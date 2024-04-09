@@ -11,6 +11,8 @@ using Jotunn.Managers;
 using ServerSync;
 using UnityEngine;
 using Common;
+using Jotunn.Utils;
+using Paths = BepInEx.Paths;
 
 namespace BlackForest_Pack_1
 {
@@ -28,6 +30,21 @@ namespace BlackForest_Pack_1
 
         private static readonly ConfigSync ConfigSync = new(ModGUID)
             { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
+        
+        public static AssetBundle assetBundle;
+        public static string bundleName = "blackforestPack1";
+
+        public static void LoadAssetBundle()
+        {
+            assetBundle = AssetUtils.LoadAssetBundleFromResources(
+                bundleName,
+                Assembly.GetExecutingAssembly()
+            );
+            if (assetBundle == null)
+            {
+                WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
+            }
+        }
 
         public enum Toggle
         {
@@ -50,7 +67,7 @@ namespace BlackForest_Pack_1
             _harmony.PatchAll(assembly);
             SetupWatcher();
             
-            AssetManager.LoadAssetBundle();
+            LoadAssetBundle();
             
             MWL_RuinsArena2_Quantity_Config = config("2 - MWL_RuinsArena2", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");

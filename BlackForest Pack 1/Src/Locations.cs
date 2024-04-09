@@ -19,7 +19,7 @@ public class Locations
     
     public static void AddAllLocations()
     {
-        var assetBundle = WarpAssetManager.assetBundle;
+        var assetBundle = BlackForest_Pack_1Plugin.assetBundle;
         
         LocationManager.AddLocation(assetBundle, 
             "MWL_RuinsArena2", 

@@ -5,21 +5,20 @@ using UnityEngine;
 
 namespace Common;
 
-public static class AssetManager
+public class AssetManager
 {
-    private const string BundleName = "meadowspack1";
     public static AssetBundle assetBundle;
+    public static string bundleName;
 
     public static void LoadAssetBundle()
     {
         assetBundle = AssetUtils.LoadAssetBundleFromResources(
-            BundleName,
+            bundleName,
             Assembly.GetExecutingAssembly()
         );
         if (assetBundle == null)
         {
-            WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + BundleName);
-
+            WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
         }
     }
 }

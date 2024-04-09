@@ -29,6 +29,21 @@ namespace Meadows_Pack_1
         private readonly Harmony _harmony = new(ModGUID);
         
         public static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
+
+        public static AssetBundle assetBundle;
+        public static string bundleName = "meadowsPack1";
+
+        public static void LoadAssetBundle()
+        {
+            assetBundle = AssetUtils.LoadAssetBundleFromResources(
+                bundleName,
+                Assembly.GetExecutingAssembly()
+            );
+            if (assetBundle == null)
+            {
+                WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
+            }
+        }
         
         public void Awake()
         {
@@ -42,8 +57,7 @@ namespace Meadows_Pack_1
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
-            AssetManager.LoadAssetBundle();
-            
+            LoadAssetBundle();
             
             MWL_Ruins1_Quantity_Config = config("1 - MWL_Ruins1", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");
@@ -167,7 +181,6 @@ namespace Meadows_Pack_1
             YAMLManager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
-            
             
             if (saveOnSet)
             {

@@ -11,7 +11,7 @@ public class Locations
 {
     public static void AddAllLocations()
     {
-        var assetBundle = AssetManager.assetBundle;
+        var assetBundle = Meadows_Pack_1Plugin.assetBundle;
         var creatureYAMLContent = YAMLManager.creatureYAMLContent;
         var lootYAMLContent = YAMLManager.lootYAMLContent;
 
