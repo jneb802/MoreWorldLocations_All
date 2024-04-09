@@ -131,6 +131,8 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore"/>
+        <Content Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+        <Content Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
         <EmbeddedResource Include="assets\meadowspack1" />
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
@@ -153,9 +155,6 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="YAML\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
