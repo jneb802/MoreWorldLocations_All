@@ -16,6 +16,12 @@ public class YAMLManager
     public static string defaultlootYamlContent;
     public static string customlootYamlContent;
     
+    public enum Toggle
+    {
+        On = 1,
+        Off = 0 
+    }
+    
     
     public static void ParseDefaultYamls()
     { 
@@ -41,10 +47,10 @@ public class YAMLManager
         }
     }
 
-    public static string GetCreatureYamlContent(Meadows_Pack_1Plugin.Toggle useCustomCreatureYaml)
+    public static string GetCreatureYamlContent(ConfigurationManager.Toggle useCustomCreatureYaml)
     {
 
-        if (useCustomCreatureYaml == Meadows_Pack_1Plugin.Toggle.On)
+        if (useCustomCreatureYaml == ConfigurationManager.Toggle.On)
         {
             return customCreatureYamlContent;
         }
@@ -52,10 +58,10 @@ public class YAMLManager
         return defaultCreatureYamlContent;
     }
     
-    public static string GetLootYamlContent(Meadows_Pack_1Plugin.Toggle useCustomLootYaml)
+    public static string GetLootYamlContent(ConfigurationManager.Toggle useCustomLootYaml)
     {
 
-        if (useCustomLootYaml == Meadows_Pack_1Plugin.Toggle.On)
+        if (useCustomLootYaml == ConfigurationManager.Toggle.On)
         {
             return customlootYamlContent;
         }
