@@ -1,8 +1,6 @@
 using Jotunn.Configs;
 
-namespace Common;
-
-
+namespace Meadows_Pack_1;
 
 public class LocationConfigs
 {

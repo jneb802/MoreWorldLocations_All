@@ -12,7 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)AssetManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreatureManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LocationConfigs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WarpLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager.cs" />
