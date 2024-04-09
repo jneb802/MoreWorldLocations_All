@@ -166,7 +166,7 @@ namespace Meadows_Pack_1
             YAMLManager.ParseDefaultYamls();
             YAMLManager.ParseCustomYamls();
             
-            ZoneManager.OnVanillaLocationsAvailable += LocationManager.AddAllLocations;
+            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             
             
             if (saveOnSet)
@@ -262,13 +262,13 @@ namespace Meadows_Pack_1
             if (!File.Exists(ConfigFileFullPath)) return;
             try
             {
-                WarpLogger.Logger.LogDebug("ReadConfigValues called");
+                Logger.LogDebug("ReadConfigValues called");
                 Config.Reload();
             }
             catch
             {
-                WarpLogger.Logger.LogError($"There was an issue loading your {ConfigFileName}");
-                WarpLogger.Logger.LogError("Please check your config entries for spelling and format!");
+                Logger.LogError($"There was an issue loading your {ConfigFileName}");
+                Logger.LogError("Please check your config entries for spelling and format!");
             }
         }
         
