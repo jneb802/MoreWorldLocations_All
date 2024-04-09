@@ -15,8 +15,6 @@ public class LocationManager
         Exterior
     }
     
-    
-
     public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, int creatureCount, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);

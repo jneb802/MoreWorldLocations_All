@@ -122,6 +122,9 @@
     <ItemGroup>
         <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Src\BlackForestPack1.cs" />
+        <Compile Include="Src\LocationConfigs.cs" />
+        <Compile Include="Src\Locations.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -129,7 +132,7 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore"/>
-        <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
+        <EmbeddedResource Include="assets\blackforestpack1" />
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
@@ -152,6 +155,9 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="25.1.0-prerelease.2"/>
         <PackageReference Include="MonoMod.Utils" Version="25.0.3"/>
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="YAML\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -255,5 +261,6 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
+    <Import Project="..\Common\Common.projitems" Label="Shared" />
 
 </Project>
