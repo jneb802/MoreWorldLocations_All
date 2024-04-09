@@ -3,7 +3,7 @@ using System.Reflection;
 using Jotunn.Utils;
 using UnityEngine;
 
-namespace Meadows_Pack_1;
+namespace Common;
 
 public static class AssetManager
 {

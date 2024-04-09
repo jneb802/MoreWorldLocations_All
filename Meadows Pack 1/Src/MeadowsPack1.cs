@@ -6,12 +6,12 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
-using ServerSync;
 using JetBrains.Annotations;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
 using Paths = BepInEx.Paths;
+using Common;
 
 namespace Meadows_Pack_1
 {
@@ -33,14 +33,14 @@ namespace Meadows_Pack_1
             bool saveOnSet = Config.SaveOnConfigSet;
             Config.SaveOnConfigSet = false; // This and the variable above are used to prevent the config from saving on startup for each config entry. This is speeds up the startup process.
             
-            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On, "If on, the configuration is locked and can be changed by server admins only.");
-            _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
+            //_serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On, "If on, the configuration is locked and can be changed by server admins only.");
+            //_ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
-            WarpAssetManager.LoadAssetBundle();
+            AssetManager.LoadAssetBundle();
             
             
             MWL_Ruins1_Quantity_Config = config("1 - MWL_Ruins1", "Spawn Quantity", 5,
@@ -161,10 +161,10 @@ namespace Meadows_Pack_1
                 "Use Custom Location Loot List", Toggle.Off,
                 "When Off, location will use default loot. When On, location will use custom loot list from the warpalicious." + ModName + " file in BepinEx config folder");*/
             
-            WarpYAMLManager.ParseDefaultYamls();
-            WarpYAMLManager.ParseCustomYamls();
+            YAMLManager.ParseDefaultYamls();
+            YAMLManager.ParseCustomYamls();
             
-            ZoneManager.OnVanillaLocationsAvailable += WarpLocationManager.AddAllLocations;
+            ZoneManager.OnVanillaLocationsAvailable += LocationManager.AddAllLocations;
             
             
             if (saveOnSet)
@@ -191,9 +191,6 @@ namespace Meadows_Pack_1
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
         }
-        
-        private static readonly ConfigSync ConfigSync = new(ModGUID)
-            { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
 
         public static ConfigEntry<int> MWL_Ruins1_Quantity_Config = null!;
         public static ConfigEntry<Toggle> MWL_Ruins1_CreatureYaml_Config = null!;

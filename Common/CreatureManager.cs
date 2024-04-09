@@ -5,7 +5,7 @@ using UnityEngine;
 using YamlDotNet.RepresentationModel;
 using Random = UnityEngine.Random;
 
-namespace Meadows_Pack_1;
+namespace Common;
 
 public static class CreatureManager
 {

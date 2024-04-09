@@ -4,7 +4,7 @@ using Jotunn.Utils;
 using YamlDotNet.RepresentationModel;
 using Paths = BepInEx.Paths;
 
-namespace Meadows_Pack_1;
+namespace Common;
 
 public class YAMLManager
 {

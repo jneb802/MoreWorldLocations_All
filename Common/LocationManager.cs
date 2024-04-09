@@ -4,7 +4,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 
-namespace Meadows_Pack_1;
+namespace Common;
 
 public class LocationManager
 {

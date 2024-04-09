@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using YamlDotNet.RepresentationModel;
 
-namespace Meadows_Pack_1;
+namespace Common;
 
 public class LootManager: MonoBehaviour
 {
