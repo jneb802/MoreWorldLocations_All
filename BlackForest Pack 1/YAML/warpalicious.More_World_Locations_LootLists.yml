@@ -1,0 +1,21 @@
+BlackforestLoot1:
+  - Amber
+  - Ruby
+  - BoneFragments
+  - Blueberries
+BlackforestLoot2:
+  - Blueberries
+  - CarrotSeeds
+  - AmberPearl
+  - TinOre
+  - CopperOre
+BlackforestLoot3:
+  - Bronze
+  - Copper
+  - AmberPearl
+  - SurtlingCore
+WoodTavernLoot1:
+  - CarrotSeeds
+  - Blueberries
+  - MinceMeatSauce
+  - DeerStew
