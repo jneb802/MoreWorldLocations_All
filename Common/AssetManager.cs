@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Meadows_Pack_1;
 
-public static class WarpAssetManager
+public static class AssetManager
 {
     private const string BundleName = "meadowspack1";
     public static AssetBundle assetBundle;

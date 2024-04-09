@@ -9,13 +9,13 @@
     <Import_RootNamespace>Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)WarpAssetManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WarpConfigurationManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WarpCreatureManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WarpLocationConfigs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WarpLocationManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AssetManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CreatureManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocationConfigs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WarpLogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WarpLootManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WarpYAMLManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LootManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)YAMLManager.cs" />
   </ItemGroup>
 </Project>

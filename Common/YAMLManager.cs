@@ -6,7 +6,7 @@ using Paths = BepInEx.Paths;
 
 namespace Meadows_Pack_1;
 
-public class WarpYAMLManager
+public class YAMLManager
 {
     public static string creatureYAMLContent;
     public static string lootYAMLContent;

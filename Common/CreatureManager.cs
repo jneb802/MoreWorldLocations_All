@@ -7,16 +7,16 @@ using Random = UnityEngine.Random;
 
 namespace Meadows_Pack_1;
 
-public static class WarpCreatureManager
+public static class CreatureManager
 {
-    public static void SetupCreatures(WarpLocationManager.LocationPosition position, string creatureListName, GameObject jotunnLocationContainer, int creatureCount, string creatureYAMLContent)
+    public static void SetupCreatures(LocationManager.LocationPosition position, string creatureListName, GameObject jotunnLocationContainer, int creatureCount, string creatureYAMLContent)
     {
         if (creatureCount == 0)
         {
             return;
         }
         
-        if (position == WarpLocationManager.LocationPosition.Exterior)
+        if (position == LocationManager.LocationPosition.Exterior)
         {
             var exteriorCreatureList = CreateCreatureList(creatureListName,creatureCount,creatureYAMLContent);
             var exteriorCreatureSpawnerList = GetExteriorCreatureSpawners(jotunnLocationContainer);

@@ -8,7 +8,7 @@ using YamlDotNet.RepresentationModel;
 
 namespace Meadows_Pack_1;
 
-public class WarpLootManager: MonoBehaviour
+public class LootManager: MonoBehaviour
 {
     public static List<String> CreateLootList(string lootListName, string yamlContent)
     {
@@ -38,7 +38,7 @@ public class WarpLootManager: MonoBehaviour
         return lootList;
     }
     
-    public static List<Container> GetLocationsContainers(GameObject location, WarpLocationManager.LocationPosition locationPosition)
+    public static List<Container> GetLocationsContainers(GameObject location, LocationManager.LocationPosition locationPosition)
     {
         List<Container> locationContainers = new List<Container>();
         Container[] allContainers = location.GetComponentsInChildren<Container>();
@@ -64,7 +64,7 @@ public class WarpLootManager: MonoBehaviour
         }
     }
     
-    public static List<DropOnDestroyed> GetLocationsDropOnDestroyeds(GameObject location, WarpLocationManager.LocationPosition locationPosition)
+    public static List<DropOnDestroyed> GetLocationsDropOnDestroyeds(GameObject location, LocationManager.LocationPosition locationPosition)
     {
         List<DropOnDestroyed> locationDropOnDestroyeds = new List<DropOnDestroyed>();
         DropOnDestroyed[] allDropOnDestroyeds = location.GetComponentsInChildren<DropOnDestroyed>();

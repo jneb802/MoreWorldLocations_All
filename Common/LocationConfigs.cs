@@ -4,7 +4,7 @@ namespace Meadows_Pack_1;
 
 
 
-public class WarpLocationConfigs
+public class LocationConfigs
 {
     public struct LocationRing
     {
