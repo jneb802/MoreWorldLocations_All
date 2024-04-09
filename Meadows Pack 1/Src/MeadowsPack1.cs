@@ -28,6 +28,8 @@ namespace Meadows_Pack_1
         internal static string ConnectionError = "";
         private readonly Harmony _harmony = new(ModGUID);
         
+        public static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
+        
         public void Awake()
         {
             bool saveOnSet = Config.SaveOnConfigSet;

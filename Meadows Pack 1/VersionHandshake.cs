@@ -14,12 +14,12 @@ namespace Meadows_Pack_1
         private static void Prefix(ZNetPeer peer, ref ZNet __instance)
         {
             // Register version check call
-            Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogDebug("Registering version RPC handler");
+            Meadows_Pack_1Plugin.Logger.LogDebug("Registering version RPC handler");
             peer.m_rpc.Register($"{Meadows_Pack_1Plugin.ModName}_VersionCheck",
                 new Action<ZRpc, ZPackage>(RpcHandlers.RPC_Meadows_Pack_1_Version));
 
             // Make calls to check versions
-            Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogDebug("Invoking version check");
+            Meadows_Pack_1Plugin.Logger.LogDebug("Invoking version check");
             ZPackage zpackage = new();
             zpackage.Write(Meadows_Pack_1Plugin.ModVersion);
             peer.m_rpc.Invoke($"{Meadows_Pack_1Plugin.ModName}_VersionCheck", zpackage);
@@ -33,7 +33,7 @@ namespace Meadows_Pack_1
         {
             if (!__instance.IsServer() || RpcHandlers.ValidatedPeers.Contains(rpc)) return true;
             // Disconnect peer if they didn't send mod version at all
-            Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogWarning(
+            Meadows_Pack_1Plugin.Logger.LogWarning(
                 $"Peer ({rpc.m_socket.GetHostName()}) never sent version or couldn't due to previous disconnect, disconnecting");
             rpc.Invoke("Error", 3);
             return false; // Prevent calling underlying method
@@ -68,7 +68,7 @@ namespace Meadows_Pack_1
         {
             if (!__instance.IsServer()) return;
             // Remove peer from validated list
-            Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogInfo(
+            Meadows_Pack_1Plugin.Logger.LogInfo(
                 $"Peer ({peer.m_rpc.m_socket.GetHostName()}) disconnected, removing from validated list");
             _ = RpcHandlers.ValidatedPeers.Remove(peer.m_rpc);
         }
@@ -82,16 +82,16 @@ namespace Meadows_Pack_1
         {
             string? version = pkg.ReadString();
 
-            Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogInfo("Version check, local: " +
-                                                              Meadows_Pack_1Plugin.ModVersion +
-                                                              ",  remote: " + version);
+            Meadows_Pack_1Plugin.Logger.LogInfo("Version check, local: " +
+                                                Meadows_Pack_1Plugin.ModVersion +
+                                                ",  remote: " + version);
             if (version != Meadows_Pack_1Plugin.ModVersion)
             {
                 Meadows_Pack_1Plugin.ConnectionError =
                     $"{Meadows_Pack_1Plugin.ModName} Installed: {Meadows_Pack_1Plugin.ModVersion}\n Needed: {version}";
                 if (!ZNet.instance.IsServer()) return;
                 // Different versions - force disconnect client from server
-                Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogWarning(
+                Meadows_Pack_1Plugin.Logger.LogWarning(
                     $"Peer ({rpc.m_socket.GetHostName()}) has incompatible version, disconnecting...");
                 rpc.Invoke("Error", 3);
             }
@@ -100,13 +100,13 @@ namespace Meadows_Pack_1
                 if (!ZNet.instance.IsServer())
                 {
                     // Enable mod on client if versions match
-                    Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogInfo(
+                    Meadows_Pack_1Plugin.Logger.LogInfo(
                         "Received same version from server!");
                 }
                 else
                 {
                     // Add client to validated list
-                    Meadows_Pack_1Plugin.Meadows_Pack_1Logger.LogInfo(
+                    Meadows_Pack_1Plugin.Logger.LogInfo(
                         $"Adding peer ({rpc.m_socket.GetHostName()}) to validated list");
                     ValidatedPeers.Add(rpc);
                 }
