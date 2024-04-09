@@ -31,6 +31,8 @@ namespace BlackForest_Pack_1
         private static readonly ConfigSync ConfigSync = new(ModGUID)
             { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
         
+        public static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
+        
         public static AssetBundle assetBundle;
         public static string bundleName = "blackforestPack1";
 

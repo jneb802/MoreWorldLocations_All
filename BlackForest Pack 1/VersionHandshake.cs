@@ -14,12 +14,12 @@ namespace BlackForest_Pack_1
         private static void Prefix(ZNetPeer peer, ref ZNet __instance)
         {
             // Register version check call
-            BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogDebug("Registering version RPC handler");
+            BlackForest_Pack_1Plugin.Logger.LogDebug("Registering version RPC handler");
             peer.m_rpc.Register($"{BlackForest_Pack_1Plugin.ModName}_VersionCheck",
                 new Action<ZRpc, ZPackage>(RpcHandlers.RPC_BlackForest_Pack_1_Version));
 
             // Make calls to check versions
-            BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogDebug("Invoking version check");
+            BlackForest_Pack_1Plugin.Logger.LogDebug("Invoking version check");
             ZPackage zpackage = new();
             zpackage.Write(BlackForest_Pack_1Plugin.ModVersion);
             peer.m_rpc.Invoke($"{BlackForest_Pack_1Plugin.ModName}_VersionCheck", zpackage);
@@ -33,7 +33,7 @@ namespace BlackForest_Pack_1
         {
             if (!__instance.IsServer() || RpcHandlers.ValidatedPeers.Contains(rpc)) return true;
             // Disconnect peer if they didn't send mod version at all
-            BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogWarning(
+            BlackForest_Pack_1Plugin.Logger.LogWarning(
                 $"Peer ({rpc.m_socket.GetHostName()}) never sent version or couldn't due to previous disconnect, disconnecting");
             rpc.Invoke("Error", 3);
             return false; // Prevent calling underlying method
@@ -68,7 +68,7 @@ namespace BlackForest_Pack_1
         {
             if (!__instance.IsServer()) return;
             // Remove peer from validated list
-            BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogInfo(
+            BlackForest_Pack_1Plugin.Logger.LogInfo(
                 $"Peer ({peer.m_rpc.m_socket.GetHostName()}) disconnected, removing from validated list");
             _ = RpcHandlers.ValidatedPeers.Remove(peer.m_rpc);
         }
@@ -82,16 +82,16 @@ namespace BlackForest_Pack_1
         {
             string? version = pkg.ReadString();
 
-            BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogInfo("Version check, local: " +
-                                                                      BlackForest_Pack_1Plugin.ModVersion +
-                                                                      ",  remote: " + version);
+            BlackForest_Pack_1Plugin.Logger.LogInfo("Version check, local: " +
+                                                    BlackForest_Pack_1Plugin.ModVersion +
+                                                    ",  remote: " + version);
             if (version != BlackForest_Pack_1Plugin.ModVersion)
             {
                 BlackForest_Pack_1Plugin.ConnectionError =
                     $"{BlackForest_Pack_1Plugin.ModName} Installed: {BlackForest_Pack_1Plugin.ModVersion}\n Needed: {version}";
                 if (!ZNet.instance.IsServer()) return;
                 // Different versions - force disconnect client from server
-                BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogWarning(
+                BlackForest_Pack_1Plugin.Logger.LogWarning(
                     $"Peer ({rpc.m_socket.GetHostName()}) has incompatible version, disconnecting...");
                 rpc.Invoke("Error", 3);
             }
@@ -100,13 +100,13 @@ namespace BlackForest_Pack_1
                 if (!ZNet.instance.IsServer())
                 {
                     // Enable mod on client if versions match
-                    BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogInfo(
+                    BlackForest_Pack_1Plugin.Logger.LogInfo(
                         "Received same version from server!");
                 }
                 else
                 {
                     // Add client to validated list
-                    BlackForest_Pack_1Plugin.BlackForest_Pack_1Logger.LogInfo(
+                    BlackForest_Pack_1Plugin.Logger.LogInfo(
                         $"Adding peer ({rpc.m_socket.GetHostName()}) to validated list");
                     ValidatedPeers.Add(rpc);
                 }
