@@ -31,7 +31,7 @@ namespace Meadows_Pack_1
         public static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
 
         public static AssetBundle assetBundle;
-        public static string bundleName = "meadowsPack1";
+        public static string bundleName = "meadowspack1";
 
         public static void LoadAssetBundle()
         {
