@@ -61,6 +61,8 @@ public class LootManager: MonoBehaviour
         {
             var dropTable = CreateDropTable(lootList, 2, 3);
             container.m_defaultItems = dropTable;
+            
+            WarpLogger.Logger.LogDebug("Container with name " + container.name + " has received new dropTable");
         }
     }
     
@@ -109,6 +111,8 @@ public class LootManager: MonoBehaviour
 
             foreach (var itemName in itemNames)
             {
+                WarpLogger.Logger.LogDebug("Attempting to add item with name " + itemName);
+                
                 GameObject itemPrefab = PrefabManager.Cache.GetPrefab<GameObject>(itemName);
 
                 if (itemPrefab != null)
@@ -123,6 +127,8 @@ public class LootManager: MonoBehaviour
                     };
 
                     newDropTable.m_drops.Add(dropData);
+                    
+                    WarpLogger.Logger.LogDebug("Added item with name " + itemName);
                 }
                 else
                 {
