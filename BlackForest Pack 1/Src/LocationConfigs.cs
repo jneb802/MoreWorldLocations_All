@@ -82,12 +82,10 @@ public class LocationConfigs
         MaxAltitude = 2,
         MinDistance = LocationRings.Ring3.MinDistance,
         MaxDistance = LocationRings.Ring3.MaxDistance,
-        InteriorRadius = 32,
+        //InteriorRadius = 32,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
-        HasInterior = true,
-        InteriorEnvironment = "Crypt",
     };
     
     public static LocationConfig MWL_RuinsTower3_Config = new LocationConfig

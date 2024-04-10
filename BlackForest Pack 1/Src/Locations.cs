@@ -10,7 +10,6 @@ namespace BlackForest_Pack_1;
 
 public class Locations
 {
-    
     public enum LocationPosition
     {
         Interior,
@@ -39,15 +38,14 @@ public class Locations
             BlackForest_Pack_1Plugin.MWL_RuinsCastle1_LootList_Config.Value,
             LocationConfigs.MWL_RuinsCastle1_Config);
         
-        /*LocationManager.AddLocation(assetBundle, 
+        LocationManager.AddLocation(assetBundle, 
             "MWL_RuinsCastle3", 
             YAMLManager.GetCreatureYamlContent(BlackForest_Pack_1Plugin.MWL_RuinsCastle3_CreatureYaml_Config.Value),
             BlackForest_Pack_1Plugin.MWL_RuinsCastle3_CreatureList_Config.Value, 
             5, 
             YAMLManager.GetLootYamlContent(BlackForest_Pack_1Plugin.MWL_RuinsCastle3_LootYaml_Config.Value), 
             BlackForest_Pack_1Plugin.MWL_RuinsCastle3_LootList_Config.Value,
-            BlackForest_Pack_1Plugin.MWL_RuinsCastle3_LootList_Config.Value,
-            LocationConfigs.MWL_RuinsCastle3_Config);*/
+            LocationConfigs.MWL_RuinsCastle3_Config);
         
         LocationManager.AddLocation(assetBundle, 
             "MWL_RuinsTower3", 
