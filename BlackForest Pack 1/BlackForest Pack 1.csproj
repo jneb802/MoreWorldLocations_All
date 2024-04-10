@@ -5,7 +5,7 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}</ProjectGuid>
+        <ProjectGuid>{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>BlackForest_Pack_1</RootNamespace>

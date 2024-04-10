@@ -5,7 +5,7 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}</ProjectGuid>
+        <ProjectGuid>{FCA46F01-F67E-434E-844D-1528E2CCD85C}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Meadows_Pack_1</RootNamespace>
