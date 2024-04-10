@@ -34,7 +34,7 @@ namespace BlackForest_Pack_1
         public static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
         
         public static AssetBundle assetBundle;
-        public static string bundleName = "blackforestPack1";
+        public static string bundleName = "blackforestpack1";
 
         public static void LoadAssetBundle()
         {
