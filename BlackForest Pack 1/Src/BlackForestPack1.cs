@@ -17,6 +17,7 @@ using Paths = BepInEx.Paths;
 namespace BlackForest_Pack_1
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
+    [BepInDependency(Jotunn.Main.ModGuid)]
     public class BlackForest_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "MWL_Blackforest_Pack_1";

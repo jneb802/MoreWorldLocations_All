@@ -151,11 +151,11 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
-        <PackageReference Include="JotunnLib" Version="2.16.2"/>
-        <PackageReference Include="Mono.Cecil" Version="0.11.5"/>
-        <PackageReference Include="MonoMod" Version="22.7.31.1"/>
-        <PackageReference Include="MonoMod.RuntimeDetour" Version="25.1.0-prerelease.2"/>
-        <PackageReference Include="MonoMod.Utils" Version="25.0.3"/>
+        <PackageReference Include="JotunnLib" Version="2.19.1" />
+        <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+        <PackageReference Include="MonoMod" Version="21.9.19.1" />
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
+        <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
