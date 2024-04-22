@@ -120,18 +120,11 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Managers\CreatureManager.cs"/>
-        <Compile Include="Managers\ItemDataManager.cs"/>
-        <Compile Include="Managers\ItemManager.cs"/>
         <Compile Include="Managers\LocalizationManager.cs"/>
-        <Compile Include="Managers\LocationManager.cs"/>
-        <Compile Include="Managers\PieceManager\MaterialReplacer.cs"/>
-        <Compile Include="Managers\PieceManager\PieceManager.cs"/>
-        <Compile Include="Managers\PieceManager\SnapPointMaker.cs"/>
-        <Compile Include="Managers\SkillManager.cs"/>
-        <Compile Include="Managers\StatusEffectManager.cs"/>
-        <Compile Include="Plugin.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Src\LocationConfigs.cs" />
+        <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\MountainsPack1.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -143,24 +136,7 @@
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
-        <Content Include="Libs\CreatureManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\ItemDataManager.dll"/>
-        <Content Include="Libs\ItemManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\LocalizationManager.dll"/>
-        <Content Include="Libs\LocationManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\PieceManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <Content Include="Libs\ServerSync.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\SkillManager.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="LICENSE.md"/>
@@ -170,6 +146,8 @@
         <Content Include="Thunderstore\manifest.json"/>
         <EmbeddedResource Include="translations\English.yml"/>
         <Content Include="UpdateManifest.ps1"/>
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
@@ -282,5 +260,6 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
+    <Import Project="..\Common\Common.projitems" Label="Shared" />
 
 </Project>
