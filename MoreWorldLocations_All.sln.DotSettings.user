@@ -1,0 +1,7 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005Cjneb8_005CAppData_005CRoaming_005Cr2modmanPlus_002Dlocal_005CValheim_005Cprofiles_005CmarketplaceTesting_005CBepInEx_005Cplugins_005CKGvalheim_002DMarketplace_005FAnd_005FServer_005FNPCs_005FRevamped_005Ckg_002EMarketplace_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005Cjneb8_005CRiderProjects_005CMoreWorldLocations_005FAll_005CMeadows_0020Pack_00201_005CLibs_005Ckg_002EMarketplace_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\assembly_valheim_publicized.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\jneb8\RiderProjects\MoreWorldLocations_All\Meadows Pack 1\Libs\kg.Marketplace.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
