@@ -5,12 +5,12 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}</ProjectGuid>
+        <ProjectGuid>{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Mountains_Pack_1</RootNamespace>
         <AssemblyName>Mountains_Pack_1</AssemblyName>
-        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
