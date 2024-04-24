@@ -11,6 +11,9 @@ using LocalizationManager;
 using ServerSync;
 using UnityEngine;
 using Common;
+using Jotunn.Managers;
+using Jotunn.Utils;
+using Paths = BepInEx.Paths;
 
 namespace Mountains_Pack_1
 {
@@ -39,6 +42,21 @@ namespace Mountains_Pack_1
             On = 1,
             Off = 0
         }
+        
+        public static AssetBundle assetBundle;
+        public static string bundleName = "mountainspack1";
+
+        public static void LoadAssetBundle()
+        {
+            assetBundle = AssetUtils.LoadAssetBundleFromResources(
+                bundleName,
+                Assembly.GetExecutingAssembly()
+            );
+            if (assetBundle == null)
+            {
+                WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
+            }
+        }
 
         public void Awake()
         {
@@ -58,19 +76,43 @@ namespace Mountains_Pack_1
             
             LoadAssetBundle();
             
-            MWL_StoneCastle1_QuantityConfig = config("1 - MWL_StoneCastle", "Spawn Quantity", 5,
+            MWL_StoneCastle1_QuantityConfig = config("1 - MWL_StoneCastle1", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");
-            MWL_StoneCastle1_CreatureYamlConfig = config("1 - MWL_StoneCastle", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+            MWL_StoneCastle1_CreatureYamlConfig = config("1 - MWL_StoneCastle1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-            MWL_StoneCastle1_CreatureListConfig = config("1 - MWL_StoneCastle", "Name of Creature List", "MountainsCreatures1",
+            MWL_StoneCastle1_CreatureListConfig = config("1 - MWL_StoneCastle1", "Name of Creature List", "MountainsCreatures1",
                 "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-            MWL_StoneCastle1_LootYamlConfig = config("1 - MWL_StoneCastle", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+            MWL_StoneCastle1_LootYamlConfig = config("1 - MWL_StoneCastle1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-            MWL_StoneCastle1_LootListConfig = config("1 - MWL_StoneCastle", "Name of Loot List", "MountainsLoot1",
+            MWL_StoneCastle1_LootListConfig = config("1 - MWL_StoneCastle1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_StoneFort1_QuantityConfig = config("2 - MWL_StoneFort1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_StoneFort1_CreatureYamlConfig = config("2 - MWL_StoneFort1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_StoneFort1_CreatureListConfig = config("2 - MWL_StoneFort1", "Name of Creature List", "MountainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_StoneFort1_LootYamlConfig = config("2 - MWL_StoneFort1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_StoneFort1_LootListConfig = config("2 - MWL_StoneFort1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_StoneFort1_QuantityConfig = config("3 - MWL_StoneHall1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_StoneFort1_CreatureYamlConfig = config("3 - MWL_StoneHall1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_StoneFort1_CreatureListConfig = config("3 - MWL_StoneHall1", "Name of Creature List", "MountainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_StoneFort1_LootYamlConfig = config("3 - MWL_StoneHall1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_StoneFort1_LootListConfig = config("3 - MWL_StoneHall1", "Name of Loot List", "MountainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
             YAMLManager.ParseDefaultYamls();
             YAMLManager.ParseCustomYamls();
+            
+            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 
             if (saveOnSet)
             {
@@ -100,6 +142,18 @@ namespace Mountains_Pack_1
         public static ConfigEntry<string> MWL_StoneCastle1_CreatureListConfig = null!;
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneCastle1_LootYamlConfig = null!;
         public static ConfigEntry<string> MWL_StoneCastle1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_StoneFort1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneFort1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneFort1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneFort1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneFort1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_StoneHall1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneHall1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneHall1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneHall1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneHall1_LootListConfig = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {
