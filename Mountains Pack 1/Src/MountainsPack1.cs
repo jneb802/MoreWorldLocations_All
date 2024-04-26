@@ -87,7 +87,7 @@ namespace Mountains_Pack_1
             MWL_StoneCastle1_LootListConfig = config("1 - MWL_StoneCastle1", "Name of Loot List", "MountainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            MWL_StoneFort1_QuantityConfig = config("2 - MWL_StoneFort1", "Spawn Quantity", 20,
+            MWL_StoneFort1_QuantityConfig = config("2 - MWL_StoneFort1", "Spawn Quantity", 10,
                 "Amount of this location the game will attempt to place during world generation");
             MWL_StoneFort1_CreatureYamlConfig = config("2 - MWL_StoneFort1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
@@ -98,15 +98,81 @@ namespace Mountains_Pack_1
             MWL_StoneFort1_LootListConfig = config("2 - MWL_StoneFort1", "Name of Loot List", "MountainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            MWL_StoneFort1_QuantityConfig = config("3 - MWL_StoneHall1", "Spawn Quantity", 20,
+            MWL_StoneHall1_QuantityConfig = config("3 - MWL_StoneHall1", "Spawn Quantity", 10,
                 "Amount of this location the game will attempt to place during world generation");
-            MWL_StoneFort1_CreatureYamlConfig = config("3 - MWL_StoneHall1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+            MWL_StoneHall1_CreatureYamlConfig = config("3 - MWL_StoneHall1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-            MWL_StoneFort1_CreatureListConfig = config("3 - MWL_StoneHall1", "Name of Creature List", "MountainsCreatures1",
+            MWL_StoneHall1_CreatureListConfig = config("3 - MWL_StoneHall1", "Name of Creature List", "MountainsCreatures4",
                 "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-            MWL_StoneFort1_LootYamlConfig = config("3 - MWL_StoneHall1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+            MWL_StoneHall1_LootYamlConfig = config("3 - MWL_StoneHall1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-            MWL_StoneFort1_LootListConfig = config("3 - MWL_StoneHall1", "Name of Loot List", "MountainsLoot1",
+            MWL_StoneHall1_LootListConfig = config("3 - MWL_StoneHall1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_StoneTavern1_QuantityConfig = config("4 - MWL_StoneTavern1", "Spawn Quantity", 10,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_StoneTavern1_CreatureYamlConfig = config("4 - MWL_StoneTavern1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_StoneTavern1_CreatureListConfig = config("4 - MWL_StoneTavern1", "Name of Creature List", "MountainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_StoneTavern1_LootYamlConfig = config("4 - MWL_StoneTavern1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_StoneTavern1_LootListConfig = config("4 - MWL_StoneTavern1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_StoneTower1_QuantityConfig = config("5 - MWL_StoneTower1", "Spawn Quantity", 10,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_StoneTower1_CreatureYamlConfig = config("5 - MWL_StoneTower1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_StoneTower1_CreatureListConfig = config("5 - MWL_StoneTower1", "Name of Creature List", "MountainsCreatures2",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_StoneTower1_LootYamlConfig = config("5 - MWL_StoneTower1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_StoneTower1_LootListConfig = config("5 - MWL_StoneTower1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_StoneTower2_QuantityConfig = config("6 - MWL_StoneTower2", "Spawn Quantity", 10,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_StoneTower2_CreatureYamlConfig = config("6 - MWL_StoneTower2", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_StoneTower2_CreatureListConfig = config("6 - MWL_StoneTower2", "Name of Creature List", "MountainsCreatures2",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_StoneTower2_LootYamlConfig = config("6 - MWL_StoneTower2", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_StoneTower2_LootListConfig = config("6 - MWL_StoneTower2", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_WoodBarn1_QuantityConfig = config("7 - MWL_WoodBarn1", "Spawn Quantity", 10,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_WoodBarn1_CreatureYamlConfig = config("7 - MWL_WoodBarn1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_WoodBarn1_CreatureListConfig = config("7 - MWL_WoodBarn1", "Name of Creature List", "MountainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_WoodBarn1_LootYamlConfig = config("7 - MWL_WoodBarn1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_WoodBarn1_LootListConfig = config("7 - MWL_WoodBarn1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_WoodFarm1_QuantityConfig = config("8 - MWL_WoodFarm1", "Spawn Quantity", 10,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_WoodFarm1_CreatureYamlConfig = config("8 - MWL_WoodFarm1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_WoodFarm1_CreatureListConfig = config("8 - MWL_WoodFarm1", "Name of Creature List", "MountainsCreatures3",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_WoodFarm1_LootYamlConfig = config("8 - MWL_WoodFarm1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_WoodFarm1_LootListConfig = config("8 - MWL_WoodFarm1", "Name of Loot List", "MountainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_WoodHouse1_QuantityConfig = config("9 - MWL_WoodHouse1", "Spawn Quantity", 5,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_WoodHouse1_CreatureYamlConfig = config("9 - MWL_WoodHouse1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_WoodHouse1_CreatureListConfig = config("9 - MWL_WoodHouse1", "Name of Creature List", "MountainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_WoodHouse1_LootYamlConfig = config("9 - MWL_WoodHouse1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_WoodHouse1_LootListConfig = config("9 - MWL_WoodHouse1", "Name of Loot List", "MountainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
             YAMLManager.ParseDefaultYamls();
@@ -154,6 +220,42 @@ namespace Mountains_Pack_1
         public static ConfigEntry<string> MWL_StoneHall1_CreatureListConfig = null!;
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneHall1_LootYamlConfig = null!;
         public static ConfigEntry<string> MWL_StoneHall1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_StoneTavern1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneTavern1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneTavern1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneTavern1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneTavern1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_StoneTower1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneTower1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneTower1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneTower1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneTower1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_StoneTower2_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneTower2_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneTower2_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_StoneTower2_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_StoneTower2_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_WoodBarn1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_WoodBarn1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_WoodBarn1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_WoodBarn1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_WoodBarn1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_WoodFarm1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_WoodFarm1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_WoodFarm1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_WoodFarm1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_WoodFarm1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_WoodHouse1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_WoodHouse1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_WoodHouse1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_WoodHouse1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_WoodHouse1_LootListConfig = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {

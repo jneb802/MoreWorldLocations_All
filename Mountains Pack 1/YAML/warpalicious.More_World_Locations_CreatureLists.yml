@@ -4,12 +4,39 @@ MountainsCreatures1:
   - Skeleton
   - Skeleton
   - Skeleton_Poison
+  - Skeleton
+  - Skeleton
+  - Skeleton
 MountainsCreatures2:
-  - Greydwarf
-  - Greydwarf
-  - Greydwarf
-  - Greydwarf
-  - Greydwarf_Elite
-  - Greydwarf
-  - Greydwarf
-  - Greydwarf_Shaman
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+MountainsCreatures3:
+  - StoneGolem
+  - StoneGolem
+MountainsCreatures4:
+  - Ulv
+  - Ulv
+  - Ulv
+  - Ulv
+  - Fenring
+  - Ulv
+  - Ulv
+  - Ulv
+  - Fenring_Cultist
+  - Ulv
+  - Ulv
+  - Ulv
+  - Ulv
+  - Fenring
+  - Fenring

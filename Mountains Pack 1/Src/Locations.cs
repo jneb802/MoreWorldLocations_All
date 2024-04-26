@@ -43,6 +43,60 @@ public class Locations
             Mountains_Pack_1Plugin.MWL_StoneHall1_LootListConfig.Value,
             LocationConfigs.MWL_StoneHall1_Config);
         
+        LocationManager.AddLocation(assetBundle,
+            "MWL_StoneTavern1",
+            YAMLManager.GetCreatureYamlContent(Mountains_Pack_1Plugin.MWL_StoneTavern1_CreatureYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_StoneTavern1_CreatureListConfig.Value,
+            9,
+            YAMLManager.GetLootYamlContent(Mountains_Pack_1Plugin.MWL_StoneTavern1_LootYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_StoneTavern1_LootListConfig.Value,
+            LocationConfigs.MWL_StoneTavern1_Config);
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_StoneTower1",
+            YAMLManager.GetCreatureYamlContent(Mountains_Pack_1Plugin.MWL_StoneTower1_CreatureYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_StoneTower1_CreatureListConfig.Value,
+            4,
+            YAMLManager.GetLootYamlContent(Mountains_Pack_1Plugin.MWL_StoneTower1_LootYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_StoneTower1_LootListConfig.Value,
+            LocationConfigs.MWL_StoneTower1_Config);
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_StoneTower2",
+            YAMLManager.GetCreatureYamlContent(Mountains_Pack_1Plugin.MWL_StoneTower2_CreatureYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_StoneTower2_CreatureListConfig.Value,
+            5,
+            YAMLManager.GetLootYamlContent(Mountains_Pack_1Plugin.MWL_StoneTower2_LootYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_StoneTower2_LootListConfig.Value,
+            LocationConfigs.MWL_StoneTower2_Config);
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_WoodBarn1",
+            YAMLManager.GetCreatureYamlContent(Mountains_Pack_1Plugin.MWL_WoodBarn1_CreatureYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_WoodBarn1_CreatureListConfig.Value,
+            7,
+            YAMLManager.GetLootYamlContent(Mountains_Pack_1Plugin.MWL_WoodBarn1_LootYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_WoodBarn1_LootListConfig.Value,
+            LocationConfigs.MWL_WoodBarn1_Config);
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_WoodFarm1",
+            YAMLManager.GetCreatureYamlContent(Mountains_Pack_1Plugin.MWL_WoodFarm1_CreatureYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_WoodFarm1_CreatureListConfig.Value,
+            2,
+            YAMLManager.GetLootYamlContent(Mountains_Pack_1Plugin.MWL_WoodFarm1_LootYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_WoodFarm1_LootListConfig.Value,
+            LocationConfigs.MWL_WoodFarm1_Config);
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_WoodHouse1",
+            YAMLManager.GetCreatureYamlContent(Mountains_Pack_1Plugin.MWL_WoodHouse1_CreatureYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_WoodHouse1_CreatureListConfig.Value,
+            5,
+            YAMLManager.GetLootYamlContent(Mountains_Pack_1Plugin.MWL_WoodHouse1_LootYamlConfig.Value),
+            Mountains_Pack_1Plugin.MWL_WoodHouse1_LootListConfig.Value,
+            LocationConfigs.MWL_WoodHouse1_Config);
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
     }
 }

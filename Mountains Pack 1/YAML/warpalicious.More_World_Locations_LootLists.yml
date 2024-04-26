@@ -1,16 +1,8 @@
 MountainsLoot1:
-  - Flint
-  - Feathers
-  - Raspberry
-MountainsLoot2:
-  - Flint
-  - Feathers
-  - LeatherScraps
-  - DeerHide
-  - Raspberry
-MountainsLoot3:
-  - FineWood
+  - OnionSeeds
+  - SurtlingCore
   - Bronze
-  - CopperOre
-  - DeerHide
-  - Raspberry
+  - AmberPearl
+  - WolfPelt
+  - Crystal
+  - ArrowFrost
