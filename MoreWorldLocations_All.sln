@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackForest Pack 1", "Black
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mountains Pack 1", "Mountains Pack 1\Mountains Pack 1.csproj", "{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swamp Pack 1", "Swamp Pack 1\Swamp Pack 1.csproj", "{E6CB5960A-827E-4414-8DE8-5B9992BC5A56}"
+EndProject
 Global
 				GlobalSection(SolutionConfigurationPlatforms) = preSolution
 								Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,7 @@ Global
 					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Release|Any CPU.Build.0 = Release|Any CPU
+					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 					{FCA46F01-F67E-434E-844D-1528E2CCD85C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{FCA46F01-F67E-434E-844D-1528E2CCD85C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{FCA46F01-F67E-434E-844D-1528E2CCD85C}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -26,5 +29,9 @@ Global
 					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Release|Any CPU.Build.0 = Release|Any CPU
+					{6CB5960A-827E-4414-8DE8-5B9992BC5A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+					{6CB5960A-827E-4414-8DE8-5B9992BC5A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+					{6CB5960A-827E-4414-8DE8-5B9992BC5A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+					{6CB5960A-827E-4414-8DE8-5B9992BC5A56}.Release|Any CPU.Build.0 = Release|Any CPU
 				EndGlobalSection
 EndGlobal

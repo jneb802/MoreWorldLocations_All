@@ -5,12 +5,12 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}</ProjectGuid>
+        <ProjectGuid>{6CB5960A-827E-4414-8DE8-5B9992BC5A56}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Swamp_Pack_1</RootNamespace>
         <AssemblyName>Swamp_Pack_1</AssemblyName>
-        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
@@ -120,18 +120,9 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Managers\CreatureManager.cs"/>
-        <Compile Include="Managers\ItemDataManager.cs"/>
-        <Compile Include="Managers\ItemManager.cs"/>
         <Compile Include="Managers\LocalizationManager.cs"/>
-        <Compile Include="Managers\LocationManager.cs"/>
-        <Compile Include="Managers\PieceManager\MaterialReplacer.cs"/>
-        <Compile Include="Managers\PieceManager\PieceManager.cs"/>
-        <Compile Include="Managers\PieceManager\SnapPointMaker.cs"/>
-        <Compile Include="Managers\SkillManager.cs"/>
-        <Compile Include="Managers\StatusEffectManager.cs"/>
-        <Compile Include="Plugin.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Src\Plugin.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -143,24 +134,7 @@
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
-        <Content Include="Libs\CreatureManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\ItemDataManager.dll"/>
-        <Content Include="Libs\ItemManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\LocalizationManager.dll"/>
-        <Content Include="Libs\LocationManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\PieceManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <Content Include="Libs\ServerSync.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Libs\SkillManager.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="LICENSE.md"/>
@@ -173,12 +147,15 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
-        <PackageReference Include="JotunnLib" Version="2.16.2"/>
-        <PackageReference Include="Mono.Cecil" Version="0.11.5"/>
-        <PackageReference Include="MonoMod" Version="22.7.31.1"/>
-        <PackageReference Include="MonoMod.RuntimeDetour" Version="25.1.0-prerelease.2"/>
-        <PackageReference Include="MonoMod.Utils" Version="25.0.3"/>
+        <PackageReference Include="JotunnLib" Version="2.19.3" />
+        <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+        <PackageReference Include="MonoMod" Version="21.9.19.1" />
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
+        <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="YAML\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

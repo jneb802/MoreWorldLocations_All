@@ -5,19 +5,11 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using CreatureManager;
 using HarmonyLib;
-using ItemManager;
 using JetBrains.Annotations;
 using LocalizationManager;
-using LocationManager;
-using PieceManager;
 using ServerSync;
-using SkillManager;
-using StatusEffectManager;
 using UnityEngine;
-using PrefabManager = ItemManager.PrefabManager;
-using Range = LocationManager.Range;
 
 namespace Swamp_Pack_1
 {
@@ -26,7 +18,7 @@ namespace Swamp_Pack_1
     {
         internal const string ModName = "Swamp_Pack_1";
         internal const string ModVersion = "1.0.0";
-        internal const string Author = "azumatt";
+        internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
