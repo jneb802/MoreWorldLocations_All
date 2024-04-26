@@ -10,7 +10,7 @@
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Meadows_Pack_1</RootNamespace>
         <AssemblyName>Meadows_Pack_1</AssemblyName>
-        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
@@ -137,6 +137,9 @@
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
+        <Content Include="Libs\kg.Marketplace.dll">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
         <Content Include="Libs\ServerSync.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -149,7 +152,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
-        <PackageReference Include="JotunnLib" Version="2.19.1" />
+        <PackageReference Include="JotunnLib" Version="2.19.3" />
         <PackageReference Include="Mono.Cecil" Version="0.11.4" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
