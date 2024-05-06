@@ -212,7 +212,7 @@ namespace Swamp_Pack_1
             MWL_SwampTower1_LootListConfig = config("12 -  MWL_SwampTower1", "Name of Loot List", "SwampLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            MWL_SwampTower2_QuantityConfig = config("13 -  MWL_SwampTower2", "Spawn Quantity", 15,
+            MWL_SwampTower2_QuantityConfig = config("13 -  MWL_SwampTower2", "Spawn Quantity", 25,
                 "Amount of this location the game will attempt to place during world generation");
             MWL_SwampTower2_CreatureYamlConfig = config("13 -  MWL_SwampTower2", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
@@ -223,7 +223,7 @@ namespace Swamp_Pack_1
             MWL_SwampTower2_LootListConfig = config("13 -  MWL_SwampTower2", "Name of Loot List", "SwampLoot3",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            MWL_SwampTower3_QuantityConfig = config("14 -  MWL_SwampTower3", "Spawn Quantity", 15,
+            MWL_SwampTower3_QuantityConfig = config("14 -  MWL_SwampTower3", "Spawn Quantity", 25,
                 "Amount of this location the game will attempt to place during world generation");
             MWL_SwampTower3_CreatureYamlConfig = config("14 -  MWL_SwampTower3", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
