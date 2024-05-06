@@ -39,14 +39,15 @@ public class LocationConfigs
         MinDistanceFromSimilar = 256,
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
-        MaxTerrainDelta = 15f,
-        //MinAltitude = 80,
+        MaxTerrainDelta = 5f,
+        MinAltitude = 0,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampAltar1_Config = new LocationConfig
@@ -62,13 +63,14 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = -1f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampAltar2_Config = new LocationConfig
@@ -84,13 +86,14 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = -1f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampAltar3_Config = new LocationConfig
@@ -106,13 +109,14 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = -1f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampAltar4_Config = new LocationConfig
@@ -128,16 +132,17 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = -1f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
-    public static LocationConfig MWL_SwampCastle1_Config = new LocationConfig
+    /*public static LocationConfig MWL_SwampCastle1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
         Quantity = Swamp_Pack_1Plugin.MWL_SwampCastle1_QuantityConfig.Value,
@@ -157,7 +162,8 @@ public class LocationConfigs
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
-    };
+        BiomeArea = Heightmap.BiomeArea.Median
+    };*/
     
     public static LocationConfig MWL_SwampCastle2_Config = new LocationConfig
     {
@@ -172,16 +178,17 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
-    public static LocationConfig MWL_SwampChurch1_Config = new LocationConfig
+    /*public static LocationConfig MWL_SwampChurch1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
         Quantity = Swamp_Pack_1Plugin.MWL_SwampChurch1_QuantityConfig.Value,
@@ -194,14 +201,15 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
-    };
+        BiomeArea = Heightmap.BiomeArea.Median
+    };*/
     
     public static LocationConfig MWL_SwampGrave1_Config = new LocationConfig
     {
@@ -223,6 +231,7 @@ public class LocationConfigs
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampHouse1_Config = new LocationConfig
@@ -245,6 +254,7 @@ public class LocationConfigs
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampRuin1_Config = new LocationConfig
@@ -267,6 +277,7 @@ public class LocationConfigs
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampTower1_Config = new LocationConfig
@@ -282,13 +293,14 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampTower2_Config = new LocationConfig
@@ -299,18 +311,19 @@ public class LocationConfigs
         ExteriorRadius = 15,
         ClearArea = true,
         RandomRotation = false,
-        Group = "Swamp_medium",
+        Group = "Swamp_small",
         MinDistanceFromSimilar = 512,
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampTower3_Config = new LocationConfig
@@ -326,13 +339,14 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
     };
     
     public static LocationConfig MWL_SwampWell1_Config = new LocationConfig
@@ -348,7 +362,7 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 8f,
-        //MinAltitude = 80,
+        MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,

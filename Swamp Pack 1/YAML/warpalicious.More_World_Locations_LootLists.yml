@@ -1,8 +1,19 @@
 SwampLoot1:
-  - OnionSeeds
+  - WitheredBone
   - SurtlingCore
-  - Bronze
   - AmberPearl
-  - WolfPelt
-  - Crystal
-  - ArrowFrost
+  - Ruby
+  - ElderBark
+  - ArrowPoison
+SwampLoot2:
+  - WitheredBone
+  - SurtlingCore
+  - Chain
+  - TurnipSeeds
+  - Guck
+  - Root
+SwampLoot3:
+  - Chain
+  - Guck
+  - IronScrap
+  - WitheredBone

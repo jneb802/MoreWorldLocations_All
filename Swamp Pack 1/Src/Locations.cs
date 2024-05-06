@@ -60,14 +60,14 @@ public class Locations
             Swamp_Pack_1Plugin.MWL_SwampAltar4_LootListConfig.Value,
             LocationConfigs.MWL_SwampAltar4_Config);
         
-        LocationManager.AddLocation(assetBundle, 
+        /*LocationManager.AddLocation(assetBundle, 
             "MWL_SwampCastle1", 
             YAMLManager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_SwampCastle1_CreatureYamlConfig.Value),
             Swamp_Pack_1Plugin.MWL_SwampCastle1_CreatureListConfig.Value, 
             11, 
             YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampCastle1_LootYamlConfig.Value), 
             Swamp_Pack_1Plugin.MWL_SwampCastle1_LootListConfig.Value,
-            LocationConfigs.MWL_SwampCastle1_Config);
+            LocationConfigs.MWL_SwampCastle1_Config);*/
         
         LocationManager.AddLocation(assetBundle, 
             "MWL_SwampCastle2", 
@@ -78,14 +78,14 @@ public class Locations
             Swamp_Pack_1Plugin.MWL_SwampCastle2_LootListConfig.Value,
             LocationConfigs.MWL_SwampCastle2_Config);
         
-        LocationManager.AddLocation(assetBundle, 
+        /*LocationManager.AddLocation(assetBundle, 
             "MWL_SwampChurch1", 
             YAMLManager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_SwampChurch1_CreatureYamlConfig.Value),
             Swamp_Pack_1Plugin.MWL_SwampChurch1_CreatureListConfig.Value, 
             11, 
             YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampChurch1_LootYamlConfig.Value), 
             Swamp_Pack_1Plugin.MWL_SwampChurch1_LootListConfig.Value,
-            LocationConfigs.MWL_SwampChurch1_Config);
+            LocationConfigs.MWL_SwampChurch1_Config);*/
         
         LocationManager.AddLocation(assetBundle, 
             "MWL_SwampGrave1", 
@@ -114,39 +114,39 @@ public class Locations
             Swamp_Pack_1Plugin.MWL_SwampRuin1_LootListConfig.Value,
             LocationConfigs.MWL_SwampRuin1_Config);
         
-        LocationManager.AddLocation(assetBundle, 
-            "MWL_SwampTower1", 
+        LocationManager.AddLocation(assetBundle,
+            "MWL_SwampTower1",
             YAMLManager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower1_CreatureYamlConfig.Value),
-            Swamp_Pack_1Plugin.MWL_SwampRuin1_CreatureListConfig.Value, 
-            4, 
-            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower1_LootYamlConfig.Value), 
+            Swamp_Pack_1Plugin.MWL_SwampRuin1_CreatureListConfig.Value,
+            4,
+            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower1_LootYamlConfig.Value),
             Swamp_Pack_1Plugin.MWL_SwampTower1_LootListConfig.Value,
             LocationConfigs.MWL_SwampTower1_Config);
-        
-        LocationManager.AddLocation(assetBundle, 
-            "MWL_SwampTower2", 
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_SwampTower2",
             YAMLManager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower2_CreatureYamlConfig.Value),
-            Swamp_Pack_1Plugin.MWL_SwampTower2_CreatureListConfig.Value, 
-            2, 
-            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower2_LootYamlConfig.Value), 
+            Swamp_Pack_1Plugin.MWL_SwampTower2_CreatureListConfig.Value,
+            2,
+            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower2_LootYamlConfig.Value),
             Swamp_Pack_1Plugin.MWL_SwampTower2_LootListConfig.Value,
             LocationConfigs.MWL_SwampTower2_Config);
-        
-        LocationManager.AddLocation(assetBundle, 
-            "MWL_SwampTower3", 
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_SwampTower3",
             YAMLManager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower3_CreatureYamlConfig.Value),
-            Swamp_Pack_1Plugin.MWL_SwampTower3_CreatureListConfig.Value, 
-            3, 
-            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower3_LootYamlConfig.Value), 
+            Swamp_Pack_1Plugin.MWL_SwampTower3_CreatureListConfig.Value,
+            3,
+            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampTower3_LootYamlConfig.Value),
             Swamp_Pack_1Plugin.MWL_SwampTower3_LootListConfig.Value,
             LocationConfigs.MWL_SwampTower3_Config);
-        
-        LocationManager.AddLocation(assetBundle, 
-            "MWL_SwampWell1", 
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_SwampWell1",
             YAMLManager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_SwampWell1_CreatureYamlConfig.Value),
-            Swamp_Pack_1Plugin.MWL_SwampWell1_CreatureListConfig.Value, 
-            0, 
-            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampWell1_LootYamlConfig.Value), 
+            Swamp_Pack_1Plugin.MWL_SwampWell1_CreatureListConfig.Value,
+            0,
+            YAMLManager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_SwampWell1_LootYamlConfig.Value),
             Swamp_Pack_1Plugin.MWL_SwampWell1_LootListConfig.Value,
             LocationConfigs.MWL_SwampWell1_Config);
         
