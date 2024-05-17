@@ -1,4 +1,5 @@
 
+using System;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
@@ -8,7 +9,6 @@ namespace Common;
 
 public class LocationManager
 {
-    
     public enum LocationPosition
     {
         Interior,
@@ -19,7 +19,6 @@ public class LocationManager
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
-        
         
         CreatureManager.SetupCreatures(LocationPosition.Exterior,creatureListName,jotunnLocationContainer,creatureCount,creatureYAMLContent);
         

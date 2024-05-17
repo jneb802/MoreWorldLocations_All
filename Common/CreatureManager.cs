@@ -50,7 +50,7 @@ public static class CreatureManager
         if (creature != null)
         {
             creatureSpawner.m_creaturePrefab = creature;
-            WarpLogger.Logger.LogDebug("Creature with name " + creaturePrefab + " was added to " + creatureSpawner.transform.parent.name);
+            WarpLogger.Logger.LogDebug("Creature with name " + creaturePrefab + " was added to " + creatureSpawner);
  
         }
         else

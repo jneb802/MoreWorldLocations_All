@@ -1,0 +1,33 @@
+SwampCreatures1:
+  - Blob
+  - Blob
+  - Blob
+  - Blob
+  - BlobElite
+SwampCreatures2:
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+SwampCreatures3:
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+  - Skeleton
+  - Skeleton
+SwampCreatures4:
+  - Wraith
+  - Wraith

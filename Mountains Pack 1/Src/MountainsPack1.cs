@@ -80,7 +80,7 @@ namespace Mountains_Pack_1
                 "Amount of this location the game will attempt to place during world generation");
             MWL_StoneCastle1_CreatureYamlConfig = config("1 - MWL_StoneCastle1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-            MWL_StoneCastle1_CreatureListConfig = config("1 - MWL_StoneCastle1", "Name of Creature List", "MountainsCreatures1",
+            MWL_StoneCastle1_CreatureListConfig = config("1 - MWL_StoneCastle1", "Name of Creature List", "SwampCreatures1",
                 "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
             MWL_StoneCastle1_LootYamlConfig = config("1 - MWL_StoneCastle1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");

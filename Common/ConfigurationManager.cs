@@ -1,6 +1,11 @@
+using BepInEx;
+using BepInEx.Configuration;
+using JetBrains.Annotations;
+using UnityEngine;
+
 namespace Common;
 
-public static class ConfigurationManager
+public class ConfigurationManager
 {
     public enum Toggle
     {

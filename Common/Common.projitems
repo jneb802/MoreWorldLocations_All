@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreatureManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PieceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WarpLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YAMLManager.cs" />
