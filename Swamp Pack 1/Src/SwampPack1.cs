@@ -80,7 +80,7 @@ namespace Swamp_Pack_1
             
             LoadAssetBundle();
             
-            MWL_GuckPit1_QuantityConfig = config("1 - MWL_GuckPit1", "Spawn Quantity", 20,
+            MWL_GuckPit1_QuantityConfig = config("1 - MWL_GuckPit1", "Spawn Quantity", 15,
                 "Amount of this location the game will attempt to place during world generation");
             MWL_GuckPit1_CreatureYamlConfig = config("1 - MWL_GuckPit1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
