@@ -5,11 +5,15 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using Common;
 using HarmonyLib;
 using JetBrains.Annotations;
+using Jotunn.Managers;
+using Jotunn.Utils;
 using LocalizationManager;
 using ServerSync;
 using UnityEngine;
+using Paths = BepInEx.Paths;
 
 namespace Plains_Pack_1
 {
@@ -42,6 +46,21 @@ namespace Plains_Pack_1
             On = 1,
             Off = 0
         }
+        
+        public static AssetBundle assetBundle;
+        public static string bundleName = "plainspack1";
+
+        public static void LoadAssetBundle()
+        {
+            assetBundle = AssetUtils.LoadAssetBundleFromResources(
+                bundleName,
+                Assembly.GetExecutingAssembly()
+            );
+            if (assetBundle == null)
+            {
+                WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
+            }
+        }
 
         public void Awake()
         {
@@ -58,6 +77,123 @@ namespace Plains_Pack_1
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
+            
+            LoadAssetBundle();
+            
+            MWL_GoblinFort1_QuantityConfig = config("1 - MWL_GoblinFort1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_GoblinFort1_CreatureYamlConfig = config("1 - MWL_GoblinFort1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_GoblinFort1_CreatureListConfig = config("1 - MWL_GoblinFort1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_GoblinFort1_LootYamlConfig = config("1 - MWL_GoblinFort1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_GoblinFort1_LootListConfig = config("1 - MWL_GoblinFort1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingRock1_QuantityConfig = config("2 - MWL_FulingRock1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingRock1_CreatureYamlConfig = config("2 - MWL_FulingRock1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingRock1_CreatureListConfig = config("2 - MWL_FulingRock1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingRock1_LootYamlConfig = config("2 - MWL_FulingRock1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingRock1_LootListConfig = config("2 - MWL_FulingRock1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingVillage1_QuantityConfig = config("3 - MWL_FulingVillage1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingVillage1_CreatureYamlConfig = config("3 - MWL_FulingVillage1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingVillage1_CreatureListConfig = config("3 - MWL_FulingVillage1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingVillage1_LootYamlConfig = config("3 - MWL_FulingVillage1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingVillage1_LootListConfig = config("3 - MWL_FulingVillage1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingVillage2_QuantityConfig = config("4 - MWL_FulingVillage2", "Spawn Quantity", 20, 
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingVillage2_CreatureYamlConfig = config("4 - MWL_FulingVillage2", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingVillage2_CreatureListConfig = config("4 - MWL_FulingVillage2", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingVillage2_LootYamlConfig = config("4 - MWL_FulingVillage2", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingVillage2_LootListConfig = config("4 - MWL_FulingVillage2", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_PlainsPillar1_QuantityConfig = config("5 - MWL_PlainsPillar1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_PlainsPillar1_CreatureYamlConfig = config("5 - MWL_PlainsPillar1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_PlainsPillar1_CreatureListConfig = config("5 - MWL_PlainsPillar1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_PlainsPillar1_LootYamlConfig = config("5 - MWL_PlainsPillar1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_PlainsPillar1_LootListConfig = config("5 - MWL_PlainsPillar1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingTemple1_QuantityConfig = config("6 - MWL_FulingTemple1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingTemple1_CreatureYamlConfig = config("6 - MWL_FulingTemple1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingTemple1_CreatureListConfig = config("6 - MWL_FulingTemple1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingTemple1_LootYamlConfig = config("6 - MWL_FulingTemple1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingTemple1_LootListConfig = config("6 - MWL_FulingTemple1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingTemple2_QuantityConfig = config("7 - MWL_FulingTemple2", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingTemple2_CreatureYamlConfig = config("7 - MWL_FulingTemple2", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingTemple2_CreatureListConfig = config("7 - MWL_FulingTemple2", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingTemple2_LootYamlConfig = config("7 - MWL_FulingTemple2", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingTemple2_LootListConfig = config("7 - MWL_FulingTemple2", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingTemple3_QuantityConfig = config("8 - MWL_FulingTemple3", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingTemple3_CreatureYamlConfig = config("8 - MWL_FulingTemple3", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingTemple3_CreatureListConfig = config("8 - MWL_FulingTemple3", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingTemple3_LootYamlConfig = config("8 - MWL_FulingTemple3", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingTemple3_LootListConfig = config("8 - MWL_FulingTemple3", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingWall1_QuantityConfig = config("9 - MWL_FulingWall1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingWall1_CreatureYamlConfig = config("9 - MWL_FulingWall1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingWall1_CreatureListConfig = config("9 - MWL_FulingWall1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingWall1_LootYamlConfig = config("9 - MWL_FulingWall1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingWall1_LootListConfig = config("9 - MWL_FulingWall1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWL_FulingTower1_QuantityConfig = config("10 - MWL_FulingTower1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_FulingTower1_CreatureYamlConfig = config("10 - MWL_FulingTower1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_FulingTower1_CreatureListConfig = config("10 - MWL_FulingTower1", "Name of Creature List", "PlainsCreatures1",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_FulingTower1_LootYamlConfig = config("10 - MWL_FulingTower1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_FulingTower1_LootListConfig = config("10 - MWL_FulingTower1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            YAMLManager.ParseDefaultYamls();
+            YAMLManager.ParseCustomYamls();
+            
+            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 
             if (saveOnSet)
             {
@@ -81,6 +217,66 @@ namespace Plains_Pack_1
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
         }
+        
+        public static ConfigEntry<int> MWL_GoblinFort1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_GoblinFort1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_GoblinFort1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_GoblinFort1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_GoblinFort1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingRock1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingRock1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingRock1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingRock1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingRock1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingVillage1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingVillage1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingVillage1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingVillage1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingVillage1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingVillage2_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingVillage2_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingVillage2_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingVillage2_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingVillage2_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_PlainsPillar1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_PlainsPillar1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_PlainsPillar1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_PlainsPillar1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_PlainsPillar1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingTemple1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTemple1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTemple1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTemple1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTemple1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingTemple2_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTemple2_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTemple2_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTemple2_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTemple2_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingTemple3_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTemple3_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTemple3_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTemple3_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTemple3_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingWall1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingWall1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingWall1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingWall1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingWall1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_FulingTower1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTower1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTower1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTower1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_FulingTower1_LootListConfig = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {
