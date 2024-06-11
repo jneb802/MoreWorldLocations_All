@@ -1,6 +1,9 @@
 PlainsLoot1:
-  - WolfMeatSkewer
-  - ScaleHide
-  - Softtissue
-  - JuteBlue
+  - BlackMetalScrap
+  - LinenThread
   - IronScrap
+  - SurtlingCore
+PlainsLoot2:
+  - Bread
+  - LoxPie
+  - FishWraps
