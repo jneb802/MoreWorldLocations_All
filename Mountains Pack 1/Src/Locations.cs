@@ -98,5 +98,6 @@ public class Locations
             LocationConfigs.MWL_WoodHouse1_Config);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
+        assetBundle.Unload(false);
     }
 }

@@ -151,5 +151,6 @@ public class Locations
             LocationConfigs.MWL_SwampWell1_Config);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
+        assetBundle.Unload(false);
     }
 }

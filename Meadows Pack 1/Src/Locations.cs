@@ -97,5 +97,6 @@ public class Locations
             LocationConfigs.MWL_RuinsWell1_Config);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
+        assetBundle.Unload(false);
     }
 }

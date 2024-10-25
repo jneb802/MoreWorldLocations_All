@@ -105,5 +105,6 @@ public class Locations
             LocationConfigs.MWL_FulingTower1_Config);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
+        assetBundle.Unload(false);
     }
 }
