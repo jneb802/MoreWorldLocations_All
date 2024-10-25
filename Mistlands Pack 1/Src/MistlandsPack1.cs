@@ -49,6 +49,8 @@ namespace Mistlands_Pack_1
             Off = 0
         }
         
+        public static YAMLManager mistlandsYAMLManager = new YAMLManager();
+        
         public static AssetBundle assetBundle;
         public static string bundleName = "mistlandspack1";
 
@@ -167,8 +169,8 @@ namespace Mistlands_Pack_1
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
                         
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            mistlandsYAMLManager.ParseDefaultYamls();
+            mistlandsYAMLManager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 

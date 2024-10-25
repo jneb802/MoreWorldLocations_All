@@ -45,6 +45,9 @@ namespace Mountains_Pack_1
         
         public static AssetBundle assetBundle;
         public static string bundleName = "mountainspack1";
+        
+        public static YAMLManager MountainYAML = new YAMLManager();
+        public static LocationManager MountainLocation = new LocationManager();
 
         public static void LoadAssetBundle()
         {
@@ -80,7 +83,7 @@ namespace Mountains_Pack_1
                 "Amount of this location the game will attempt to place during world generation");
             MWL_StoneCastle1_CreatureYamlConfig = config("1 - MWL_StoneCastle1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-            MWL_StoneCastle1_CreatureListConfig = config("1 - MWL_StoneCastle1", "Name of Creature List", "SwampCreatures1",
+            MWL_StoneCastle1_CreatureListConfig = config("1 - MWL_StoneCastle1", "Name of Creature List", "MountainsCreatures1",
                 "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
             MWL_StoneCastle1_LootYamlConfig = config("1 - MWL_StoneCastle1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
@@ -175,8 +178,8 @@ namespace Mountains_Pack_1
             MWL_WoodHouse1_LootListConfig = config("9 - MWL_WoodHouse1", "Name of Loot List", "MountainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            MountainYAML.ParseDefaultYamls();
+            MountainYAML.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 

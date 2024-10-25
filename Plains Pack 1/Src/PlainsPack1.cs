@@ -47,6 +47,8 @@ namespace Plains_Pack_1
             Off = 0
         }
         
+        public static YAMLManager plainsYAMLmanager = new YAMLManager();
+        
         public static AssetBundle assetBundle;
         public static string bundleName = "plainspack1";
 
@@ -190,8 +192,8 @@ namespace Plains_Pack_1
             MWL_FulingTower1_LootListConfig = config("10 - MWL_FulingTower1", "Name of Loot List", "PlainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            plainsYAMLmanager.ParseDefaultYamls();
+            plainsYAMLmanager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 

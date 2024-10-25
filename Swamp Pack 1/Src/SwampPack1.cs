@@ -47,6 +47,8 @@ namespace Swamp_Pack_1
             Off = 0
         }
         
+        public static YAMLManager swampYAMLmanager = new YAMLManager();
+        
         public static AssetBundle assetBundle;
         public static string bundleName = "swamppack1";
 
@@ -245,8 +247,8 @@ namespace Swamp_Pack_1
             MWL_SwampWell1_LootListConfig = config("15 -  MWL_SwampWell1", "Name of Loot List", "SwampLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            swampYAMLmanager.ParseDefaultYamls();
+            swampYAMLmanager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 

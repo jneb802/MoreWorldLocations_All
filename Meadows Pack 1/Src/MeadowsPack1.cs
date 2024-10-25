@@ -31,6 +31,8 @@ namespace Meadows_Pack_1
         
         public static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
 
+        public static YAMLManager meadowsYAMLManager = new YAMLManager();
+        
         public static AssetBundle assetBundle;
         public static string bundleName = "meadowspack1";
 
@@ -178,8 +180,8 @@ namespace Meadows_Pack_1
                 "Use Custom Location Loot List", Toggle.Off,
                 "When Off, location will use default loot. When On, location will use custom loot list from the warpalicious." + ModName + " file in BepinEx config folder");*/
             
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            meadowsYAMLManager.ParseDefaultYamls();
+            meadowsYAMLManager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             

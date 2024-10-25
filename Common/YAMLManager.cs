@@ -8,13 +8,13 @@ namespace Common;
 
 public class YAMLManager
 {
-    public static string creatureYAMLContent;
-    public static string lootYAMLContent;
+    public string creatureYAMLContent;
+    public string lootYAMLContent;
     
-    public static string defaultCreatureYamlContent;
-    public static string customCreatureYamlContent;
-    public static string defaultlootYamlContent;
-    public static string customlootYamlContent;
+    public string defaultCreatureYamlContent;
+    public string customCreatureYamlContent;
+    public string defaultlootYamlContent;
+    public string customlootYamlContent;
     
     public enum Toggle
     {
@@ -22,14 +22,13 @@ public class YAMLManager
         Off = 0 
     }
     
-    
-    public static void ParseDefaultYamls()
+    public void ParseDefaultYamls()
     { 
         defaultCreatureYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_CreatureLists.yml");
         defaultlootYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LootLists.yml");
     }
     
-    public static void ParseCustomYamls()
+    public void ParseCustomYamls()
     { 
         var customCreatureListYamLFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_CreatureLists.yml");
         
@@ -47,7 +46,7 @@ public class YAMLManager
         }
     }
 
-    public static string GetCreatureYamlContent(ConfigurationManager.Toggle useCustomCreatureYaml)
+    public string GetCreatureYamlContent(ConfigurationManager.Toggle useCustomCreatureYaml)
     {
 
         if (useCustomCreatureYaml == ConfigurationManager.Toggle.On)
@@ -58,7 +57,7 @@ public class YAMLManager
         return defaultCreatureYamlContent;
     }
     
-    public static string GetLootYamlContent(ConfigurationManager.Toggle useCustomLootYaml)
+    public string GetLootYamlContent(ConfigurationManager.Toggle useCustomLootYaml)
     {
 
         if (useCustomLootYaml == ConfigurationManager.Toggle.On)
