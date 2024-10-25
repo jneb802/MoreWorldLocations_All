@@ -36,6 +36,8 @@ namespace BlackForest_Pack_1
         
         public static AssetBundle assetBundle;
         public static string bundleName = "blackforestpack1";
+        
+        public static YAMLManager blackforestYAMLmanager = new YAMLManager();
 
         public static void LoadAssetBundle()
         {
@@ -171,8 +173,8 @@ namespace BlackForest_Pack_1
             MWL_WoodTower3_LootList_Config = config("10 - MWL_WoodTower3", "Name of Loot List", "BlackforestLoot3",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            blackforestYAMLmanager.ParseDefaultYamls();
+            blackforestYAMLmanager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 
