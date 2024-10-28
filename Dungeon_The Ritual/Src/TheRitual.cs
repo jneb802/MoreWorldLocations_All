@@ -36,7 +36,7 @@ namespace Dungeon_The_Ritual
             { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
         
         public static AssetBundle assetBundle;
-        public static string bundleName = "dungeontheritual";
+        public static string bundleName = "dungeonblackforest";
         public static GameObject dungeonGameObject;
 
         // Location Manager variables
@@ -82,13 +82,13 @@ namespace Dungeon_The_Ritual
             
             LoadAssetBundle();
             
-            MWD_TheRitual_Quantity_Config = config("1 - MWD_TheRitual", "Spawn Quantity", 30,
-                "Amount of this dungeon the game will attempt to place during world generation");
+            MWD_TheRitual_Quantity_Config = config("1 - MWD_BlackForest_Exterior", "Spawn Quantity", 30,
+                "Amount of attempts world generation will try to place dungeon exterior during world generation");
             
-            dungeonGameObject = assetBundle.LoadAsset<GameObject>("RitualEntrance");
+            dungeonGameObject = assetBundle.LoadAsset<GameObject>("MWD_BlackForest_Exterior");
             RoomManager.RegisterTheme(dungeonGameObject, "Grafstad");
             
-            DungeonManager.OnVanillaRoomsAvailable += Rooms.AddAllRooms;
+            DungeonManager.OnVanillaRoomsAvailable += RoomManager.AddAllRooms;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             
 
