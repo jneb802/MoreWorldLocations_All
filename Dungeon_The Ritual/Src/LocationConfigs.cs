@@ -29,7 +29,8 @@ public class LocationConfigs
     
     public static LocationConfig MWD_TheRitual_Config = new LocationConfig
     {
-        Biome = Heightmap.Biome.Meadows,
+        Biome = Heightmap.Biome.BlackForest,
+        BiomeArea = Heightmap.BiomeArea.Median,
         Quantity = Dungeon_The_RitualPlugin.MWD_TheRitual_Quantity_Config.Value,
         Priotized = true,
         ExteriorRadius = 8,
@@ -38,11 +39,11 @@ public class LocationConfigs
         Group = "Dungeon_TheRitual",
         MinDistanceFromSimilar = 512,
         MaxTerrainDelta = 2f,
-        MinAltitude = 1,
+        MinAltitude = 10,
         MinDistance = LocationRings.Ring1.MinDistance,
-        MaxDistance = LocationRings.Ring2.MaxDistance,
+        MaxDistance = LocationRings.Ring3.MaxDistance,
         //InteriorRadius = 64,
-        InForest = false,
+        // InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
     };
