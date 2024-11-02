@@ -35,6 +35,8 @@ namespace Dungeon_The_Ritual
         private static readonly ConfigSync ConfigSync = new(ModGUID)
             { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
         
+        public static YAMLManager dungeonBFDYamlManager = new YAMLManager();
+        
         public static AssetBundle assetBundle;
         public static string bundleName = "dungeonblackforest";
         public static GameObject dungeonGameObject;
@@ -82,11 +84,18 @@ namespace Dungeon_The_Ritual
             
             LoadAssetBundle();
             
-            MWD_TheRitual_Quantity_Config = config("1 - MWD_BlackForest_Exterior", "Spawn Quantity", 30,
+            MWD_TheRitual_Quantity_Config = config("1 - BFD_Exterior", "Spawn Quantity", 30,
                 "Amount of attempts world generation will try to place dungeon exterior during world generation");
+            MWD_TheRitual_CreatureYaml_Config = config("1 - BFD_Exterior", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWD_TheRitual_CreatureList_Config = config("1 - BFD_Exterior", "Name of Creature List", "BlackforestCreatures2",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
             
-            dungeonGameObject = assetBundle.LoadAsset<GameObject>("MWD_BlackForest_Exterior");
-            RoomManager.RegisterTheme(dungeonGameObject, "Grafstad");
+            dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior");
+            RoomManager.RegisterTheme(dungeonGameObject, "Underground Ruins");
+            
+            dungeonBFDYamlManager.ParseDefaultYamls();
+            dungeonBFDYamlManager.ParseCustomYamls();
             
             DungeonManager.OnVanillaRoomsAvailable += RoomManager.AddAllRooms;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
@@ -116,10 +125,10 @@ namespace Dungeon_The_Ritual
         }
         
         public static ConfigEntry<int> MWD_TheRitual_Quantity_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWL_Ruins1_CreatureYaml_Config = null!;
-        public static ConfigEntry<string> MWL_Ruins1_CreatureList_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWL_Ruins1_LootYaml_Config = null!;
-        public static ConfigEntry<string> MWL_Ruins1_LootList_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_TheRitual_CreatureYaml_Config = null!;
+        public static ConfigEntry<string> MWD_TheRitual_CreatureList_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_TheRitual_LootYaml_Config = null!;
+        public static ConfigEntry<string> MWD_TheRitual_LootList_Config = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {

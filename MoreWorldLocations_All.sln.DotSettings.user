@@ -6,4 +6,5 @@
   &lt;Assembly Path="C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\assembly_valheim_publicized.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\jneb8\RiderProjects\MoreWorldLocations_All\Meadows Pack 1\Libs\kg.Marketplace.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\jneb8\RiderProjects\Jotunn\JotunnLib\bin\Debug\net462\Jotunn.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\jneb8\.nuget\packages\jotunnlib\2.21.1\lib\net462\Jotunn.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

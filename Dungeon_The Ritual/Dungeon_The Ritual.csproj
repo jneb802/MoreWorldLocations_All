@@ -134,7 +134,6 @@
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\TheRitual.cs" />
-        <Compile Include="Src\Utils\DungeonUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -169,6 +168,9 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Src\Utils\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
