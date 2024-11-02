@@ -81,6 +81,9 @@
         <Reference Include="Jotunn">
           <HintPath>..\..\Jotunn\JotunnLib\bin\Debug\net462\Jotunn.dll</HintPath>
         </Reference>
+        <Reference Include="Mono.Cecil.Mdb">
+          <HintPath>..\..\..\.nuget\packages\mono.cecil\0.11.5\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+        </Reference>
         <Reference Include="ServerSync">
             <HintPath>Libs\ServerSync.dll</HintPath>
         </Reference>
@@ -126,11 +129,12 @@
         <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="Src\AttachPuzzle.cs" />
+        <Compile Include="Src\Patches\DungeonGenerator_Patch.cs" />
         <Compile Include="Src\RoomManager.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\TheRitual.cs" />
-        <Compile Include="Src\WearNTearPatch.cs" />
+        <Compile Include="Src\Utils\DungeonUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -154,12 +158,13 @@
         <Content Include="Thunderstore\manifest.json"/>
         <EmbeddedResource Include="translations\English.yml"/>
         <Content Include="UpdateManifest.ps1"/>
-        <EmbeddedResource Include="YAML\warpalicious.More_World_Dungeons_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
         <PackageReference Include="JotunnLib" Version="2.21.1" />
-        <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+        <PackageReference Include="Mono.Cecil" Version="0.11.5" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />

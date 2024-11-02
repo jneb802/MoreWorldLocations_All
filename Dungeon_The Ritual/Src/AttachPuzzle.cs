@@ -9,70 +9,155 @@ using Random = UnityEngine.Random;
 
 namespace Dungeon_The_Ritual;
 
-
 public class AttachPuzzle : MonoBehaviour
 {
-    
-    public List<ItemStand> puzzleItemStandList = new List<ItemStand>();
+    public List<PuzzleStand> puzzleItemStandList = new List<PuzzleStand>();
+    public List<PuzzleStand> puzzleSolutionPickableList = new List<PuzzleStand>();
     public List<int> puzzleSolution = new List<int>();
-    public int countPuzzleStands = new int();
+    public int countPuzzleStands = 8;
     public Door targetDoor;
     public Switch puzzleSwitch;
     public string solutionItemName = "SurtlingCore";
-    
-    public void Awake()
+
+    public void Initialize()
     {
-        GetItemStands(this.gameObject);
-        GetDoor(this.gameObject);
-        GetSwitch(this.gameObject);
-        GenerateSolution();
-        Debug.Log("AttachPuzzle called awake");
+        Debug.Log("AttachPuzzle called Initialize");
+
+        GetItemStands();
+        GetPickables();
+            
+        GameObject targetDoorPrefab = FindGameObjectInSector("PuzzleSecretDoor",this.gameObject.transform.position);
+        if (targetDoorPrefab != null)
+        {
+            Debug.Log("Found door in scene");
+            targetDoor = targetDoorPrefab.GetComponent<Door>();
+        }
         
-        // Assign the switch callback
+        GameObject puzzleSwitchPrefab = FindGameObjectInSector("PuzzleLever",this.gameObject.transform.position);
+        if (puzzleSwitchPrefab != null)
+        {
+            Debug.Log("Found switch in scene");
+            puzzleSwitch = puzzleSwitchPrefab.GetComponent<Switch>();
+        } 
+        
+        GenerateSolution();
+
         if (puzzleSwitch != null)
         {
             Debug.Log("Switch assigned");
             puzzleSwitch.m_onUse = OnSwitchUse;
         }
     }
+    
+    public GameObject FindGameObjectInSector(string prefabName, Vector3 position)
+    {
+        int prefabHash = prefabName.GetStableHashCode();
+        // Debug.Log("Starting search for prefab with name: " + prefabName);
+        // Debug.Log("Starting search for prefab with hash: " + prefabHash);
+    
+        // Debug.Log("Searching for sector that matches position: " + position);
+        Vector2i sector = ZoneSystem.GetZone(position);
+        // Debug.Log("Determined sector coordinates: " + sector);
+    
+        int sectorIndex = ZDOMan.instance.SectorToIndex(sector);
+        // Debug.Log("Calculated sector index: " + sectorIndex);
+    
+        if (sectorIndex >= 0 && sectorIndex < ZDOMan.instance.m_objectsBySector.Length)
+        {
+            List<ZDO> sectorList = ZDOMan.instance.m_objectsBySector[sectorIndex];
+            // Debug.Log("Retrieved sector list, item count: " + (sectorList != null ? sectorList.Count : 0));
+        
+            if (sectorList != null)
+            {
+                foreach (ZDO zdo in sectorList)
+                {
+                    int zdoPrefabHash = zdo.GetPrefab();
+                    // Debug.Log("Checking ZDO with prefab hash: " + zdoPrefabHash);
+                
+                    if (zdoPrefabHash == prefabHash)
+                    {
+                        Debug.Log("Match found for prefab hash: " + prefabHash);
+                    
+                        GameObject instance = ZNetScene.instance.FindInstance(zdo)?.gameObject;
+                        if (instance != null)
+                        {
+                            Debug.Log("Found instance of GameObject with name "+ prefabName + " in sector");
+                            return instance;
+                        }
+                        else
+                        {
+                            Debug.Log("No active GameObject instance found for matching ZDO");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("Sector list is null, no ZDOs to check");
+            }
+        }
+        else
+        {
+            Debug.Log("Sector index out of range: " + sectorIndex);
+        }
+    
+        Debug.Log("No matching GameObject found in sector");
+        return null;
+    }
+    
+    public void GetItemStands()
+    {
+        for (int i = 0; i < countPuzzleStands; i++)
+        {
+            string prefabName = string.Concat(i.ToString(),"_PuzzleStand");
+            
+            GameObject puzzleStandPrefab = FindGameObjectInSector(prefabName, this.gameObject.transform.position);
 
-    public void GetItemStands(GameObject gameobject)
-    {
-        if (gameobject != null)
-        {
-            puzzleItemStandList = gameobject.GetComponentsInChildren<ItemStand>(true).ToList();
-            countPuzzleStands = puzzleItemStandList.Count;
-            Debug.Log("Found item stands: " + countPuzzleStands);
-        }
-        else
-        {
-            Debug.Log("Failed to item stands");
-        }
-    }
-    
-    public void GetDoor(GameObject gameobject)
-    {
-        if (gameobject != null)
-        {
-            targetDoor = gameobject.GetComponentInChildren<Door>(true);
-            Debug.Log("Found door: " + targetDoor);
-        }
-        else
-        {
-            Debug.Log("Failed to find door");
+            if (puzzleStandPrefab == null)
+            {
+                Debug.Log("Cant not find puzzle stand with name " + prefabName + " in scene");
+                continue;
+            }
+            
+            Debug.Log("Found puzzle stand with name " + prefabName + " in scene"); 
+            
+            
+            PuzzleStand puzzleStand = new PuzzleStand()
+            {
+                PuzzleStandGameObject = puzzleStandPrefab,
+                puzzleStand = true,
+                puzzlePickable = false,
+                puzzlePosition = i
+            };
+            
+            puzzleItemStandList.Add(puzzleStand);
         }
     }
     
-    public void GetSwitch(GameObject gameobject)
+    public void GetPickables()
     {
-        if (gameobject != null)
+        for (int i = 0; i < countPuzzleStands; i++)
         {
-            puzzleSwitch = gameobject.GetComponentInChildren<Switch>(true);
-            Debug.Log("Found switch: " + puzzleSwitch);
-        }
-        else
-        {
-            Debug.Log("Failed to find switch");
+            string prefabName = string.Concat(i.ToString(),"_PuzzlePickable");
+            GameObject puzzleStandPrefab = FindGameObjectInSector(prefabName, this.gameObject.transform.position);
+
+            if (puzzleStandPrefab == null)
+            {
+                Debug.Log("Cant not find puzzle stand with name " + prefabName + " in scene");
+                continue;
+            }
+            
+            Debug.Log("Found puzzle stand with name " + prefabName + " in scene"); 
+            
+            PuzzleStand puzzleStand = new PuzzleStand()
+            {
+                PuzzleStandGameObject = puzzleStandPrefab,
+                puzzleStand = false,
+                puzzlePickable = true,
+                puzzlePosition = i
+            };
+            
+            puzzleSolutionPickableList.Add(puzzleStand);
         }
     }
     
@@ -84,16 +169,15 @@ public class AttachPuzzle : MonoBehaviour
             Debug.Log("Puzzle solved! Door is opening.");
             return true;
         }
-        else
-        {
-            Debug.Log("Puzzle solution is incorrect.");
-            return false;
-        }
+        Debug.Log("Puzzle solution is incorrect.");
+        return false;
+        
     }
 
     public void GenerateSolution()
     {
-        if (countPuzzleStands > 0)
+        Debug.Log("Generating solution");
+        if (puzzleSolutionPickableList.Count > 0 && puzzleSolutionPickableList != null)
         {
             puzzleSolution.Clear();
             
@@ -105,11 +189,14 @@ public class AttachPuzzle : MonoBehaviour
             for (int i = 0; i < countPuzzleStands; i++)
             {
                 int answer = Random.Range(0, 2);
-                int.TryParse(puzzleItemStandList[i].gameObject.name, out int position);
-                // Ensure position is within bounds
+                int.TryParse(puzzleSolutionPickableList[i].PuzzleStandGameObject.name[0].ToString(), out int position);
                 if (position >= 0 && position < puzzleSolution.Count)
                 {
                     puzzleSolution[position] = answer;
+                    if (answer == 0)
+                    {
+                        puzzleSolutionPickableList[i].PuzzleStandGameObject.GetComponent<Pickable>().SetPicked(true);
+                    }
                 }
                 else
                 {
@@ -131,8 +218,15 @@ public class AttachPuzzle : MonoBehaviour
         }
         
         
-        foreach (ItemStand itemStand in puzzleItemStandList)
+        foreach (PuzzleStand puzzleStand in puzzleItemStandList)
         {
+            if (puzzleStand == null)
+            {
+                continue;
+            }
+
+            ItemStand itemStand = puzzleStand.PuzzleStandGameObject.GetComponent<ItemStand>();
+
             if (itemStand == null)
             {
                 continue;
@@ -147,11 +241,11 @@ public class AttachPuzzle : MonoBehaviour
             {
                 continue;
             }
-            
-            string attachItemName = itemStand.GetAttachedItem();
+
+            string attachItemName = itemStand.m_visualName;
             Debug.Log("Checking solution. Item attached has name " + attachItemName);
-        
-            if (int.TryParse(itemStand.gameObject.name, out int position))
+            
+            if (int.TryParse(puzzleStand.PuzzleStandGameObject.name[0].ToString(), out int position))
             {
                 if (position >= 0 && position < tempPuzzleSolution.Count)
                 {
@@ -171,6 +265,14 @@ public class AttachPuzzle : MonoBehaviour
         bool isCorrectSolution = tempPuzzleSolution.SequenceEqual(puzzleSolution);
         Debug.Log("Checking solution. Provided answer is: " + string.Join(",", tempPuzzleSolution));
         return isCorrectSolution;
+    }
+
+    public class PuzzleStand
+    {
+        public GameObject PuzzleStandGameObject = new GameObject();
+        public bool puzzleStand = new bool();
+        public bool puzzlePickable = new bool();
+        public int puzzlePosition = new int();
     }
 }
 
