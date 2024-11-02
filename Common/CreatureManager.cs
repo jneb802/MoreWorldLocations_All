@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Jotunn.Managers;
 using UnityEngine;
 using YamlDotNet.RepresentationModel;
@@ -28,6 +29,24 @@ public static class CreatureManager
             var interiorCreatureSpawnerList = GetInteriorCreatureSpawners(jotunnLocationContainer);
             AddCreaturestoSpawnerList(interiorCreatureSpawnerList,interiorCreatureList);
         }
+    }
+    
+    public static void SetupCreatures(string creatureListName, GameObject gameObject, string creatureYAMLContent)
+    {
+        int creatureCount = GetCreatureSpawners(gameObject).Count;
+        if (creatureCount == 0)
+        {
+            return;
+        }
+        
+        List<string> creatureList = CreateCreatureList(creatureListName,creatureCount,creatureYAMLContent);
+        List<CreatureSpawner> creatureSpawners = GetCreatureSpawners(gameObject);
+        AddCreaturestoSpawnerList(creatureSpawners,creatureList);
+    }
+
+    public static List<CreatureSpawner> GetCreatureSpawners(GameObject gameObject)
+    {
+        return gameObject.GetComponentsInChildren<CreatureSpawner>().ToList();
     }
     
     public static GameObject GetCreaturePrefab(string prefabName)
