@@ -13,16 +13,8 @@ public class RoomManager
     
     public static Dictionary<string, RoomConfig> AllRoomConfigs = new Dictionary<string, RoomConfig>
     {
-        // { "BFD_MainEntrance", new RoomConfig { ThemeName = "Underground Ruins", Entrance = true, Weight = 1.0f } },
         { "BFD_MainEntrance2", new RoomConfig { ThemeName = "Underground Ruins", Entrance = true, Weight = 1.0f } },
-        // { "BFD_Hall1", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Hall2", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Hall3", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Hall4", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Modular1", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Modular2", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Modular3", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Modular4", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Modular5", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f, MinPlaceOrder = 2 } },
         { "BFD_Modular6", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Modular7", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
@@ -32,11 +24,10 @@ public class RoomManager
         { "BFD_Modular12", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Modular13", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Modular14", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
+        { "BFD_Modular17", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Modular8_Puzzle", new RoomConfig { ThemeName = "Underground Ruins", Weight = 0f } },
         { "BFD_Modular12_Solution", new RoomConfig { ThemeName = "Underground Ruins", Weight = 0f } },
         { "BFD_ModularElbow", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_ModularEnd1", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
-        // { "BFD_ModularEnd2", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
         { "BFD_ModularEnd3", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
         { "BFD_ModularEnd4", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
         { "BFD_ModularEnd5", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
@@ -44,18 +35,8 @@ public class RoomManager
         { "BFD_ModularEnd7", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
         { "BFD_ModularEnd8", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
         { "BFD_ModularEnd9", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
-        // { "BFD_EndCap1", new RoomConfig { ThemeName = "Underground Ruins", Endcap = true, EndcapPrio = 1, Weight = 1.0f } },
         { "BFD_ModularDivider1", new RoomConfig { ThemeName = "Underground Ruins", Entrance = false, Endcap = false, Divider = true, EndcapPrio = 0, Weight = 1.0f } },
-        // { "BFD_Room1", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Room2", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Room3", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Room4", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Room5", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Room6", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Stairwell1", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        // { "BFD_Stairwell2", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Stairwell3", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
-        { "BFD_Stairwell4", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } },
         { "BFD_Stairwell5", new RoomConfig { ThemeName = "Underground Ruins", Weight = 1.0f } }
     };
     
@@ -74,7 +55,6 @@ public class RoomManager
         }
         
         DungeonManager.OnVanillaRoomsAvailable -= AddAllRooms;
-        
     }
 
     public static void RegisterTheme(GameObject dungeonGameObject, string themeName)
