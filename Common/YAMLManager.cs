@@ -15,6 +15,8 @@ public class YAMLManager
     public string customCreatureYamlContent;
     public string defaultlootYamlContent;
     public string customlootYamlContent;
+    public string defaultPickableItemContent;
+    public string customPickableItemContent;
     
     public enum Toggle
     {
@@ -45,6 +47,42 @@ public class YAMLManager
             WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_LootLists.yml file from BepinEx config folder");
         }
     }
+    
+    public void ParseCreatureYaml(string filename)
+    { 
+        defaultCreatureYamlContent = AssetUtils.LoadTextFromResources(filename + "_CreatureLists.yml");
+        
+        var customCreatureListYamLFilePath = Path.Combine(Paths.ConfigPath, filename + "_CreatureLists.yml");
+        if (File.Exists(customCreatureListYamLFilePath))
+        {
+            customCreatureYamlContent = File.ReadAllText(customCreatureListYamLFilePath);
+            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_CreatureLists.yml file from BepinEx config folder");;
+        }
+    }
+    
+    public void ParseContainerYaml(string filename)
+    { 
+        defaultlootYamlContent = AssetUtils.LoadTextFromResources(filename + "_ContainerLists.yml");
+        
+        var customCreatureListYamLFilePath = Path.Combine(Paths.ConfigPath, filename + "_ContainerLists.yml");
+        if (File.Exists(customCreatureListYamLFilePath))
+        {
+            customlootYamlContent = File.ReadAllText(customCreatureListYamLFilePath);
+            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_ContainerLists.yml file from BepinEx config folder");;
+        }
+    }
+    
+    public void ParsePickableItemYaml(string filename)
+    { 
+        defaultPickableItemContent = AssetUtils.LoadTextFromResources(filename + "_PickableItemLists.yml");
+        
+        var customCreatureListYamLFilePath = Path.Combine(Paths.ConfigPath, filename + "_PickableItemLists.yml");
+        if (File.Exists(customCreatureListYamLFilePath))
+        {
+            customPickableItemContent = File.ReadAllText(customCreatureListYamLFilePath);
+            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_PickableItemLists.yml file from BepinEx config folder");;
+        }
+    }
 
     public string GetCreatureYamlContent(ConfigurationManager.Toggle useCustomCreatureYaml)
     {
@@ -68,32 +106,15 @@ public class YAMLManager
         
     }
     
-    
-    /*public static void ParseCreatureYAML()
-    { 
-        if (Meadows_Pack_1Plugin.UseCustomLocationCreatureListYAML.Value ==  Meadows_Pack_1Plugin.Toggle.On)
+    public string GetPickableItemContent(ConfigurationManager.Toggle useCustomPickableItemYAML)
+    {
+
+        if (useCustomPickableItemYAML == ConfigurationManager.Toggle.On)
         {
-            var creatureYAMLFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.MWL_Meadows_Pack_1_Creatures.yml");
-            creatureYAMLContent = File.ReadAllText(creatureYAMLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.MWL_Meadows_Pack_1_Creatures.yml file from BepinEx config folder");
+            return customPickableItemContent;
         }
-        else
-        {
-            creatureYAMLContent = AssetUtils.LoadTextFromResources("warpalicious.MWL_Meadows_Pack_1_Creatures.yml");
-        }
-    }
+        return defaultPickableItemContent;
         
-    public static void ParseLootYAML()
-    { 
-        if (Meadows_Pack_1Plugin.UseCustomLocationLootListYAML.Value == Meadows_Pack_1Plugin.Toggle.On)
-        {
-            var lootYAMLFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.MWL_Meadows_Pack_1_LootLists.yml");
-            lootYAMLContent = File.ReadAllText(lootYAMLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.MWL_Meadows_Pack_1_LootLists.yml file from BepinEx config folder");
-        }
-        else
-        {
-            lootYAMLContent = AssetUtils.LoadTextFromResources("warpalicious.MWL_Meadows_Pack_1_LootLists.yml");
-        }
-    }*/
+    }
+    
 }

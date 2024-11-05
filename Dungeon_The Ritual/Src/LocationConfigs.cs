@@ -31,20 +31,16 @@ public class LocationConfigs
     {
         Biome = Heightmap.Biome.BlackForest,
         BiomeArea = Heightmap.BiomeArea.Median,
-        Quantity = Dungeon_The_RitualPlugin.MWD_TheRitual_Quantity_Config.Value,
+        Quantity = Dungeon_The_RitualPlugin.MWD_UndergroundRuins_Quantity_Config.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
         RandomRotation = false,
-        Group = "Dungeon_TheRitual",
+        Group = "Dungeon_UndergroundRuins",
         MinDistanceFromSimilar = 512,
         MaxTerrainDelta = 2f,
         MinAltitude = 10,
         MinDistance = LocationRings.Ring1.MinDistance,
         MaxDistance = LocationRings.Ring3.MaxDistance,
-        //InteriorRadius = 64,
-        // InForest = false,
-        //ForestTresholdMin = 0f,
-        //ForestTrasholdMax = 2,
     };
 }

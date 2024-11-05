@@ -129,11 +129,15 @@
         <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="Src\AttachPuzzle.cs" />
+        <Compile Include="Src\Creatures.cs" />
+        <Compile Include="Src\CustomPrefabs.cs" />
         <Compile Include="Src\Patches\DungeonGenerator_Patch.cs" />
+        <Compile Include="Src\RoomExtras.cs" />
         <Compile Include="Src\RoomManager.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\TheRitual.cs" />
+        <Compile Include="Src\Utils\TranslationUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -159,6 +163,9 @@
         <Content Include="UpdateManifest.ps1"/>
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_ContainerLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_PickableItemLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
@@ -168,9 +175,6 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Src\Utils\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

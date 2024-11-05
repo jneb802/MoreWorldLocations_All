@@ -1,7 +1,13 @@
-BlackforestLoot1:
-  - Amber
-  - Ruby
-  - BoneFragments
-  - AmberPearl
-  - TinOre
-  - CopperOre
+MeadowsLoot1:
+  - item: Flint
+    stackMin: 1
+    stackMax: 5
+    weight: 1.5
+  - item: Feathers
+    stackMin: 2
+    stackMax: 10
+    weight: 2.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0

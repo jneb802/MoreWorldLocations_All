@@ -173,7 +173,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
-        <PackageReference Include="JotunnLib" Version="2.16.2"/>
+        <PackageReference Include="JotunnLib" Version="2.21.3" />
         <PackageReference Include="Mono.Cecil" Version="0.11.5"/>
         <PackageReference Include="MonoMod" Version="22.7.31.1"/>
         <PackageReference Include="MonoMod.RuntimeDetour" Version="25.1.0-prerelease.2"/>

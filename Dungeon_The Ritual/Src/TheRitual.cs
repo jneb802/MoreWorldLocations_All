@@ -80,26 +80,41 @@ namespace Dungeon_The_Ritual
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
+
+            RoomExtras.ApplyPatches(_harmony);
+                
             SetupWatcher();
             
             LoadAssetBundle();
             
-            MWD_TheRitual_Quantity_Config = config("1 - BFD_Exterior", "Spawn Quantity", 30,
+            MWD_UndergroundRuins_Quantity_Config = config("1 - Underground Ruins", "Spawn Quantity", 30,
                 "Amount of attempts world generation will try to place dungeon exterior during world generation");
-            MWD_TheRitual_CreatureYaml_Config = config("1 - BFD_Exterior", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-            MWD_TheRitual_CreatureList_Config = config("1 - BFD_Exterior", "Name of Creature List", "BlackforestCreatures2",
-                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWD_UndergroundRuins_CreatureYaml_Config = config("1 - Underground Ruins", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, dungeon will select creatures from list in the custom YAML file in BepinEx config folder");
+            MWD_UndergroundRuins_CreatureList_Config = config("1 - Underground Ruins", "Name of Creature List", "UndergroundRuinsCreatures1",
+                "The name of the creature list to use from YAML file");
+            MWD_UndergroundRuins_LootYaml_Config = config("1 - Underground Ruins", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
+            MWD_UndergroundRuins_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "MeadowsLoot2",
+                "The name of the loot list to use from YAML file");
+            MWD_UndergroundRuins_PickableItemYaml_Config = config("1 - Underground Ruins", "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
+            MWD_UndergroundRuins_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "MeadowsLoot2",
+                "The name of the loot list to use from YAML file");
             
             dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior");
             RoomManager.RegisterTheme(dungeonGameObject, "Underground Ruins");
             
-            dungeonBFDYamlManager.ParseDefaultYamls();
-            dungeonBFDYamlManager.ParseCustomYamls();
+            dungeonBFDYamlManager.ParseContainerYaml("warpalicious.UndergroundRuins");
+            dungeonBFDYamlManager.ParseCreatureYaml("warpalicious.UndergroundRuins");
+            dungeonBFDYamlManager.ParsePickableItemYaml("warpalicious.UndergroundRuins");
             
-            DungeonManager.OnVanillaRoomsAvailable += RoomManager.AddAllRooms;
+            TranslationUtils.AddLocalizations();
+            Creatures.CreateShamanBoss();
+            
+            PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
-            
+            DungeonManager.OnVanillaRoomsAvailable += RoomManager.AddAllRooms;
 
             if (saveOnSet)
             {
@@ -124,11 +139,13 @@ namespace Dungeon_The_Ritual
             watcher.EnableRaisingEvents = true;
         }
         
-        public static ConfigEntry<int> MWD_TheRitual_Quantity_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWD_TheRitual_CreatureYaml_Config = null!;
-        public static ConfigEntry<string> MWD_TheRitual_CreatureList_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWD_TheRitual_LootYaml_Config = null!;
-        public static ConfigEntry<string> MWD_TheRitual_LootList_Config = null!;
+        public static ConfigEntry<int> MWD_UndergroundRuins_Quantity_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_CreatureYaml_Config = null!;
+        public static ConfigEntry<string> MWD_UndergroundRuins_CreatureList_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_LootYaml_Config = null!;
+        public static ConfigEntry<string> MWD_UndergroundRuins_LootList_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_PickableItemYaml_Config = null!;
+        public static ConfigEntry<string> MWD_UndergroundRuins_PickableItemList_Config = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {
