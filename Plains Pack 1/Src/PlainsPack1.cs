@@ -21,7 +21,7 @@ namespace Plains_Pack_1
     public class Plains_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Plains_Pack_1";
-        internal const string ModVersion = "1.0.1";
+        internal const string ModVersion = "1.0.2";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";

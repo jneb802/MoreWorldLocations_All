@@ -45,7 +45,7 @@ public class LootManager: MonoBehaviour
     
         foreach (var container in allContainers)
         {
-            if (container.name.StartsWith("loot_chest") && container.transform.position.y <= 5000)
+            if (container.transform.position.y <= 5000)
             {
                 locationContainers.Add(container);
                 WarpLogger.Logger.LogDebug("Container found in " + location + "with name: " + container.name);
