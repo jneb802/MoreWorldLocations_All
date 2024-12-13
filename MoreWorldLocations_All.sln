@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon BlackForest", "Dung
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackForest Pack 2", "BlackForest Pack 2\BlackForest Pack 2.csproj", "{B6473A52-06C5-4B03-99E5-63395E0DD1F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "More World Vendors", "More World Vendors\More World Vendors.csproj", "{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}"
+EndProject
 Global
 				GlobalSection(SolutionConfigurationPlatforms) = preSolution
 								Debug|Any CPU = Debug|Any CPU
@@ -39,8 +41,8 @@ Global
 					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Release|Any CPU.Build.0 = Release|Any CPU
+					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Debug|Any CPU.Build.0 = Debug|Any CPU
 					{00000000-0000-0000-0000-000000000000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{00000000-0000-0000-0000-000000000000}.Debug|Any CPU.Build.0 = Debug|Any CPU
 					{EB37647D-DFB9-458C-9DF5-82B747B36077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{A787FC6C-140B-4CEA-8626-C541548EA684}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{A787FC6C-140B-4CEA-8626-C541548EA684}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -53,5 +55,9 @@ Global
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Release|Any CPU.Build.0 = Release|Any CPU
 					{A732FBD3-6B4E-4F1A-8B9D-C4974A20DE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{B6473A52-06C5-4B03-99E5-63395E0DD1F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Release|Any CPU.Build.0 = Release|Any CPU
 				EndGlobalSection
 EndGlobal
