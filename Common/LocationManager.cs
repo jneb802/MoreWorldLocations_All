@@ -36,6 +36,38 @@ public class LocationManager
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
     
+    public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
+        
+        var lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+        var locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+        LootManager.SetupChestLoot(locationChestContainers,lootList);
+        
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
+    public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig, LocationPosition position)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
+        
+        var lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+        var locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer,position);
+        LootManager.SetupChestLoot(locationChestContainers,lootList);
+        
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
     public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfig locationConfig)
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
