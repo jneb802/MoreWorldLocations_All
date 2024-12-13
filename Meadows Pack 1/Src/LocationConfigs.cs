@@ -215,7 +215,7 @@ public class LocationConfigs
         ExteriorRadius = 5,
         ClearArea = true,
         RandomRotation = false,
-        Group = "Ruins_small",
+        Group = "Ruins_well",
         MinDistanceFromSimilar = 256,
         MaxTerrainDelta = 2f,
         MinAltitude = 1,

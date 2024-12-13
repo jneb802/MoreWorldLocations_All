@@ -21,7 +21,7 @@ namespace Meadows_Pack_1
     public class Meadows_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Meadows_Pack_1";
-        internal const string ModVersion = "1.0.4";
+        internal const string ModVersion = "1.0.6";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
