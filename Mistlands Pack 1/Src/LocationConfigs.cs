@@ -179,7 +179,7 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 15f,
-        MinAltitude = 0f,
+        MinAltitude = 5f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
