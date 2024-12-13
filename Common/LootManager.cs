@@ -38,6 +38,20 @@ public class LootManager: MonoBehaviour
         return lootList;
     }
     
+    public static List<Container> GetLocationsContainers(GameObject location)
+    {
+        List<Container> locationContainers = new List<Container>();
+        Container[] allContainers = location.GetComponentsInChildren<Container>();
+    
+        foreach (var container in allContainers)
+        {
+            locationContainers.Add(container);
+            WarpLogger.Logger.LogDebug("Container found in " + location + "with name: " + container.name);
+        }
+        
+        return locationContainers;
+    }
+    
     public static List<Container> GetLocationsContainers(GameObject location, LocationManager.LocationPosition locationPosition)
     {
         List<Container> locationContainers = new List<Container>();
