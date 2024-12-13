@@ -21,7 +21,7 @@ namespace Plains_Pack_1
     public class Plains_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Plains_Pack_1";
-        internal const string ModVersion = "1.0.2";
+        internal const string ModVersion = "1.0.3";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -192,6 +192,17 @@ namespace Plains_Pack_1
             MWL_FulingTower1_LootListConfig = config("10 - MWL_FulingTower1", "Name of Loot List", "PlainsLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
+            MWL_GoblinCave1_QuantityConfig = config("10 - MWL_GoblinCave1", "Spawn Quantity", 20,
+                "Amount of this location the game will attempt to place during world generation");
+            MWL_GoblinCave1_CreatureYamlConfig = config("10 - MWL_GoblinCave1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
+            MWL_GoblinCave1_CreatureListConfig = config("10 - MWL_GoblinCave1", "Name of Creature List", "PlainsCreatures2",
+                "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
+            MWL_GoblinCave1_LootYamlConfig = config("10 - MWL_GoblinCave1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
+            MWL_GoblinCave1_LootListConfig = config("10 - MWL_GoblinCave1", "Name of Loot List", "PlainsLoot1",
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
             plainsYAMLmanager.ParseDefaultYamls();
             plainsYAMLmanager.ParseCustomYamls();
             
@@ -279,6 +290,12 @@ namespace Plains_Pack_1
         public static ConfigEntry<string> MWL_FulingTower1_CreatureListConfig = null!;
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_FulingTower1_LootYamlConfig = null!;
         public static ConfigEntry<string> MWL_FulingTower1_LootListConfig = null!;
+        
+        public static ConfigEntry<int> MWL_GoblinCave1_QuantityConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_GoblinCave1_CreatureYamlConfig = null!;
+        public static ConfigEntry<string> MWL_GoblinCave1_CreatureListConfig = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWL_GoblinCave1_LootYamlConfig = null!;
+        public static ConfigEntry<string> MWL_GoblinCave1_LootListConfig = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {

@@ -104,6 +104,14 @@ public class Locations
             Plains_Pack_1Plugin.MWL_FulingTower1_LootListConfig.Value,
             LocationConfigs.MWL_FulingTower1_Config);
         
+        LocationManager.AddLocation(assetBundle,
+            "MWL_GoblinCave1",
+            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_GoblinCave1_CreatureYamlConfig.Value),
+            Plains_Pack_1Plugin.MWL_GoblinCave1_CreatureListConfig.Value,
+            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_GoblinCave1_LootYamlConfig.Value),
+            Plains_Pack_1Plugin.MWL_GoblinCave1_LootListConfig.Value,
+            LocationConfigs.MWL_GoblinCave1_Config);
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
     }
