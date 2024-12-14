@@ -168,7 +168,6 @@ namespace Mistlands_Pack_1
             MWL_MistHut1_LootListConfig = config("7 - MWL_MistHut1", "Name of Loot List", "MistLoot1",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
             
-                        
             mistlandsYAMLManager.ParseDefaultYamls();
             mistlandsYAMLManager.ParseCustomYamls();
             

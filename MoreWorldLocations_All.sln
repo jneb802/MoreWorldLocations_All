@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon BlackForest", "Dung
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackForest Pack 2", "BlackForest Pack 2\BlackForest Pack 2.csproj", "{B6473A52-06C5-4B03-99E5-63395E0DD1F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "More World Vendors", "More World Vendors\More World Vendors.csproj", "{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "More World Traders", "More World Traders\More World Traders.csproj", "{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}"
 EndProject
 Global
 				GlobalSection(SolutionConfigurationPlatforms) = preSolution
