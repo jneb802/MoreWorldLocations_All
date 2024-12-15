@@ -78,6 +78,18 @@ public class LocationManager
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
     
+    public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfig locationConfig, string traderName)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+
+        jotunnLocationContainer.GetComponentInChildren<Trader>().m_items = TraderManager.buyItemLists[traderName];
+        
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
     public static void AddLocation(GameObject locationGameObject, LocationConfig locationConfig)
     {
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);

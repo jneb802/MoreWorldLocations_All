@@ -1,0 +1,22 @@
+# TEMPLATE
+# vendorName:
+#   - prefabName: string
+#     action: buy / sell
+#     quality: #
+#     stack: #
+#     price: #
+#     requiredGlobalKey: string
+
+# The # sign means you must use a number
+# The word 'string' means you must write a word
+
+# You can find all Valheim prefab names here: https://valheim-modding.github.io/Jotunn/data/objects/item-list.html
+# You can find all Valheim global keys here: https://valheim.fandom.com/wiki/Global_Keys
+
+PlainsTavernTrader1:
+  - prefabName: Barley
+    action: buy
+    quality: 0
+    stack: 1
+    price: 20
+    requiredGlobalKey: defeated_goblinking

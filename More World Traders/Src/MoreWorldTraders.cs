@@ -85,7 +85,11 @@ namespace More_World_Traders
             
             MWV_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 1,
                 "Amount of this location the game will attempt to place during world generation");
-
+            
+            moreWorldTradersYAMLManager.ParseTraderYaml("warpalicious.More_World_Traders_MoreWorldTraders.yml");
+            
+            Debug.Log("Log 1");
+            PrefabManager.OnVanillaPrefabsAvailable += Traders.AddAllTraderLists;    
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             
             if (saveOnSet)

@@ -163,7 +163,6 @@ public static class CreatureManager
     {
         List<string> locationCreatureList = new List<string>();
         
-        
         var yaml = new YamlStream();
         yaml.Load(new StringReader(yamlContent));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;

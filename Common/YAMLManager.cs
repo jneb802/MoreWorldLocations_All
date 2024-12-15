@@ -13,10 +13,15 @@ public class YAMLManager
     
     public string defaultCreatureYamlContent;
     public string customCreatureYamlContent;
+    
     public string defaultlootYamlContent;
     public string customlootYamlContent;
+    
     public string defaultPickableItemContent;
     public string customPickableItemContent;
+    
+    public string defaultTraderYamlContent;
+    public string customTraderYamlContent;
     
     public enum Toggle
     {
@@ -57,6 +62,18 @@ public class YAMLManager
         {
             customCreatureYamlContent = File.ReadAllText(customCreatureListYamLFilePath);
             WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_CreatureLists.yml file from BepinEx config folder");;
+        }
+    }
+    
+    public void ParseTraderYaml(string filename)
+    {
+        defaultTraderYamlContent = AssetUtils.LoadTextFromResources(filename);
+        
+        string customTraderListYamLFilePath = Path.Combine(Paths.ConfigPath, filename);
+        if (File.Exists(customTraderListYamLFilePath))
+        {
+            customTraderYamlContent = File.ReadAllText(customTraderListYamLFilePath);
+            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + " file from BepinEx config folder");;
         }
     }
     

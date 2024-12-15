@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LocationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager_v2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PieceManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WarpLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YAMLManager.cs" />

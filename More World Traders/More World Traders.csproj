@@ -125,6 +125,7 @@
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\MoreWorldTraders.cs" />
+        <Compile Include="Src\Traders.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -164,6 +165,7 @@
         <Content Include="Thunderstore\manifest.json"/>
         <EmbeddedResource Include="translations\English.yml"/>
         <Content Include="UpdateManifest.ps1"/>
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Traders_MoreWorldTraders.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
@@ -173,9 +175,6 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="YAML\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

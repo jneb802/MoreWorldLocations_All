@@ -9,12 +9,11 @@ public class Locations
     public static void AddAllLocations()
     {
         var assetBundle = More_World_TradersPlugin.assetBundle;
-        var creatureYAMLContent = More_World_TradersPlugin.moreWorldTradersYAMLManager.creatureYAMLContent;
-        var lootYAMLContent = More_World_TradersPlugin.moreWorldTradersYAMLManager.lootYAMLContent;
         
         LocationManager.AddLocation(assetBundle,
             "MWV_PlainsTavern1",
-            LocationConfigs.MWV_PlainsTavern1);
+            LocationConfigs.MWV_PlainsTavern1,
+            "PlainsTavernTrader1");
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
