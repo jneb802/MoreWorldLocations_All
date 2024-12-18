@@ -125,27 +125,30 @@
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\MoreWorldTraders.cs" />
+        <Compile Include="Src\StatusEffects\BlacksmithStone_SE.cs" />
         <Compile Include="Src\Traders.cs" />
-        <Compile Include="VersionHandshake.cs"/>
+        <Compile Include="Src\Utils\PrefabUtils.cs" />
+        <Compile Include="Src\Utils\TranslationUtils.cs" />
+        <Compile Include="VersionHandshake.cs" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="App.config"/>
+        <None Include="App.config" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include=".gitignore"/>
-        <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
+        <Content Include=".gitignore" />
+        <Content Include="assets\DropAssetBundleInThisFolder.txt" />
         <EmbeddedResource Include="assets\moreworldvendors" />
-        <Content Include="environment.props"/>
-        <Content Include="icons\README.txt"/>
-        <Content Include="ILRepack.targets"/>
+        <Content Include="environment.props" />
+        <Content Include="icons\README.txt" />
+        <Content Include="ILRepack.targets" />
         <Content Include="Libs\CreatureManager.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Libs\ItemDataManager.dll"/>
+        <Content Include="Libs\ItemDataManager.dll" />
         <Content Include="Libs\ItemManager.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Libs\LocalizationManager.dll"/>
+        <Content Include="Libs\LocalizationManager.dll" />
         <Content Include="Libs\LocationManager.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -158,23 +161,26 @@
         <Content Include="Libs\SkillManager.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="LICENSE.md"/>
-        <Content Include="README.md"/>
-        <Content Include="Thunderstore\CHANGELOG.md"/>
-        <Content Include="Thunderstore\icon.png"/>
-        <Content Include="Thunderstore\manifest.json"/>
-        <EmbeddedResource Include="translations\English.yml"/>
-        <Content Include="UpdateManifest.ps1"/>
+        <Content Include="LICENSE.md" />
+        <Content Include="README.md" />
+        <Content Include="Thunderstore\CHANGELOG.md" />
+        <Content Include="Thunderstore\icon.png" />
+        <Content Include="Thunderstore\manifest.json" />
+        <EmbeddedResource Include="translations\English.yml" />
+        <Content Include="UpdateManifest.ps1" />
         <EmbeddedResource Include="YAML\warpalicious.More_World_Traders_MoreWorldTraders.yml" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
         <PackageReference Include="JotunnLib" Version="2.21.3" />
-        <PackageReference Include="Mono.Cecil" Version="0.11.5"/>
+        <PackageReference Include="Mono.Cecil" Version="0.11.5" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
-        <PackageReference Include="YamlDotNet" Version="13.2.0"/>
+        <PackageReference Include="YamlDotNet" Version="13.2.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Src\Items\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

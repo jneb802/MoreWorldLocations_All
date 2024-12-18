@@ -11,9 +11,12 @@ public class Locations
         var assetBundle = More_World_TradersPlugin.assetBundle;
         
         LocationManager.AddLocation(assetBundle,
-            "MWV_PlainsTavern1",
-            LocationConfigs.MWV_PlainsTavern1,
-            "PlainsTavernTrader1");
+            "MWL_PlainsTavern1",
+            LocationConfigs.MWV_PlainsTavern1);
+        
+        LocationManager.AddLocation(assetBundle,
+            "MWL_PlainsCamp1",
+            LocationConfigs.MWV_PlainsCamp1);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);

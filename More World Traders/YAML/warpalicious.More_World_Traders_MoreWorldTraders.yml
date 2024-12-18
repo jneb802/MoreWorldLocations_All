@@ -9,14 +9,164 @@
 
 # The # sign means you must use a number
 # The word 'string' means you must write a word
+# For the action field, you must use 'buy' or 'sell'
 
 # You can find all Valheim prefab names here: https://valheim-modding.github.io/Jotunn/data/objects/item-list.html
 # You can find all Valheim global keys here: https://valheim.fandom.com/wiki/Global_Keys
 
 PlainsTavernTrader1:
-  - prefabName: Barley
+  - prefabName: QueensJam
     action: buy
-    quality: 0
-    stack: 1
     price: 20
+    quantity: 1
+    requiredGlobalKey: defeated_gdking
+  - prefabName: CarrotSoup
+    action: buy
+    price: 20
+    quantity: 1
+    requiredGlobalKey: defeated_gdking
+  - prefabName: DeerStew
+    action: buy
+    price: 20
+    quantity: 1
+    requiredGlobalKey: defeated_gdking
+  - prefabName: MincedMeatSauce
+    action: buy
+    price: 20
+    quantity: 1
+    requiredGlobalKey: defeated_gdking
+
+  - prefabName: Sausages
+    action: buy
+    price: 30
+    quantity: 1
+    requiredGlobalKey: defeated_bonemass
+  - prefabName: TurnipStew
+    action: buy
+    price: 30
+    quantity: 1
+    requiredGlobalKey: defeated_bonemass
+  - prefabName: BlackSoup
+    action: buy
+    price: 30
+    quantity: 1
+    requiredGlobalKey: defeated_bonemass
+  - prefabName: ShocklateSmoothie
+    action: buy
+    price: 30
+    quantity: 1
+    requiredGlobalKey: defeated_bonemass
+
+  - prefabName: OnionSoup
+    action: buy
+    price: 40
+    quantity: 1
+    requiredGlobalKey: defeated_dragon
+  - prefabName: WolfMeatSkewer
+    action: buy
+    price: 40
+    quantity: 1
+    requiredGlobalKey: defeated_dragon
+  - prefabName: Eyescream
+    action: buy
+    price: 40
+    quantity: 1
+    requiredGlobalKey: defeated_dragon
+
+  - prefabName: BloodPudding
+    action: buy
+    price: 50
+    quantity: 1
     requiredGlobalKey: defeated_goblinking
+  - prefabName: FishWraps
+    action: buy
+    price: 50
+    quantity: 1
+    requiredGlobalKey: defeated_goblinking
+  - prefabName: LoxPie
+    action: buy
+    price: 50
+    quantity: 1
+    requiredGlobalKey: defeated_goblinking
+
+  - prefabName: MeatPlatter
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: Salad
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: HoneyGlazedChicken
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: MisthareSupreme
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: MushroomOmelette
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: StuffedMushroom
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: YggdrasilPorridge
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+  - prefabName: SeekerAspic
+    action: buy
+    price: 60
+    quantity: 1
+    requiredGlobalKey: defeated_queen
+
+  - prefabName: FierySvinstew
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: PiquantPie
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: SpicyMarmalade
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: ScorchingMedley
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: RoastedCrustPie
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: SizzlingBerryBroth
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: SparklingShroomshake
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader
+  - prefabName: MarinatedGreens
+    action: buy
+    price: 70
+    quantity: 1
+    requiredGlobalKey: defeated_fader

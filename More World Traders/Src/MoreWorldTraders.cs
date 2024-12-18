@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using LocalizationManager;
+using More_World_Traders.Utils;
 using ServerSync;
 using UnityEngine;
 using Paths = BepInEx.Paths;
@@ -86,10 +87,12 @@ namespace More_World_Traders
             MWV_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 1,
                 "Amount of this location the game will attempt to place during world generation");
             
+            MWV_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsCamp1", "Spawn Quantity", 1,
+                "Amount of this location the game will attempt to place during world generation");
+            
             moreWorldTradersYAMLManager.ParseTraderYaml("warpalicious.More_World_Traders_MoreWorldTraders.yml");
             
-            Debug.Log("Log 1");
-            PrefabManager.OnVanillaPrefabsAvailable += Traders.AddAllTraderLists;    
+            PrefabManager.OnVanillaPrefabsAvailable -= PrefabUtils.CreateCustomItems;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             
             if (saveOnSet)
@@ -100,6 +103,7 @@ namespace More_World_Traders
         }
         
         public static ConfigEntry<int> MWV_PlainsTavern1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWV_PlainsCamp1_QuantityConfig = null!;
 
         private void OnDestroy()
         {
