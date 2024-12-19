@@ -5,6 +5,8 @@ using Jotunn.Managers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Common;
 
@@ -36,6 +38,131 @@ public class LootManager: MonoBehaviour
         }
 
         return lootList;
+    }
+
+    public static bool isLootListVersion2(string yamlContent)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(yamlContent));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        
+        if (mapping.Children.ContainsKey(new YamlScalarNode("version")))
+        {
+            var versionNode = (YamlScalarNode)mapping.Children[new YamlScalarNode("version")];
+            string version = versionNode.Value;
+            
+            if (version == "2.0")
+            {
+                WarpLogger.Logger.LogDebug("Version is 2");
+                return true;
+            }
+        }
+        else
+        {
+            WarpLogger.Logger.LogDebug("Version not found in YAML file");
+            return false;
+        }
+
+        return false;
+    }
+    
+    
+    public static List<String> ParseContainerYaml_v1(string lootListName, string yamlContent)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(yamlContent));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        
+        List<string> lootList = new List<string>();
+    
+        if (mapping.Children.ContainsKey(new YamlScalarNode(lootListName)))
+        {
+            WarpLogger.Logger.LogDebug("Found loot list with name " + lootListName + " in loot list Yaml file");
+            var lootItems = mapping.Children[new YamlScalarNode(lootListName)] as YamlSequenceNode;
+            
+            foreach (var item in lootItems)
+            {
+                var scalar = item as YamlScalarNode;
+                lootList.Add(scalar.Value);
+                WarpLogger.Logger.LogDebug("Added item with name: " + item + " to loot list with name " + lootListName);
+            }
+        }
+        else
+        {
+            WarpLogger.Logger.LogError("Failed to find loot list with name: " + lootListName + " in loot list Yaml file");
+        }
+    
+        return lootList;
+    }
+    
+    public static List<DropTable.DropData> ParseContainerYaml_v2(string lootListName, string yamlContent)
+    {
+        List<DropTable.DropData> dropDataList = new List<DropTable.DropData>();
+        
+        var modifiedYamlContent = RemoveVersionFromYaml(yamlContent);
+        
+        var deserializer = new DeserializerBuilder().Build();
+        var lootData = deserializer.Deserialize<Dictionary<string, List<Dictionary<string, object>>>>(modifiedYamlContent);
+        
+        if (lootData.ContainsKey(lootListName))
+        {
+            WarpLogger.Logger.LogDebug("Found loot list with name " + lootListName + " in loot list Yaml file");
+            
+            foreach (var itemData in lootData[lootListName])
+            {
+                string itemName = itemData["item"].ToString();
+                GameObject itemPrefab = PrefabManager.Cache.GetPrefab<GameObject>(itemName);
+
+                if (itemPrefab != null)
+                {
+                    var dropData = new DropTable.DropData
+                    {
+                        m_item = itemPrefab,
+                        m_stackMin = int.Parse(itemData["stackMin"].ToString()),
+                        m_stackMax = int.Parse(itemData["stackMax"].ToString()),
+                        m_weight = float.Parse(itemData["weight"].ToString()),
+                        m_dontScale = false
+                    };
+                    dropDataList.Add(dropData);
+                    WarpLogger.Logger.LogDebug("Added item with name: " + itemName + " to loot list " + lootListName + " with stackMin: " + dropData.m_stackMin + ", stackMax: " + dropData.m_stackMax + ", weight: " + dropData.m_weight);
+                }
+                else
+                {
+                    WarpLogger.Logger.LogWarning("Prefab for item " + itemName + " not found.");
+                }
+            }
+        }
+        else
+        {
+            WarpLogger.Logger.LogError("Failed to find loot list with name: " + lootListName + " in loot list Yaml file");
+        }
+
+        return dropDataList;
+    }
+    
+    private static string RemoveVersionFromYaml(string yamlContent)
+    {
+        var lines = yamlContent.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        var filteredLines = new List<string>();
+
+        bool versionFound = false;
+
+        foreach (var line in lines)
+        {
+            if (line.TrimStart().StartsWith("version"))
+            {
+                versionFound = true;
+                continue; // Skip this line
+            }
+            filteredLines.Add(line);
+        }
+
+        if (versionFound)
+        {
+            WarpLogger.Logger.LogDebug("Version key found and removed from YAML content.");
+        }
+
+        return string.Join("\n", filteredLines);
     }
     
     public static List<Container> GetLocationsContainers(GameObject location)
@@ -76,6 +203,19 @@ public class LootManager: MonoBehaviour
             var dropTable = CreateDropTable(lootList, 2, 3);
             container.m_defaultItems = dropTable;
             
+            WarpLogger.Logger.LogDebug("Container with name " + container.name + " has received new dropTable");
+        }
+    }
+    
+    public static void SetupChestLoot(List<Container> containerList, List<DropTable.DropData> lootList)
+    {
+        DropTable dropTable = new DropTable();
+        dropTable.m_dropMax = 2;
+        dropTable.m_drops = lootList;
+        
+        foreach (var container in containerList)
+        {
+            container.m_defaultItems = dropTable;
             WarpLogger.Logger.LogDebug("Container with name " + container.name + " has received new dropTable");
         }
     }

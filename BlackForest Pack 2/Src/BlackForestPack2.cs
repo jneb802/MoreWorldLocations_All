@@ -21,7 +21,7 @@ namespace BlackForest_Pack_2
     public class BlackForest_Pack_2Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Blackforest_Pack_2";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.1.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";

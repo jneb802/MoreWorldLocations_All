@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
@@ -15,6 +16,9 @@ public class LocationManager
         Exterior
     }
     
+    
+    // Original method used by most mods
+    // Added check for new loot list version
     public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, int creatureCount, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
@@ -22,13 +26,48 @@ public class LocationManager
         
         CreatureManager.SetupCreatures(LocationPosition.Exterior,creatureListName,jotunnLocationContainer,creatureCount,creatureYAMLContent);
         
-        var lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
-        var locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer,LocationPosition.Exterior);
-        LootManager.SetupChestLoot(locationChestContainers,lootList);
-        var locationDropOnDestroyedLoot = LootManager.GetLocationsDropOnDestroyeds(jotunnLocationContainer,LocationPosition.Exterior);
-        if (locationDropOnDestroyedLoot != null)
+        if (LootManager.isLootListVersion2(lootYAMLContent))
         {
-            LootManager.SetupDropOnDestroyedLoot(locationDropOnDestroyedLoot,lootList);
+            List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        }
+        else
+        {
+            List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,lootList);   
+            var locationDropOnDestroyedLoot = LootManager.GetLocationsDropOnDestroyeds(jotunnLocationContainer,LocationPosition.Exterior);
+            if (locationDropOnDestroyedLoot != null)
+            {
+                LootManager.SetupDropOnDestroyedLoot(locationDropOnDestroyedLoot,lootList);
+            }
+        }
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
+    // Alternate method that doesn't use creatureCount
+    // Alternate method to check for new loot list version
+    public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
+
+        if (LootManager.isLootListVersion2(lootYAMLContent))
+        {
+            List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        }
+        else
+        {
+            List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,lootList);   
         }
         
         CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
@@ -36,38 +75,7 @@ public class LocationManager
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
     
-    public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
-    {
-        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
-        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
-        
-        CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
-        
-        var lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
-        var locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
-        LootManager.SetupChestLoot(locationChestContainers,lootList);
-        
-        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
-        
-        ZoneManager.Instance.AddCustomLocation(customLocation);
-    }
-    
-    public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig, LocationPosition position)
-    {
-        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
-        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
-        
-        CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
-        
-        var lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
-        var locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer,position);
-        LootManager.SetupChestLoot(locationChestContainers,lootList);
-        
-        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
-        
-        ZoneManager.Instance.AddCustomLocation(customLocation);
-    }
-    
+    // Simplified method to just accept location without loot or creature modifications
     public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfig locationConfig)
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
@@ -78,18 +86,7 @@ public class LocationManager
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
     
-    public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfig locationConfig, string traderName)
-    {
-        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
-        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
-
-        jotunnLocationContainer.GetComponentInChildren<Trader>().m_items = TraderManager.buyItemLists[traderName];
-        
-        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
-        
-        ZoneManager.Instance.AddCustomLocation(customLocation);
-    }
-    
+    // Modified to accept a location gameObject instead of asset bundle
     public static void AddLocation(GameObject locationGameObject, LocationConfig locationConfig)
     {
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);

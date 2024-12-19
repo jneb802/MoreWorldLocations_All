@@ -21,7 +21,7 @@ namespace Mountains_Pack_1
     public class Mountains_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Mountains_Pack_1";
-        internal const string ModVersion = "1.0.2";
+        internal const string ModVersion = "1.1.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
