@@ -8,8 +8,8 @@ namespace Common
 {
     public static class TraderManager
     {
-        public static Dictionary<string, List<Trader.TradeItem>> buyItemLists;
-        public static Dictionary<string, List<SellItem>> sellItemLists;
+        public static Dictionary<string, List<Trader.TradeItem>> buyItemLists = new Dictionary<string, List<Trader.TradeItem>>();
+        public static Dictionary<string, List<SellItem>> sellItemLists = new Dictionary<string, List<SellItem>>();
         
         public static void AddTraderBuyItems(GameObject locationContainer, List<Trader.TradeItem> traderItems)
         {
@@ -37,16 +37,16 @@ namespace Common
                 WarpLogger.Logger.LogWarning("Parsed data is null or trader name: " + traderName + " does not exist in the YAML content.");
                 return;
             }
-
             var traderList = parsedData[traderName];
             
             foreach (var item in traderList)
             {
-                GameObject itemPrefab = PrefabManager.Instance.GetPrefab(item.PrefabName);
-                if (itemPrefab == null)
-                {
-                    WarpLogger.Logger.LogWarning("Failed to find prefab with name: " + item.PrefabName);
-                }
+                GameObject itemPrefab = PrefabManager.Cache.GetPrefab<GameObject>(item.PrefabName);
+                // if (itemPrefab == null)
+                // {
+                //     WarpLogger.Logger.LogWarning("Failed to find prefab with name: " + item.PrefabName);
+                //     continue;
+                // }
 
                 if (item.Action != "buy")
                 {
@@ -55,7 +55,7 @@ namespace Common
                 
                 ItemDrop itemDrop = itemPrefab.GetComponent<ItemDrop>();
 
-                if (item.Quality != 0)
+                if (item.Quality != 1)
                 {
                     itemDrop.SetQuality(item.Quality);
                 }
@@ -68,8 +68,9 @@ namespace Common
                     m_requiredGlobalKey = item.RequiredGlobalKey
                 };
                 buyItems.Add(tradeItem);
+                Debug.Log("Added item with name: " + item.PrefabName + " to trader buy list with name: " + traderName);
             }
-
+            
             buyItemLists.Add(traderName,buyItems);
         }
         
@@ -88,10 +89,10 @@ namespace Common
             foreach (var item in traderList)
             {
                 GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(item.PrefabName);
-                if (itemPrefab == null)
-                {
-                    WarpLogger.Logger.LogWarning("Failed to find prefab with name: " + item.PrefabName);
-                }
+                // if (itemPrefab == null)
+                // {
+                //     WarpLogger.Logger.LogWarning("Failed to find prefab with name: " + item.PrefabName);
+                // }
 
                 if (item.Action != "sell")
                 {

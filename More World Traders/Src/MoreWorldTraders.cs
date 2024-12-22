@@ -78,21 +78,39 @@ namespace More_World_Traders
                 "If on, the configuration is locked and can be changed by server admins only.");
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
             
+            LoadAssetBundle();
+            
+            PrefabUtils.LoadIcons();
+            PrefabUtils.BuildLocationSpriteData();
+            
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
             
-            LoadAssetBundle();
-            
-            MWV_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 1,
+            MWL_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");
             
-            MWV_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsCamp1", "Spawn Quantity", 1,
+            MWL_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsCamp1", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");
+            
+            MWL_BlackForestBlacksmith1_QuantityConfig = config("3 - MWL_BlackForestBlacksmith1", "Spawn Quantity", 5,
+                "Amount of this location the game will attempt to place during world generation");
+
+            MWL_BlackForestBlacksmith2_QuantityConfig = config("4 - MWL_BlackForestBlacksmith2", "Spawn Quantity", 5,
+                "Amount of this location the game will attempt to place during world generation");
+
+            MWL_MountainsBlacksmith1_QuantityConfig = config("5 - MWL_MountainsBlacksmith1", "Spawn Quantity", 5,
+                "Amount of this location the game will attempt to place during world generation");
+            
+            MWL_MistlandsBlacksmith1_QuantityConfig = config("6 - MWL_MistlandsCamp1", "Spawn Quantity", 5,
+                "Amount of this location the game will attempt to place during world generation");
+
             
             moreWorldTradersYAMLManager.ParseTraderYaml("warpalicious.More_World_Traders_MoreWorldTraders.yml");
             
-            PrefabManager.OnVanillaPrefabsAvailable -= PrefabUtils.CreateCustomItems;
+            TranslationUtils.AddLocalizations();
+            StatusEffectUtils.CreateCustomStatusEffects();
+            PrefabUtils.CreateCustomItems();
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             
             if (saveOnSet)
@@ -102,8 +120,14 @@ namespace More_World_Traders
             }
         }
         
-        public static ConfigEntry<int> MWV_PlainsTavern1_QuantityConfig = null!;
-        public static ConfigEntry<int> MWV_PlainsCamp1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_PlainsTavern1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_PlainsCamp1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_BlackForestBlacksmith1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_BlackForestBlacksmith2_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_MountainsBlacksmith1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_MistlandsBlacksmith1_QuantityConfig = null!;
+        
+        
 
         private void OnDestroy()
         {

@@ -27,10 +27,10 @@ public class LocationConfigs
         public static LocationRing Ring7 { get; set; } = new LocationRing(5000, 10500);
     }
 
-    public static LocationConfig MWV_PlainsTavern1 = new LocationConfig
+    public static LocationConfig MWL_PlainsTavern1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = More_World_TradersPlugin.MWV_PlainsTavern1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_PlainsTavern1_QuantityConfig.Value,
         Priotized = true,
         ExteriorRadius = 32,
         ClearArea = true,
@@ -47,29 +47,103 @@ public class LocationConfigs
         InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
-        BiomeArea = Heightmap.BiomeArea.Median
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
     };
     
-    public static LocationConfig MWV_PlainsCamp1 = new LocationConfig
+    public static LocationConfig MWL_PlainsCamp1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = More_World_TradersPlugin.MWV_PlainsTavern1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_PlainsTavern1_QuantityConfig.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
         RandomRotation = false,
         Group = "MWL_Trader",
         MinDistanceFromSimilar = 1024,
-        //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 5f,
         MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
-        //MaxDistance = LocationRings.Ring7.MaxDistance,
-        //InteriorRadius = 64,
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
+    };
+    
+    public static LocationConfig MWL_BlackForestBlacksmith1 = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = More_World_TradersPlugin.MWL_BlackForestBlacksmith1_QuantityConfig.Value,
+        Priotized = true,
+        ExteriorRadius = 20,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "MWL_Trader",
+        MinDistanceFromSimilar = 1024,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 6f,
+        MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
+    };
+    
+    public static LocationConfig MWL_BlackForestBlacksmith2 = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = More_World_TradersPlugin.MWL_BlackForestBlacksmith2_QuantityConfig.Value,
+        Priotized = true,
+        ExteriorRadius = 20,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "MWL_Trader",
+        MinDistanceFromSimilar = 1024,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 6f,
+        MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
+    };
+    
+    public static LocationConfig MWL_MountainsBlacksmith1 = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Mountain,
+        Quantity = More_World_TradersPlugin.MWL_MountainsBlacksmith1_QuantityConfig.Value,
+        Priotized = true,
+        ExteriorRadius = 20,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "MWL_Trader",
+        MinDistanceFromSimilar = 1024,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 6f,
+        MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
+    };
+    
+    public static LocationConfig MWL_MistlandsBlacksmith1 = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Mistlands,
+        Quantity = More_World_TradersPlugin.MWL_MistlandsBlacksmith1_QuantityConfig.Value,
+        Priotized = true,
+        ExteriorRadius = 20,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "MWL_Trader",
+        MinDistanceFromSimilar = 1024,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 12f,
+        MinAltitude = 1f,
         InForest = false,
-        //ForestTresholdMin = 0f,
-        //ForestTrasholdMax = 2,
-        BiomeArea = Heightmap.BiomeArea.Median
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
     };
 }

@@ -1,0 +1,76 @@
+[
+  {
+    "prefab": "Tar",
+    "stack": 1,
+    "price": 5
+  },
+  {
+    "prefab": "Tar",
+    "stack": 10,
+    "price": 40,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "Tar",
+    "stack": 50,
+    "price": 200,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "BlackMetalScrap",
+    "stack": 1,
+    "price": 15
+  },
+  {
+    "prefab": "Needle",
+    "stack": 1,
+    "price": 5
+  },
+  {
+    "prefab": "Cloudberry",
+    "stack": 1,
+    "price": 2
+  },
+  {
+    "prefab": "Cloudberry",
+    "stack": 10,
+    "price": 16,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "Cloudberry",
+    "stack": 50,
+    "price": 75,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "Feathers",
+    "stack": 1,
+    "price": 5
+  },
+  {
+    "prefab": "LoxPelt",
+    "stack": 1,
+    "price": 30
+  },
+  {
+    "prefab": "LinenThread",
+    "stack": 1,
+    "price": 20
+  },
+  {
+    "prefab": "CookedLoxMeat",
+    "stack": 1,
+    "price": 20
+  },
+  {
+    "prefab": "LoxSaddle",
+    "stack": 1,
+    "price": 500
+  },
+  {
+    "prefab": "BoltBlackmetal",
+    "stack": 1,
+    "price": 20
+  }
+]

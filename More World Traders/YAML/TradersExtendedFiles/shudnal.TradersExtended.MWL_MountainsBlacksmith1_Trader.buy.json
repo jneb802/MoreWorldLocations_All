@@ -1,0 +1,11 @@
+[
+  {
+    "prefab": "MWL_blacksmithStone_tier2",
+    "stack": 1,
+    "price": 750,
+    "requiredGlobalKey": "defeated_gdking",
+    "notRequiredGlobalKey": "",
+    "requiredPlayerKey": "",
+    "notRequiredPlayerKey": ""
+  }
+]

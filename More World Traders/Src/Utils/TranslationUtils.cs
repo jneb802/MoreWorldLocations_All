@@ -13,6 +13,7 @@ public class TranslationUtils
     
         Localization.AddTranslation("English", new Dictionary<string, string>
         {
+            {"$se_blacksmithStone", "Blacksmith Stone"},
             {"$item_mwl_blacksmithstone", "Blacksmith Stone"},
             {"$item_mwl_blacksmithstone_description", "Upgrades an armor or weapon past max quality. Place an armor or weapon in top left cell in inventory and consume this item."},
         });

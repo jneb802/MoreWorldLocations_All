@@ -1,0 +1,158 @@
+[
+  {
+    "prefab": "Raspberry",
+    "stack": 1,
+    "price": 2,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "Blueberries",
+    "stack": 1,
+    "price": 2,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "Carrot",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "Mushroom",
+    "stack": 1,
+    "price": 2,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "CookedDeerMeat",
+    "stack": 1,
+    "price": 3,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "RawMeat",
+    "stack": 1,
+    "price": 3,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "NeckTail",
+    "stack": 1,
+    "price": 2,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "Thistle",
+    "stack": 1,
+    "price": 2,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "Turnip",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_bonemass"
+  },
+  {
+    "prefab": "Bloodbag",
+    "stack": 1,
+    "price": 4,
+    "requiredGlobalKey": "defeated_bonemass"
+  },
+  {
+    "prefab": "Honey",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "Ooze",
+    "stack": 1,
+    "price": 5,
+    "requiredGlobalKey": "defeated_bonemass"
+  },
+  {
+    "prefab": "Onion",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_dragon"
+  },
+  {
+    "prefab": "WolfMeat",
+    "stack": 1,
+    "price": 5,
+    "requiredGlobalKey": "defeated_dragon"
+  },
+  {
+    "prefab": "GreydwarfEye",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "FreezeGland",
+    "stack": 1,
+    "price": 3,
+    "requiredGlobalKey": "defeated_dragon"
+  },
+  {
+    "prefab": "BarleyFlour",
+    "stack": 1,
+    "price": 3,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "FishCooked",
+    "stack": 1,
+    "price": 10,
+    "requiredGlobalKey": "defeated_gdking"
+  },
+  {
+    "prefab": "LoxMeat",
+    "stack": 1,
+    "price": 6,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "BugMeat",
+    "stack": 1,
+    "price": 4,
+    "requiredGlobalKey": "defeated_queen"
+  },
+  {
+    "prefab": "HareMeat",
+    "stack": 1,
+    "price": 6,
+    "requiredGlobalKey": "defeated_queen"
+  },
+  {
+    "prefab": "MushroomJotunPuffs",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_queen"
+  },
+  {
+    "prefab": "ChickenEgg",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_goblinking"
+  },
+  {
+    "prefab": "MushroomMagecap",
+    "stack": 1,
+    "price": 1,
+    "requiredGlobalKey": "defeated_queen"
+  },
+  {
+    "prefab": "GiantBloodSack",
+    "stack": 1,
+    "price": 4,
+    "requiredGlobalKey": "defeated_queen"
+  },
+  {
+    "prefab": "RoyalJelly",
+    "stack": 1,
+    "price": 4,
+    "requiredGlobalKey": "defeated_queen"
+  }
+]
