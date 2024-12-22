@@ -1,16 +1,56 @@
+version: 2.0
 MeadowsLoot1:
-  - Flint
-  - Feathers
-  - Raspberry
+  - item: Flint
+    stackMin: 1
+    stackMax: 4
+    weight: 1.0
+  - item: Feathers
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
 MeadowsLoot2:
-  - Flint
-  - Feathers
-  - LeatherScraps
-  - DeerHide
-  - Raspberry
+  - item: Flint
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Feathers
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: LeatherScraps
+    stackMin: 1
+    stackMax: 3
+    weight: 1.2
+  - item: DeerHide
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
 MeadowsLoot3:
-  - FineWood
-  - Copper
-  - CopperOre
-  - DeerHide
-  - Raspberry
+  - item: FineWood
+    stackMin: 1
+    stackMax: 4
+    weight: 1.0
+  - item: Copper
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: CopperOre
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: DeerHide
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0

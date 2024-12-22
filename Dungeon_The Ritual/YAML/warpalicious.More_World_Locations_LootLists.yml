@@ -1,3 +1,4 @@
+MWL_Loot_YAML_version: 2.0
 MeadowsLoot1:
   - item: Flint
     stackMin: 1

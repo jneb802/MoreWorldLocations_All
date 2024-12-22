@@ -1,18 +1,68 @@
+version: 2.0
 SwampLoot1:
-  - WitheredBone
-  - SurtlingCore
-  - AmberPearl
-  - Ruby
-  - ElderBark
-  - ArrowPoison
+  - item: WitheredBone
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: SurtlingCore
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: AmberPearl
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: Ruby
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: ElderBark
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+  - item: ArrowPoison
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
 SwampLoot2:
-  - WitheredBone
-  - SurtlingCore
-  - Chain
-  - TurnipSeeds
-  - Guck
-  - Root
+  - item: WitheredBone
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: SurtlingCore
+    stackMin: 3
+    stackMax: 3
+    weight: 1.0
+  - item: Chain
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: TurnipSeeds
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: Guck
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Root
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
 SwampLoot3:
-  - Chain
-  - IronScrap
-  - WitheredBone
+  - item: Chain
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: Guck
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: IronScrap
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: WitheredBone
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0

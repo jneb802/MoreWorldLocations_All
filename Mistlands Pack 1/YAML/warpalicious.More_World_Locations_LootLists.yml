@@ -1,12 +1,43 @@
+version: 2.0
 MistLoot1:
-  - WolfMeatSkewer
-  - ScaleHide
-  - Softtissue
-  - JuteBlue
-  - IronScrap
+  - item: WolfMeatSkewer
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: ScaleHide
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: Softtissue
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: JuteBlue
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: IronScrap
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
 MistLoot2:
-  - RoyalJelly
-  - Mandible
-  - Bilebag
-  - ScaleHide
-  - WolfMeatSkewer
+  - item: RoyalJelly
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+  - item: Mandible
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: Bilebag
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: ScaleHide
+    stackMin: 2
+    stackMax: 5
+    weight: 1.0
+  - item: WolfMeatSkewer
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
