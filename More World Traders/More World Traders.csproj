@@ -8,8 +8,8 @@
         <ProjectGuid>{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>More_World_Vendors</RootNamespace>
-        <AssemblyName>More_World_Vendors</AssemblyName>
+        <RootNamespace>More_World_Traders</RootNamespace>
+        <AssemblyName>More_World_Traders</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>10</LangVersion>
@@ -127,6 +127,7 @@
         <Compile Include="Src\Minimap_Patch.cs" />
         <Compile Include="Src\MoreWorldTraders.cs" />
         <Compile Include="Src\StatusEffects\BlacksmithStone_SE.cs" />
+        <Compile Include="Src\StatusEffects\TrainerSkillBook_SE.cs" />
         <Compile Include="Src\Utils\PrefabUtils.cs" />
         <Compile Include="Src\Utils\StatusEffectUtils.cs" />
         <Compile Include="Src\Utils\TranslationUtils.cs" />
