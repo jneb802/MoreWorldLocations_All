@@ -26,10 +26,9 @@ public class PrefabUtils
 
     public static void LoadIcons()
     {
-        anvilSprite = More_World_TradersPlugin.assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationIcons/Anvil.png");
+        anvilSprite = More_World_TradersPlugin.assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationsIcons/Anvil.png");
         tankardSprite = More_World_TradersPlugin.assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationsIcons/Tankard.png");
         coinSprite = More_World_TradersPlugin.assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationsIcons/Coin.png");
-        Debug.Log("Icons loaded");
     }
 
     public static void BuildLocationSpriteData()
@@ -69,8 +68,6 @@ public class PrefabUtils
             m_name = "MWL_PlainsCamp1",
             m_icon = coinSprite
         };
-        
-        Debug.Log("LocationSpriteData built");
     }
     
     public static void CreateCustomItems()

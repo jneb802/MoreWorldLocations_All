@@ -11,10 +11,8 @@ public class Minimap_Patch
     {
         public static void Postfix(Minimap __instance)
         {
-            Debug.Log("Starting Minimap add icons patch");
             if (__instance.GetLocationIcon(PrefabUtils.blackForestBlacksmith1Icon.m_name) == null)
             {
-                Debug.Log("Adding icon for blacksmith1");
                 __instance.m_locationIcons.Add(PrefabUtils.blackForestBlacksmith1Icon);
             }
             if (__instance.GetLocationIcon(PrefabUtils.blackForestBlacksmith2Icon.m_name) == null)
@@ -40,15 +38,15 @@ public class Minimap_Patch
         }
     }
     
-    [HarmonyPatch(typeof(Minimap), nameof(Minimap.GetLocationIcon))]
-    public static class Minimap_GetLocationIcon_Patch
-    {
-        public static void Postfix(Minimap __instance)
-        {
-            foreach (Minimap.LocationSpriteData locationIcon in __instance.m_locationIcons)
-            {
-                Debug.Log("LocationIcons contains icon with name: " + locationIcon.m_name);
-            }
-        }
-    }
+    // [HarmonyPatch(typeof(Minimap), nameof(Minimap.GetLocationIcon))]
+    // public static class Minimap_GetLocationIcon_Patch
+    // {
+    //     public static void Postfix(Minimap __instance)
+    //     {
+    //         foreach (Minimap.LocationSpriteData locationIcon in __instance.m_locationIcons)
+    //         {
+    //             Debug.Log("LocationIcons contains icon with name: " + locationIcon.m_name);
+    //         }
+    //     }
+    // }
 }
