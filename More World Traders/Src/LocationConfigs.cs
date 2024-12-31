@@ -52,10 +52,35 @@ public class LocationConfigs
         IconPlaced = true
     };
     
+    public static LocationConfig MWL_OceanTavern1 = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Ocean,
+        Quantity = More_World_TradersPlugin.MWL_OceanTavern1_QuantityConfig.Value,
+        Priotized = true,
+        ExteriorRadius = 50,
+        ClearArea = false,
+        RandomRotation = false,
+        Group = "MWL_Trader",
+        MinDistanceFromSimilar = 1024,
+        // SlopeRotation = true,
+        // MinTerrainDelta = 0f,
+        // MaxTerrainDelta = 5f,
+        // MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        // MaxDistance = LocationRings.Ring7.MaxDistance,
+        // InteriorRadius = 64,
+        // InForest = false,
+        // ForestTresholdMin = 0f,
+        // ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median,
+        Unique = true,
+        IconPlaced = true
+    };
+    
     public static LocationConfig MWL_PlainsCamp1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = More_World_TradersPlugin.MWL_PlainsTavern1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_PlainsCamp1_QuantityConfig.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,

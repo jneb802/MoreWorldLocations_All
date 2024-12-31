@@ -22,6 +22,7 @@ public class PrefabUtils
     public static Minimap.LocationSpriteData mountainsBlacksmith1Icon;
     public static Minimap.LocationSpriteData mistlandsBlacksmith1Icon;
     public static Minimap.LocationSpriteData plainsTavern1Icon;
+    public static Minimap.LocationSpriteData oceanTavern1Icon;
     public static Minimap.LocationSpriteData plainsCamp1Icon;
 
     public static void LoadIcons()
@@ -60,6 +61,12 @@ public class PrefabUtils
         plainsTavern1Icon = new Minimap.LocationSpriteData
         {
             m_name = "MWL_PlainsTavern1",
+            m_icon = tankardSprite
+        };
+        
+        oceanTavern1Icon = new Minimap.LocationSpriteData
+        {
+            m_name = "MWL_OceanTavern1",
             m_icon = tankardSprite
         };
 

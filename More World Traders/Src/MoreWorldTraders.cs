@@ -22,7 +22,7 @@ namespace More_World_Traders
     public class More_World_TradersPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Traders";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.0.8";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -53,6 +53,9 @@ namespace More_World_Traders
         
         public static AssetBundle assetBundle;
         public static string bundleName = "moreworldvendors";
+        
+        public static AssetBundle assetBundleAshlands;
+        public static string bundleNameAshlands = "moreworldvendorsashlands";
 
         public static void LoadAssetBundle()
         {
@@ -60,9 +63,20 @@ namespace More_World_Traders
                 bundleName,
                 Assembly.GetExecutingAssembly()
             );
+            
+            assetBundleAshlands = AssetUtils.LoadAssetBundleFromResources(
+                bundleNameAshlands,
+                Assembly.GetExecutingAssembly()
+            );
+            
             if (assetBundle == null)
             {
                 WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
+            }
+            
+            if (assetBundleAshlands == null)
+            {
+                WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleNameAshlands);
             }
         }
 
@@ -104,6 +118,9 @@ namespace More_World_Traders
             
             MWL_MistlandsBlacksmith1_QuantityConfig = config("6 - MWL_MistlandsCamp1", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");
+            
+            MWL_OceanTavern1_QuantityConfig = config("7 - MWL_OceanTavern1", "Spawn Quantity", 5,
+                "Amount of this location the game will attempt to place during world generation");
 
             
             moreWorldTradersYAMLManager.ParseTraderYaml("warpalicious.More_World_Traders_MoreWorldTraders.yml");
@@ -126,6 +143,7 @@ namespace More_World_Traders
         public static ConfigEntry<int> MWL_BlackForestBlacksmith2_QuantityConfig = null!;
         public static ConfigEntry<int> MWL_MountainsBlacksmith1_QuantityConfig = null!;
         public static ConfigEntry<int> MWL_MistlandsBlacksmith1_QuantityConfig = null!;
+        public static ConfigEntry<int> MWL_OceanTavern1_QuantityConfig = null!;
         
         
 

@@ -31,6 +31,10 @@ public class Minimap_Patch
             {
                 __instance.m_locationIcons.Add(PrefabUtils.plainsTavern1Icon);
             }
+            if (__instance.GetLocationIcon(PrefabUtils.oceanTavern1Icon.m_name) == null)
+            {
+                __instance.m_locationIcons.Add(PrefabUtils.oceanTavern1Icon);
+            }
             if (__instance.GetLocationIcon(PrefabUtils.plainsCamp1Icon.m_name) == null)
             {
                 __instance.m_locationIcons.Add(PrefabUtils.plainsCamp1Icon);

@@ -1,0 +1,62 @@
+[
+  {
+    "prefab": "Fish1",
+    "stack": 1,
+    "price": 5
+  },
+  {
+    "prefab": "Fish2",
+    "stack": 1,
+    "price": 5
+  },
+  {
+    "prefab": "Fish3",
+    "stack": 1,
+    "price": 30
+  },
+  {
+    "prefab": "Fish4",
+    "stack": 1,
+    "price": 100
+  },
+  {
+    "prefab": "Fish5",
+    "stack": 1,
+    "price": 10
+  },
+  {
+    "prefab": "Fish6",
+    "stack": 1,
+    "price": 30
+  },
+  {
+    "prefab": "Fish7",
+    "stack": 1,
+    "price": 40
+  },
+  {
+    "prefab": "Fish8",
+    "stack": 1,
+    "price": 30
+  },
+  {
+    "prefab": "Fish9",
+    "stack": 1,
+    "price": 50
+  },
+  {
+    "prefab": "Fish10",
+    "stack": 1,
+    "price": 30
+  },
+  {
+    "prefab": "Fish11",
+    "stack": 1,
+    "price": 100
+  },
+  {
+    "prefab": "Fish12",
+    "stack": 1,
+    "price": 50
+  }
+]

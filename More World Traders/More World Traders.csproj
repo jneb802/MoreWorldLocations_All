@@ -139,6 +139,7 @@
     <ItemGroup>
         <Content Include=".gitignore" />
         <Content Include="assets\DropAssetBundleInThisFolder.txt" />
+        <EmbeddedResource Include="assets\moreworldvendorsashlands" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.cfg" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_BlackForestBlacksmith1_Trader.buy.json" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_BlackForestBlacksmith1_Trader.sell.json" />
@@ -148,6 +149,8 @@
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_MistlandsBlacksmith1_Trader.sell.json" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_MountainsBlacksmith1_Trader.buy.json" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_MountainsBlacksmith1_Trader.sell.json" />
+        <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_OceanTavern1_Trader.buy.json" />
+        <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_OceanTavern1_Trader.sell.json" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_PlainsCamp1_Trader.buy.json" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_PlainsCamp1_Trader.sell.json" />
         <Content Include="YAML\TradersExtendedFiles\shudnal.TradersExtended.MWL_PlainsTavern1_Trader.buy.json" />
