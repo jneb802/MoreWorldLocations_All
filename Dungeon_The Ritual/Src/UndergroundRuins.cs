@@ -15,12 +15,12 @@ using ServerSync;
 using UnityEngine;
 using Paths = BepInEx.Paths;
 
-namespace Dungeon_The_Ritual
+namespace Underground_Ruins
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
-    public class Dungeon_The_RitualPlugin : BaseUnityPlugin
+    public class Underground_RuinsPlugin : BaseUnityPlugin
     {
-        internal const string ModName = "Dungeon_The_Ritual";
+        internal const string ModName = "Underground Ruins";
         internal const string ModVersion = "1.0.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
@@ -110,7 +110,7 @@ namespace Dungeon_The_Ritual
             dungeonBFDYamlManager.ParsePickableItemYaml("warpalicious.UndergroundRuins");
             
             TranslationUtils.AddLocalizations();
-            Creatures.CreateShamanBoss();
+            // Creatures.CreateShamanBoss();
             
             PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;

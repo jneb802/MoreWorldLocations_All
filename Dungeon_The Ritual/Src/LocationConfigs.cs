@@ -1,6 +1,6 @@
 using Jotunn.Configs;
 
-namespace Dungeon_The_Ritual;
+namespace Underground_Ruins;
 
 public class LocationConfigs
 {
@@ -31,7 +31,7 @@ public class LocationConfigs
     {
         Biome = Heightmap.Biome.BlackForest,
         BiomeArea = Heightmap.BiomeArea.Median,
-        Quantity = Dungeon_The_RitualPlugin.MWD_UndergroundRuins_Quantity_Config.Value,
+        Quantity = Underground_RuinsPlugin.MWD_UndergroundRuins_Quantity_Config.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,

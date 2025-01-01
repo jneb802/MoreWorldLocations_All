@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using Dungeon_The_Ritual;
+using Underground_Ruins;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(Dungeon_The_RitualPlugin.ModName)]
+[assembly: AssemblyTitle(Underground_RuinsPlugin.ModName)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(Dungeon_The_RitualPlugin.Author)]
-[assembly: AssemblyProduct(Dungeon_The_RitualPlugin.ModName)]
+[assembly: AssemblyCompany(Underground_RuinsPlugin.Author)]
+[assembly: AssemblyProduct(Underground_RuinsPlugin.ModName)]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using Dungeon_The_Ritual;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(Dungeon_The_RitualPlugin.ModVersion)]
-[assembly: AssemblyFileVersion(Dungeon_The_RitualPlugin.ModVersion)]
+[assembly: AssemblyVersion(Underground_RuinsPlugin.ModVersion)]
+[assembly: AssemblyFileVersion(Underground_RuinsPlugin.ModVersion)]

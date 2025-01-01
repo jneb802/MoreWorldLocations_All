@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Jotunn.Entities;
 
-namespace Dungeon_The_Ritual;
+namespace Underground_Ruins;
 
 public class TranslationUtils
 {

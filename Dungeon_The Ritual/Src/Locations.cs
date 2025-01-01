@@ -4,14 +4,14 @@ using Jotunn.Managers;
 using UnityEngine;
 using Common;
 
-namespace Dungeon_The_Ritual;
+namespace Underground_Ruins;
 
 public class Locations
 {
     public static void AddAllLocations()
     {
         LocationManager.AddLocation(
-            Dungeon_The_RitualPlugin.dungeonGameObject,
+            Underground_RuinsPlugin.dungeonGameObject,
             LocationConfigs.MWD_TheRitual_Config);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;

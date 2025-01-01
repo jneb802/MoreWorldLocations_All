@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.PlayerLoop;
 using Random = UnityEngine.Random;
 
-namespace Dungeon_The_Ritual;
+namespace Underground_Ruins;
 
 public class AttachPuzzle : MonoBehaviour
 {
@@ -37,16 +37,20 @@ public class AttachPuzzle : MonoBehaviour
         if (puzzleSwitchPrefab != null)
         {
             Debug.Log("Found switch in scene");
-            puzzleSwitch = puzzleSwitchPrefab.GetComponent<Switch>();
+            puzzleSwitch = puzzleSwitchPrefab.GetComponentInChildren<Switch>();
         } 
         
-        GenerateSolution();
-
         if (puzzleSwitch != null)
         {
             Debug.Log("Switch assigned");
             puzzleSwitch.m_onUse = OnSwitchUse;
         }
+        else
+        {
+            Debug.Log("Failed to assign switch");
+        }
+        
+        GenerateSolution();
     }
     
     public GameObject FindGameObjectInSector(string prefabName, Vector3 position)

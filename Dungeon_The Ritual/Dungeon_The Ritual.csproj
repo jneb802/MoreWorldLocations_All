@@ -8,8 +8,8 @@
         <ProjectGuid>{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>Dungeon_The_Ritual</RootNamespace>
-        <AssemblyName>Dungeon_The_Ritual</AssemblyName>
+        <RootNamespace>Underground_Ruins</RootNamespace>
+        <AssemblyName>Underground_Ruins</AssemblyName>
         <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>10</LangVersion>
@@ -136,7 +136,7 @@
         <Compile Include="Src\RoomManager.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
-        <Compile Include="Src\TheRitual.cs" />
+        <Compile Include="Src\UndergroundRuins.cs" />
         <Compile Include="Src\Utils\TranslationUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>

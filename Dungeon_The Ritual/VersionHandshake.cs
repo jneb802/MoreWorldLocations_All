@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using HarmonyLib;
+using Underground_Ruins;
 
 namespace Dungeon_The_Ritual
 {
@@ -14,15 +15,15 @@ namespace Dungeon_The_Ritual
         private static void Prefix(ZNetPeer peer, ref ZNet __instance)
         {
             // Register version check call
-            Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogDebug("Registering version RPC handler");
-            peer.m_rpc.Register($"{Dungeon_The_RitualPlugin.ModName}_VersionCheck",
+            Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogDebug("Registering version RPC handler");
+            peer.m_rpc.Register($"{Underground_RuinsPlugin.ModName}_VersionCheck",
                 new Action<ZRpc, ZPackage>(RpcHandlers.RPC_Dungeon_The_Ritual_Version));
 
             // Make calls to check versions
-            Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogDebug("Invoking version check");
+            Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogDebug("Invoking version check");
             ZPackage zpackage = new();
-            zpackage.Write(Dungeon_The_RitualPlugin.ModVersion);
-            peer.m_rpc.Invoke($"{Dungeon_The_RitualPlugin.ModName}_VersionCheck", zpackage);
+            zpackage.Write(Underground_RuinsPlugin.ModVersion);
+            peer.m_rpc.Invoke($"{Underground_RuinsPlugin.ModName}_VersionCheck", zpackage);
         }
     }
 
@@ -33,7 +34,7 @@ namespace Dungeon_The_Ritual
         {
             if (!__instance.IsServer() || RpcHandlers.ValidatedPeers.Contains(rpc)) return true;
             // Disconnect peer if they didn't send mod version at all
-            Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogWarning(
+            Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogWarning(
                 $"Peer ({rpc.m_socket.GetHostName()}) never sent version or couldn't due to previous disconnect, disconnecting");
             rpc.Invoke("Error", 3);
             return false; // Prevent calling underlying method
@@ -42,7 +43,7 @@ namespace Dungeon_The_Ritual
         private static void Postfix(ZNet __instance)
         {
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(),
-                $"{Dungeon_The_RitualPlugin.ModName}RequestAdminSync",
+                $"{Underground_RuinsPlugin.ModName}RequestAdminSync",
                 new ZPackage());
         }
     }
@@ -56,7 +57,7 @@ namespace Dungeon_The_Ritual
             {
                 __instance.m_connectionFailedError.fontSizeMax = 25;
                 __instance.m_connectionFailedError.fontSizeMin = 15;
-                __instance.m_connectionFailedError.text += "\n" + Dungeon_The_RitualPlugin.ConnectionError;
+                __instance.m_connectionFailedError.text += "\n" + Underground_RuinsPlugin.ConnectionError;
             }
         }
     }
@@ -68,7 +69,7 @@ namespace Dungeon_The_Ritual
         {
             if (!__instance.IsServer()) return;
             // Remove peer from validated list
-            Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogInfo(
+            Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogInfo(
                 $"Peer ({peer.m_rpc.m_socket.GetHostName()}) disconnected, removing from validated list");
             _ = RpcHandlers.ValidatedPeers.Remove(peer.m_rpc);
         }
@@ -82,16 +83,16 @@ namespace Dungeon_The_Ritual
         {
             string? version = pkg.ReadString();
 
-            Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogInfo("Version check, local: " +
-                                                                      Dungeon_The_RitualPlugin.ModVersion +
+            Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogInfo("Version check, local: " +
+                                                                      Underground_RuinsPlugin.ModVersion +
                                                                       ",  remote: " + version);
-            if (version != Dungeon_The_RitualPlugin.ModVersion)
+            if (version != Underground_RuinsPlugin.ModVersion)
             {
-                Dungeon_The_RitualPlugin.ConnectionError =
-                    $"{Dungeon_The_RitualPlugin.ModName} Installed: {Dungeon_The_RitualPlugin.ModVersion}\n Needed: {version}";
+                Underground_RuinsPlugin.ConnectionError =
+                    $"{Underground_RuinsPlugin.ModName} Installed: {Underground_RuinsPlugin.ModVersion}\n Needed: {version}";
                 if (!ZNet.instance.IsServer()) return;
                 // Different versions - force disconnect client from server
-                Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogWarning(
+                Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogWarning(
                     $"Peer ({rpc.m_socket.GetHostName()}) has incompatible version, disconnecting...");
                 rpc.Invoke("Error", 3);
             }
@@ -100,13 +101,13 @@ namespace Dungeon_The_Ritual
                 if (!ZNet.instance.IsServer())
                 {
                     // Enable mod on client if versions match
-                    Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogInfo(
+                    Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogInfo(
                         "Received same version from server!");
                 }
                 else
                 {
                     // Add client to validated list
-                    Dungeon_The_RitualPlugin.Dungeon_The_RitualLogger.LogInfo(
+                    Underground_RuinsPlugin.Dungeon_The_RitualLogger.LogInfo(
                         $"Adding peer ({rpc.m_socket.GetHostName()}) to validated list");
                     ValidatedPeers.Add(rpc);
                 }
