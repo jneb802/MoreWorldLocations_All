@@ -20,7 +20,7 @@ namespace Underground_Ruins
     [BepInPlugin(ModGUID, ModName, ModVersion)]
     public class Underground_RuinsPlugin : BaseUnityPlugin
     {
-        internal const string ModName = "Underground Ruins";
+        internal const string ModName = "Underground_Ruins";
         internal const string ModVersion = "1.0.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
@@ -95,19 +95,19 @@ namespace Underground_Ruins
                 "The name of the creature list to use from YAML file");
             MWD_UndergroundRuins_LootYaml_Config = config("1 - Underground Ruins", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
-            MWD_UndergroundRuins_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "MeadowsLoot2",
+            MWD_UndergroundRuins_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "UndergroundRuinsLoot1",
                 "The name of the loot list to use from YAML file");
             MWD_UndergroundRuins_PickableItemYaml_Config = config("1 - Underground Ruins", "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
-            MWD_UndergroundRuins_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "MeadowsLoot2",
+            MWD_UndergroundRuins_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "UndergroundRuinsPickables1",
                 "The name of the loot list to use from YAML file");
             
             dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior");
             RoomManager.RegisterTheme(dungeonGameObject, "Underground Ruins");
             
-            dungeonBFDYamlManager.ParseContainerYaml("warpalicious.UndergroundRuins");
-            dungeonBFDYamlManager.ParseCreatureYaml("warpalicious.UndergroundRuins");
-            dungeonBFDYamlManager.ParsePickableItemYaml("warpalicious.UndergroundRuins");
+            dungeonBFDYamlManager.ParseDefaultYamls();
+            dungeonBFDYamlManager.ParseCustomYamls();
+            dungeonBFDYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
             
             TranslationUtils.AddLocalizations();
             // Creatures.CreateShamanBoss();

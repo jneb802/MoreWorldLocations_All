@@ -1,0 +1,10 @@
+UndergroundRuinsPickables1:
+  - item: Coins
+    stackMin: 5
+    stackMax: 20
+  - item: AmberPearl
+    stackMin: 1
+    stackMax: 2
+  - item: Ruby
+    stackMin: 1
+    stackMax: 3

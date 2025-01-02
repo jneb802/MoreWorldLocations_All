@@ -58,7 +58,9 @@ public class RoomManager
                 Underground_RuinsPlugin.dungeonBFDYamlManager.GetCreatureYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureYaml_Config.Value),
                 Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureList_Config.Value,
                 Underground_RuinsPlugin.dungeonBFDYamlManager.GetLootYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_LootYaml_Config.Value),
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemYaml_Config.Value));
+                Underground_RuinsPlugin.MWD_UndergroundRuins_LootList_Config.Value,
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemYaml_Config.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemList_Config.Value);
         }
         
         foreach (var room in AllLimitRooms)
@@ -70,7 +72,9 @@ public class RoomManager
                 Underground_RuinsPlugin.dungeonBFDYamlManager.GetCreatureYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureYaml_Config.Value),
                 Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureList_Config.Value,
                 Underground_RuinsPlugin.dungeonBFDYamlManager.GetLootYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_LootYaml_Config.Value),
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemYaml_Config.Value));
+                Underground_RuinsPlugin.MWD_UndergroundRuins_LootList_Config.Value,
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemYaml_Config.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemList_Config.Value);
         }
         
         DungeonManager.OnVanillaRoomsAvailable -= AddAllRooms;
@@ -89,14 +93,17 @@ public class RoomManager
         
     }
     
-    public static void AddRoom(AssetBundle assetBundle, string prefabName, RoomConfig roomConfig, string creatureYAMLContent, string creatureListName,  string lootYAMLContent, string pickableItemYAMLContent)
+    public static void AddRoom(AssetBundle assetBundle, string prefabName, RoomConfig roomConfig, string creatureYAMLContent, string creatureListName,  string lootYAMLContent, string lootListName, string pickableItemYAMLContent, string pickableListName)
     {
         GameObject roomGameObject = assetBundle.LoadAsset<GameObject>(prefabName);
         GameObject roomContainer = ZoneManager.Instance.CreateLocationContainer(roomGameObject);
+        
         AddTentaRoot(roomContainer);
         
-        LootManager_v2.SetupContainers(roomContainer,lootYAMLContent);
-        LootManager_v2.SetupPickableItems(roomContainer,pickableItemYAMLContent);
+        List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+        List<Container> locationChestContainers = LootManager.GetLocationsContainers(roomContainer);
+        LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        LootManager_v2.SetupPickableItems(roomContainer,pickableItemYAMLContent,pickableListName);
         CreatureManager.SetupCreatures(creatureListName,roomContainer,creatureYAMLContent);
         
         CustomRoom customRoom = new CustomRoom(roomContainer, fixReference: true, roomConfig);
@@ -104,7 +111,7 @@ public class RoomManager
         DungeonManager.Instance.AddCustomRoom(customRoom);
     }
     
-    public static void AddLimitRooms(AssetBundle assetBundle, string prefabName, RoomConfig roomConfig, string creatureYAMLContent, string creatureListName,  string lootYAMLContent, string pickableItemYAMLContent)
+    public static void AddLimitRooms(AssetBundle assetBundle, string prefabName, RoomConfig roomConfig, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, string pickableItemYAMLContent, string pickableListName)
     {
         GameObject roomGameObject = assetBundle.LoadAsset<GameObject>(prefabName);
         GameObject roomContainer = ZoneManager.Instance.CreateLocationContainer(roomGameObject);
@@ -114,8 +121,10 @@ public class RoomManager
         
         AddTentaRoot(roomContainer);
         
-        LootManager_v2.SetupContainers(roomContainer,lootYAMLContent);
-        LootManager_v2.SetupPickableItems(roomContainer,pickableItemYAMLContent);
+        List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+        List<Container> locationChestContainers = LootManager.GetLocationsContainers(roomContainer);
+        LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        LootManager_v2.SetupPickableItems(roomContainer,pickableItemYAMLContent,pickableListName);
         CreatureManager.SetupCreatures(creatureListName,roomContainer,creatureYAMLContent);
         
         CustomRoom customRoom = new CustomRoom(roomContainer, fixReference: true, roomConfig);

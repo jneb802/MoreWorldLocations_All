@@ -14,7 +14,6 @@ public class CustomPrefabs
 
     var prefabs = new List<string>()
     {
-        // Existing prefabs
         "BFD_CastleKit_groundtorch_blue.prefab",
         // "BFD_chest_loot.prefab",
         // "BFD_ModularEnd1_Pickable1.prefab",
@@ -31,8 +30,8 @@ public class CustomPrefabs
         "BFD_chest_spawner1.prefab",
         "BFD_chest_spawner2.prefab",
         
-        "BFD_Modular5_chestLoot1.prefab",
-        "BFD_Modular5_chestLoot2.prefab",
+        "BFD_Modular5_chest_loot1.prefab",
+        "BFD_Modular5_chest_loot2.prefab",
         "BFD_Modular5_Spawner1.prefab",
         "BFD_Modular5_Spawner2.prefab",
         "BFD_Modular5_Spawner3.prefab",
@@ -45,9 +44,9 @@ public class CustomPrefabs
         "BFD_Modular7_Spawner1.prefab",
         "BFD_Modular7_Spawner2.prefab",
 
-        "BFD_Modular8_Puzzle_chestLoot1.prefab",
-        "BFD_Modular8_Puzzle_chestLoot2.prefab",
-        "BFD_Modular8_Puzzle_chestLoot3.prefab",
+        "BFD_Modular8_Puzzle_chest_loot1.prefab",
+        "BFD_Modular8_Puzzle_chest_loot2.prefab",
+        "BFD_Modular8_Puzzle_chest_loot3.prefab",
         "BFD_Modular8_Puzzle_Pickable1.prefab",
         "BFD_Modular8_Puzzle_Pickable2.prefab",
         "BFD_Modular8_Puzzle_Pickable3.prefab",
@@ -69,7 +68,7 @@ public class CustomPrefabs
 
         "BFD_Modular13_Spawner1.prefab",
 
-        "BFD_Modular14_chestLoot1.prefab",
+        "BFD_Modular14_chest_loot1.prefab",
         "BFD_Modular14_Pickable2.prefab",
         "BFD_Modular14_Pickable3.prefab",
         "BFD_Modular14_Spawner1.prefab",
@@ -80,11 +79,11 @@ public class CustomPrefabs
         "BFD_ModularEnd1_Pickable2.prefab",
         "BFD_ModularEnd1_Pickable3.prefab",
 
-        "BFD_ModularEnd4_chestLoot1.prefab",
-        "BFD_ModularEnd6_chestLoot1.prefab",
-        "BFD_ModularEnd7_chestLoot1.prefab",
+        "BFD_ModularEnd4_chest_loot1.prefab",
+        "BFD_ModularEnd6_chest_loot1.prefab",
+        "BFD_ModularEnd7_chest_loot1.prefab",
 
-        "BFD_Stairwell5_chestLoot1.prefab"
+        "BFD_Stairwell5_chest_loot1.prefab"
     };
     
     for (int i = 0; i <= 7; i++)

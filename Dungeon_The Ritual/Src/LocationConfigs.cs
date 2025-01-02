@@ -40,7 +40,7 @@ public class LocationConfigs
         MinDistanceFromSimilar = 512,
         MaxTerrainDelta = 2f,
         MinAltitude = 10,
-        MinDistance = LocationRings.Ring1.MinDistance,
-        MaxDistance = LocationRings.Ring3.MaxDistance,
+        MinDistance = LocationRings.Ring3.MinDistance,
+        MaxDistance = LocationRings.Ring6.MaxDistance,
     };
 }

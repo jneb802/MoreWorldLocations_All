@@ -1,14 +1,30 @@
-MWL_Loot_YAML_version: 2.0
-MeadowsLoot1:
-  - item: Flint
+version: 2.0
+UndergroundRuinsLoot1:
+  - item: Amber
     stackMin: 1
     stackMax: 5
     weight: 1.5
-  - item: Feathers
-    stackMin: 2
-    stackMax: 10
-    weight: 2.0
-  - item: Raspberry
+  - item: Ruby
     stackMin: 1
     stackMax: 3
     weight: 1.0
+  - item: Coins
+    stackMin: 10
+    stackMax: 30
+    weight: 1.5
+  - item: ArrowFlint
+    stackMin: 5
+    stackMax: 10
+    weight: 1.5
+  - item: BoneFragments
+    stackMin: 1
+    stackMax: 5
+    weight: 2.0
+  - item: AmberPearl
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: TinOre
+    stackMin: 1
+    stackMax: 2
+    weight: 0.5

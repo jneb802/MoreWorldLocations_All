@@ -163,6 +163,7 @@
         <Content Include="UpdateManifest.ps1"/>
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_PickableItemLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_ContainerLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_CreatureLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_PickableItemLists.yml" />
