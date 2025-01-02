@@ -23,10 +23,10 @@ public static class LootManager_v2
       }
    }
    
-   public static void SetupPickableItems(GameObject gameObject, string yamlContent)
+   public static void SetupPickableItems(GameObject gameObject, string yamlContent, string listName)
    {
       List<PickableItem> pickableItems = GetPickableItems(gameObject);
-      List<PickableItem.RandomItem> randomItemsList = ParsePickableItemsYAML(yamlContent);
+      List<PickableItem.RandomItem> randomItemsList = ParsePickableYaml(listName, yamlContent);
       PickableItem.RandomItem[] randomItemsArray = randomItemsList.ToArray();
       foreach (PickableItem pickableItem in pickableItems)
       {
@@ -66,39 +66,52 @@ public static class LootManager_v2
       return dropDataList;
    }
 
-   public static List<PickableItem.RandomItem> ParsePickableItemsYAML(string yamlContent)
-   {
-      List<PickableItem.RandomItem> randomItemsList = new List<PickableItem.RandomItem>();
-      
-      var deserializer = new DeserializerBuilder().Build();
-      var pickableItemsData =
-         deserializer.Deserialize<Dictionary<string, List<Dictionary<string, object>>>>(yamlContent);
-      
-      foreach (var itemData in pickableItemsData["PickableItems"])
-      {
-         string itemName = itemData["item"].ToString();
-         GameObject itemPrefabObject = PrefabManager.Cache.GetPrefab<GameObject>(itemName);
-
-         if (itemPrefabObject != null)
-         {
-            // Get the ItemDrop component for m_itemPrefab
-            ItemDrop itemDrop = itemPrefabObject.GetComponent<ItemDrop>();
-
-            if (itemDrop != null)
+   public static List<PickableItem.RandomItem> ParsePickableYaml(string pickablelootListName, string yamlContent)
+    {
+        List<PickableItem.RandomItem> randomItemsList = new List<PickableItem.RandomItem>();
+        
+        var deserializer = new DeserializerBuilder().Build();
+        var lootData = deserializer.Deserialize<Dictionary<string, List<Dictionary<string, object>>>>(yamlContent);
+        
+        if (lootData.ContainsKey(pickablelootListName))
+        {
+            WarpLogger.Logger.LogDebug("Found loot list with name " + pickablelootListName + " in pickable list Yaml file");
+            
+            foreach (var itemData in lootData[pickablelootListName])
             {
-               var randomItem = new PickableItem.RandomItem
-               {
-                  m_itemPrefab = itemDrop,
-                  m_stackMin = int.Parse(itemData["stackMin"].ToString()),
-                  m_stackMax = int.Parse(itemData["stackMax"].ToString())
-               };
-               randomItemsList.Add(randomItem);
+                string itemName = itemData["item"].ToString();
+                GameObject itemPrefab = PrefabManager.Cache.GetPrefab<GameObject>(itemName);
+
+                if (itemPrefab != null)
+                {
+                    
+                    ItemDrop itemDrop = itemPrefab.GetComponent<ItemDrop>();
+
+                        if (itemDrop != null)
+                        {
+                            var randomItem = new PickableItem.RandomItem
+                            {
+                                m_itemPrefab = itemDrop,
+                                m_stackMin = int.Parse(itemData["stackMin"].ToString()),
+                                m_stackMax = int.Parse(itemData["stackMax"].ToString())
+                            };
+                            randomItemsList.Add(randomItem);
+                            WarpLogger.Logger.LogDebug("Added item with name: " + itemName + " to pickable list " + pickablelootListName + " with stackMin: " + randomItem.m_stackMin + ", stackMax: " + randomItem.m_stackMax);
+                        }   
+                }
+                else
+                {
+                    WarpLogger.Logger.LogWarning("Prefab for item " + itemName + " not found.");
+                }
             }
-         }
-         
-      }
-      return randomItemsList;
-   }
+        }
+        else
+        {
+            WarpLogger.Logger.LogError("Failed to find loot list with name: " + pickablelootListName + " in loot list Yaml file");
+        }
+
+        return randomItemsList;
+    }
 
    public static List<Container> GetContainers(GameObject room)
    {
