@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using Random = UnityEngine.Random;
+using System.Globalization;
 
 namespace Common;
 
@@ -115,14 +116,39 @@ public class LootManager: MonoBehaviour
 
                 if (itemPrefab != null)
                 {
+                    int stackMinValue;
+                    if (!int.TryParse(itemData["stackMin"].ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out stackMinValue))
+                    {
+                        stackMinValue = 2;
+                        WarpLogger.Logger.LogWarning("Failed to parse stackMin for item " + itemName + ". Defaulting to " + stackMinValue);
+                        
+                    }
+                    
+                    int stackMaxValue;
+                    if (!int.TryParse(itemData["stackMax"].ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out stackMaxValue))
+                    {
+                        stackMaxValue = 3;
+                        WarpLogger.Logger.LogWarning("Failed to parse stackMax for item " + itemName + ". Defaulting to " + stackMaxValue);
+                        
+                    }
+                    
+                    float weightValue;
+                    if (!float.TryParse(itemData["weight"].ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out weightValue))
+                    {
+                        weightValue = 1.0f;
+                        WarpLogger.Logger.LogWarning("Failed to parse weight for item " + itemName + ". Defaulting to " + weightValue);
+                        
+                    }
+                    
                     var dropData = new DropTable.DropData
                     {
                         m_item = itemPrefab,
-                        m_stackMin = int.Parse(itemData["stackMin"].ToString()),
-                        m_stackMax = int.Parse(itemData["stackMax"].ToString()),
-                        m_weight = float.Parse(itemData["weight"].ToString()),
+                        m_stackMin = stackMinValue,
+                        m_stackMax = stackMaxValue,
+                        m_weight = weightValue,
                         m_dontScale = false
                     };
+                    
                     dropDataList.Add(dropData);
                     WarpLogger.Logger.LogDebug("Added item with name: " + itemName + " to loot list " + lootListName + " with stackMin: " + dropData.m_stackMin + ", stackMax: " + dropData.m_stackMax + ", weight: " + dropData.m_weight);
                 }
