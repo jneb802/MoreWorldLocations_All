@@ -185,5 +185,30 @@ public static class CreatureManager
         return locationCreatureList;
     }
     
+    public static List<string> CreateCreatureList(string creatureListName, string yamlContent)
+    {
+        List<string> locationCreatureList = new List<string>();
+        
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(yamlContent));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        
+        if (mapping.Children.ContainsKey(new YamlScalarNode(creatureListName)))
+        {
+            var creatureNames = mapping.Children[new YamlScalarNode(creatureListName)] as YamlSequenceNode;
+            
+            foreach (var creatureNode in creatureNames.Children)
+            {
+                if (creatureNode is YamlScalarNode creature)
+                {
+                    locationCreatureList.Add(creature.Value);
+                }
+            }
+        }
+        
+        return locationCreatureList;
+    }
+
+    
     
 }
