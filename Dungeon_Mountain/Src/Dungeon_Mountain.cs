@@ -10,6 +10,10 @@ using JetBrains.Annotations;
 using LocalizationManager;
 using ServerSync;
 using UnityEngine;
+using Common;
+using Jotunn.Managers;
+using Jotunn.Utils;
+using Paths = BepInEx.Paths;
 
 namespace Dungeon_Mountain
 {
@@ -42,6 +46,24 @@ namespace Dungeon_Mountain
             On = 1,
             Off = 0
         }
+        
+        public static YAMLManager dungeonMountainYamlManager = new YAMLManager();
+        
+        public static AssetBundle assetBundle;
+        public static string bundleName = "mountaindungeon";
+        public static GameObject dungeonGameObject;
+        
+        public static void LoadAssetBundle()
+        {
+            assetBundle = AssetUtils.LoadAssetBundleFromResources(
+                bundleName,
+                Assembly.GetExecutingAssembly()
+            );
+            if (assetBundle == null)
+            {
+                WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
+            }
+        }
 
         public void Awake()
         {
@@ -56,6 +78,36 @@ namespace Dungeon_Mountain
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
+            
+            RoomExtras.ApplyPatches(_harmony);
+            
+            LoadAssetBundle();
+            
+            MWD_MountainDungeon_Quantity_Config = config("1 - Underground Ruins", "Spawn Quantity", 30,
+                "Amount of attempts world generation will try to place dungeon exterior during world generation");
+            MWD_MountainDungeon_CreatureYaml_Config = config("1 - Underground Ruins", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will spawn default creatures. When On, dungeon will select creatures from list in the custom YAML file in BepinEx config folder");
+            MWD_MountainDungeon_CreatureList_Config = config("1 - Underground Ruins", "Name of Creature List", "MountainDungeonCreatures1",
+                "The name of the creature list to use from YAML file");
+            MWD_MountainDungeon_LootYaml_Config = config("1 - Underground Ruins", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
+            MWD_MountainDungeon_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "MountainDungeonLoot1",
+                "The name of the loot list to use from YAML file");
+            MWD_MountainDungeon_PickableItemYaml_Config = config("1 - Underground Ruins", "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off,
+                "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
+            MWD_MountainDungeon_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "MountainDungeonPickables1",
+                "The name of the loot list to use from YAML file");
+            
+            dungeonGameObject = assetBundle.LoadAsset<GameObject>("MDD_Exterior");
+            RoomManager.RegisterTheme(dungeonGameObject, "Mountain Dvergr Dungeon");
+            
+            dungeonMountainYamlManager.ParseDefaultYamls();
+            dungeonMountainYamlManager.ParseCustomYamls();
+            dungeonMountainYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
+            
+            PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
+            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
+            DungeonManager.OnVanillaRoomsAvailable += RoomManager.AddAllRooms;
 
             if (saveOnSet)
             {
@@ -63,6 +115,14 @@ namespace Dungeon_Mountain
                 Config.Save();
             }
         }
+        
+        public static ConfigEntry<int> MWD_MountainDungeon_Quantity_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_MountainDungeon_CreatureYaml_Config = null!;
+        public static ConfigEntry<string> MWD_MountainDungeon_CreatureList_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_MountainDungeon_LootYaml_Config = null!;
+        public static ConfigEntry<string> MWD_MountainDungeon_LootList_Config = null!;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_MountainDungeon_PickableItemYaml_Config = null!;
+        public static ConfigEntry<string> MWD_MountainDungeon_PickableItemList_Config = null!;
 
         private void OnDestroy()
         {

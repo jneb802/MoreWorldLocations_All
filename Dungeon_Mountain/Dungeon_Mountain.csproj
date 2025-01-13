@@ -122,7 +122,12 @@
     <ItemGroup>
         <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Src\CustomPrefabs.cs" />
         <Compile Include="Src\Dungeon_Mountain.cs" />
+        <Compile Include="Src\LocationConfigs.cs" />
+        <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\RoomExtras.cs" />
+        <Compile Include="Src\RoomManager.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -131,6 +136,7 @@
     <ItemGroup>
         <Content Include=".gitignore"/>
         <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
+        <EmbeddedResource Include="assets\mountaindungeon" />
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
@@ -145,6 +151,9 @@
         <Content Include="Thunderstore\manifest.json"/>
         <EmbeddedResource Include="translations\English.yml"/>
         <Content Include="UpdateManifest.ps1"/>
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_PickableItemLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
@@ -257,5 +266,6 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
+    <Import Project="..\Common\Common.projitems" Label="Shared" />
 
 </Project>
