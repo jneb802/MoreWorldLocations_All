@@ -69,7 +69,7 @@ public class BlacksmithStone_SE : StatusEffect
 
     public bool isQualityCompatible(ItemDrop.ItemData item)
     {
-        if (item.m_quality < stoneTier + 4)
+        if (item.m_quality == stoneTier + 3)
         {
             return true;
         }
