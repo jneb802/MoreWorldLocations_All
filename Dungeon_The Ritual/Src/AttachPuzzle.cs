@@ -21,7 +21,7 @@ public class AttachPuzzle : MonoBehaviour
 
     public void Initialize()
     {
-        Debug.Log("AttachPuzzle called Initialize");
+        // Debug.Log("AttachPuzzle called Initialize");
 
         GetItemStands();
         GetPickables();
@@ -29,25 +29,25 @@ public class AttachPuzzle : MonoBehaviour
         GameObject targetDoorPrefab = FindGameObjectInSector("PuzzleSecretDoor",this.gameObject.transform.position);
         if (targetDoorPrefab != null)
         {
-            Debug.Log("Found door in scene");
+            // Debug.Log("Found door in scene");
             targetDoor = targetDoorPrefab.GetComponent<Door>();
         }
         
         GameObject puzzleSwitchPrefab = FindGameObjectInSector("PuzzleLever",this.gameObject.transform.position);
         if (puzzleSwitchPrefab != null)
         {
-            Debug.Log("Found switch in scene");
+            // Debug.Log("Found switch in scene");
             puzzleSwitch = puzzleSwitchPrefab.GetComponentInChildren<Switch>();
         } 
         
         if (puzzleSwitch != null)
         {
-            Debug.Log("Switch assigned");
+            // Debug.Log("Switch assigned");
             puzzleSwitch.m_onUse = OnSwitchUse;
         }
         else
         {
-            Debug.Log("Failed to assign switch");
+            // Debug.Log("Failed to assign switch");
         }
         
         GenerateSolution();
@@ -80,32 +80,32 @@ public class AttachPuzzle : MonoBehaviour
                 
                     if (zdoPrefabHash == prefabHash)
                     {
-                        Debug.Log("Match found for prefab hash: " + prefabHash);
+                        // Debug.Log("Match found for prefab hash: " + prefabHash);
                     
                         GameObject instance = ZNetScene.instance.FindInstance(zdo)?.gameObject;
                         if (instance != null)
                         {
-                            Debug.Log("Found instance of GameObject with name "+ prefabName + " in sector");
+                            // Debug.Log("Found instance of GameObject with name "+ prefabName + " in sector");
                             return instance;
                         }
                         else
                         {
-                            Debug.Log("No active GameObject instance found for matching ZDO");
+                            // Debug.Log("No active GameObject instance found for matching ZDO");
                         }
                     }
                 }
             }
             else
             {
-                Debug.Log("Sector list is null, no ZDOs to check");
+                // Debug.Log("Sector list is null, no ZDOs to check");
             }
         }
         else
         {
-            Debug.Log("Sector index out of range: " + sectorIndex);
+            // Debug.Log("Sector index out of range: " + sectorIndex);
         }
     
-        Debug.Log("No matching GameObject found in sector");
+        // Debug.Log("No matching GameObject found in sector");
         return null;
     }
     
@@ -119,11 +119,11 @@ public class AttachPuzzle : MonoBehaviour
 
             if (puzzleStandPrefab == null)
             {
-                Debug.Log("Cant not find puzzle stand with name " + prefabName + " in scene");
+                // Debug.Log("Cant not find puzzle stand with name " + prefabName + " in scene");
                 continue;
             }
             
-            Debug.Log("Found puzzle stand with name " + prefabName + " in scene"); 
+            // Debug.Log("Found puzzle stand with name " + prefabName + " in scene"); 
             
             
             PuzzleStand puzzleStand = new PuzzleStand()
@@ -208,7 +208,7 @@ public class AttachPuzzle : MonoBehaviour
                 }
             }
         
-            Debug.Log("Solution for puzzle generated. Answer is: " + string.Join(",", puzzleSolution));
+            // Debug.Log("Solution for puzzle generated. Answer is: " + string.Join(",", puzzleSolution));
         }
     }
 
