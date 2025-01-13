@@ -21,7 +21,7 @@ namespace Underground_Ruins
     public class Underground_RuinsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "Underground_Ruins";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.0.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -103,18 +103,22 @@ namespace Underground_Ruins
                 "The name of the loot list to use from YAML file");
             
             dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior");
-            RoomManager.RegisterTheme(dungeonGameObject, "Underground Ruins");
+            Rooms.RegisterTheme(dungeonGameObject, "Underground Ruins");
             
             dungeonBFDYamlManager.ParseDefaultYamls();
             dungeonBFDYamlManager.ParseCustomYamls();
             dungeonBFDYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
+
+            dungeonBFDYamlManager.BuildCreatureList(MWD_UndergroundRuins_CreatureYaml_Config.Value, MWD_UndergroundRuins_CreatureList_Config.Value);
+            dungeonBFDYamlManager.BuildLootList(MWD_UndergroundRuins_LootYaml_Config.Value, MWD_UndergroundRuins_LootList_Config.Value);
+            dungeonBFDYamlManager.BuildPickableList(MWD_UndergroundRuins_PickableItemYaml_Config.Value, MWD_UndergroundRuins_PickableItemList_Config.Value);
             
             TranslationUtils.AddLocalizations();
             // Creatures.CreateShamanBoss();
             
             PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
-            DungeonManager.OnVanillaRoomsAvailable += RoomManager.AddAllRooms;
+            DungeonManager.OnVanillaRoomsAvailable += Rooms.AddAllRooms;
 
             if (saveOnSet)
             {

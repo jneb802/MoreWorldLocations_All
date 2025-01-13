@@ -133,7 +133,7 @@
         <Compile Include="Src\CustomPrefabs.cs" />
         <Compile Include="Src\Patches\DungeonGenerator_Patch.cs" />
         <Compile Include="Src\RoomExtras.cs" />
-        <Compile Include="Src\RoomManager.cs" />
+        <Compile Include="Src\Rooms.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\UndergroundRuins.cs" />
@@ -164,9 +164,6 @@
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
         <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_PickableItemLists.yml" />
-        <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_ContainerLists.yml" />
-        <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_CreatureLists.yml" />
-        <EmbeddedResource Include="YAML\warpalicious.UndergroundRuins_PickableItemLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>

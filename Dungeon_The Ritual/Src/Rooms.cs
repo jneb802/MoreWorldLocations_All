@@ -10,7 +10,7 @@ using LootManager = Common.LootManager;
 
 namespace Underground_Ruins;
 
-public class RoomManager
+public class Rooms
 {
     public static Dictionary<string, RoomConfig> AllLimitRooms = new Dictionary<string, RoomConfig>
     {

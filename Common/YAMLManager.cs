@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
+using Jotunn.Managers;
 using Jotunn.Utils;
+using UnityEngine;
 using YamlDotNet.RepresentationModel;
 using Paths = BepInEx.Paths;
 
@@ -13,12 +15,15 @@ public class YAMLManager
     
     public string defaultCreatureYamlContent;
     public string customCreatureYamlContent;
+    public List<string> creatureList;
     
     public string defaultlootYamlContent;
     public string customlootYamlContent;
+    public List<DropTable.DropData> lootList;
     
     public string defaultPickableItemContent;
     public string customPickableItemContent;
+    public List<PickableItem.RandomItem> pickableList;
     
     public string defaultTraderYamlContent;
     public string customTraderYamlContent;
@@ -133,5 +138,43 @@ public class YAMLManager
         return defaultPickableItemContent;
         
     }
+
+    public void BuildCreatureList(ConfigurationManager.Toggle useCustomCreatureYAML, string creatureListName)
+    {
+        // Debug.Log("Creature list built");
+        if (useCustomCreatureYAML == ConfigurationManager.Toggle.On)
+        {
+            creatureList = Common.CreatureManager.CreateCreatureList(creatureListName, customCreatureYamlContent);
+        }
+        else
+        {
+           creatureList = Common.CreatureManager.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
+        }
+    }
+
+    public void BuildLootList(ConfigurationManager.Toggle useCustomLootYAML, string lootListName)
+    {
+        // Debug.Log("Loot list built");
+        if (useCustomLootYAML == ConfigurationManager.Toggle.On)
+        {
+            lootList = Common.LootManager.ParseContainerYaml_v2(lootListName,customlootYamlContent);
+        }
+        else
+        {
+            lootList = Common.LootManager.ParseContainerYaml_v2(lootListName,defaultlootYamlContent);
+        }
+    }
     
+    public void BuildPickableList(ConfigurationManager.Toggle useCustomPickableYAML, string pickableListName)
+    {
+        // Debug.Log("Pickable list built");
+        if (useCustomPickableYAML == ConfigurationManager.Toggle.On)
+        {
+            pickableList = Common.LootManager_v2.ParsePickableYaml(pickableListName,customPickableItemContent);
+        }
+        else
+        {
+            pickableList = Common.LootManager_v2.ParsePickableYaml(pickableListName,defaultPickableItemContent);
+        }
+    }
 }
