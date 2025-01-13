@@ -1,4 +1,5 @@
-UndergroundRuinsContainers1:
+version: 2.0
+MountainDungeonLoot1:
   - item: Amber
     stackMin: 1
     stackMax: 5

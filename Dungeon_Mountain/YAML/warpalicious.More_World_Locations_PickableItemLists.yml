@@ -1,4 +1,4 @@
-PickableItems:
+MountainDungeonPickables1:
   - item: Coins
     stackMin: 5
     stackMax: 20
