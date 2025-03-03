@@ -236,6 +236,7 @@ public class LootManager: MonoBehaviour
     public static void SetupChestLoot(List<Container> containerList, List<DropTable.DropData> lootList)
     {
         DropTable dropTable = new DropTable();
+        dropTable.m_dropMin = 2;
         dropTable.m_dropMax = 3;
         dropTable.m_drops = lootList;
         
