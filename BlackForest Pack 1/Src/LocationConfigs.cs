@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsArena2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin. MWL_RuinsArena2_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsArena2_Quantity_Config.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
