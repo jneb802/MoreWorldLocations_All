@@ -21,7 +21,7 @@ namespace Meadows_Pack_1
     public class Meadows_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Meadows_Pack_1";
-        internal const string ModVersion = "1.1.2";
+        internal const string ModVersion = "1.1.3";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -61,8 +61,30 @@ namespace Meadows_Pack_1
             SetupWatcher();
 
             LoadAssetBundle();
+
+            MWL_Ruins1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_Ruins1", 5, "MeadowsCreatures1", "MeadowsLoot1");
+            MWL_Ruins2_Configuration =
+                new LocationConfiguration(this.Config, "MWL_Ruins2", 10, "MeadowsCreatures1", "MeadowsLoot2");
+            MWL_Ruins3_Configuration =
+                new LocationConfiguration(this.Config, "MWL_Ruins3", 25, "MeadowsCreatures1", "MeadowsLoot1");
+            MWL_Ruins6_Configuration =
+                new LocationConfiguration(this.Config, "MWL_Ruins6", 5, "MeadowsCreatures2", "MeadowsLoot3");
+            MWL_Ruins7_Configuration =
+                new LocationConfiguration(this.Config, "MWL_Ruins7", 2, "MeadowsCreatures2", "MeadowsLoot3");
+            MWL_Ruins8_Configuration =
+                new LocationConfiguration(this.Config, "MWL_Ruins8", 5, "MeadowsCreatures2", "MeadowsLoot1");
+            MWL_RuinsArena1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_RuinsArena1", 25, "MeadowsCreatures1", "MeadowsLoot3");
+            MWL_RuinsArena3_Configuration =
+                new LocationConfiguration(this.Config, "MWL_RuinsArena3", 25, "MeadowsCreatures1", "MeadowsLoot2");
+            MWL_RuinsChurch1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_RuinsChurch1", 25, "MeadowsCreatures1", "MeadowsLoot2");
+            MWL_RuinsWell1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_RuinsWell1", 5, "MeadowsCreatures1", "MeadowsLoot1");
             
-            MWL_Ruins1_Quantity_Config = config("1 - MWL_Ruins1", "Spawn Quantity", 5,
+            
+            /*MWL_Ruins1_Quantity_Config = config("1 - MWL_Ruins1", "Spawn Quantity", 5,
                 "Amount of this location the game will attempt to place during world generation");
             MWL_Ruins1_CreatureYaml_Config = config("1 - MWL_Ruins1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
@@ -171,7 +193,7 @@ namespace Meadows_Pack_1
             MWL_RuinsWell1_LootYaml_Config = config("10 - MWL_RuinsWell1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
                 "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
             MWL_RuinsWell1_LootList_Config = config("10 - MWL_RuinsWell1", "Name of Loot List", "MeadowsLoot1",
-                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");*/
             
             /*UseCustomLocationCreatureListYAML = config("2 - Custom Location YAML files",
                 "Use Custom Location Creature List", Toggle.Off,
@@ -209,8 +231,19 @@ namespace Meadows_Pack_1
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
         }
+
+        public static LocationConfiguration MWL_Ruins1_Configuration;
+        public static LocationConfiguration MWL_Ruins2_Configuration;
+        public static LocationConfiguration MWL_Ruins3_Configuration;
+        public static LocationConfiguration MWL_Ruins6_Configuration;
+        public static LocationConfiguration MWL_Ruins7_Configuration;
+        public static LocationConfiguration MWL_Ruins8_Configuration;
+        public static LocationConfiguration MWL_RuinsArena1_Configuration;
+        public static LocationConfiguration MWL_RuinsArena3_Configuration;
+        public static LocationConfiguration MWL_RuinsChurch1_Configuration;
+        public static LocationConfiguration MWL_RuinsWell1_Configuration;
         
-        public static ConfigEntry<int> MWL_Ruins1_Quantity_Config = null!;
+        /*public static ConfigEntry<int> MWL_Ruins1_Quantity_Config = null!;
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_Ruins1_CreatureYaml_Config = null!;
         public static ConfigEntry<string> MWL_Ruins1_CreatureList_Config = null!;
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_Ruins1_LootYaml_Config = null!;
@@ -270,8 +303,7 @@ namespace Meadows_Pack_1
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_RuinsWell1_CreatureYaml_Config = null!;
         public static ConfigEntry<string> MWL_RuinsWell1_CreatureList_Config = null!;
         public static ConfigEntry<ConfigurationManager.Toggle> MWL_RuinsWell1_LootYaml_Config = null!;
-        public static ConfigEntry<string> MWL_RuinsWell1_LootList_Config = null!;
-        
+        public static ConfigEntry<string> MWL_RuinsWell1_LootList_Config = null!;*/
         
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {

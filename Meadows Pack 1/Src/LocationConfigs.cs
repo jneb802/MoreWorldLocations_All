@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Ruins1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_Ruins1_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_Ruins1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -50,7 +50,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Ruins2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_Ruins2_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_Ruins2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -70,7 +70,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Ruins3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_Ruins3_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_Ruins3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -90,7 +90,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Ruins6_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_Ruins6_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_Ruins6_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 14,
         ClearArea = true,
@@ -110,7 +110,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Ruins7_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_Ruins7_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_Ruins7_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 7,
         ClearArea = true,
@@ -130,7 +130,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Ruins8_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_Ruins8_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_Ruins8_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 11,
         ClearArea = true,
@@ -150,7 +150,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsArena1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_RuinsArena1_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_RuinsArena1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -170,7 +170,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsArena3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_RuinsArena3_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_RuinsArena3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -190,7 +190,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsChurch1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_RuinsChurch1_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_RuinsChurch1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -210,7 +210,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsWell1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Meadows,
-        Quantity = Meadows_Pack_1Plugin.MWL_RuinsWell1_Quantity_Config.Value,
+        Quantity = Meadows_Pack_1Plugin.MWL_RuinsWell1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 5,
         ClearArea = true,
