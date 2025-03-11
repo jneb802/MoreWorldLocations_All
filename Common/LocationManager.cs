@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
@@ -79,7 +80,31 @@ public class LocationManager
     public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfig locationConfig)
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        // GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CustomLocation customLocation = new CustomLocation(locationGameObject, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
+    // Simplified method to just accept location: Loot: Yes, Creature: No
+    public static void AddLocation(AssetBundle assetBundle, string locationName, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        if (LootManager.isLootListVersion2(lootYAMLContent))
+        {
+            List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        }
+        else
+        {
+            List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,lootList);   
+        }
         
         CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
         
@@ -90,6 +115,39 @@ public class LocationManager
     public static void AddLocation(GameObject locationGameObject, LocationConfig locationConfig)
     {
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
+    public static void AddEventLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
+
+        if (LootManager.isLootListVersion2(lootYAMLContent))
+        {
+            List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        }
+        else
+        {
+            List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,lootList);
+        }
+        
+        GameObject eventStone = jotunnLocationContainer.FindDeepChild("MWL_EventStone").gameObject;
+        if (!eventStone)
+        {
+            WarpLogger.Logger.LogDebug("Failed to find EventStone");
+        }
+        
+        eventStone.GetComponent<EffectArea>().m_statusEffect = "GoblinShaman_shield";
         
         CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
         

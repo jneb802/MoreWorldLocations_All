@@ -12,10 +12,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)AssetManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreatureManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager_v2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PieceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TraderManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarpLocation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WarpLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YAMLManager.cs" />
