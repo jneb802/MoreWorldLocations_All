@@ -69,11 +69,21 @@ public class BlacksmithStone_SE : StatusEffect
 
     public bool isQualityCompatible(ItemDrop.ItemData item)
     {
-        if (item.m_quality == stoneTier + 3)
+        // Shield max level is 3
+        if (item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Shield)
         {
-            return true;
+            if (item.m_quality == stoneTier + 2)
+            {
+                return true;
+            } 
         }
-
+        else
+        {
+            if (item.m_quality == stoneTier + 3)
+            {
+                return true;
+            }  
+        }
         return false;
     }
     
