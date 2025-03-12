@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_PlainsTavern1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = More_World_TradersPlugin.MWL_PlainsTavern1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_PlainsTavern1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 32,
         ClearArea = true,
@@ -55,7 +55,7 @@ public class LocationConfigs
     public static LocationConfig MWL_OceanTavern1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Ocean,
-        Quantity = More_World_TradersPlugin.MWL_OceanTavern1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_OceanTavern1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 50,
         ClearArea = false,
@@ -80,7 +80,7 @@ public class LocationConfigs
     public static LocationConfig MWL_PlainsCamp1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = More_World_TradersPlugin.MWL_PlainsCamp1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_PlainsCamp1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -99,7 +99,7 @@ public class LocationConfigs
     public static LocationConfig MWL_BlackForestBlacksmith1 = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = More_World_TradersPlugin.MWL_BlackForestBlacksmith1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_BlackForestBlacksmith1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -118,7 +118,7 @@ public class LocationConfigs
     public static LocationConfig MWL_BlackForestBlacksmith2 = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = More_World_TradersPlugin.MWL_BlackForestBlacksmith2_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_BlackForestBlacksmith2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -137,7 +137,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MountainsBlacksmith1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = More_World_TradersPlugin.MWL_MountainsBlacksmith1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_MountainsBlacksmith1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -156,7 +156,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistlandsBlacksmith1 = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = More_World_TradersPlugin.MWL_MistlandsBlacksmith1_QuantityConfig.Value,
+        Quantity = More_World_TradersPlugin.MWL_MistlandsBlacksmith1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,

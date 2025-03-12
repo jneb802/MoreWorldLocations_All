@@ -22,7 +22,7 @@ namespace More_World_Traders
     public class More_World_TradersPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Traders";
-        internal const string ModVersion = "1.0.8";
+        internal const string ModVersion = "1.0.9";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -32,9 +32,6 @@ namespace More_World_Traders
 
         public static readonly ManualLogSource More_World_TradersLogger =
             BepInEx.Logging.Logger.CreateLogSource(ModName);
-
-        private static readonly ConfigSync ConfigSync = new(ModGUID)
-            { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
 
         // Location Manager variables
         public Texture2D tex = null!;
@@ -87,10 +84,6 @@ namespace More_World_Traders
             bool saveOnSet = Config.SaveOnConfigSet;
             Config.SaveOnConfigSet =
                 false; // This and the variable above are used to prevent the config from saving on startup for each config entry. This is speeds up the startup process.
-
-            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
-                "If on, the configuration is locked and can be changed by server admins only.");
-            _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
             
             LoadAssetBundle();
             
@@ -101,26 +94,42 @@ namespace More_World_Traders
             _harmony.PatchAll(assembly);
             SetupWatcher();
             
-            MWL_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
+            MWL_PlainsTavern1_Configuration =
+                new LocationConfiguration(this.Config, "PlainsTavern1", 5);
+            MWL_PlainsCamp1_Configuration =
+                new LocationConfiguration(this.Config, "PlainsCamp1", 5);
+            MWL_BlackForestBlacksmith1_Configuration =
+                new LocationConfiguration(this.Config, "BlackForestBlacksmith1", 5);
+            MWL_BlackForestBlacksmith2_Configuration =
+                new LocationConfiguration(this.Config, "BlackForestBlacksmith2", 5);
+            MWL_MountainsBlacksmith1_Configuration =
+                new LocationConfiguration(this.Config, "MountainsBlacksmith1", 5);
+            MWL_MistlandsBlacksmith1_Configuration =
+                new LocationConfiguration(this.Config, "MistlandsBlacksmith1", 5);
+            MWL_OceanTavern1_Configuration =
+                new LocationConfiguration(this.Config, "OceanTavern1", 5);
             
-            MWL_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsCamp1", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
             
-            MWL_BlackForestBlacksmith1_QuantityConfig = config("3 - MWL_BlackForestBlacksmith1", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
-
-            MWL_BlackForestBlacksmith2_QuantityConfig = config("4 - MWL_BlackForestBlacksmith2", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
-
-            MWL_MountainsBlacksmith1_QuantityConfig = config("5 - MWL_MountainsBlacksmith1", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
-            
-            MWL_MistlandsBlacksmith1_QuantityConfig = config("6 - MWL_MistlandsCamp1", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
-            
-            MWL_OceanTavern1_QuantityConfig = config("7 - MWL_OceanTavern1", "Spawn Quantity", 5,
-                "Amount of this location the game will attempt to place during world generation");
+            // MWL_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
+            //
+            // MWL_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsCamp1", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
+            //
+            // MWL_BlackForestBlacksmith1_QuantityConfig = config("3 - MWL_BlackForestBlacksmith1", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
+            //
+            // MWL_BlackForestBlacksmith2_QuantityConfig = config("4 - MWL_BlackForestBlacksmith2", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
+            //
+            // MWL_MountainsBlacksmith1_QuantityConfig = config("5 - MWL_MountainsBlacksmith1", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
+            //
+            // MWL_MistlandsBlacksmith1_QuantityConfig = config("6 - MWL_MistlandsCamp1", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
+            //
+            // MWL_OceanTavern1_QuantityConfig = config("7 - MWL_OceanTavern1", "Spawn Quantity", 5,
+            //     "Amount of this location the game will attempt to place during world generation");
 
             
             moreWorldTradersYAMLManager.ParseTraderYaml("warpalicious.More_World_Traders_MoreWorldTraders.yml");
@@ -137,13 +146,21 @@ namespace More_World_Traders
             }
         }
         
-        public static ConfigEntry<int> MWL_PlainsTavern1_QuantityConfig = null!;
-        public static ConfigEntry<int> MWL_PlainsCamp1_QuantityConfig = null!;
-        public static ConfigEntry<int> MWL_BlackForestBlacksmith1_QuantityConfig = null!;
-        public static ConfigEntry<int> MWL_BlackForestBlacksmith2_QuantityConfig = null!;
-        public static ConfigEntry<int> MWL_MountainsBlacksmith1_QuantityConfig = null!;
-        public static ConfigEntry<int> MWL_MistlandsBlacksmith1_QuantityConfig = null!;
-        public static ConfigEntry<int> MWL_OceanTavern1_QuantityConfig = null!;
+        public static LocationConfiguration MWL_PlainsTavern1_Configuration;
+        public static LocationConfiguration MWL_PlainsCamp1_Configuration;
+        public static LocationConfiguration MWL_BlackForestBlacksmith1_Configuration;
+        public static LocationConfiguration MWL_BlackForestBlacksmith2_Configuration;
+        public static LocationConfiguration MWL_MountainsBlacksmith1_Configuration;
+        public static LocationConfiguration MWL_MistlandsBlacksmith1_Configuration;
+        public static LocationConfiguration MWL_OceanTavern1_Configuration;
+        
+        // public static ConfigEntry<int> MWL_PlainsTavern1_QuantityConfig = null!;
+        // public static ConfigEntry<int> MWL_PlainsCamp1_QuantityConfig = null!;
+        // public static ConfigEntry<int> MWL_BlackForestBlacksmith1_QuantityConfig = null!;
+        // public static ConfigEntry<int> MWL_BlackForestBlacksmith2_QuantityConfig = null!;
+        // public static ConfigEntry<int> MWL_MountainsBlacksmith1_QuantityConfig = null!;
+        // public static ConfigEntry<int> MWL_MistlandsBlacksmith1_QuantityConfig = null!;
+        // public static ConfigEntry<int> MWL_OceanTavern1_QuantityConfig = null!;
         
         
 
@@ -177,57 +194,6 @@ namespace More_World_Traders
                 More_World_TradersLogger.LogError("Please check your config entries for spelling and format!");
             }
         }
-
-
-        #region ConfigOptions
-
-        private static ConfigEntry<Toggle> _serverConfigLocked = null!;
-
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
-            bool synchronizedSetting = true)
-        {
-            ConfigDescription extendedDescription =
-                new(
-                    description.Description +
-                    (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"),
-                    description.AcceptableValues, description.Tags);
-            ConfigEntry<T> configEntry = Config.Bind(group, name, value, extendedDescription);
-            //var configEntry = Config.Bind(group, name, value, description);
-
-            SyncedConfigEntry<T> syncedConfigEntry = ConfigSync.AddConfigEntry(configEntry);
-            syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
-
-            return configEntry;
-        }
-
-        private ConfigEntry<T> config<T>(string group, string name, T value, string description,
-            bool synchronizedSetting = true)
-        {
-            return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-        }
-
-        private class ConfigurationManagerAttributes
-        {
-            [UsedImplicitly] public int? Order = null!;
-            [UsedImplicitly] public bool? Browsable = null!;
-            [UsedImplicitly] public string? Category = null!;
-            [UsedImplicitly] public Action<ConfigEntryBase>? CustomDrawer = null!;
-        }
-
-        class AcceptableShortcuts : AcceptableValueBase
-        {
-            public AcceptableShortcuts() : base(typeof(KeyboardShortcut))
-            {
-            }
-
-            public override object Clamp(object value) => value;
-            public override bool IsValid(object value) => true;
-
-            public override string ToDescriptionString() =>
-                "# Acceptable values: " + string.Join(", ", UnityInput.Current.SupportedKeyCodes);
-        }
-
-        #endregion
     }
 
     public static class KeyboardExtensions
