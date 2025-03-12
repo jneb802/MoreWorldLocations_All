@@ -31,7 +31,7 @@ public class LocationConfigs
     {
         Biome = Heightmap.Biome.BlackForest,
         BiomeArea = Heightmap.BiomeArea.Median,
-        Quantity = Underground_RuinsPlugin.MWD_UndergroundRuins_Quantity_Config.Value,
+        Quantity = Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,

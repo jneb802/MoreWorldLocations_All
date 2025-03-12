@@ -55,12 +55,12 @@ public class Rooms
                 assetBundle, 
                 room.Key, 
                 room.Value,
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetCreatureYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureYaml_Config.Value),
-                Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureList_Config.Value,
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetLootYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_LootYaml_Config.Value),
-                Underground_RuinsPlugin.MWD_UndergroundRuins_LootList_Config.Value,
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemYaml_Config.Value),
-                Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemList_Config.Value);
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetCreatureYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureYaml.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value,
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetLootYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootYaml.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootList.Value,
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.PickableItemYaml.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.PickableItemList.Value);
         }
         
         foreach (var room in AllLimitRooms)
@@ -69,12 +69,12 @@ public class Rooms
                 assetBundle, 
                 room.Key, 
                 room.Value,
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetCreatureYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureYaml_Config.Value),
-                Underground_RuinsPlugin.MWD_UndergroundRuins_CreatureList_Config.Value,
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetLootYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_LootYaml_Config.Value),
-                Underground_RuinsPlugin.MWD_UndergroundRuins_LootList_Config.Value,
-                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemYaml_Config.Value),
-                Underground_RuinsPlugin.MWD_UndergroundRuins_PickableItemList_Config.Value);
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetCreatureYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureYaml.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value,
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetLootYamlContent(Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootYaml.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootList.Value,
+                Underground_RuinsPlugin.dungeonBFDYamlManager.GetPickableItemContent(Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.PickableItemYaml.Value),
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.PickableItemList.Value);
         }
         
         DungeonManager.OnVanillaRoomsAvailable -= AddAllRooms;

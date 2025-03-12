@@ -21,7 +21,7 @@ namespace Underground_Ruins
     public class Underground_RuinsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "Underground_Ruins";
-        internal const string ModVersion = "1.0.1";
+        internal const string ModVersion = "1.0.3";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -31,9 +31,6 @@ namespace Underground_Ruins
 
         public static readonly ManualLogSource Dungeon_The_RitualLogger =
             BepInEx.Logging.Logger.CreateLogSource(ModName);
-
-        private static readonly ConfigSync ConfigSync = new(ModGUID)
-            { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
         
         public static YAMLManager dungeonBFDYamlManager = new YAMLManager();
         
@@ -74,10 +71,6 @@ namespace Underground_Ruins
             Config.SaveOnConfigSet =
                 false; // This and the variable above are used to prevent the config from saving on startup for each config entry. This is speeds up the startup process.
 
-            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
-                "If on, the configuration is locked and can be changed by server admins only.");
-            _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
-
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
 
@@ -87,20 +80,23 @@ namespace Underground_Ruins
             
             LoadAssetBundle();
             
-            MWD_UndergroundRuins_Quantity_Config = config("1 - Underground Ruins", "Spawn Quantity", 30,
-                "Amount of attempts world generation will try to place dungeon exterior during world generation");
-            MWD_UndergroundRuins_CreatureYaml_Config = config("1 - Underground Ruins", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-                "When Off, location will spawn default creatures. When On, dungeon will select creatures from list in the custom YAML file in BepinEx config folder");
-            MWD_UndergroundRuins_CreatureList_Config = config("1 - Underground Ruins", "Name of Creature List", "UndergroundRuinsCreatures1",
-                "The name of the creature list to use from YAML file");
-            MWD_UndergroundRuins_LootYaml_Config = config("1 - Underground Ruins", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-                "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
-            MWD_UndergroundRuins_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "UndergroundRuinsLoot1",
-                "The name of the loot list to use from YAML file");
-            MWD_UndergroundRuins_PickableItemYaml_Config = config("1 - Underground Ruins", "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off,
-                "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
-            MWD_UndergroundRuins_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "UndergroundRuinsPickables1",
-                "The name of the loot list to use from YAML file");
+            MWD_UndergroundRuins_Configuration =
+                new LocationConfiguration(this.Config, "Underground Ruins", 40, "UndergroundRuinsCreatures1", "UndergroundRuinsLoot1","UndergroundRuinsPickables1");
+            
+            // MWD_UndergroundRuins_Quantity_Config = config("1 - Underground Ruins", "Spawn Quantity", 30,
+            //     "Amount of attempts world generation will try to place dungeon exterior during world generation");
+            // MWD_UndergroundRuins_CreatureYaml_Config = config("1 - Underground Ruins", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
+            //     "When Off, location will spawn default creatures. When On, dungeon will select creatures from list in the custom YAML file in BepinEx config folder");
+            // MWD_UndergroundRuins_CreatureList_Config = config("1 - Underground Ruins", "Name of Creature List", "UndergroundRuinsCreatures1",
+            //     "The name of the creature list to use from YAML file");
+            // MWD_UndergroundRuins_LootYaml_Config = config("1 - Underground Ruins", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
+            //     "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
+            // MWD_UndergroundRuins_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "UndergroundRuinsLoot1",
+            //     "The name of the loot list to use from YAML file");
+            // MWD_UndergroundRuins_PickableItemYaml_Config = config("1 - Underground Ruins", "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off,
+            //     "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
+            // MWD_UndergroundRuins_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "UndergroundRuinsPickables1",
+            //     "The name of the loot list to use from YAML file");
             
             dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior");
             Rooms.RegisterTheme(dungeonGameObject, "Underground Ruins");
@@ -108,14 +104,11 @@ namespace Underground_Ruins
             dungeonBFDYamlManager.ParseDefaultYamls();
             dungeonBFDYamlManager.ParseCustomYamls();
             dungeonBFDYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
-
-            dungeonBFDYamlManager.BuildCreatureList(MWD_UndergroundRuins_CreatureYaml_Config.Value, MWD_UndergroundRuins_CreatureList_Config.Value);
-            dungeonBFDYamlManager.BuildLootList(MWD_UndergroundRuins_LootYaml_Config.Value, MWD_UndergroundRuins_LootList_Config.Value);
-            dungeonBFDYamlManager.BuildPickableList(MWD_UndergroundRuins_PickableItemYaml_Config.Value, MWD_UndergroundRuins_PickableItemList_Config.Value);
             
             TranslationUtils.AddLocalizations();
             // Creatures.CreateShamanBoss();
             
+            PrefabManager.OnVanillaPrefabsAvailable += BuildYamlLists;
             PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             DungeonManager.OnVanillaRoomsAvailable += Rooms.AddAllRooms;
@@ -125,6 +118,15 @@ namespace Underground_Ruins
                 Config.SaveOnConfigSet = saveOnSet;
                 Config.Save();
             }
+        }
+
+        public void BuildYamlLists()
+        {
+            dungeonBFDYamlManager.BuildCreatureList(MWD_UndergroundRuins_Configuration.CreatureYaml.Value, MWD_UndergroundRuins_Configuration.CreatureList.Value);
+            dungeonBFDYamlManager.BuildLootList(MWD_UndergroundRuins_Configuration.LootYaml.Value, MWD_UndergroundRuins_Configuration.LootList.Value);
+            dungeonBFDYamlManager.BuildPickableList(MWD_UndergroundRuins_Configuration.PickableItemYaml.Value, MWD_UndergroundRuins_Configuration.PickableItemList.Value);
+            
+            PrefabManager.OnVanillaPrefabsAvailable -= BuildYamlLists;
         }
 
         private void OnDestroy()
@@ -143,13 +145,15 @@ namespace Underground_Ruins
             watcher.EnableRaisingEvents = true;
         }
         
-        public static ConfigEntry<int> MWD_UndergroundRuins_Quantity_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_CreatureYaml_Config = null!;
-        public static ConfigEntry<string> MWD_UndergroundRuins_CreatureList_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_LootYaml_Config = null!;
-        public static ConfigEntry<string> MWD_UndergroundRuins_LootList_Config = null!;
-        public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_PickableItemYaml_Config = null!;
-        public static ConfigEntry<string> MWD_UndergroundRuins_PickableItemList_Config = null!;
+        public static LocationConfiguration MWD_UndergroundRuins_Configuration;
+        
+        // public static ConfigEntry<int> MWD_UndergroundRuins_Quantity_Config = null!;
+        // public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_CreatureYaml_Config = null!;
+        // public static ConfigEntry<string> MWD_UndergroundRuins_CreatureList_Config = null!;
+        // public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_LootYaml_Config = null!;
+        // public static ConfigEntry<string> MWD_UndergroundRuins_LootList_Config = null!;
+        // public static ConfigEntry<ConfigurationManager.Toggle> MWD_UndergroundRuins_PickableItemYaml_Config = null!;
+        // public static ConfigEntry<string> MWD_UndergroundRuins_PickableItemList_Config = null!;
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {
@@ -170,29 +174,6 @@ namespace Underground_Ruins
         #region ConfigOptions
 
         private static ConfigEntry<Toggle> _serverConfigLocked = null!;
-
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
-            bool synchronizedSetting = true)
-        {
-            ConfigDescription extendedDescription =
-                new(
-                    description.Description +
-                    (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"),
-                    description.AcceptableValues, description.Tags);
-            ConfigEntry<T> configEntry = Config.Bind(group, name, value, extendedDescription);
-            //var configEntry = Config.Bind(group, name, value, description);
-
-            SyncedConfigEntry<T> syncedConfigEntry = ConfigSync.AddConfigEntry(configEntry);
-            syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
-
-            return configEntry;
-        }
-
-        private ConfigEntry<T> config<T>(string group, string name, T value, string description,
-            bool synchronizedSetting = true)
-        {
-            return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-        }
 
         private class ConfigurationManagerAttributes
         {
