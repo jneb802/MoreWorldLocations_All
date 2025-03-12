@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_GuckPit1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_GuckPit1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_GuckPit1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -53,7 +53,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampAltar1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -76,7 +76,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampAltar2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar2_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -99,7 +99,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampAltar3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar3_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -122,7 +122,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampAltar4_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar4_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampAltar4_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -168,7 +168,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampCastle2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampCastle2_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampCastle2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -214,7 +214,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampGrave1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampGrave1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampGrave1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -237,7 +237,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampHouse1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampHouse1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampHouse1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -260,7 +260,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampRuin1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampRuin1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampRuin1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -283,7 +283,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampTower1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampTower1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampTower1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -306,7 +306,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampTower2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampTower2_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampTower2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -329,7 +329,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampTower3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampTower3_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampTower3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -352,7 +352,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SwampWell1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Swamp_Pack_1Plugin.MWL_SwampWell1_QuantityConfig.Value,
+        Quantity = Swamp_Pack_1Plugin.MWL_SwampWell1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
