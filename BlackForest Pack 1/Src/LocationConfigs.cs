@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsArena2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsArena2_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsArena2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -50,7 +50,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsCastle1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsCastle1_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsCastle1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 12.5f,
         ClearArea = true,
@@ -70,7 +70,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsCastle3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsCastle3_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsCastle3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -91,7 +91,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsTower3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsTower3_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsTower3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -111,7 +111,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinsTower8_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsTower8_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsTower8_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -133,7 +133,7 @@ public class LocationConfigs
     public static LocationConfig MWL_Tavern1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_Tavern1_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_RuinsTavern1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 12,
         ClearArea = true,
@@ -153,7 +153,7 @@ public class LocationConfigs
     public static LocationConfig MWL_WoodTower1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_WoodTower1_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_WoodTower1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -173,7 +173,7 @@ public class LocationConfigs
     public static LocationConfig MWL_WoodTower2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_WoodTower2_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_WoodTower2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -193,7 +193,7 @@ public class LocationConfigs
     public static LocationConfig MWL_WoodTower3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = BlackForest_Pack_1Plugin.MWL_WoodTower3_Quantity_Config.Value,
+        Quantity = BlackForest_Pack_1Plugin.MWL_WoodTower3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 24,
         ClearArea = true,
