@@ -125,7 +125,9 @@
     <ItemGroup>
         <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="Src\Plugin.cs" />
+        <Compile Include="Src\AshlandsPack1.cs" />
+        <Compile Include="Src\LocationConfigs.cs" />
+        <Compile Include="Src\Locations.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -133,14 +135,12 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore"/>
+        <EmbeddedResource Include="assets\ashlandspack1" />
         <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="Libs\LocalizationManager.dll"/>
-        <Content Include="Libs\ServerSync.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <Content Include="LICENSE.md"/>
         <Content Include="README.md"/>
         <Content Include="Thunderstore\CHANGELOG.md"/>
@@ -148,6 +148,8 @@
         <Content Include="Thunderstore\manifest.json"/>
         <EmbeddedResource Include="translations\English.yml"/>
         <Content Include="UpdateManifest.ps1"/>
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
@@ -156,9 +158,6 @@
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="YAML\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -262,5 +261,6 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
+    <Import Project="..\Common\Common.projitems" Label="Shared" />
 
 </Project>

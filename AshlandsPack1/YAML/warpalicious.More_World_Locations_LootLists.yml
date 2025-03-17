@@ -1,0 +1,38 @@
+version: 2.0
+AshlandsLoot1:
+  - item: GemstoneBlue
+    stackMin: 1
+    stackMax: 1
+    weight: 0.5
+  - item: GemstoneGreen
+    stackMin: 1
+    stackMax: 1
+    weight: 0.5
+  - item: GemstoneRed
+    stackMin: 1
+    stackMax: 1
+    weight: 0.5
+  - item: Coins
+    stackMin: 200
+    stackMax: 500
+    weight: 1
+  - item: CharredBone
+    stackMin: 5
+    stackMax: 10
+    weight: 1
+  - item: Charredskull
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+  - item: CelestialFeather
+    stackMin: 1
+    stackMax: 1
+    weight: 0.1
+  - item: FlametalOreNew
+    stackMin: 10
+    stackMax: 20
+    weight: 1
+  - item: MoltenCore
+    stackMin: 1
+    stackMax: 2
+    weight: 0.5
