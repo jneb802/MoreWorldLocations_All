@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_GoblinFort1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_GoblinFort1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_GoblinFort1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -53,7 +53,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingRock1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingRock1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingRock1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -76,7 +76,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingVillage1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingVillage1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingVillage1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -99,7 +99,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingVillage2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingVillage2_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingVillage2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -122,7 +122,7 @@ public class LocationConfigs
     public static LocationConfig MWL_PlainsPillar1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_PlainsPillar1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_PlainsPillar1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -145,7 +145,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingTemple1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingTemple1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingTemple1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -168,7 +168,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingTemple2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingTemple2_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingTemple2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -191,7 +191,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingTemple3_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingTemple3_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingTemple3_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -214,7 +214,7 @@ public class LocationConfigs
     public static LocationConfig MWL_FulingWall1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingWall1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingWall1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -233,34 +233,11 @@ public class LocationConfigs
         //ForestTrasholdMax = 2,
         BiomeArea = Heightmap.BiomeArea.Everything
     };
-    
-    public static LocationConfig MWL_FulingTower1_Config = new LocationConfig
-    {
-        Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_FulingTower1_QuantityConfig.Value,
-        Priotized = true,
-        ExteriorRadius = 8,
-        ClearArea = true,
-        RandomRotation = false,
-        Group = "PlainsCamp",
-        MinDistanceFromSimilar = 1024,
-        //SlopeRotation = true,
-        // MinTerrainDelta = 0f,
-        MaxTerrainDelta = 8f,
-        MinAltitude = 0f,
-        MinDistance = LocationRings.Ring2.MinDistance,
-        //MaxDistance = LocationRings.Ring7.MaxDistance,
-        //InteriorRadius = 64,
-        InForest = false,
-        //ForestTresholdMin = 0f,
-        //ForestTrasholdMax = 2,
-        BiomeArea = Heightmap.BiomeArea.Everything
-    };
-    
+
     public static LocationConfig MWL_GoblinCave1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Plains,
-        Quantity = Plains_Pack_1Plugin.MWL_GoblinCave1_QuantityConfig.Value,
+        Quantity = Plains_Pack_1Plugin.MWL_GoblinCave1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -270,6 +247,29 @@ public class LocationConfigs
         //SlopeRotation = true,
         MinTerrainDelta = 0f,
         MaxTerrainDelta = 10f,
+        MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Everything
+    };
+
+    public static LocationConfig MWL_FulingTower1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Plains,
+        Quantity = Plains_Pack_1Plugin.MWL_FulingTower1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 8,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "PlainsCamp",
+        MinDistanceFromSimilar = 1024,
+        //SlopeRotation = true,
+        // MinTerrainDelta = 0f,
+        MaxTerrainDelta = 8f,
         MinAltitude = 0f,
         MinDistance = LocationRings.Ring2.MinDistance,
         //MaxDistance = LocationRings.Ring7.MaxDistance,
