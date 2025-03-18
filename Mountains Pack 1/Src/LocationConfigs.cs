@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_StoneCastle1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_StoneCastle1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_StoneCastle1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -52,7 +52,7 @@ public class LocationConfigs
     public static LocationConfig MWL_StoneFort1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_StoneFort1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_StoneFort1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -74,7 +74,7 @@ public class LocationConfigs
     public static LocationConfig MWL_StoneHall1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_StoneHall1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_StoneHall1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -96,7 +96,7 @@ public class LocationConfigs
     public static LocationConfig MWL_StoneTavern1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_StoneTavern1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_StoneTavern1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -118,7 +118,7 @@ public class LocationConfigs
     public static LocationConfig MWL_StoneTower1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_StoneTower1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_StoneTower1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -140,7 +140,7 @@ public class LocationConfigs
     public static LocationConfig MWL_StoneTower2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_StoneTower2_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_StoneTower2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 10,
         ClearArea = true,
@@ -162,7 +162,7 @@ public class LocationConfigs
     public static LocationConfig MWL_WoodBarn1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_WoodBarn1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_WoodBarn1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -184,7 +184,7 @@ public class LocationConfigs
     public static LocationConfig MWL_WoodFarm1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_WoodFarm1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_WoodFarm1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 18,
         ClearArea = true,
@@ -206,7 +206,7 @@ public class LocationConfigs
     public static LocationConfig MWL_WoodHouse1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Mountains_Pack_1Plugin.MWL_WoodHouse1_QuantityConfig.Value,
+        Quantity = Mountains_Pack_1Plugin.MWL_WoodHouse1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 10,
         ClearArea = true,
