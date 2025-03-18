@@ -80,10 +80,8 @@ public class LocationManager
     public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfig locationConfig)
     {
         var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
-        // GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
-        
-        CustomLocation customLocation = new CustomLocation(locationGameObject, fixReference: true, locationConfig);
-        
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
     
