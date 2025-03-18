@@ -75,11 +75,11 @@ namespace AshlandsPack1
             LoadAssetBundle();
 
             MWL_AshlandsFort1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_AshlandsFort1", 5, "BlackforestCreatures3", "AshlandsLoot1");
+                new LocationConfiguration(this.Config, "MWL_AshlandsFort1", 5, "AshlandsCreatures1", "AshlandsLoot1");
             MWL_AshlandsFort2_Configuration =
-                new LocationConfiguration(this.Config, "MWL_AshlandsFort2", 5, "BlackforestCreatures3", "AshlandsLoot1");
+                new LocationConfiguration(this.Config, "MWL_AshlandsFort2", 5, "AshlandsCreatures1", "AshlandsLoot1");
             MWL_AshlandsFort3_Configuration =
-                new LocationConfiguration(this.Config, "MWL_AshlandsFort3", 5, "BlackforestCreatures3", "AshlandsLoot1");
+                new LocationConfiguration(this.Config, "MWL_AshlandsFort3", 5, "AshlandsCreatures1", "AshlandsLoot1");
             
             ashlandsYAMLManager.ParseDefaultYamls();
             ashlandsYAMLManager.ParseCustomYamls();
