@@ -20,7 +20,7 @@ namespace Swamp_Pack_1
     public class Swamp_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Swamp_Pack_1";
-        internal const string ModVersion = "1.1.3";
+        internal const string ModVersion = "1.2.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -100,7 +100,15 @@ namespace Swamp_Pack_1
                 new LocationConfiguration(this.Config, "SwampTower3", 25, "SwampCreatures2", "SwampLoot1");
             MWL_SwampWell1_Configuration =
                 new LocationConfiguration(this.Config, "SwampWell1", 20, "SwampCreatures1", "SwampLoot1");
-            //
+            MWL_AbandonedHouse1_Configuration =
+                new LocationConfiguration(this.Config, "AbandonedHouse1", 15, "SwampCreatures3", "SwampLoot1");
+            MWL_Treehouse1_Configuration =
+                new LocationConfiguration(this.Config, "Treehouse1", 20, "SwampCreatures1", "SwampLoot1");
+            MWL_Shipyard1_Configuration =
+                new LocationConfiguration(this.Config, "Shipyard1", 20, "SwampCreatures2", "SwampLoot1");
+            MWL_FortBakkarhalt1_Configuration =
+                new LocationConfiguration(this.Config, "FortBakkarhalt1", 15, "SwampCreatures2", "SwampLoot1");
+            
             // MWL_GuckPit1_QuantityConfig = config("1 - MWL_GuckPit1", "Spawn Quantity", 15,
             //     "Amount of this location the game will attempt to place during world generation");
             // MWL_GuckPit1_CreatureYamlConfig = config("1 - MWL_GuckPit1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
@@ -307,6 +315,11 @@ namespace Swamp_Pack_1
         public static LocationConfiguration MWL_SwampTower2_Configuration;
         public static LocationConfiguration MWL_SwampTower3_Configuration;
         public static LocationConfiguration MWL_SwampWell1_Configuration;
+        
+        public static LocationConfiguration MWL_AbandonedHouse1_Configuration;
+        public static LocationConfiguration MWL_Treehouse1_Configuration;
+        public static LocationConfiguration MWL_Shipyard1_Configuration;
+        public static LocationConfiguration MWL_FortBakkarhalt1_Configuration;
         
         // public static ConfigEntry<int> MWL_GuckPit1_QuantityConfig = null!;
         // public static ConfigEntry<ConfigurationManager.Toggle> MWL_GuckPit1_CreatureYamlConfig = null!;

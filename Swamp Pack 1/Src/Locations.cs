@@ -150,6 +150,38 @@ public class Locations
             Swamp_Pack_1Plugin.MWL_SwampWell1_Configuration.LootList.Value,
             LocationConfigs.MWL_SwampWell1_Config);
         
+        LocationManager.AddLocation(assetBundle,
+            "MWL_AbandonedHouse1",
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_AbandonedHouse1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_AbandonedHouse1_Configuration.CreatureList.Value,
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_AbandonedHouse1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_AbandonedHouse1_Configuration.LootList.Value,
+            LocationConfigs.MWL_AbandonedHouse1_Config);
+        
+        LocationManager.AddLocation(assetBundle,
+            "MWL_Treehouse1",
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_Treehouse1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_Treehouse1_Configuration.CreatureList.Value,
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_Treehouse1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_Treehouse1_Configuration.LootList.Value,
+            LocationConfigs.MWL_Treehouse1_Config);
+        
+        LocationManager.AddLocation(assetBundle,
+            "MWL_Shipyard1",
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_Shipyard1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_Shipyard1_Configuration.CreatureList.Value,
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_Shipyard1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_Shipyard1_Configuration.LootList.Value,
+            LocationConfigs.MWL_Shipyard1_Config);
+        
+        LocationManager.AddLocation(assetBundle,
+            "MWL_FortBakkarhalt1",
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_FortBakkarhalt1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_FortBakkarhalt1_Configuration.CreatureList.Value,
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_FortBakkarhalt1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_FortBakkarhalt1_Configuration.LootList.Value,
+            LocationConfigs.MWL_FortBakkarhalt1_Config);
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
     }

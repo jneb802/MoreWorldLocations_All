@@ -370,4 +370,93 @@ public class LocationConfigs
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
     };
+    
+    public static LocationConfig MWL_AbandonedHouse1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Swamp,
+        Quantity = Swamp_Pack_1Plugin.MWL_AbandonedHouse1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Swamp_house",
+        MinDistanceFromSimilar = 512,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 8f,
+        MinAltitude = 2f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+    };
+    
+    public static LocationConfig MWL_Treehouse1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Swamp,
+        Quantity = Swamp_Pack_1Plugin.MWL_Treehouse1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Treehouse",
+        MinDistanceFromSimilar = 512,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 8f,
+        MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+    };
+    
+    public static LocationConfig MWL_Shipyard1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Swamp,
+        Quantity = Swamp_Pack_1Plugin.MWL_Shipyard1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Swamp_ship",
+        MinDistanceFromSimilar = 512,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 8f,
+        MinAltitude = 2f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+    };
+    
+    public static LocationConfig MWL_FortBakkarhalt1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Swamp,
+        Quantity = Swamp_Pack_1Plugin.MWL_FortBakkarhalt1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Swamp_fort",
+        MinDistanceFromSimilar = 1024,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 8f,
+        MinAltitude = 0f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+    };
+    
 }
