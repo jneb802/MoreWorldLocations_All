@@ -77,7 +77,7 @@ public class LocationConfiguration
         PickableItemYaml = ConfigFileExtensions.BindConfigInOrder(config, locationName, "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off, 
             "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
 
-        PickableItemList = ConfigFileExtensions.BindConfigInOrder(config, locationName, "Name of PickableItem List", customLootListName, 
+        PickableItemList = ConfigFileExtensions.BindConfigInOrder(config, locationName, "Name of PickableItem List", pickableItemListName, 
             "The name of the loot list to use from YAML file");
     }
     
