@@ -20,7 +20,7 @@ namespace Swamp_Pack_1
     public class Swamp_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Swamp_Pack_1";
-        internal const string ModVersion = "1.2.1";
+        internal const string ModVersion = "1.2.2";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -107,7 +107,9 @@ namespace Swamp_Pack_1
             MWL_Shipyard1_Configuration =
                 new LocationConfiguration(this.Config, "Shipyard1", 20, "SwampCreatures2", "SwampLoot1");
             MWL_FortBakkarhalt1_Configuration =
-                new LocationConfiguration(this.Config, "FortBakkarhalt1", 15, "SwampCreatures2", "SwampLoot1");
+                new LocationConfiguration(this.Config, "FortBakkarhalt1", 5, "SwampCreatures2", "SwampLoot1");
+            MWL_Belmont1_Configuration =
+                new LocationConfiguration(this.Config, "Belmont1", 5, "SwampCreatures2", "SwampLoot1");
             
             // MWL_GuckPit1_QuantityConfig = config("1 - MWL_GuckPit1", "Spawn Quantity", 15,
             //     "Amount of this location the game will attempt to place during world generation");
@@ -320,6 +322,7 @@ namespace Swamp_Pack_1
         public static LocationConfiguration MWL_Treehouse1_Configuration;
         public static LocationConfiguration MWL_Shipyard1_Configuration;
         public static LocationConfiguration MWL_FortBakkarhalt1_Configuration;
+        public static LocationConfiguration MWL_Belmont1_Configuration;
         
         // public static ConfigEntry<int> MWL_GuckPit1_QuantityConfig = null!;
         // public static ConfigEntry<ConfigurationManager.Toggle> MWL_GuckPit1_CreatureYamlConfig = null!;

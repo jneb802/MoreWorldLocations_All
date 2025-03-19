@@ -182,6 +182,14 @@ public class Locations
             Swamp_Pack_1Plugin.MWL_FortBakkarhalt1_Configuration.LootList.Value,
             LocationConfigs.MWL_FortBakkarhalt1_Config);
         
+        LocationManager.AddLocation(assetBundle,
+            "MWL_Belmont1",
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetCreatureYamlContent(Swamp_Pack_1Plugin.MWL_Belmont1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_Belmont1_Configuration.CreatureList.Value,
+            Swamp_Pack_1Plugin.swampYAMLmanager.GetLootYamlContent(Swamp_Pack_1Plugin.MWL_Belmont1_Configuration.CreatureYaml.Value),
+            Swamp_Pack_1Plugin.MWL_Belmont1_Configuration.LootList.Value,
+            LocationConfigs.MWL_Belmont1_Config);
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
     }
