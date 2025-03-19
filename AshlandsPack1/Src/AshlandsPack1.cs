@@ -20,7 +20,7 @@ namespace AshlandsPack1
     public class AshlandsPack1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "AshlandsPack1";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.0.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
