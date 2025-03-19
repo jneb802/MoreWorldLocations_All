@@ -176,8 +176,95 @@ public class LocationConfigs
         MaxTerrainDelta = 2f,
         MinAltitude = 10,
         MinDistance = LocationRings.Ring2.MinDistance,
-        MaxDistance = LocationRings.Ring3.MaxDistance,
+        //MaxDistance = LocationRings.Ring3.MaxDistance,
         // InForest = false,
+    };
+    
+    public static LocationConfig MWL_GuardTower1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = BlackForest_Pack_2Plugin.MWL_GuardTower1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 5,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Ruins_large",
+        MinDistanceFromSimilar = 1024,
+        MaxTerrainDelta = 2f,
+        MinAltitude = 6,
+        MinDistance = LocationRings.Ring3.MinDistance,
+        //MaxDistance = LocationRings.Ring3.MaxDistance,
+        // InForest = false,
+    };
+    
+    public static LocationConfig MWL_RootRuins1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = BlackForest_Pack_2Plugin.MWL_RootRuins1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 5,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Ruins_small",
+        MinDistanceFromSimilar = 1024,
+        MaxTerrainDelta = 2f,
+        MinAltitude = 10,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        MaxDistance = LocationRings.Ring4.MaxDistance,
+        // InForest = false,
+    };
+    
+    public static LocationConfig MWL_RootsTower1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = BlackForest_Pack_2Plugin.MWL_RootsTower1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 5,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Ruins_medium",
+        MinDistanceFromSimilar = 1024,
+        MaxTerrainDelta = 2f,
+        MinAltitude = 10,
+        MinDistance = LocationRings.Ring4.MinDistance,
+        MaxDistance = LocationRings.Ring6.MaxDistance,
+        // InForest = false,
+    };
+    
+    public static LocationConfig MWL_RootsTower2_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = BlackForest_Pack_2Plugin.MWL_RootsTower2_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 5,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Ruins_medium",
+        MinDistanceFromSimilar = 1024,
+        MaxTerrainDelta = 2f,
+        MinAltitude = 10,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring3.MaxDistance,
+        // InForest = false,
+    };
+    
+    public static LocationConfig MWL_StoneOutlook1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.BlackForest,
+        Quantity = BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 5,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Coastal",
+        MinDistanceFromSimilar = 1024,
+        //MaxTerrainDelta = 2f,
+        MinAltitude = -2,
+        MaxAltitude = 1,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring3.MaxDistance,
+        // InForest = false,
+        SlopeRotation = true
     };
 
 }

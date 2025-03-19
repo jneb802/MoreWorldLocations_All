@@ -91,7 +91,47 @@ public class Locations
             BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_StoneFormation1_Configuration.LootYaml.Value), 
             BlackForest_Pack_2Plugin.MWL_StoneFormation1_Configuration.LootList.Value,
             LocationConfigs.MWL_StoneFormation1_Config);
-
+        
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_GuardTower1", 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetCreatureYamlContent(BlackForest_Pack_2Plugin.MWL_GuardTower1_Configuration.CreatureYaml.Value),
+            BlackForest_Pack_2Plugin.MWL_GuardTower1_Configuration.CreatureList.Value, 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_GuardTower1_Configuration.LootYaml.Value), 
+            BlackForest_Pack_2Plugin.MWL_GuardTower1_Configuration.LootList.Value,
+            LocationConfigs.MWL_GuardTower1_Config);
+        
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_RootRuins1", 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetCreatureYamlContent(BlackForest_Pack_2Plugin.MWL_RootRuins1_Configuration.CreatureYaml.Value),
+            BlackForest_Pack_2Plugin.MWL_RootRuins1_Configuration.CreatureList.Value, 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_RootRuins1_Configuration.LootYaml.Value), 
+            BlackForest_Pack_2Plugin.MWL_RootRuins1_Configuration.LootList.Value,
+            LocationConfigs.MWL_RootRuins1_Config);
+        
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_RootsTower1", 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetCreatureYamlContent(BlackForest_Pack_2Plugin.MWL_RootsTower1_Configuration.CreatureYaml.Value),
+            BlackForest_Pack_2Plugin.MWL_RootsTower1_Configuration.CreatureList.Value, 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_RootsTower1_Configuration.LootYaml.Value), 
+            BlackForest_Pack_2Plugin.MWL_RootsTower1_Configuration.LootList.Value,
+            LocationConfigs.MWL_RootsTower1_Config);
+        
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_RootsTower2", 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetCreatureYamlContent(BlackForest_Pack_2Plugin.MWL_RootsTower2_Configuration.CreatureYaml.Value),
+            BlackForest_Pack_2Plugin.MWL_RootsTower2_Configuration.CreatureList.Value, 
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_RootsTower2_Configuration.LootYaml.Value), 
+            BlackForest_Pack_2Plugin.MWL_RootsTower2_Configuration.LootList.Value,
+            LocationConfigs.MWL_RootsTower2_Config);
+        
+        // LocationManager.AddLocation(assetBundle, 
+        //     "MWL_StoneOutlook1", 
+        //     BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetCreatureYamlContent(BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.CreatureYaml.Value),
+        //     BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.CreatureList.Value, 
+        //     BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.LootYaml.Value), 
+        //     BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.LootList.Value,
+        //     LocationConfigs.MWL_StoneOutlook1_Config);
+       
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);

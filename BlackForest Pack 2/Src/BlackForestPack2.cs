@@ -20,7 +20,7 @@ namespace BlackForest_Pack_2
     public class BlackForest_Pack_2Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Blackforest_Pack_2";
-        internal const string ModVersion = "1.1.4";
+        internal const string ModVersion = "1.1.5";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -84,6 +84,18 @@ namespace BlackForest_Pack_2
                 new LocationConfiguration(this.Config, "MassGrave1", 15, "BlackforestCreatures3", "BlackforestLoot1");
             MWL_StoneFormation1_Configuration =
                 new LocationConfiguration(this.Config, "StoneFormation1", 15, "BlackforestCreatures3", "BlackforestLoot3");
+            
+            MWL_GuardTower1_Configuration =
+                new LocationConfiguration(this.Config, "GuardTower1", 5, "BlackforestCreatures1", "BlackforestLoot3");
+            MWL_RootRuins1_Configuration =
+                new LocationConfiguration(this.Config, "RootRuins1", 15, "BlackforestCreatures3", "BlackforestLoot1");
+            MWL_RootsTower1_Configuration =
+                new LocationConfiguration(this.Config, "RootsTower1", 20, "BlackforestCreatures3", "BlackforestLoot2");
+            MWL_RootsTower2_Configuration =
+                new LocationConfiguration(this.Config, "RootsTower2", 10, "BlackforestCreatures3", "BlackforestLoot2");
+            MWL_StoneOutlook1_Configuration =
+                new LocationConfiguration(this.Config, "StoneOutlook1", 10, "BlackforestCreatures3", "BlackforestLoot1");
+            
             
         //     MWL_ForestForge1_Quantity_Config = config("1 - MWL_ForestForge1", "Spawn Quantity", 20,
         // "Amount of this location the game will attempt to place during world generation");
@@ -236,6 +248,12 @@ namespace BlackForest_Pack_2
         public static LocationConfiguration MWL_ForestTower3_Configuration;
         public static LocationConfiguration MWL_MassGrave1_Configuration;
         public static LocationConfiguration MWL_StoneFormation1_Configuration;
+        
+        public static LocationConfiguration MWL_GuardTower1_Configuration;
+        public static LocationConfiguration MWL_RootRuins1_Configuration;
+        public static LocationConfiguration MWL_RootsTower1_Configuration;
+        public static LocationConfiguration MWL_RootsTower2_Configuration;
+        public static LocationConfiguration MWL_StoneOutlook1_Configuration;
         
         // public static ConfigEntry<int> MWL_ForestForge1_Quantity_Config = null!;
         // public static ConfigEntry<ConfigurationManager.Toggle> MWL_ForestForge1_CreatureYaml_Config = null!;
