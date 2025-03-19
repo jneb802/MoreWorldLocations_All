@@ -31,7 +31,7 @@ public class LocationConfigs
     public static LocationConfig MWL_CastleCorner1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_CastleCorner1_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_CastleCorner1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -51,7 +51,7 @@ public class LocationConfigs
     public static LocationConfig MWL_ForestCamp1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_ForestCamp1_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_ForestCamp1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -71,7 +71,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistHut2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_Misthut2_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_Misthut2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -91,7 +91,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MountainDvergrShrine1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_MountainDvergrShrine1_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_MountainDvergrShrine1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -102,16 +102,38 @@ public class LocationConfigs
         MinAltitude = 2,
         MinDistance = LocationRings.Ring5.MinDistance,
         MaxDistance = LocationRings.Ring7.MaxDistance,
+        BiomeArea = Heightmap.BiomeArea.Median
         //InteriorRadius = 64,
         // InForest = false,
         //ForestTresholdMin = 0f,
         //ForestTrasholdMax = 2,
     };
     
+    // public static LocationConfig MWL_MountainDvergrShrine2_Config = new LocationConfig
+    // {
+    //     Biome = Heightmap.Biome.Mountain,
+    //     Quantity = Adventure_Map_Pack_1Plugin.MWL_MountainDvergrShrine2_Quantity_Config.Value,
+    //     Priotized = true,
+    //     ExteriorRadius = 20,
+    //     ClearArea = true,
+    //     RandomRotation = false,
+    //     Group = "Shrine",
+    //     MinDistanceFromSimilar = 512,
+    //     MaxTerrainDelta = 4f,
+    //     MinAltitude = 2,
+    //     MinDistance = LocationRings.Ring5.MinDistance,
+    //     MaxDistance = LocationRings.Ring7.MaxDistance,
+    //     BiomeArea = Heightmap.BiomeArea.Median
+    //     //InteriorRadius = 64,
+    //     // InForest = false,
+    //     //ForestTresholdMin = 0f,
+    //     //ForestTrasholdMax = 2,
+    // };
+    
     public static LocationConfig MWL_MountainShrine1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mountain,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_MountainShrine1_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_MountainShrine1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -120,7 +142,7 @@ public class LocationConfigs
         MinDistanceFromSimilar = 512,
         MaxTerrainDelta = 4f,
         MinAltitude = 2,
-        MinDistance = LocationRings.Ring1.MinDistance,
+        MinDistance = LocationRings.Ring4.MinDistance,
         MaxDistance = LocationRings.Ring7.MaxDistance,
         //InteriorRadius = 64,
         // InForest = false,
@@ -131,7 +153,7 @@ public class LocationConfigs
     public static LocationConfig MWL_RuinedTower1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.BlackForest,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_RuinedTower1_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_RuinedTower1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,
@@ -151,7 +173,7 @@ public class LocationConfigs
     public static LocationConfig MWL_TreeTowers1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        Quantity = Adventure_Map_Pack_1Plugin.MWL_TreeTowers1_Quantity_Config.Value,
+        Quantity = Adventure_Map_Pack_1Plugin.MWL_TreeTowers1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 20,
         ClearArea = true,

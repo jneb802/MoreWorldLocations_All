@@ -128,6 +128,9 @@
         <Compile Include="Src\AdventureMapPack1.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\StatusEffects\ImmuneShield.cs" />
+        <Compile Include="Src\Utils\PrefabUtils.cs" />
+        <Compile Include="Src\Utils\StatusEffectUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -137,13 +140,11 @@
         <Content Include=".gitignore"/>
         <EmbeddedResource Include="assets\adventuremap1" />
         <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
+        <EmbeddedResource Include="assets\totems" />
         <Content Include="environment.props"/>
         <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="Libs\LocalizationManager.dll"/>
-        <Content Include="Libs\ServerSync.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <Content Include="LICENSE.md"/>
         <Content Include="README.md"/>
         <Content Include="Thunderstore\CHANGELOG.md"/>
