@@ -1,0 +1,1 @@
+﻿Put skill, location, and other pngs in this folder.
