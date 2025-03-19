@@ -30,7 +30,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistFort2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_MistFort2_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_MistFort2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -53,7 +53,7 @@ public class LocationConfigs
     public static LocationConfig MWL_SecretRoom1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_SecretRoom1_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_SecretRoom1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -76,7 +76,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistWorkshop1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_MistWorkshop1_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_MistWorkshop1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -100,7 +100,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistTower1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_MistTower1_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_MistTower1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -123,7 +123,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistWall1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_MistWall1_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_MistWall1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -146,7 +146,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistTower2_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_MistTower2_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_MistTower2_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
@@ -169,7 +169,7 @@ public class LocationConfigs
     public static LocationConfig MWL_MistHut1_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Mistlands,
-        Quantity = Mistlands_Pack_1Plugin.MWL_MistHut1_QuantityConfig.Value,
+        Quantity = Mistlands_Pack_1Plugin.MWL_MistHut1_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 15,
         ClearArea = true,
