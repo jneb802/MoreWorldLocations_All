@@ -131,7 +131,36 @@ public class Locations
         //     BlackForest_Pack_2Plugin.blackforest2YAMLmanager.GetLootYamlContent(BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.LootYaml.Value), 
         //     BlackForest_Pack_2Plugin.MWL_StoneOutlook1_Configuration.LootList.Value,
         //     LocationConfigs.MWL_StoneOutlook1_Config);
-       
+        
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_ForestRuin2",
+            BlackForest_Pack_2Plugin.MWL_ForestRuin2_Configuration,
+            LocationConfigs.MWL_ForestRuin2_Config,
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
+    
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_ForestRuin3",
+            BlackForest_Pack_2Plugin.MWL_ForestRuin3_Configuration,
+            LocationConfigs.MWL_ForestRuin3_Config,
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
+    
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_ForestSkull1",
+            BlackForest_Pack_2Plugin.MWL_ForestSkull1_Configuration,
+            LocationConfigs.MWL_ForestSkull1_Config,
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
+    
+        LocationManager.AddLocation(assetBundle, 
+            "MWL_ForestTower4",
+            BlackForest_Pack_2Plugin.MWL_ForestTower4_Configuration,
+            LocationConfigs.MWL_ForestTower4_Config,
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
+
+        LocationManager.AddLocation(assetBundle,
+            "MWL_ForestTower5",
+            BlackForest_Pack_2Plugin.MWL_ForestTower5_Configuration,
+            LocationConfigs.MWL_ForestTower5_Config,
+            BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
