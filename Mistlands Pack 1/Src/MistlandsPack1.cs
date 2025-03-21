@@ -90,6 +90,14 @@ namespace Mistlands_Pack_1
                 new LocationConfiguration(this.Config, "MistTower2", 25, "MistCreatures1", "MistLoot1");
             MWL_MistHut1_Configuration =
                 new LocationConfiguration(this.Config, "MistHut1", 25, "MistCreatures1", "MistLoot1");
+        
+            MWL_DvergrEitrSingularity1_Configuration =
+                new LocationConfiguration(this.Config, "DvergrEitrSingularity1", 25, "MistCreatures1", "MistLoot1");
+            MWL_DvergrHouse1_Configuration =
+                new LocationConfiguration(this.Config, "DvergrHouse1", 20, "PlainsCreatures3", "MistLoot1");
+            MWL_DvergrKnowledgeExtractor1_Configuration =
+                new LocationConfiguration(this.Config, "DvergrKnowledgeExtractor1", 15, "MistCreatures1", "MistLoot1");
+            
             
             // MWL_MistFort2_QuantityConfig = config("1 - MWL_MistFort2", "Spawn Quantity", 20,
             //     "Amount of this location the game will attempt to place during world generation");
@@ -203,6 +211,9 @@ namespace Mistlands_Pack_1
         public static LocationConfiguration MWL_MistWall1_Configuration;
         public static LocationConfiguration MWL_MistTower2_Configuration;
         public static LocationConfiguration MWL_MistHut1_Configuration;
+        public static LocationConfiguration MWL_DvergrEitrSingularity1_Configuration;
+        public static LocationConfiguration MWL_DvergrHouse1_Configuration;
+        public static LocationConfiguration MWL_DvergrKnowledgeExtractor1_Configuration;
         
         // public static ConfigEntry<int> MWL_MistFort2_QuantityConfig = null!;
         // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MistFort2_CreatureYamlConfig = null!;

@@ -188,4 +188,73 @@ public class LocationConfigs
         //ForestTrasholdMax = 2,
         BiomeArea = Heightmap.BiomeArea.Everything
     };
+    
+    public static LocationConfig MWL_DvergrEitrSingularity1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Mistlands,
+        Quantity = Mistlands_Pack_1Plugin.MWL_DvergrEitrSingularity1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Mist5",
+        MinDistanceFromSimilar = 512,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 15f,
+        MinAltitude = 5f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Everything
+    };
+    
+    public static LocationConfig MWL_DvergrHouse1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Mistlands,
+        Quantity = Mistlands_Pack_1Plugin.MWL_DvergrHouse1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Mist4",
+        MinDistanceFromSimilar = 512,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 15f,
+        MinAltitude = 5f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Edge
+    };
+    
+    public static LocationConfig MWL_DvergrKnowledgeExtractor1_Config = new LocationConfig
+    {
+        Biome = Heightmap.Biome.Mistlands,
+        Quantity = Mistlands_Pack_1Plugin.MWL_DvergrKnowledgeExtractor1_Configuration.Quantity.Value,
+        Priotized = true,
+        ExteriorRadius = 15,
+        ClearArea = true,
+        RandomRotation = false,
+        Group = "Mist5",
+        MinDistanceFromSimilar = 512,
+        //SlopeRotation = true,
+        MinTerrainDelta = 0f,
+        MaxTerrainDelta = 15f,
+        MinAltitude = 5f,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        //MaxDistance = LocationRings.Ring7.MaxDistance,
+        //InteriorRadius = 64,
+        InForest = false,
+        //ForestTresholdMin = 0f,
+        //ForestTrasholdMax = 2,
+        BiomeArea = Heightmap.BiomeArea.Median
+    };
 }

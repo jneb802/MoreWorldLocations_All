@@ -71,6 +71,24 @@ public class Locations
             Mistlands_Pack_1Plugin.MWL_MistHut1_Configuration.LootList.Value,
             LocationConfigs.MWL_MistHut1_Config);
         
+        LocationManager.AddLocation(assetBundle,
+            "MWL_DvergrEitrSingularity1",
+            Mistlands_Pack_1Plugin.MWL_DvergrEitrSingularity1_Configuration,
+            LocationConfigs.MWL_MistHut1_Config,
+            Mistlands_Pack_1Plugin.mistlandsYAMLManager);
+        
+        LocationManager.AddLocation(assetBundle,
+            "MWL_DvergrHouse1",
+            Mistlands_Pack_1Plugin.MWL_DvergrHouse1_Configuration,
+            LocationConfigs.MWL_DvergrHouse1_Config,
+            Mistlands_Pack_1Plugin.mistlandsYAMLManager);
+        
+        LocationManager.AddLocation(assetBundle,
+            "MWL_DvergrKnowledgeExtractor1",
+            Mistlands_Pack_1Plugin.MWL_DvergrKnowledgeExtractor1_Configuration,
+            LocationConfigs.MWL_DvergrKnowledgeExtractor1_Config,
+            Mistlands_Pack_1Plugin.mistlandsYAMLManager);
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
     }
