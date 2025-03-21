@@ -123,16 +123,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Managers\CreatureManager.cs"/>
-        <Compile Include="Managers\ItemDataManager.cs"/>
-        <Compile Include="Managers\ItemManager.cs"/>
         <Compile Include="Managers\LocalizationManager.cs"/>
-        <Compile Include="Managers\LocationManager.cs"/>
-        <Compile Include="Managers\PieceManager\MaterialReplacer.cs"/>
-        <Compile Include="Managers\PieceManager\PieceManager.cs"/>
-        <Compile Include="Managers\PieceManager\SnapPointMaker.cs"/>
-        <Compile Include="Managers\SkillManager.cs"/>
-        <Compile Include="Managers\StatusEffectManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />

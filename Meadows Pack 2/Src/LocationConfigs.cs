@@ -31,7 +31,7 @@ public class LocationConfigs
     public static Dictionary<string, LocationConfig> AllLocationConfigs = new Dictionary<string, LocationConfig>
     {
         { "MWL_DeerShrine1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_DeerShrine1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_shrine", Priotized = true, RandomRotation = false, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring1.MaxDistance, InForest = false } },
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring3.MaxDistance, InForest = false } },
         
         { "MWL_DeerShrine2_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_DeerShrine2_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_shrine", Priotized = true, RandomRotation = false, 
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring4.MinDistance, InForest = false } },
@@ -45,11 +45,8 @@ public class LocationConfigs
         { "MWL_MeadowsRuin1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsRuin1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_small", Priotized = true, RandomRotation = false, 
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring4.MaxDistance, InForest = false } },
         
-        { "MWL_MeadowsTomb1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsTomb1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Environment_small", Priotized = true, RandomRotation = false, 
-            MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance, InForest = true, ClearArea = false} },
-        
         { "MWL_MeadowsTomb4_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsTomb4_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Environment_medium", Priotized = true, RandomRotation = false, 
-            MinDistanceFromSimilar = 512, MaxTerrainDelta = 4f, MinAltitude = 0, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring4.MaxDistance, InForest = false } },
+            MinDistanceFromSimilar = 512, MaxTerrainDelta = 4f, MinAltitude = -1, MaxAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring4.MaxDistance, InForest = false } },
         
         { "MWL_MeadowsTower1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsTower1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_small", Priotized = true, RandomRotation = false, 
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance, InForest = false } },
@@ -58,6 +55,6 @@ public class LocationConfigs
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
         
         { "MWL_SmallHouse1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_SmallHouse1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_medium", Priotized = true, RandomRotation = false, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } }
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } }
     };
 }

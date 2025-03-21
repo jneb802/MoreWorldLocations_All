@@ -77,25 +77,23 @@ namespace Meadows_Pack_2
             LoadAssetBundle();
             
             MWL_DeerShrine1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_DeerShrine1", 5, "MeadowsCreatures1", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_DeerShrine1", 10, "MeadowsCreatures1", "MeadowsLoot1");
             MWL_DeerShrine2_Configuration =
-                new LocationConfiguration(this.Config, "MWL_DeerShrine2", 5, "MeadowsCreatures1", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_DeerShrine2", 10, "MeadowsCreatures1", "MeadowsLoot3");
             MWL_MeadowsBarn1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_MeadowsBarn1", 15, "MeadowsCreatures3", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_MeadowsBarn1", 5, "MeadowsCreatures5", "MeadowsLoot1");
             MWL_MeadowsHouse2_Configuration =
-                new LocationConfiguration(this.Config, "MWL_MeadowsHouse2", 5, "MeadowsCreatures2", "MeadowsLoot3");
+                new LocationConfiguration(this.Config, "MWL_MeadowsHouse2", 20, "MeadowsCreatures2", "MeadowsLoot3");
             MWL_MeadowsRuin1_Configuration =
                 new LocationConfiguration(this.Config, "MWL_MeadowsRuin1", 5, "MeadowsCreatures1", "MeadowsLoot1");
-            MWL_MeadowsTomb1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_MeadowsTomb1", 5, "MeadowsCreatures1", "MeadowsLoot1");
             MWL_MeadowsTomb4_Configuration =
-                new LocationConfiguration(this.Config, "MWL_MeadowsTomb4", 5, "MeadowsCreatures1", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_MeadowsTomb4", 10, "MeadowsCreatures1", "MeadowsLoot1");
             MWL_MeadowsTower1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_MeadowsTower1", 5, "MeadowsCreatures1", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_MeadowsTower1", 15, "MeadowsCreatures1", "MeadowsLoot1");
             MWL_OakHut1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_OakHut1", 5, "MeadowsCreatures1", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_OakHut1", 15, "MeadowsCreatures1", "MeadowsLoot1");
             MWL_SmallHouse1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_SmallHouse1", 5, "MeadowsCreatures1", "MeadowsLoot1");
+                new LocationConfiguration(this.Config, "MWL_SmallHouse1", 20, "MeadowsCreatures1", "MeadowsLoot1");
             
             meadows2YAMLManager.ParseDefaultYamls();
             meadows2YAMLManager.ParseCustomYamls();
@@ -114,7 +112,6 @@ namespace Meadows_Pack_2
         public static LocationConfiguration MWL_MeadowsBarn1_Configuration;
         public static LocationConfiguration MWL_MeadowsHouse2_Configuration;
         public static LocationConfiguration MWL_MeadowsRuin1_Configuration;
-        public static LocationConfiguration MWL_MeadowsTomb1_Configuration;
         public static LocationConfiguration MWL_MeadowsTomb4_Configuration;
         public static LocationConfiguration MWL_MeadowsTower1_Configuration;
         public static LocationConfiguration MWL_OakHut1_Configuration;
