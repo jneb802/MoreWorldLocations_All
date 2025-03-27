@@ -6,6 +6,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using Common;
+using Dungeon_Castle.Utils;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Jotunn.Managers;
@@ -79,6 +80,8 @@ namespace Dungeon_Castle
             dungeonCastleYamlManager.ParseDefaultYamls();
             dungeonCastleYamlManager.ParseCustomYamls();
             dungeonCastleYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
+            
+            TranslationUtils.AddLocalizations();
             
             PrefabManager.OnVanillaPrefabsAvailable += BuildYamlLists;
             PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
