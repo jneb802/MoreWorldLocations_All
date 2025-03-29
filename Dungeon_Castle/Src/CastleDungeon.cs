@@ -74,7 +74,7 @@ namespace Dungeon_Castle
             MWD_CastleDungeon_Configuration =
                 new LocationConfiguration(this.Config, "Castle", 40, "UndergroundRuinsCreatures1", "UndergroundRuinsLoot1","UndergroundRuinsPickables1");
 
-            dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior2");
+            dungeonGameObject = assetBundle.LoadAsset<GameObject>("CD_Exterior");
             Rooms.RegisterTheme(dungeonGameObject, "CD_Castle");
             
             dungeonCastleYamlManager.ParseDefaultYamls();

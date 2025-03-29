@@ -29,18 +29,20 @@ public class LocationConfigs
     
     public static LocationConfig MWD_Castle_Config = new LocationConfig
     {
-        Biome = Heightmap.Biome.BlackForest,
-        BiomeArea = Heightmap.BiomeArea.Median,
+        Biome = Heightmap.Biome.Swamp,
+        BiomeArea = Heightmap.BiomeArea.Edge,
         Quantity = Dungeon_CastlePlugin.MWD_CastleDungeon_Configuration.Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
+        SlopeRotation = true,
         RandomRotation = false,
-        Group = "Dungeon_Castle",
+        Group = "Dungeon_Catacomb",
         MinDistanceFromSimilar = 512,
-        MaxTerrainDelta = 2f,
-        MinAltitude = 10,
-        MinDistance = LocationRings.Ring3.MinDistance,
-        MaxDistance = LocationRings.Ring6.MaxDistance,
+        MinTerrainDelta = 1f,
+        // MaxTerrainDelta = 2f,
+        MinAltitude = 1,
+        MinDistance = LocationRings.Ring2.MinDistance,
+        MaxDistance = LocationRings.Ring7.MaxDistance,
     };
 }

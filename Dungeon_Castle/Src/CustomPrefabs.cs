@@ -38,6 +38,7 @@ public class CustomPrefabs
             "CD_kit_SunkenKit_int_arch",
             "CD_kit_SunkenKit_int_stair",
             
+            "CD_kit_sunken_crypt_gate",
         };
         
         var roomSpawnerPrefabs = new List<string>()
@@ -54,18 +55,24 @@ public class CustomPrefabs
             "CD_RoomBig3_Spawner2",
             "CD_RoomBig3_Spawner3",
             "CD_RoomBig3_Spawner4",
+            
+            "CD_Lower_Hallway2_Spawner1",
+            "CD_Lower_Hallway2_Spawner2",
+            
+            "CD_Lower_Hallway4_Spawner1",
+            
+            "CD_Lower_Room1_Spawner1",
         };
         
         var roomContainerPrefabs = new List<string>()
         {
-            
+            "CD_Lower_Room1_loot_chest_stone1",
         };
         
         var roomPickablePrefabs = new List<string>()
         {
             
         };
-        
         
         foreach (var prefab in customPrefabs)
         {
@@ -77,12 +84,12 @@ public class CustomPrefabs
             int randomIndex = Random.Range(0, Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureList.Count);
             RegisterCustomPrefabSpawner(Dungeon_CastlePlugin.assetBundle, prefab, Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureList[randomIndex]);
         }
-        //
-        // foreach (var prefab in roomContainerPrefabs)
-        // {
-        //     RegisterCustomPrefabContainer(Dungeon_CastlePlugin.assetBundle, prefab, Dungeon_CastlePlugin.dungeonCastleYamlManager.lootList);
-        // }
-        //
+        
+        foreach (var prefab in roomContainerPrefabs)
+        {
+            RegisterCustomPrefabContainer(Dungeon_CastlePlugin.assetBundle, prefab, Dungeon_CastlePlugin.dungeonCastleYamlManager.lootList);
+        }
+        
         // foreach (var prefab in roomPickablePrefabs)
         // {
         //     RegisterCustomPrefabRandomItem(Dungeon_CastlePlugin.assetBundle, prefab, Dungeon_CastlePlugin.dungeonCastleYamlManager.pickableList);
