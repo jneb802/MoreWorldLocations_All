@@ -79,15 +79,30 @@ public class CustomPrefabs
             RegisterCustomPrefab(Dungeon_CastlePlugin.assetBundle, prefab);
         }
         
-        foreach (var prefab in roomSpawnerPrefabs)
+        foreach (var prefab in roomUpperSpawnerPrefabs)
         {
-            int randomIndex = Random.Range(0, Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureList.Count);
-            RegisterCustomPrefabSpawner(Dungeon_CastlePlugin.assetBundle, prefab, Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureList[randomIndex]);
+            List<string> upperCreatureList =
+                Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureListDictionary[
+                    Dungeon_CastlePlugin.MWD_CastleDungeon_CreatureListUpper.Value];
+            int randomIndex = Random.Range(0, upperCreatureList.Count);
+            RegisterCustomPrefabSpawner(Dungeon_CastlePlugin.assetBundle, prefab, upperCreatureList[randomIndex]);
         }
         
-        foreach (var prefab in roomContainerPrefabs)
+        foreach (var prefab in roomLowerSpawnerPrefabs)
         {
-            RegisterCustomPrefabContainer(Dungeon_CastlePlugin.assetBundle, prefab, Dungeon_CastlePlugin.dungeonCastleYamlManager.lootList);
+            List<string> lowerCreatureList =
+                Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureListDictionary[
+                    Dungeon_CastlePlugin.MWD_CastleDungeon_CreatureListLower.Value];
+            int randomIndex = Random.Range(0, lowerCreatureList.Count);
+            RegisterCustomPrefabSpawner(Dungeon_CastlePlugin.assetBundle, prefab, lowerCreatureList[randomIndex]);
+        }
+        
+        foreach (var prefab in roomUpperContainerPrefabs)
+        {
+            List<DropTable.DropData> upperLootList =
+                Dungeon_CastlePlugin.dungeonCastleYamlManager.lootListDictionary[
+                    Dungeon_CastlePlugin.MWD_CastleDungeon_LootListUpper.Value];
+            RegisterCustomPrefabContainer(Dungeon_CastlePlugin.assetBundle, prefab, upperLootList);
         }
         
         // foreach (var prefab in roomPickablePrefabs)

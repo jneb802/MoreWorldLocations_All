@@ -124,13 +124,19 @@ public class CustomPrefabs
     
     foreach (var prefab in roomSpawnerPrefabs)
     {
-        int randomIndex = Random.Range(0, Underground_RuinsPlugin.dungeonBFDYamlManager.creatureList.Count);
-        RegisterCustomPrefabSpawner(Underground_RuinsPlugin.assetBundle, prefab, Underground_RuinsPlugin.dungeonBFDYamlManager.creatureList[randomIndex]);
+        List<string> creatureList = Underground_RuinsPlugin.dungeonBFDYamlManager.creatureListDictionary[Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value];
+        int randomIndex = Random.Range(0, creatureList.Count);
+        RegisterCustomPrefabSpawner(Underground_RuinsPlugin.assetBundle, prefab, creatureList[randomIndex]);
     }
     
     foreach (var prefab in roomContainerPrefabs)
     {
         RegisterCustomPrefabContainer(Underground_RuinsPlugin.assetBundle, prefab, Underground_RuinsPlugin.dungeonBFDYamlManager.lootList);
+        
+        List<DropTable.DropData> lootList =
+            Underground_RuinsPlugin.dungeonBFDYamlManager.lootListDictionary[
+                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootList.Value];
+        RegisterCustomPrefabContainer(Underground_RuinsPlugin.assetBundle, prefab, lootList);
     }
     
     foreach (var prefab in roomPickablePrefabs)

@@ -21,7 +21,7 @@ public class YAMLManager
     public string defaultlootYamlContent;
     public string customlootYamlContent;
     public List<DropTable.DropData> lootList;
-    public Dictionary<string, List<string>> lootListDictionary;
+    public Dictionary<string, List<DropTable.DropData>> lootListDictionary;
     
     public string defaultPickableItemContent;
     public string customPickableItemContent;
@@ -161,11 +161,13 @@ public class YAMLManager
         // Debug.Log("Loot list built");
         if (useCustomLootYAML == ConfigurationManager.Toggle.On)
         {
-            lootList = Common.LootManager.ParseContainerYaml_v2(lootListName,customlootYamlContent);
+            List<DropTable.DropData> list = Common.LootManager.ParseContainerYaml_v2(lootListName, customlootYamlContent);
+            lootListDictionary.Add(lootListName,list);
         }
         else
         {
-            lootList = Common.LootManager.ParseContainerYaml_v2(lootListName,defaultlootYamlContent);
+            List<DropTable.DropData> list = Common.LootManager.ParseContainerYaml_v2(lootListName, defaultlootYamlContent);
+            lootListDictionary.Add(lootListName,list);
         }
     }
     
