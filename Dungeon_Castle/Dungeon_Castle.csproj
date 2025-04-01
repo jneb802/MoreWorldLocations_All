@@ -126,6 +126,7 @@
         <Compile Include="Src\CustomPrefabs.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\Patches\ZnetScene_patch.cs" />
         <Compile Include="Src\Rooms.cs" />
         <Compile Include="Src\Utils\TranslationUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>

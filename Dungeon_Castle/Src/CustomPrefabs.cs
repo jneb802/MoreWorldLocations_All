@@ -31,6 +31,7 @@ public class CustomPrefabs
             "CD_kit_water",
             "CD_kit_altarHolder",
             "CD_kit_secretdoor",
+            "CD_kit_AltarDoor",
             
             "CD_kit_SunkenKit_int_wall_4x4",
             "CD_kit_SunkenKit_int_wall_2x4",
@@ -39,10 +40,19 @@ public class CustomPrefabs
             "CD_kit_SunkenKit_int_stair",
             
             "CD_kit_sunken_crypt_gate",
+            "CD_kit_Spawner_DraugrPile",
+            
+            "CD_kit_CastleKit_groundtorch",
+            "CD_kit_CastleKit_groundtorch_green",
+            
+            "CD_kit_CryptKey"
         };
         
-        var roomSpawnerPrefabs = new List<string>()
+        var roomUpperSpawnerPrefabs = new List<string>()
         {
+            "CD_Room1_Spawner1",
+            "CD_Room2_Spawner1",
+            
             "CD_RoomBig1_Spawner1",
             "CD_RoomBig1_Spawner2",
             "CD_RoomBig1_Spawner3",
@@ -55,7 +65,10 @@ public class CustomPrefabs
             "CD_RoomBig3_Spawner2",
             "CD_RoomBig3_Spawner3",
             "CD_RoomBig3_Spawner4",
-            
+        };
+        
+        var roomLowerSpawnerPrefabs = new List<string>()
+        { 
             "CD_Lower_Hallway2_Spawner1",
             "CD_Lower_Hallway2_Spawner2",
             
@@ -64,7 +77,15 @@ public class CustomPrefabs
             "CD_Lower_Room1_Spawner1",
         };
         
-        var roomContainerPrefabs = new List<string>()
+        var roomUpperContainerPrefabs = new List<string>()
+        {
+            "CD_Endcap14_loot_chest_stone1",
+            "CD_Room2_loot_chest_stone1",
+            "CD_RoomBig1_loot_chest_stone1",
+            "CD_RoomBig2_loot_chest_stone1"
+        };
+        
+        var roomLowerContainerPrefabs = new List<string>()
         {
             "CD_Lower_Room1_loot_chest_stone1",
         };

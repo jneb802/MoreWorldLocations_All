@@ -1,30 +1,35 @@
 version: 2.0
-UndergroundRuinsLoot1:
+CatacombLoot1:
   - item: Amber
-    stackMin: 1
+    stackMin: 3
     stackMax: 5
     weight: 1.5
   - item: Ruby
-    stackMin: 1
-    stackMax: 3
+    stackMin: 3
+    stackMax: 5
     weight: 1.0
+  - item: Coins
+    stackMin: 20
+    stackMax: 50
+    weight: 1.5
+  - item: AmberPearl
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: Copper
+    stackMin: 2
+    stackMax: 3
+    weight: 0.5
+CatacombLoot2:
   - item: Coins
     stackMin: 10
     stackMax: 30
     weight: 1.5
-  - item: ArrowFlint
-    stackMin: 5
-    stackMax: 10
-    weight: 1.5
-  - item: BoneFragments
-    stackMin: 1
-    stackMax: 5
-    weight: 2.0
-  - item: AmberPearl
-    stackMin: 1
-    stackMax: 2
+  - item: IronOre
+    stackMin: 4
+    stackMax: 8
     weight: 1.0
-  - item: TinOre
+  - item: WitheredBones
     stackMin: 1
     stackMax: 2
     weight: 0.5

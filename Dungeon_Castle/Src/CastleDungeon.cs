@@ -6,9 +6,10 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using Common;
-using Dungeon_Castle.Utils;
+using Dungeon_Castle.Utils1;
 using HarmonyLib;
 using JetBrains.Annotations;
+using Jotunn.Extensions;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Dungeon_Castle
     [BepInPlugin(ModGUID, ModName, ModVersion)]
     public class Dungeon_CastlePlugin : BaseUnityPlugin
     {
-        internal const string ModName = "Dungeon_Castle";
+        internal const string ModName = "Forbidden_Catacombs";
         internal const string ModVersion = "1.0.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
@@ -72,16 +73,33 @@ namespace Dungeon_Castle
             LoadAssetBundle();
             
             MWD_CastleDungeon_Configuration =
-                new LocationConfiguration(this.Config, "Castle", 40, "UndergroundRuinsCreatures1", "UndergroundRuinsLoot1","UndergroundRuinsPickables1");
+                new LocationConfiguration(this.Config, "Forbidden_Catacombs", 40, "UndergroundRuinsCreatures1", "UndergroundRuinsLoot1","UndergroundRuinsPickables1");
 
+            MWD_CastleDungeon_Quantity = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Spawn Quantity", 40, 
+                "Amount of this dungeon the game will attempt to place during world generation");
+            
+            MWD_CastleDungeon_CreatureYaml = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off, 
+                "When Off, location will spawn default creatures. When On, both upper and lower dungeon sections will select creatures from the list in the warpalicious.More_World_Locations_CreatureLists.yml file in the BepInEx config folder");
+            MWD_CastleDungeon_CreatureListUpper = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Name of Loot List for Upper Section", "CatacombCreatures1", 
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            MWD_CastleDungeon_CreatureListLower = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Name of Loot List for Lower Section", "CatacombCreatures2", 
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
+            MWD_CastleDungeon_LootYaml = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off, 
+                "When Off, location will use default loot. When On, both upper and lower dungeon sections will select loot from the list in the warpalicious.More_World_Locations_LootLists.yml file in the BepInEx config folder");
+            MWD_CastleDungeon_LootListUpper = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Name of Loot List", "CatacombLoot1", 
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            MWD_CastleDungeon_LootListLower = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Name of Loot List", "CatacombLoot2", 
+                "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
+            
             dungeonGameObject = assetBundle.LoadAsset<GameObject>("CD_Exterior");
-            Rooms.RegisterTheme(dungeonGameObject, "CD_Castle");
+            Rooms.RegisterTheme(dungeonGameObject, "CD_Catacomb");
             
             dungeonCastleYamlManager.ParseDefaultYamls();
             dungeonCastleYamlManager.ParseCustomYamls();
             dungeonCastleYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
             
-            TranslationUtils.AddLocalizations();
+            // Utils1.TranslationUtils.AddLocalizations();
             
             PrefabManager.OnVanillaPrefabsAvailable += BuildYamlLists;
             PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;
@@ -105,6 +123,14 @@ namespace Dungeon_Castle
         }
         
         public static LocationConfiguration MWD_CastleDungeon_Configuration;
+        
+        public static ConfigEntry<int> MWD_CastleDungeon_Quantity;
+        public static ConfigEntry<string> MWD_CastleDungeon_CreatureListUpper;
+        public static ConfigEntry<string> MWD_CastleDungeon_CreatureListLower;
+        public static ConfigEntry<string> MWD_CastleDungeon_LootListUpper;
+        public static ConfigEntry<string> MWD_CastleDungeon_LootListLower;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_CastleDungeon_CreatureYaml;
+        public static ConfigEntry<ConfigurationManager.Toggle> MWD_CastleDungeon_LootYaml;
 
         private void OnDestroy()
         {

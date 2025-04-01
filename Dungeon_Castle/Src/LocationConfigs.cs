@@ -31,7 +31,7 @@ public class LocationConfigs
     {
         Biome = Heightmap.Biome.Swamp,
         BiomeArea = Heightmap.BiomeArea.Edge,
-        Quantity = Dungeon_CastlePlugin.MWD_CastleDungeon_Configuration.Quantity.Value,
+        Quantity = Dungeon_CastlePlugin.MWD_CastleDungeon_Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,
@@ -39,10 +39,10 @@ public class LocationConfigs
         RandomRotation = false,
         Group = "Dungeon_Catacomb",
         MinDistanceFromSimilar = 512,
-        MinTerrainDelta = 1f,
+        MinTerrainDelta = 0.25f,
         // MaxTerrainDelta = 2f,
         MinAltitude = 1,
         MinDistance = LocationRings.Ring2.MinDistance,
-        MaxDistance = LocationRings.Ring7.MaxDistance,
+        // MaxDistance = LocationRings.Ring7.MaxDistance,
     };
 }
