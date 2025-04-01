@@ -16,10 +16,12 @@ public class YAMLManager
     public string defaultCreatureYamlContent;
     public string customCreatureYamlContent;
     public List<string> creatureList;
+    public Dictionary<string, List<string>> creatureListDictionary;
     
     public string defaultlootYamlContent;
     public string customlootYamlContent;
     public List<DropTable.DropData> lootList;
+    public Dictionary<string, List<string>> lootListDictionary;
     
     public string defaultPickableItemContent;
     public string customPickableItemContent;
@@ -144,11 +146,13 @@ public class YAMLManager
         // Debug.Log("Creature list built");
         if (useCustomCreatureYAML == ConfigurationManager.Toggle.On)
         {
-            creatureList = Common.CreatureManager.CreateCreatureList(creatureListName, customCreatureYamlContent);
+            List<string> list = Common.CreatureManager.CreateCreatureList(creatureListName, customCreatureYamlContent);
+            creatureListDictionary.Add(creatureListName,list);
         }
         else
-        {
-           creatureList = Common.CreatureManager.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
+        { 
+            List<string> list = Common.CreatureManager.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
+            creatureListDictionary.Add(creatureListName,list);
         }
     }
 
