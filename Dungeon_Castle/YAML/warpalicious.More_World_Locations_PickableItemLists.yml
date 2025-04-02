@@ -1,4 +1,4 @@
-UndergroundRuinsPickables1:
+CatacombPickables1:
   - item: Coins
     stackMin: 5
     stackMax: 20
