@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using Dungeon_Castle;
+using Forbidden_Catacombs;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(Dungeon_CastlePlugin.ModName)]
+[assembly: AssemblyTitle(Forbidden_CatacombsPlugin.ModName)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(Dungeon_CastlePlugin.Author)]
-[assembly: AssemblyProduct(Dungeon_CastlePlugin.ModName)]
+[assembly: AssemblyCompany(Forbidden_CatacombsPlugin.Author)]
+[assembly: AssemblyProduct(Forbidden_CatacombsPlugin.ModName)]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using Dungeon_Castle;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(Dungeon_CastlePlugin.ModVersion)]
-[assembly: AssemblyFileVersion(Dungeon_CastlePlugin.ModVersion)]
+[assembly: AssemblyVersion(Forbidden_CatacombsPlugin.ModVersion)]
+[assembly: AssemblyFileVersion(Forbidden_CatacombsPlugin.ModVersion)]

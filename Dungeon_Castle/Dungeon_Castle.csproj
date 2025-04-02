@@ -8,8 +8,8 @@
         <ProjectGuid>{9C8F2F18-3C73-4F4F-A2E0-1F9C0D72B62D}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>Dungeon_Castle</RootNamespace>
-        <AssemblyName>Dungeon_Castle</AssemblyName>
+        <RootNamespace>Forbidden_Catacombs</RootNamespace>
+        <AssemblyName>Forbidden_Catacombs</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>10</LangVersion>

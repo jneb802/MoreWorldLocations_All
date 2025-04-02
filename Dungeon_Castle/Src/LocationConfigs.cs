@@ -1,6 +1,6 @@
 using Jotunn.Configs;
 
-namespace Dungeon_Castle;
+namespace Forbidden_Catacombs;
 
 public class LocationConfigs
 {

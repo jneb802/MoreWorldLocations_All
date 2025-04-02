@@ -4,7 +4,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 
-namespace Dungeon_Castle;
+namespace Forbidden_Catacombs;
 
 public class CustomPrefabs
 {

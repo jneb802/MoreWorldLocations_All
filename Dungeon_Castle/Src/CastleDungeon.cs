@@ -15,10 +15,10 @@ using Jotunn.Utils;
 using UnityEngine;
 using Paths = BepInEx.Paths;
 
-namespace Dungeon_Castle
+namespace Forbidden_Catacombs
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
-    public class Dungeon_CastlePlugin : BaseUnityPlugin
+    public class Forbidden_CatacombsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "Forbidden_Catacombs";
         internal const string ModVersion = "1.0.0";
