@@ -31,7 +31,7 @@ public class LocationConfigs
     {
         Biome = Heightmap.Biome.Swamp,
         BiomeArea = Heightmap.BiomeArea.Edge,
-        Quantity = Dungeon_CastlePlugin.MWD_CastleDungeon_Quantity.Value,
+        Quantity = Forbidden_CatacombsPlugin.MWD_CastleDungeon_Quantity.Value,
         Priotized = true,
         ExteriorRadius = 8,
         ClearArea = true,

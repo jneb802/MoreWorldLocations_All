@@ -97,33 +97,41 @@ public class CustomPrefabs
         
         foreach (var prefab in customPrefabs)
         {
-            RegisterCustomPrefab(Dungeon_CastlePlugin.assetBundle, prefab);
+            RegisterCustomPrefab(Forbidden_CatacombsPlugin.assetBundle, prefab);
         }
         
         foreach (var prefab in roomUpperSpawnerPrefabs)
         {
             List<string> upperCreatureList =
-                Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureListDictionary[
-                    Dungeon_CastlePlugin.MWD_CastleDungeon_CreatureListUpper.Value];
+                Forbidden_CatacombsPlugin.dungeonCastleYamlManager.creatureListDictionary[
+                    Forbidden_CatacombsPlugin.MWD_CastleDungeon_CreatureListUpper.Value];
             int randomIndex = Random.Range(0, upperCreatureList.Count);
-            RegisterCustomPrefabSpawner(Dungeon_CastlePlugin.assetBundle, prefab, upperCreatureList[randomIndex]);
+            RegisterCustomPrefabSpawner(Forbidden_CatacombsPlugin.assetBundle, prefab, upperCreatureList[randomIndex]);
         }
         
         foreach (var prefab in roomLowerSpawnerPrefabs)
         {
             List<string> lowerCreatureList =
-                Dungeon_CastlePlugin.dungeonCastleYamlManager.creatureListDictionary[
-                    Dungeon_CastlePlugin.MWD_CastleDungeon_CreatureListLower.Value];
+                Forbidden_CatacombsPlugin.dungeonCastleYamlManager.creatureListDictionary[
+                    Forbidden_CatacombsPlugin.MWD_CastleDungeon_CreatureListLower.Value];
             int randomIndex = Random.Range(0, lowerCreatureList.Count);
-            RegisterCustomPrefabSpawner(Dungeon_CastlePlugin.assetBundle, prefab, lowerCreatureList[randomIndex]);
+            RegisterCustomPrefabSpawner(Forbidden_CatacombsPlugin.assetBundle, prefab, lowerCreatureList[randomIndex]);
         }
         
         foreach (var prefab in roomUpperContainerPrefabs)
         {
             List<DropTable.DropData> upperLootList =
-                Dungeon_CastlePlugin.dungeonCastleYamlManager.lootListDictionary[
-                    Dungeon_CastlePlugin.MWD_CastleDungeon_LootListUpper.Value];
-            RegisterCustomPrefabContainer(Dungeon_CastlePlugin.assetBundle, prefab, upperLootList);
+                Forbidden_CatacombsPlugin.dungeonCastleYamlManager.lootListDictionary[
+                    Forbidden_CatacombsPlugin.MWD_CastleDungeon_LootListUpper.Value];
+            RegisterCustomPrefabContainer(Forbidden_CatacombsPlugin.assetBundle, prefab, upperLootList);
+        }
+        
+        foreach (var prefab in roomLowerContainerPrefabs)
+        {
+            List<DropTable.DropData> lowerLootList =
+                Forbidden_CatacombsPlugin.dungeonCastleYamlManager.lootListDictionary[
+                    Forbidden_CatacombsPlugin.MWD_CastleDungeon_LootListLower.Value];
+            RegisterCustomPrefabContainer(Forbidden_CatacombsPlugin.assetBundle, prefab, lowerLootList);
         }
         
         // foreach (var prefab in roomPickablePrefabs)
