@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Jotunn.Entities;
 
-namespace Dungeon_Castle.Utils;
+namespace Forbidden_Catacombs.Utils;
 
 public class TranslationUtils
 {
@@ -13,7 +13,7 @@ public class TranslationUtils
         
         Localization.AddTranslation("English", new Dictionary<string, string>
         {
-            {"piece_CD_kit_piece_walltorch", "Wall Torch"}
+            {"catacomb_hint", "Ancient Seal"}
         });
     }
 }

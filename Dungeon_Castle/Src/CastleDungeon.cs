@@ -6,7 +6,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using Common;
-using Forbidden_Catacombs.Utils1;
+using Forbidden_Catacombs.Utils;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Jotunn.Extensions;
@@ -94,14 +94,14 @@ namespace Forbidden_Catacombs
             MWD_CastleDungeon_PickableList = ConfigFileExtensions.BindConfigInOrder(this.Config, "Forbidden_Catacombs", "Name of PickableItem List", "CatacombPickables1", 
                 "The name of the loot list to use from YAML file");
             
-            dungeonGameObject = assetBundle.LoadAsset<GameObject>("CD_Exterior");
+            dungeonGameObject = assetBundle.LoadAsset<GameObject>("CD_Exterior1");
             Rooms.RegisterTheme(dungeonGameObject, "CD_Catacomb");
             
             dungeonCastleYamlManager.ParseDefaultYamls();
             dungeonCastleYamlManager.ParseCustomYamls();
             dungeonCastleYamlManager.ParsePickableItemYaml("warpalicious.More_World_Locations");
             
-            // Utils1.TranslationUtils.AddLocalizations();
+            Utils.TranslationUtils.AddLocalizations();
             
             PrefabManager.OnVanillaPrefabsAvailable += BuildYamlLists;
             PrefabManager.OnVanillaPrefabsAvailable += CustomPrefabs.RegisterKitPrefabs;

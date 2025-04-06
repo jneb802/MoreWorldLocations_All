@@ -30,18 +30,18 @@ public class LocationConfigs
     public static LocationConfig MWD_Castle_Config = new LocationConfig
     {
         Biome = Heightmap.Biome.Swamp,
-        BiomeArea = Heightmap.BiomeArea.Edge,
+        BiomeArea = Heightmap.BiomeArea.Everything,
         Quantity = Forbidden_CatacombsPlugin.MWD_CastleDungeon_Quantity.Value,
         Priotized = true,
-        ExteriorRadius = 8,
+        ExteriorRadius = 12,
         ClearArea = true,
         SlopeRotation = true,
         RandomRotation = false,
         Group = "Dungeon_Catacomb",
         MinDistanceFromSimilar = 512,
-        MinTerrainDelta = 0.25f,
+        MinTerrainDelta = 0.3f,
         // MaxTerrainDelta = 2f,
-        MinAltitude = 1,
+        MinAltitude = 2f,
         MinDistance = LocationRings.Ring2.MinDistance,
         // MaxDistance = LocationRings.Ring7.MaxDistance,
     };

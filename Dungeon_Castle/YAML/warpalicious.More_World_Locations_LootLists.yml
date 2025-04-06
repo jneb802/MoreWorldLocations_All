@@ -25,11 +25,11 @@ CatacombLoot2:
     stackMin: 10
     stackMax: 30
     weight: 1.5
-  - item: IronOre
-    stackMin: 4
-    stackMax: 8
+  - item: IronScrap
+    stackMin: 6
+    stackMax: 10
     weight: 1.0
   - item: WitheredBone
-    stackMin: 1
-    stackMax: 2
+    stackMin: 2
+    stackMax: 3
     weight: 0.5
