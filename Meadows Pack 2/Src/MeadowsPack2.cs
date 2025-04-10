@@ -21,7 +21,7 @@ namespace Meadows_Pack_2
     public class Meadows_Pack_2Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Meadows_Pack_2";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.0.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -95,6 +95,17 @@ namespace Meadows_Pack_2
             MWL_SmallHouse1_Configuration =
                 new LocationConfiguration(this.Config, "MWL_SmallHouse1", 20, "MeadowsCreatures1", "MeadowsLoot1");
             
+            MWL_MeadowsFarm1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_MeadowsFarm1", 10, "MeadowsCreatures1", "MeadowsLoot3");
+            MWL_MeadowsLighthouse1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_MeadowsLighthouse1", 10, "MeadowsCreatures1", "MeadowsLoot3");
+            MWL_MeadowsSawmill1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_MeadowsSawmill1", 10, "MeadowsCreatures1", "MeadowsLoot3");
+            MWL_MeadowsWall1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_MeadowsWall1", 10, "MeadowsCreatures1", "MeadowsLoot3");
+            MWL_MeadowsTavern1_Configuration =
+                new LocationConfiguration(this.Config, "MWL_MeadowsTavern1", 10, "MeadowsCreatures1", "MeadowsLoot3");
+            
             meadows2YAMLManager.ParseDefaultYamls();
             meadows2YAMLManager.ParseCustomYamls();
             
@@ -116,6 +127,12 @@ namespace Meadows_Pack_2
         public static LocationConfiguration MWL_MeadowsTower1_Configuration;
         public static LocationConfiguration MWL_OakHut1_Configuration;
         public static LocationConfiguration MWL_SmallHouse1_Configuration;
+        
+        public static LocationConfiguration MWL_MeadowsFarm1_Configuration;
+        public static LocationConfiguration MWL_MeadowsLighthouse1_Configuration;
+        public static LocationConfiguration MWL_MeadowsSawmill1_Configuration;
+        public static LocationConfiguration MWL_MeadowsWall1_Configuration;
+        public static LocationConfiguration MWL_MeadowsTavern1_Configuration;
 
         private void OnDestroy()
         {

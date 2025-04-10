@@ -15,6 +15,11 @@ public class Locations
        Common.LocationManager.AddLocation(assetBundle, "MWL_MeadowsTower1", Meadows_Pack_2Plugin.MWL_MeadowsTower1_Configuration, LocationConfigs.AllLocationConfigs["MWL_MeadowsTower1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
        Common.LocationManager.AddLocation(assetBundle, "MWL_OakHut1", Meadows_Pack_2Plugin.MWL_OakHut1_Configuration, LocationConfigs.AllLocationConfigs["MWL_OakHut1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
        Common.LocationManager.AddLocation(assetBundle, "MWL_SmallHouse1", Meadows_Pack_2Plugin.MWL_SmallHouse1_Configuration, LocationConfigs.AllLocationConfigs["MWL_SmallHouse1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
-
+       
+       Common.LocationManager.AddLocation(assetBundle, "MWL_MeadowsFarm1", Meadows_Pack_2Plugin.MWL_MeadowsFarm1_Configuration, LocationConfigs.AllLocationConfigs["MWL_MeadowsFarm1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
+       Common.LocationManager.AddLocation(assetBundle, "MWL_MeadowsLighthouse1", Meadows_Pack_2Plugin.MWL_MeadowsLighthouse1_Configuration, LocationConfigs.AllLocationConfigs["MWL_MeadowsLighthouse1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
+       Common.LocationManager.AddLocation(assetBundle, "MWL_MeadowsSawmill1", Meadows_Pack_2Plugin.MWL_MeadowsSawmill1_Configuration, LocationConfigs.AllLocationConfigs["MWL_MeadowsSawmill1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
+       Common.LocationManager.AddLocation(assetBundle, "MWL_MeadowsWall1", Meadows_Pack_2Plugin.MWL_MeadowsWall1_Configuration, LocationConfigs.AllLocationConfigs["MWL_MeadowsWall1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
+       Common.LocationManager.AddLocation(assetBundle, "MWL_MeadowsTavern1", Meadows_Pack_2Plugin.MWL_MeadowsTavern1_Configuration, LocationConfigs.AllLocationConfigs["MWL_MeadowsTavern1_Config"], Meadows_Pack_2Plugin.meadows2YAMLManager);
     }
 }

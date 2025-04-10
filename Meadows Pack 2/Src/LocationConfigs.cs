@@ -55,6 +55,23 @@ public class LocationConfigs
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
         
         { "MWL_SmallHouse1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_SmallHouse1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_medium", Priotized = true, RandomRotation = false, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } }
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
+        
+        
+        { "MWL_MeadowsFarm1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsFarm1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false, 
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
+
+        { "MWL_MeadowsLighthouse1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsLighthouse1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false, 
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 1.5f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
+
+        { "MWL_MeadowsSawmill1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsSawmill1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false, 
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring4.MinDistance, InForest = false } },
+
+        { "MWL_MeadowsWall1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsWall1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false, 
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
+
+        { "MWL_MeadowsTavern1_Config", new LocationConfig { Quantity = Meadows_Pack_2Plugin.MWL_MeadowsTavern1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false, 
+            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance,  InForest = true } },
+
     };
 }
