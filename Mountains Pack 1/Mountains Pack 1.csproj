@@ -120,7 +120,6 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
@@ -134,7 +133,6 @@
         <Content Include=".gitignore"/>
         <EmbeddedResource Include="assets\mountainspack1" />
         <Content Include="environment.props"/>
-        <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>
         <Content Include="README.md"/>
@@ -154,9 +152,6 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Libs\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

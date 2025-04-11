@@ -135,7 +135,6 @@
         <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
         <EmbeddedResource Include="assets\plainspack1" />
         <Content Include="environment.props"/>
-        <Content Include="icons\README.txt"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="Libs\LocalizationManager.dll"/>
         <Content Include="LICENSE.md"/>
