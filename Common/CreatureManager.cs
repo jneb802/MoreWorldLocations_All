@@ -81,6 +81,11 @@ public static class CreatureManager
 
     public static void AddCreaturestoSpawnerList(List<CreatureSpawner> CreatureSpawnerList, List<string> CreatureList)
     {
+        if (CreatureList.Count == 0)
+        {
+            return;
+        }
+        
         int creatureIndex = 0;
 
         foreach (var spawner in CreatureSpawnerList)
