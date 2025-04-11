@@ -10,99 +10,26 @@ public class Locations
 {
     public static void AddAllLocations()
     {
-        var assetBundle = Plains_Pack_1Plugin.assetBundle;
-        var creatureYAMLContent = Plains_Pack_1Plugin.plainsYAMLmanager.creatureYAMLContent;
-        var lootYAMLContent = Plains_Pack_1Plugin.plainsYAMLmanager.lootYAMLContent;
+        AssetBundle assetBundle = Plains_Pack_1Plugin.assetBundle;
+
+        Common.LocationManager.AddLocation(assetBundle, "MWL_GoblinFort1", Plains_Pack_1Plugin.MWL_GoblinFort1_Configuration, LocationConfigs.AllLocationConfigs["MWL_GoblinFort1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingRock1", Plains_Pack_1Plugin.MWL_FulingRock1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingRock1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingVillage1", Plains_Pack_1Plugin.MWL_FulingVillage1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingVillage1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingVillage2", Plains_Pack_1Plugin.MWL_FulingVillage2_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingVillage2_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsPillar1", Plains_Pack_1Plugin.MWL_PlainsPillar1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsPillar1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingTemple1", Plains_Pack_1Plugin.MWL_FulingTemple1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingTemple1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingTemple2", Plains_Pack_1Plugin.MWL_FulingTemple2_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingTemple2_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingTemple3", Plains_Pack_1Plugin.MWL_FulingTemple3_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingTemple3_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingWall1", Plains_Pack_1Plugin.MWL_FulingWall1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingWall1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_FulingTower1", Plains_Pack_1Plugin.MWL_FulingTower1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingTower1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
         
-        LocationManager.AddLocation(assetBundle,
-            "MWL_GoblinFort1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_GoblinFort1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_GoblinFort1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_GoblinFort1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_GoblinFort1_Configuration.LootList.Value,
-            LocationConfigs.MWL_GoblinFort1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingRock1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingRock1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingRock1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingRock1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingRock1_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingRock1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingVillage1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingVillage1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingVillage1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingVillage1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingVillage1_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingVillage1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingVillage2",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingVillage2_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingVillage2_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingVillage2_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingVillage2_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingVillage2_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_PlainsPillar1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_PlainsPillar1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_PlainsPillar1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_PlainsPillar1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_PlainsPillar1_Configuration.LootList.Value,
-            LocationConfigs.MWL_PlainsPillar1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingTemple1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingTemple1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTemple1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingTemple1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTemple1_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingTemple1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingTemple2",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingTemple2_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTemple2_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingTemple2_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTemple2_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingTemple2_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingTemple3",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingTemple3_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTemple3_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingTemple3_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTemple3_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingTemple3_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingWall1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingWall1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingWall1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingWall1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingWall1_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingWall1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_FulingTower1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_FulingTower1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTower1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_FulingTower1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_FulingTower1_Configuration.LootList.Value,
-            LocationConfigs.MWL_FulingTower1_Config);
-        
-        LocationManager.AddLocation(assetBundle,
-            "MWL_GoblinCave1",
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetCreatureYamlContent(Plains_Pack_1Plugin.MWL_GoblinCave1_Configuration.CreatureYaml.Value),
-            Plains_Pack_1Plugin.MWL_GoblinCave1_Configuration.CreatureList.Value,
-            Plains_Pack_1Plugin.plainsYAMLmanager.GetLootYamlContent(Plains_Pack_1Plugin.MWL_GoblinCave1_Configuration.LootYaml.Value),
-            Plains_Pack_1Plugin.MWL_GoblinCave1_Configuration.LootList.Value,
-            LocationConfigs.MWL_GoblinCave1_Config);
-        
+        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsArena1", Plains_Pack_1Plugin.MWL_PlainsArena1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsArena1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsFarm1", Plains_Pack_1Plugin.MWL_PlainsFarm1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsFarm1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsManor1", Plains_Pack_1Plugin.MWL_PlainsManor1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsManor1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsOracle1", Plains_Pack_1Plugin.MWL_PlainsOracle1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsOracle1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
+
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
     }
+
 }
