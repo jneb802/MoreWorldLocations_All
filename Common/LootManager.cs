@@ -195,11 +195,14 @@ public class LootManager: MonoBehaviour
     {
         List<Container> locationContainers = new List<Container>();
         Container[] allContainers = location.GetComponentsInChildren<Container>();
-    
-        foreach (var container in allContainers)
+
+        if (allContainers.Length > 0)
         {
-            locationContainers.Add(container);
-            WarpLogger.Logger.LogDebug("Container found in " + location + "with name: " + container.name);
+            foreach (var container in allContainers)
+            {
+                locationContainers.Add(container);
+                WarpLogger.Logger.LogDebug("Container found in " + location + "with name: " + container.name);
+            } 
         }
         
         return locationContainers;
@@ -239,6 +242,11 @@ public class LootManager: MonoBehaviour
         dropTable.m_dropMin = 2;
         dropTable.m_dropMax = 3;
         dropTable.m_drops = lootList;
+
+        if (containerList.Count == 0)
+        {
+            return;
+        }
         
         foreach (var container in containerList)
         {
