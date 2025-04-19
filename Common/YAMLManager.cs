@@ -143,23 +143,16 @@ public class YAMLManager
 
     public void BuildCreatureList(ConfigurationManager.Toggle useCustomCreatureYAML, string creatureListName)
     {
-        Debug.Log("Test 1");
         // Debug.Log("Creature list built");
         if (useCustomCreatureYAML == ConfigurationManager.Toggle.On)
         {
-            Debug.Log("Test 2");
             List<string> list = Common.CreatureManager.CreateCreatureList(creatureListName, customCreatureYamlContent);
-            Debug.Log("Test 3");
             creatureListDictionary.Add(creatureListName,list);
-            Debug.Log("Test 4");
         }
         else
         { 
-            Debug.Log("Test 5");
             List<string> list = Common.CreatureManager.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
-            Debug.Log("Test 6");
             creatureListDictionary.Add(creatureListName,list);
-            Debug.Log("Test 7");
         }
     }
 
