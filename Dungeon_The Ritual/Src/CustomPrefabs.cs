@@ -131,11 +131,8 @@ public class CustomPrefabs
     
     foreach (var prefab in roomContainerPrefabs)
     {
-        RegisterCustomPrefabContainer(Underground_RuinsPlugin.assetBundle, prefab, Underground_RuinsPlugin.dungeonBFDYamlManager.lootList);
-        
-        List<DropTable.DropData> lootList =
-            Underground_RuinsPlugin.dungeonBFDYamlManager.lootListDictionary[
-                Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootList.Value];
+        // RegisterCustomPrefabContainer(Underground_RuinsPlugin.assetBundle, prefab, Underground_RuinsPlugin.dungeonBFDYamlManager.lootList);
+        List<DropTable.DropData> lootList = Underground_RuinsPlugin.dungeonBFDYamlManager.lootListDictionary[Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.LootList.Value];
         RegisterCustomPrefabContainer(Underground_RuinsPlugin.assetBundle, prefab, lootList);
     }
     
