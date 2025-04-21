@@ -21,7 +21,7 @@ namespace Underground_Ruins
     public class Underground_RuinsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "Underground_Ruins";
-        internal const string ModVersion = "1.0.7";
+        internal const string ModVersion = "1.0.8";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -81,22 +81,7 @@ namespace Underground_Ruins
             LoadAssetBundle();
             
             MWD_UndergroundRuins_Configuration =
-                new LocationConfiguration(this.Config, "Underground Ruins", 40, "UndergroundRuinsCreatures1", "UndergroundRuinsLoot1","UndergroundRuinsPickables1");
-            
-            // MWD_UndergroundRuins_Quantity_Config = config("1 - Underground Ruins", "Spawn Quantity", 30,
-            //     "Amount of attempts world generation will try to place dungeon exterior during world generation");
-            // MWD_UndergroundRuins_CreatureYaml_Config = config("1 - Underground Ruins", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-            //     "When Off, location will spawn default creatures. When On, dungeon will select creatures from list in the custom YAML file in BepinEx config folder");
-            // MWD_UndergroundRuins_CreatureList_Config = config("1 - Underground Ruins", "Name of Creature List", "UndergroundRuinsCreatures1",
-            //     "The name of the creature list to use from YAML file");
-            // MWD_UndergroundRuins_LootYaml_Config = config("1 - Underground Ruins", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-            //     "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
-            // MWD_UndergroundRuins_LootList_Config = config("1 - Underground Ruins", "Name of Loot List", "UndergroundRuinsLoot1",
-            //     "The name of the loot list to use from YAML file");
-            // MWD_UndergroundRuins_PickableItemYaml_Config = config("1 - Underground Ruins", "Use Custom PickableItem YAML file", ConfigurationManager.Toggle.Off,
-            //     "When Off, location will use default loot. When On, dungeon will select loot from list in the custom YAML file in BepinEx config folder");
-            // MWD_UndergroundRuins_PickableItemList_Config = config("1 - Underground Ruins", "Name of PickableItem List", "UndergroundRuinsPickables1",
-            //     "The name of the loot list to use from YAML file");
+                new LocationConfiguration(this.Config, "Underground Ruins", 60, "UndergroundRuinsCreatures1", "UndergroundRuinsLoot1","UndergroundRuinsPickables1");
             
             dungeonGameObject = assetBundle.LoadAsset<GameObject>("BFD_Exterior");
             Rooms.RegisterTheme(dungeonGameObject, "Underground Ruins");
