@@ -38,13 +38,6 @@ public class Locations
         Common.LocationManager.AddLocation(assetBundle, "MWL_ForestSkull1", BlackForest_Pack_2Plugin.MWL_ForestSkull1_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestSkull1_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
         Common.LocationManager.AddLocation(assetBundle, "MWL_ForestTower4", BlackForest_Pack_2Plugin.MWL_ForestTower4_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestTower4_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
         Common.LocationManager.AddLocation(assetBundle, "MWL_ForestTower5", BlackForest_Pack_2Plugin.MWL_ForestTower5_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestTower5_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
-
-        Common.LocationManager.AddLocation(assetBundle, "MWL_ForestWarehouse1", BlackForest_Pack_2Plugin.MWL_ForestWarehouse1_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestWarehouse1_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
-        // Common.LocationManager.AddLocation(assetBundle, "MWL_ForestFort1", BlackForest_Pack_2Plugin.MWL_ForestFort1_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestFort1_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
-        Common.LocationManager.AddLocation(assetBundle, "MWL_ForestStation1", BlackForest_Pack_2Plugin.MWL_ForestStation1_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestStation1_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
-        Common.LocationManager.AddLocation(assetBundle, "MWL_ForestLodge1", BlackForest_Pack_2Plugin.MWL_ForestLodge1_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestLodge1_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
-        Common.LocationManager.AddLocation(assetBundle, "MWL_ForestMine1", BlackForest_Pack_2Plugin.MWL_ForestMine1_Configuration, LocationConfigs.AllLocationConfigs["MWL_ForestMine1_Config"], BlackForest_Pack_2Plugin.blackforest2YAMLmanager);
-
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);

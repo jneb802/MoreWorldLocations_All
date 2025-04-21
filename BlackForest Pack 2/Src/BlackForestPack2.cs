@@ -107,17 +107,6 @@ namespace BlackForest_Pack_2
             MWL_ForestTower5_Configuration =
                 new LocationConfiguration(this.Config, "ForestTower5", 15, "BlackforestCreatures3", "BlackforestLoot1");
             
-            MWL_ForestWarehouse1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_ForestWarehouse1", 10, "BlackforestCreatures2", "BlackforestLoot2");
-            MWL_ForestFort1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_ForestFort1", 10, "BlackforestCreatures3", "BlackforestLoot3");
-            MWL_ForestStation1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_ForestStation1", 10, "BlackforestCreatures1", "BlackforestLoot1");
-            MWL_ForestLodge1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_ForestLodge1", 10, "BlackforestCreatures2", "BlackforestLoot2");
-            MWL_ForestMine1_Configuration =
-                new LocationConfiguration(this.Config, "MWL_ForestMine1", 10, "BlackforestCreatures3", "BlackforestLoot3");
-            
             blackforest2YAMLmanager.ParseDefaultYamls();
             blackforest2YAMLmanager.ParseCustomYamls();
             
@@ -182,12 +171,6 @@ namespace BlackForest_Pack_2
         public static LocationConfiguration MWL_ForestSkull1_Configuration;
         public static LocationConfiguration MWL_ForestTower4_Configuration;
         public static LocationConfiguration MWL_ForestTower5_Configuration;
-        
-        public static LocationConfiguration MWL_ForestWarehouse1_Configuration;
-        public static LocationConfiguration MWL_ForestFort1_Configuration;
-        public static LocationConfiguration MWL_ForestStation1_Configuration;
-        public static LocationConfiguration MWL_ForestLodge1_Configuration;
-        public static LocationConfiguration MWL_ForestMine1_Configuration;
 
 
         private static ConfigEntry<Toggle> _serverConfigLocked = null!;

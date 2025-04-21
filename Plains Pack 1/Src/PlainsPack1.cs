@@ -97,15 +97,6 @@ namespace Plains_Pack_1
             MWL_GoblinCave1_Configuration =
                 new LocationConfiguration(this.Config, "GoblinCave1", 20, "PlainsCreatures2", "PlainsLoot1");
             
-            MWL_PlainsArena1_Configuration = 
-                new LocationConfiguration(this.Config, "PlainsArena1", 10, "PlainsCreatures2", "PlainsLoot1");
-            MWL_PlainsFarm1_Configuration = 
-                new LocationConfiguration(this.Config, "PlainsFarm1", 10, "PlainsCreatures1", "PlainsLoot1");
-            MWL_PlainsManor1_Configuration = 
-                new LocationConfiguration(this.Config, "PlainsManor1", 10, "PlainsCreatures3", "PlainsLoot1");
-            MWL_PlainsOracle1_Configuration = 
-                new LocationConfiguration(this.Config, "PlainsOracle1", 10, "PlainsCreatures2", "PlainsLoot1");
-            
             plainsYAMLmanager.ParseDefaultYamls();
             plainsYAMLmanager.ParseCustomYamls();
             
@@ -145,12 +136,6 @@ namespace Plains_Pack_1
         public static LocationConfiguration MWL_FulingWall1_Configuration;
         public static LocationConfiguration MWL_FulingTower1_Configuration;
         public static LocationConfiguration MWL_GoblinCave1_Configuration;
-        
-        public static LocationConfiguration MWL_PlainsArena1_Configuration;
-        public static LocationConfiguration MWL_PlainsFarm1_Configuration;
-        public static LocationConfiguration MWL_PlainsManor1_Configuration;
-        public static LocationConfiguration MWL_PlainsOracle1_Configuration;
-
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {

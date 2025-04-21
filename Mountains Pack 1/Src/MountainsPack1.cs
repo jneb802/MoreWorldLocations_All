@@ -89,18 +89,6 @@ namespace Mountains_Pack_1
             MWL_WoodHouse1_Configuration =
                 new LocationConfiguration(this.Config, "WoodHouse1", 5, "MountainsCreatures1", "MountainsLoot1");
             
-            MWL_MountainAedicule1_Configuration = 
-                new LocationConfiguration(this.Config, "MountainAedicule1", 10, "MountainsCreatures2", "MountainsLoot1");
-            MWL_MountainPagota1_Configuration = 
-                new LocationConfiguration(this.Config, "MountainPagota1", 10, "MountainsCreatures2", "MountainsLoot1");
-            MWL_MountainTower1_Configuration = 
-                new LocationConfiguration(this.Config, "MountainTower1", 10, "MountainsCreatures2", "MountainsLoot1");
-            MWL_MountainTreasury1_Configuration = 
-                new LocationConfiguration(this.Config, "MountainTreasury1", 10, "MountainsCreatures3", "MountainsLoot1");
-            MWL_MountainHogan1_Configuration = 
-                new LocationConfiguration(this.Config, "MountainHogan1", 10, "MountainsCreatures1", "MountainsLoot1");
-
-            
             MountainYAML.ParseDefaultYamls();
             MountainYAML.ParseCustomYamls();
             
@@ -138,12 +126,6 @@ namespace Mountains_Pack_1
         public static LocationConfiguration MWL_WoodBarn1_Configuration;
         public static LocationConfiguration MWL_WoodFarm1_Configuration;
         public static LocationConfiguration MWL_WoodHouse1_Configuration;
-        
-        public static LocationConfiguration MWL_MountainAedicule1_Configuration;
-        public static LocationConfiguration MWL_MountainPagota1_Configuration;
-        public static LocationConfiguration MWL_MountainTower1_Configuration;
-        public static LocationConfiguration MWL_MountainTreasury1_Configuration;
-        public static LocationConfiguration MWL_MountainHogan1_Configuration;
 
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)

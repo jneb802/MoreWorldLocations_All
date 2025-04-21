@@ -23,11 +23,6 @@ public class Locations
         Common.LocationManager.AddLocation(assetBundle, "MWL_FulingWall1", Plains_Pack_1Plugin.MWL_FulingWall1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingWall1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
         Common.LocationManager.AddLocation(assetBundle, "MWL_FulingTower1", Plains_Pack_1Plugin.MWL_FulingTower1_Configuration, LocationConfigs.AllLocationConfigs["MWL_FulingTower1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
         
-        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsArena1", Plains_Pack_1Plugin.MWL_PlainsArena1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsArena1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
-        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsFarm1", Plains_Pack_1Plugin.MWL_PlainsFarm1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsFarm1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
-        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsManor1", Plains_Pack_1Plugin.MWL_PlainsManor1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsManor1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
-        Common.LocationManager.AddLocation(assetBundle, "MWL_PlainsOracle1", Plains_Pack_1Plugin.MWL_PlainsOracle1_Configuration, LocationConfigs.AllLocationConfigs["MWL_PlainsOracle1_Config"], Plains_Pack_1Plugin.plainsYAMLmanager);
-
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
         assetBundle.Unload(false);
     }

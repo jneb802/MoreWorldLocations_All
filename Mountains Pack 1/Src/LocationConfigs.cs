@@ -56,23 +56,6 @@ public class LocationConfigs
         
         { "MWL_WoodHouse1_Config", new LocationConfig { Quantity = Mountains_Pack_1Plugin.MWL_WoodHouse1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mountain, Group = "Mountain_Wood_2", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
             MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 90f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
-        
-        
-        { "MWL_MountainAedicule1_Config", new LocationConfig { Quantity = Mountains_Pack_1Plugin.MWL_MountainAedicule1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mountain, BiomeArea = Heightmap.BiomeArea.Median, Group = "Mountain_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 80, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
-
-        { "MWL_MountainPagota1_Config", new LocationConfig { Quantity = Mountains_Pack_1Plugin.MWL_MountainPagota1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mountain, BiomeArea = Heightmap.BiomeArea.Median, Group = "Mountain_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 12, ClearArea = true, 
-            MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 75, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
-
-        { "MWL_MountainTower1_Config", new LocationConfig { Quantity = Mountains_Pack_1Plugin.MWL_MountainTower1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mountain, BiomeArea = Heightmap.BiomeArea.Median, Group = "Mountain_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 90, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
-
-        { "MWL_MountainTreasury1_Config", new LocationConfig { Quantity = Mountains_Pack_1Plugin.MWL_MountainTreasury1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mountain, BiomeArea = Heightmap.BiomeArea.Median, Group = "Mountain_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, 
-            MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 85, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
-
-        { "MWL_MountainHogan1_Config", new LocationConfig { Quantity = Mountains_Pack_1Plugin.MWL_MountainHogan1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mountain, BiomeArea = Heightmap.BiomeArea.Median, Group = "Mountain_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 80, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
-
     };
     
 }

@@ -86,22 +86,6 @@ public class LocationConfigs
         
         { "MWL_ForestTower5_Config", new LocationConfig { Quantity = BlackForest_Pack_2Plugin.MWL_ForestTower5_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Ruins_medium", Priotized = true, RandomRotation = false, ClearArea = true, 
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 2, MinDistance = LocationRings.Ring4.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance } },
-        
-        
-        { "MWL_ForestWarehouse1_Config", new LocationConfig { Quantity = BlackForest_Pack_2Plugin.MWL_ForestWarehouse1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Structure_large", Priotized = true, RandomRotation = false, ExteriorRadius = 12, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 3, MinDistance = LocationRings.Ring3.MinDistance } },
-
-        { "MWL_ForestFort1_Config", new LocationConfig { Quantity = BlackForest_Pack_2Plugin.MWL_ForestFort1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Structure_large", Priotized = true, RandomRotation = false, ExteriorRadius = 14, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 2, MinDistance = LocationRings.Ring2.MinDistance } },
-
-        { "MWL_ForestStation1_Config", new LocationConfig { Quantity = BlackForest_Pack_2Plugin.MWL_ForestStation1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Structure_large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 3, MinDistance = LocationRings.Ring2.MinDistance } },
-
-        { "MWL_ForestLodge1_Config", new LocationConfig { Quantity = BlackForest_Pack_2Plugin.MWL_ForestLodge1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Structure_large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 3, MinDistance = LocationRings.Ring2.MinDistance } },
-
-        { "MWL_ForestMine1_Config", new LocationConfig { Quantity = BlackForest_Pack_2Plugin.MWL_ForestMine1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Structure_large", Priotized = true, RandomRotation = false, ExteriorRadius = 12, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MaxTerrainDelta = 5f, MinAltitude = 3, MinDistance = LocationRings.Ring3.MinDistance } },
     };
 
 }

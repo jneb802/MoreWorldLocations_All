@@ -63,20 +63,6 @@ public class LocationConfigs
         { "MWL_FulingTower1_Config", new LocationConfig { Quantity = Plains_Pack_1Plugin.MWL_FulingTower1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsCamp", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, 
             MinDistanceFromSimilar = 1024, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
         
-        
-        { "MWL_PlainsArena1_Config", new LocationConfig { Quantity = Plains_Pack_1Plugin.MWL_PlainsArena1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsLarge", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
-
-        { "MWL_PlainsFarm1_Config", new LocationConfig { Quantity = Plains_Pack_1Plugin.MWL_PlainsFarm1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsLarge", Priotized = true, RandomRotation = false, ExteriorRadius = 12, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
-
-        { "MWL_PlainsManor1_Config", new LocationConfig { Quantity = Plains_Pack_1Plugin.MWL_PlainsManor1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsLarge", Priotized = true, RandomRotation = false, ExteriorRadius = 14, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 1f, MinDistance = LocationRings.Ring3.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
-
-        { "MWL_PlainsOracle1_Config", new LocationConfig { Quantity = Plains_Pack_1Plugin.MWL_PlainsOracle1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsLarge", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, 
-            MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 7f, MinAltitude = 1f, MinDistance = LocationRings.Ring3.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
-
-        
     };
     
 }
