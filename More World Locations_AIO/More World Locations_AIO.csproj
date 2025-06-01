@@ -124,7 +124,10 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="Src\Plugin.cs" />
+        <Compile Include="Src\BepinexConfigs.cs" />
+        <Compile Include="Src\LocationConfigs.cs" />
+        <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\MoreWorldLocations.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -135,11 +138,14 @@
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>
-        <Content Include="README.md"/>
         <Content Include="UpdateManifest.ps1"/>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
+        <PackageReference Include="JotunnLib" Version="2.24.3" />
+        <PackageReference Include="MonoMod" Version="21.9.19.1" />
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
+        <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
     </ItemGroup>
     <ItemGroup>
@@ -247,5 +253,6 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
+    <Import Project="..\Common\Common.projitems" Label="Shared" />
 
 </Project>
