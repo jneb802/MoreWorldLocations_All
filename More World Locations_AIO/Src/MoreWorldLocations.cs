@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -22,23 +23,16 @@ namespace More_World_Locations_AIO
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         internal static string ConnectionError = "";
         private readonly Harmony _harmony = new(ModGUID);
-
+        
         public static readonly ManualLogSource More_World_Locations_AIOLogger =
             BepInEx.Logging.Logger.CreateLogSource(ModName);
 
-        public enum Toggle
-        {
-            On = 1,
-            Off = 0
-        }
-
         public void Awake()
         {
-            // Uncomment the line below to use the LocalizationManager for localizing your mod.
-            //Localizer.Load(); // Use this to initialize the LocalizationManager (for more information on LocalizationManager, see the LocalizationManager documentation https://github.com/blaxxun-boop/LocalizationManager#example-project).
-            bool saveOnSet = Config.SaveOnConfigSet;
-            Config.SaveOnConfigSet =
-                false; // This and the variable above are used to prevent the config from saving on startup for each config entry. This is speeds up the startup process.
+            BepinexConfigs.Config = Config;
+            bool saveOnSet = BepinexConfigs.Config.SaveOnConfigSet;
+            BepinexConfigs.Config.SaveOnConfigSet =
+                false;
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
@@ -46,14 +40,14 @@ namespace More_World_Locations_AIO
 
             if (saveOnSet)
             {
-                Config.SaveOnConfigSet = saveOnSet;
-                Config.Save();
+                BepinexConfigs.Config.SaveOnConfigSet = saveOnSet;
+                BepinexConfigs.Config.Save();
             }
         }
 
         private void OnDestroy()
         {
-            Config.Save();
+            BepinexConfigs.Config.Save();
         }
 
         private void SetupWatcher()
@@ -73,7 +67,7 @@ namespace More_World_Locations_AIO
             try
             {
                 More_World_Locations_AIOLogger.LogDebug("ReadConfigValues called");
-                Config.Reload();
+                BepinexConfigs.Config.Reload();
             }
             catch
             {
@@ -82,20 +76,5 @@ namespace More_World_Locations_AIO
             }
         }
         
-    }
-
-    public static class KeyboardExtensions
-    {
-        public static bool IsKeyDown(this KeyboardShortcut shortcut)
-        {
-            return shortcut.MainKey != KeyCode.None && Input.GetKeyDown(shortcut.MainKey) &&
-                   shortcut.Modifiers.All(Input.GetKey);
-        }
-
-        public static bool IsKeyHeld(this KeyboardShortcut shortcut)
-        {
-            return shortcut.MainKey != KeyCode.None && Input.GetKey(shortcut.MainKey) &&
-                   shortcut.Modifiers.All(Input.GetKey);
-        }
     }
 }
