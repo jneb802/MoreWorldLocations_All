@@ -39,6 +39,7 @@ public class BepinexConfigs
     public static LocationConfiguration MWL_RuinsCastle1_Configuration;
     public static LocationConfiguration MWL_RuinsCastle3_Configuration;
     public static LocationConfiguration MWL_RuinsTower3_Configuration;
+    public static LocationConfiguration MWL_RuinsTower6_Configuration;
     public static LocationConfiguration MWL_RuinsTower8_Configuration;
     public static LocationConfiguration MWL_RuinsTavern1_Configuration;
     public static LocationConfiguration MWL_WoodTower1_Configuration;
@@ -209,6 +210,8 @@ public class BepinexConfigs
             new LocationConfiguration(Config, "MWL_WoodTower2", 10, "BlackforestCreatures2", "BlackforestLoot1");
         MWL_WoodTower3_Configuration =
             new LocationConfiguration(Config, "MWL_WoodTower3", 10, "BlackforestCreatures3", "BlackforestLoot3");
+        MWL_RuinsTower6_Configuration =
+            new LocationConfiguration(Config, "MWL_RuinsTower6", 15, "BlackforestCreatures1", "BlackforestLoot3");
         
         // Blackforest Pack 2 configs
         MWL_ForestForge1_Configuration =

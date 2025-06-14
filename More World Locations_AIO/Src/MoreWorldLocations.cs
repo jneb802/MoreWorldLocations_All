@@ -6,8 +6,11 @@ using System.Runtime.CompilerServices;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using Common;
 using HarmonyLib;
 using JetBrains.Annotations;
+using Jotunn.Managers;
+using SoftReferenceableAssets;
 using UnityEngine;
 
 namespace More_World_Locations_AIO
@@ -26,6 +29,8 @@ namespace More_World_Locations_AIO
         
         public static readonly ManualLogSource More_World_Locations_AIOLogger =
             BepInEx.Logging.Logger.CreateLogSource(ModName);
+        
+        public static YAMLManager YAMLManager = new YAMLManager();
 
         public void Awake()
         {
@@ -38,12 +43,21 @@ namespace More_World_Locations_AIO
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
+            // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
+            // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
+            // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
+            
+            BepinexConfigs.GenerateConfigs();
+            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
+
             if (saveOnSet)
             {
                 BepinexConfigs.Config.SaveOnConfigSet = saveOnSet;
                 BepinexConfigs.Config.Save();
             }
         }
+        
+        
 
         private void OnDestroy()
         {

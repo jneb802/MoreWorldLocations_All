@@ -78,6 +78,9 @@
         <Reference Include="BepInEx">
             <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
         </Reference>
+        <Reference Include="Jotunn">
+          <HintPath>..\..\Jotunn\JotunnLib\bin\Debug\net462\Jotunn.dll</HintPath>
+        </Reference>
         <Reference Include="ServerSync">
             <HintPath>Libs\ServerSync.dll</HintPath>
         </Reference>
@@ -124,6 +127,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Src\AssetBundles.cs" />
         <Compile Include="Src\BepinexConfigs.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
@@ -135,6 +139,9 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore"/>
+        <Content Include="assets\moreworldlocations_assetbundle_1" />
+        <Content Include="assets\moreworldlocations_assetbundle_3" />
+        <Content Include="assets\moreworldlocations_assetbundle_2" />
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>
@@ -142,14 +149,11 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
-        <PackageReference Include="JotunnLib" Version="2.24.3" />
+        <PackageReference Include="Mono.Cecil" Version="0.11.6" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="assets\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

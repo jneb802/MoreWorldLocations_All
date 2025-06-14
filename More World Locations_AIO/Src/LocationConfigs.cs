@@ -98,7 +98,7 @@ public class LocationConfigs
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance,  InForest = true } },
         };
     
-    public static Dictionary<string, LocationConfig> BlackforestPack1Configs =
+    public static Dictionary<string, LocationConfig> BlackforestPack1LocationConfigs =
         new Dictionary<string, LocationConfig>
         {
             { "MWL_RuinsArena2_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_RuinsArena2_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Ruins_large", 
@@ -112,6 +112,9 @@ public class LocationConfigs
 
             { "MWL_RuinsTower3_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_RuinsTower3_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Ruins_medium", 
                 MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring2.MaxDistance, InForest = false } },
+            
+            { "MWL_RuinsTower6_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_RuinsTower6_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Ruins_large", 
+                MinDistanceFromSimilar = 512, MaxAltitude = 0, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
 
             { "MWL_RuinsTower8_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_RuinsTower8_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 15, ClearArea = true, RandomRotation = true, Group = "Ruins_medium", 
                 MinDistanceFromSimilar = 512, MinAltitude = -2, MaxAltitude = 0.5f, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring2.MaxDistance, InForest = false } },
@@ -317,7 +320,7 @@ public class LocationConfigs
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
         };
     
-    public static Dictionary<string, LocationConfig> MistlandsPack1Configs =
+    public static Dictionary<string, LocationConfig> MistlandsPack1LocationConfigs =
         new Dictionary<string, LocationConfig>
         {
             { "MWL_MistFort2_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_MistFort2_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Mist3", 
@@ -352,7 +355,7 @@ public class LocationConfigs
         };
 
     
-    public static Dictionary<string, LocationConfig> AshlandsPack1Configs =
+    public static Dictionary<string, LocationConfig> AshlandsPack1LocationConfigs =
         new Dictionary<string, LocationConfig>
         {
             { "MWL_AshlandsFort1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_AshlandsFort1_Configuration.Quantity.Value, Biome = Heightmap.Biome.AshLands, Priotized = true, ClearArea = true, RandomRotation = false, Group = "Ashlands_Fort", 
@@ -366,7 +369,7 @@ public class LocationConfigs
         };
 
     
-    public static Dictionary<string, LocationConfig> AdventureMapPack1Configs =
+    public static Dictionary<string, LocationConfig> AdventureMapPack1LocationConfigs =
         new Dictionary<string, LocationConfig>
         {
             { "MWL_CastleCorner1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_CastleCorner1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Swamp, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Swamp_Ruins", 
