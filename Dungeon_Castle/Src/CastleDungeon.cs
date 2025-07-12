@@ -21,7 +21,7 @@ namespace Forbidden_Catacombs
     public class Forbidden_CatacombsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "Forbidden_Catacombs";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.0.2";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";

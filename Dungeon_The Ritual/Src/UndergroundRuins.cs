@@ -21,7 +21,7 @@ namespace Underground_Ruins
     public class Underground_RuinsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "Underground_Ruins";
-        internal const string ModVersion = "1.0.8";
+        internal const string ModVersion = "1.0.9";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
