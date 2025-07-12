@@ -22,7 +22,7 @@ namespace More_World_Traders
     public class More_World_TradersPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Traders";
-        internal const string ModVersion = "1.0.9";
+        internal const string ModVersion = "1.0.11";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -95,25 +95,24 @@ namespace More_World_Traders
             SetupWatcher();
             
             MWL_PlainsTavern1_Configuration =
-                new LocationConfiguration(this.Config, "PlainsTavern1", 5);
+                new LocationConfiguration(this.Config, "MWV_PlainsTavern1", 5);
             MWL_PlainsCamp1_Configuration =
-                new LocationConfiguration(this.Config, "PlainsCamp1", 5);
+                new LocationConfiguration(this.Config, "MWV_PlainsTavern1", 5);
             MWL_BlackForestBlacksmith1_Configuration =
-                new LocationConfiguration(this.Config, "BlackForestBlacksmith1", 5);
+                new LocationConfiguration(this.Config, "MWL_BlackForestBlacksmith1", 5);
             MWL_BlackForestBlacksmith2_Configuration =
-                new LocationConfiguration(this.Config, "BlackForestBlacksmith2", 5);
+                new LocationConfiguration(this.Config, "MWL_BlackForestBlacksmith2", 5);
             MWL_MountainsBlacksmith1_Configuration =
-                new LocationConfiguration(this.Config, "MountainsBlacksmith1", 5);
+                new LocationConfiguration(this.Config, "MWL_MountainsBlacksmith1", 5);
             MWL_MistlandsBlacksmith1_Configuration =
-                new LocationConfiguration(this.Config, "MistlandsBlacksmith1", 5);
+                new LocationConfiguration(this.Config, "MWL_MistlandsCamp1", 5);
             MWL_OceanTavern1_Configuration =
-                new LocationConfiguration(this.Config, "OceanTavern1", 5);
-            
+                new LocationConfiguration(this.Config, "MWL_OceanTavern1", 5);
             
             // MWL_PlainsTavern1_QuantityConfig = config("1 - MWV_PlainsTavern1", "Spawn Quantity", 5,
             //     "Amount of this location the game will attempt to place during world generation");
             //
-            // MWL_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsCamp1", "Spawn Quantity", 5,
+            // MWL_PlainsCamp1_QuantityConfig = config("2 - MWV_PlainsTavern1", "Spawn Quantity", 5,
             //     "Amount of this location the game will attempt to place during world generation");
             //
             // MWL_BlackForestBlacksmith1_QuantityConfig = config("3 - MWL_BlackForestBlacksmith1", "Spawn Quantity", 5,
@@ -135,8 +134,10 @@ namespace More_World_Traders
             moreWorldTradersYAMLManager.ParseTraderYaml("warpalicious.More_World_Traders_MoreWorldTraders.yml");
             
             TranslationUtils.AddLocalizations();
+            TranslationUtils.BuildSkillBookLocalizations();
             StatusEffectUtils.CreateCustomStatusEffects();
             PrefabUtils.CreateCustomItems();
+            BookUtils.BuildSkillBooks();
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
             
             if (saveOnSet)
@@ -161,8 +162,6 @@ namespace More_World_Traders
         // public static ConfigEntry<int> MWL_MountainsBlacksmith1_QuantityConfig = null!;
         // public static ConfigEntry<int> MWL_MistlandsBlacksmith1_QuantityConfig = null!;
         // public static ConfigEntry<int> MWL_OceanTavern1_QuantityConfig = null!;
-        
-        
 
         private void OnDestroy()
         {

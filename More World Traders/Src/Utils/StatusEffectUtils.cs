@@ -13,7 +13,13 @@ public class StatusEffectUtils
         blacksmithStone.name = "BlacksmithStoneStatusEffect";
         blacksmithStone.m_name = "$se_blacksmithStone";
         CustomStatusEffect blacksmithStoneSE = new CustomStatusEffect(blacksmithStone, false);
+        
+        SkillBook_SE skillBook_SE = ScriptableObject.CreateInstance<SkillBook_SE>();
+        skillBook_SE.name = "SkillBookStatusEffect";
+        skillBook_SE.m_name = "$se_skillBook";
+        CustomStatusEffect skillBookSE = new CustomStatusEffect(skillBook_SE, false);
 
         ItemManager.Instance.AddStatusEffect(blacksmithStoneSE);
+        ItemManager.Instance.AddStatusEffect(skillBookSE);
     }
 }

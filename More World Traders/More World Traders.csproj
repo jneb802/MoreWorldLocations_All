@@ -127,6 +127,8 @@
         <Compile Include="Src\Minimap_Patch.cs" />
         <Compile Include="Src\MoreWorldTraders.cs" />
         <Compile Include="Src\StatusEffects\BlacksmithStone_SE.cs" />
+        <Compile Include="Src\StatusEffects\SkillBook_SE.cs" />
+        <Compile Include="Src\Utils\BookUtils.cs" />
         <Compile Include="Src\Utils\PrefabUtils.cs" />
         <Compile Include="Src\Utils\StatusEffectUtils.cs" />
         <Compile Include="Src\Utils\TranslationUtils.cs" />
@@ -189,7 +191,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
-        <PackageReference Include="JotunnLib" Version="2.23.0" />
+        <PackageReference Include="JotunnLib" Version="2.25.0" />
         <PackageReference Include="Mono.Cecil" Version="0.11.5" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
