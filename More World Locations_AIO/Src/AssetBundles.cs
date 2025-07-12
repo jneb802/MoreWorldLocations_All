@@ -129,6 +129,8 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestSkull1.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestTower4.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestTower5.prefab",
+        "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestPillar1.prefab",
+        "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_CoastTower1.prefab",
 
         // Swamp Pack 1
         "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_GuckPit1.prefab",
@@ -172,6 +174,7 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/Plains Pack 1/MWL_FulingTemple3.prefab",
         "Assets/WarpProjects/More World Locations/Plains Pack 1/MWL_FulingWall1.prefab",
         "Assets/WarpProjects/More World Locations/Plains Pack 1/MWL_FulingTower1.prefab",
+        "Assets/WarpProjects/More World Locations/Plains Pack 1/MWL_RockGarden1.prefab",
 
         // Mistlands Pack 1
         "Assets/WarpProjects/More World Locations/Mistlands Pack 1/MWL_MistFort2.prefab",
@@ -184,6 +187,8 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/Mistlands Pack 1/MWL_DvergrEitrSingularity1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands Pack 1/MWL_DvergrHouse1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands Pack 1/MWL_DvergrKnowledgeExtractor1.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands Pack 1/MWL_AncientShrine1.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands Pack 1/MWL_MistShrine1.prefab",
 
         // Adventure Map Pack 1
         "Assets/WarpProjects/More World Locations/Adventure Map 1/MWL_CastleCorner1.prefab",

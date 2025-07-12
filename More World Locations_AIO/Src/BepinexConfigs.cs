@@ -66,6 +66,9 @@ public class BepinexConfigs
     public static LocationConfiguration MWL_ForestSkull1_Configuration;
     public static LocationConfiguration MWL_ForestTower4_Configuration;
     public static LocationConfiguration MWL_ForestTower5_Configuration;
+    public static LocationConfiguration MWL_ForestPillar1_Configuration;
+    public static LocationConfiguration MWL_CoastTower1_Configuration;
+    
     
     // Swamp Pack 1 configs
     public static LocationConfiguration MWL_GuckPit1_Configuration;
@@ -110,6 +113,8 @@ public class BepinexConfigs
     public static LocationConfiguration MWL_FulingWall1_Configuration;
     public static LocationConfiguration MWL_FulingTower1_Configuration;
     // public static LocationConfiguration MWL_GoblinCave1_Configuration;
+    public static LocationConfiguration MWL_RockGarden1_Configuration;
+    
     
     // Mistlands Pack 1 configs
     public static LocationConfiguration MWL_MistFort2_Configuration;
@@ -122,6 +127,9 @@ public class BepinexConfigs
     public static LocationConfiguration MWL_DvergrEitrSingularity1_Configuration;
     public static LocationConfiguration MWL_DvergrHouse1_Configuration;
     public static LocationConfiguration MWL_DvergrKnowledgeExtractor1_Configuration;
+    public static LocationConfiguration MWL_AncientShrine1_Configuration;
+    public static LocationConfiguration MWL_MistShrine1_Configuration;
+    
     
     // Ashlands Pack 1 configs
     public static LocationConfiguration MWL_AshlandsFort1_Configuration;
@@ -252,6 +260,10 @@ public class BepinexConfigs
             new LocationConfiguration(Config, "ForestTower4", 15, "BlackforestCreatures3", "BlackforestLoot2");
         MWL_ForestTower5_Configuration =
             new LocationConfiguration(Config, "ForestTower5", 15, "BlackforestCreatures3", "BlackforestLoot1");
+        MWL_ForestPillar1_Configuration =
+            new LocationConfiguration(Config, "ForestPillar1", 15, "BlackforestCreatures3", "BlackforestLoot1");
+        MWL_CoastTower1_Configuration =
+            new LocationConfiguration(Config, "CoastTower1", 15, "BlackforestCreatures1", "BlackforestLoot1");
         
         // Swamp Pack 1 configs
         MWL_GuckPit1_Configuration =
@@ -334,6 +346,8 @@ public class BepinexConfigs
             new LocationConfiguration(Config, "FulingTower1", 20, "PlainsCreatures3", "PlainsLoot1");
         // MWL_GoblinCave1_Configuration =
         //     new LocationConfiguration(Config, "GoblinCave1", 20, "PlainsCreatures2", "PlainsLoot1");
+        MWL_RockGarden1_Configuration =
+            new LocationConfiguration(Config, "RockGarden1", 15, "PlainsCreatures3", "PlainsLoot1");
         
         // Mistlands Pack 1 configs
         MWL_MistFort2_Configuration =
@@ -356,6 +370,10 @@ public class BepinexConfigs
             new LocationConfiguration(Config, "DvergrHouse1", 20, "PlainsCreatures3", "MistLoot1");
         MWL_DvergrKnowledgeExtractor1_Configuration =
             new LocationConfiguration(Config, "DvergrKnowledgeExtractor1", 15, "MistCreatures1", "MistLoot1");
+        MWL_AncientShrine1_Configuration =
+            new LocationConfiguration(Config, "AncientShrine1", 15, "MistCreatures1", "MistLoot1");
+        MWL_MistShrine1_Configuration =
+            new LocationConfiguration(Config, "MistShrine1", 15, "MistCreatures1", "MistLoot1");
         
         // Ashlands Pack 1 configs
         MWL_AshlandsFort1_Configuration =

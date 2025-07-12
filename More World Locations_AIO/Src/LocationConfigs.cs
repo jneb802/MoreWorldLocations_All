@@ -16,7 +16,7 @@ public class LocationConfigs
             MaxDistance = maxDistance;
         }
     }
-    
+
     public static class LocationRings
     {
         public static LocationRing Ring1 { get; set; } = new LocationRing(0, 500);
@@ -191,7 +191,14 @@ public class LocationConfigs
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 2, MinDistance = LocationRings.Ring3.MinDistance } },
             
             { "MWL_ForestTower5_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_ForestTower5_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Ruins_medium", Priotized = true, RandomRotation = false, ClearArea = true, 
-                MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 2, MinDistance = LocationRings.Ring4.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance } },          
+                MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 2, MinDistance = LocationRings.Ring4.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance } },  
+            
+            { "MWL_ForestPillar1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_ForestPillar1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Ruins_small", Priotized = true, RandomRotation = false, ClearArea = true, 
+                MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 2, MaxDistance = LocationRings.Ring3.MaxDistance } },  
+            
+            { "MWL_CoastTower1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_CoastTower1_Configuration.Quantity.Value, Biome = Heightmap.Biome.BlackForest, Group = "Coastal", Priotized = true, RandomRotation = false, ClearArea = true, 
+                MinDistanceFromSimilar = 512, MinAltitude = -1, MaxAltitude = 2} },
+            
         };
     
     public static Dictionary<string, LocationConfig> SwampPack1LocationConfigs =
@@ -318,6 +325,10 @@ public class LocationConfigs
             
             { "MWL_FulingTower1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_FulingTower1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsCamp", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, 
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+            
+            { "MWL_RockGarden1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_RockGarden1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Plains, Group = "PlainsRock", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, 
+                MinDistanceFromSimilar = 1024, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+            
         };
     
     public static Dictionary<string, LocationConfig> MistlandsPack1LocationConfigs =
@@ -351,7 +362,14 @@ public class LocationConfigs
                 MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 15f, MinAltitude = 5f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Edge } },
 
             { "MWL_DvergrKnowledgeExtractor1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_DvergrKnowledgeExtractor1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 15, ClearArea = true, RandomRotation = false, Group = "Mist5", 
-                MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 15f, MinAltitude = 5f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } }
+                MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 15f, MinAltitude = 5f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+            
+            { "MWL_AncientShrine1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_AncientShrine1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 15, ClearArea = true, RandomRotation = false, Group = "Mist6", 
+                MinDistanceFromSimilar = 512, MaxTerrainDelta = 15f, MinAltitude = -2f, MaxAltitude = 2f, InForest = false, BiomeArea = Heightmap.BiomeArea.Edge } },
+            
+            { "MWL_MistShrine1_Config", new LocationConfig { Quantity = BepinexConfigs.MWL_MistShrine1_Configuration.Quantity.Value, Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 15, ClearArea = true, RandomRotation = false, Group = "Mist6", 
+                MinDistanceFromSimilar = 512, MaxTerrainDelta = 15f, MaxAltitude = 20f, MinAltitude = 3f, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+            
         };
 
     

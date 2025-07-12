@@ -89,6 +89,8 @@ public class Locations
         Common.LocationManager.AddLocation("MWL_ForestSkull1", BepinexConfigs.MWL_ForestSkull1_Configuration, LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestSkull1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_ForestTower4", BepinexConfigs.MWL_ForestTower4_Configuration, LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestTower4_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_ForestTower5", BepinexConfigs.MWL_ForestTower5_Configuration, LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestTower5_Config"], More_World_Locations_AIOPlugin.YAMLManager);
+        Common.LocationManager.AddLocation("MWL_ForestPillar1", BepinexConfigs.MWL_ForestPillar1_Configuration, LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestPillar1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
+        Common.LocationManager.AddLocation("MWL_CoastTower1", BepinexConfigs.MWL_CoastTower1_Configuration, LocationConfigs.BlackforestPack2LocationConfigs["MWL_CoastTower1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
     }
     
     public static void AddSwampPack1Locations()
@@ -138,6 +140,7 @@ public class Locations
         Common.LocationManager.AddLocation("MWL_FulingTemple3", BepinexConfigs.MWL_FulingTemple3_Configuration, LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTemple3_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_FulingWall1", BepinexConfigs.MWL_FulingWall1_Configuration, LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingWall1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_FulingTower1", BepinexConfigs.MWL_FulingTower1_Configuration, LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTower1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
+        Common.LocationManager.AddLocation("MWL_RockGarden1", BepinexConfigs.MWL_RockGarden1_Configuration, LocationConfigs.PlainsPack1LocationConfigs["MWL_RockGarden1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
     }
     
     public static void AddMistlandsPack1Locations()
@@ -152,6 +155,8 @@ public class Locations
         Common.LocationManager.AddLocation("MWL_DvergrEitrSingularity1", BepinexConfigs.MWL_DvergrEitrSingularity1_Configuration, LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrEitrSingularity1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_DvergrHouse1", BepinexConfigs.MWL_DvergrHouse1_Configuration, LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrHouse1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_DvergrKnowledgeExtractor1", BepinexConfigs.MWL_DvergrKnowledgeExtractor1_Configuration, LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrKnowledgeExtractor1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
+        Common.LocationManager.AddLocation("MWL_AncientShrine1", BepinexConfigs.MWL_AncientShrine1_Configuration, LocationConfigs.MistlandsPack1LocationConfigs["MWL_AncientShrine1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
+        Common.LocationManager.AddLocation("MWL_MistShrine1", BepinexConfigs.MWL_MistShrine1_Configuration, LocationConfigs.MistlandsPack1LocationConfigs["MWL_MistShrine1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
     }
     
     public static void AddAshlandsPack1Locations()
