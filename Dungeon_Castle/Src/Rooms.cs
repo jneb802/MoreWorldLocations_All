@@ -40,10 +40,10 @@ public class Rooms
         
     public static Dictionary<string, RoomConfig> LowerRoomConfigs = new Dictionary<string, RoomConfig>
     {    
-        { "CD_Lower_Hallway1", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
-        { "CD_Lower_Hallway2", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
-        { "CD_Lower_Hallway3", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
-        { "CD_Lower_Hallway4", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
+        { "CD_Lower_Hallway1", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.5f } },
+        { "CD_Lower_Hallway2", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.5f } },
+        { "CD_Lower_Hallway3", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.5f } },
+        { "CD_Lower_Hallway4", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.5f } },
         { "CD_Lower_Room1", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
         { "CD_Lower_Room2", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
         { "CD_Lower_Room3", new RoomConfig { ThemeName = "CD_Catacomb", Weight = 1.0f } },
