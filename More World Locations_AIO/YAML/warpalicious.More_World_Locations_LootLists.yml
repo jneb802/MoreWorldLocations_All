@@ -1,0 +1,304 @@
+version: 2.0
+MeadowsLoot1:
+  - item: Flint
+    stackMin: 1
+    stackMax: 4
+    weight: 1.0
+  - item: Feathers
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+MeadowsLoot2:
+  - item: Flint
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Feathers
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: LeatherScraps
+    stackMin: 1
+    stackMax: 3
+    weight: 1.2
+  - item: DeerHide
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+MeadowsLoot3:
+  - item: FineWood
+    stackMin: 1
+    stackMax: 4
+    weight: 1.0
+  - item: Copper
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: CopperOre
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: DeerHide
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Raspberry
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+BlackforestLoot1:
+  - item: Amber
+    stackMin: 1
+    stackMax: 4
+    weight: 1
+  - item: Ruby
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+  - item: BoneFragments
+    stackMin: 2
+    stackMax: 4
+    weight: 1
+  - item: Blueberries
+    stackMin: 2
+    stackMax: 4
+    weight: 1
+BlackforestLoot2:
+  - item: Blueberries
+    stackMin: 3
+    stackMax: 4
+    weight: 1
+  - item: CarrotSeeds
+    stackMin: 2
+    stackMax: 4
+    weight: 1
+  - item: AmberPearl
+    stackMin: 1
+    stackMax: 3
+    weight: 1
+  - item: TinOre
+    stackMin: 1
+    stackMax: 3
+    weight: 1
+  - item: CopperOre
+    stackMin: 1
+    stackMax: 3
+    weight: 1
+BlackforestLoot3:
+  - item: Bronze
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+  - item: Copper
+    stackMin: 1
+    stackMax: 3
+    weight: 1
+  - item: AmberPearl
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+  - item: SurtlingCore
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+WoodTavernLoot1:
+  - item: CarrotSeeds
+    stackMin: 2
+    stackMax: 3
+    weight: 1
+  - item: Blueberries
+    stackMin: 2
+    stackMax: 4
+    weight: 1
+  - item: MinceMeatSauce
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+  - item: DeerStew
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+SwampLoot1:
+  - item: WitheredBone
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: SurtlingCore
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: AmberPearl
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: Ruby
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: ElderBark
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+  - item: ArrowPoison
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+SwampLoot2:
+  - item: WitheredBone
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: SurtlingCore
+    stackMin: 3
+    stackMax: 3
+    weight: 1.0
+  - item: Chain
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: TurnipSeeds
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: Guck
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: Root
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+SwampLoot3:
+  - item: Chain
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: Guck
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: IronScrap
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: WitheredBone
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+PlainsLoot1:
+  - item: BlackMetalScrap
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: LinenThread
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+  - item: IronScrap
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: SurtlingCore
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+PlainsLoot2:
+  - item: Bread
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+  - item: LoxPie
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: FishWraps
+    stackMin: 1
+    stackMax: 3
+    weight: 1.0
+MistLoot1:
+  - item: WolfMeatSkewer
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: ScaleHide
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: Softtissue
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: JuteBlue
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: IronScrap
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+MistLoot2:
+  - item: RoyalJelly
+    stackMin: 3
+    stackMax: 5
+    weight: 1.0
+  - item: Mandible
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: Bilebag
+    stackMin: 1
+    stackMax: 2
+    weight: 1.0
+  - item: ScaleHide
+    stackMin: 2
+    stackMax: 5
+    weight: 1.0
+  - item: WolfMeatSkewer
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+AshlandsLoot1:
+  - item: GemstoneBlue
+    stackMin: 1
+    stackMax: 1
+    weight: 0.5
+  - item: GemstoneGreen
+    stackMin: 1
+    stackMax: 1
+    weight: 0.5
+  - item: GemstoneRed
+    stackMin: 1
+    stackMax: 1
+    weight: 0.5
+  - item: Coins
+    stackMin: 200
+    stackMax: 500
+    weight: 1
+  - item: CharredBone
+    stackMin: 5
+    stackMax: 10
+    weight: 1
+  - item: Charredskull
+    stackMin: 1
+    stackMax: 2
+    weight: 1
+  - item: CelestialFeather
+    stackMin: 1
+    stackMax: 1
+    weight: 0.1
+  - item: FlametalOreNew
+    stackMin: 10
+    stackMax: 20
+    weight: 1
+  - item: MoltenCore
+    stackMin: 1
+    stackMax: 2
+    weight: 0.5

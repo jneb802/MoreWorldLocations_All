@@ -1,0 +1,205 @@
+MeadowsCreatures1:
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+MeadowsCreatures2:
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Elite
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Shaman
+MeadowsCreatures3:
+  - Greyling
+  - Greyling
+  - Greyling
+MeadowsCreatures4:
+  - Skeleton
+  - Skeleton
+  - Skeleton
+MeadowsCreatures5:
+  - Boar
+  - Boar
+  - Boar
+BlackforestCreatures1:
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+BlackforestCreatures2:
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Elite
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Shaman
+BlackforestCreatures3:
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Elite
+  - Greydwarf_Elite
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Shaman
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Elite
+  - Greydwarf_Elite
+  - Greydwarf
+  - Greydwarf
+  - Greydwarf_Shaman
+SwampCreatures1:
+  - Blob
+  - Blob
+  - Blob
+  - Blob
+  - BlobElite
+SwampCreatures2:
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+SwampCreatures3:
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+  - Skeleton
+  - Skeleton
+SwampCreatures4:
+  - Wraith
+  - Wraith
+MountainsCreatures1:
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton
+  - Skeleton_Poison
+  - Skeleton
+  - Skeleton
+  - Skeleton
+MountainsCreatures2:
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr
+  - Draugr_Elite
+  - Draugr
+  - Draugr
+MountainsCreatures3:
+  - StoneGolem
+  - StoneGolem
+MountainsCreatures4:
+  - Ulv
+  - Ulv
+  - Ulv
+  - Ulv
+  - Fenring
+  - Ulv
+  - Ulv
+  - Ulv
+  - Fenring_Cultist
+  - Ulv
+  - Ulv
+  - Ulv
+  - Ulv
+  - Fenring
+  - Fenring
+PlainsCreatures1:
+  - Goblin
+  - Goblin
+  - Goblin
+  - GoblinArcher
+  - Goblin
+  - GoblinShaman
+  - Goblin
+  - GoblinArcher
+  - Goblin
+  - GoblinShaman
+  - Goblin
+PlainsCreatures2:
+  - Goblin
+  - GoblinArcher
+  - Goblin
+  - GoblinBrute
+  - GoblinShaman
+  - Goblin
+  - Goblin
+  - GoblinArcher
+  - Goblin
+  - GoblinArcher
+  - GoblinShaman
+  - GoblinBrute
+  - Goblin
+PlainsCreatures3:
+  - Goblin
+  - Goblin
+  - Goblin
+  - GoblinArcher
+  - Goblin
+MistCreatures1:
+  - Dverger
+  - DvergerMage
+  - DvergerMage
+  - Dverger
+  - DvergerMage
+  - Dverger
+  - DvergerMage
+  - Dverger
+  - Dverger
+  - Dverger
+MistCreatures2:
+  - Seeker
+  - Seeker
+  - Seeker
+  - SeekerBrute
+  - Seeker
+  - Seeker
+  - Seeker
+  - Seeker
+  - Seeker
+  - SeekerBrute
+  - Seeker
+MistCreatures3:
+  - Gjall
+  - Seeker
+  - Seeker
+  - Seeker
+  - Seeker
+  - Seeker
+  - Seeker
+AshlandsCreatures1:
+  - Charred_Twitcher
+  - Charred_Twitcher
+  - Charred_Archer
+  - Charred_Twitcher
+  - Charred_Melee
+  - Charred_Twitcher
+  - Charred_Twitcher
+  - Charred_Archer
+  - Charred_Twitcher
+  - Charred_Melee
