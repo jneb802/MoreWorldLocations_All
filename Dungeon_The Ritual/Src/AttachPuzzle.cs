@@ -33,6 +33,7 @@ public class AttachPuzzle : MonoBehaviour
     {
         if (initialized)
         {
+            Debug.Log("Dungeon puzzle in position " + this.gameObject.transform.position + " has already been initialized.");
             return;
         }
 
