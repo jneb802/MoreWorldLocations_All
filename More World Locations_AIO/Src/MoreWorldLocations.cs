@@ -43,11 +43,17 @@ namespace More_World_Locations_AIO
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
+            Prefabs.LoadPrefabBundles();
+
             // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
-            // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
+            AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
             // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
             
+            YAMLManager.ParseDefaultYamls();
+            YAMLManager.ParseCustomYamls();
+            
             BepinexConfigs.GenerateConfigs();
+            PrefabManager.OnVanillaPrefabsAvailable += Prefabs.AddAllPrefabs;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 
             if (saveOnSet)

@@ -132,6 +132,7 @@
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
+        <Compile Include="Src\Prefabs.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
@@ -140,8 +141,9 @@
     <ItemGroup>
         <Content Include=".gitignore"/>
         <Content Include="assets\moreworldlocations_assetbundle_1" />
-        <Content Include="assets\moreworldlocations_assetbundle_3" />
         <Content Include="assets\moreworldlocations_assetbundle_2" />
+        <Content Include="assets\moreworldlocations_assetbundle_3" />
+        <EmbeddedResource Include="assets\moreworldlocations_prefabs_2" />
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>
@@ -154,6 +156,10 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0"/>
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+      <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
