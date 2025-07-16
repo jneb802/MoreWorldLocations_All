@@ -33,6 +33,8 @@ public static class CreatureManager
     
     public static void SetupCreatures(string creatureListName, GameObject gameObject, string creatureYAMLContent)
     {
+        Debug.Log("Seting up creatures for location with name: " + gameObject.name + " using creature list name: " + creatureListName);
+        
         int creatureCount = GetCreatureSpawners(gameObject).Count;
         if (creatureCount == 0)
         {
