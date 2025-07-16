@@ -66,3 +66,32 @@ SwampLoot3:
     stackMin: 1
     stackMax: 3
     weight: 1.0
+MountainsLoot1:
+  - item: OnionSeeds
+    stackMin: 2
+    stackMax: 5
+    weight: 1.0
+  - item: SurtlingCore
+    stackMin: 2
+    stackMax: 3
+    weight: 1.0
+  - item: Bronze
+    stackMin: 3
+    stackMax: 4
+    weight: 1.0
+  - item: AmberPearl
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: WolfPelt
+    stackMin: 2
+    stackMax: 4
+    weight: 1.0
+  - item: Crystal
+    stackMin: 4
+    stackMax: 6
+    weight: 1.0
+  - item: ArrowFrost
+    stackMin: 4
+    stackMax: 10
+    weight: 1.0
