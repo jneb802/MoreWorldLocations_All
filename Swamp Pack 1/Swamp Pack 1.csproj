@@ -78,9 +78,6 @@
         <Reference Include="BepInEx">
             <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
         </Reference>
-        <Reference Include="ServerSync">
-            <HintPath>Libs\ServerSync.dll</HintPath>
-        </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
@@ -158,6 +155,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Libs\" />
+      <Folder Include="Managers\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
