@@ -15,8 +15,7 @@ public class YAMLManager
     
     public string defaultCreatureYamlContent;
     public string customCreatureYamlContent;
-    public List<string> creatureList;
-    public Dictionary<string, List<string>> creatureListDictionary = new Dictionary<string, List<string>>();
+    public Dictionary<string, List<GameObject>> creatureListDictionary = new Dictionary<string, List<GameObject>>();
     
     public string defaultlootYamlContent;
     public string customlootYamlContent;
@@ -141,18 +140,18 @@ public class YAMLManager
         
     }
 
-    public void BuildCreatureList(ConfigurationManager.Toggle useCustomCreatureYAML, string creatureListName)
+    public void BuildCreatureLists(ConfigurationManager.Toggle useCustomCreatureYAML, string creatureListName)
     {
         // Debug.Log("Creature list built");
         if (useCustomCreatureYAML == ConfigurationManager.Toggle.On)
         {
-            List<string> list = Common.CreatureManager.CreateCreatureList(creatureListName, customCreatureYamlContent);
-            creatureListDictionary.Add(creatureListName,list);
+            List<GameObject> creatureList = Common.CreatureManager_v2.CreateCreatureList(creatureListName, customCreatureYamlContent);
+            creatureListDictionary.Add(creatureListName,creatureList);
         }
         else
         { 
-            List<string> list = Common.CreatureManager.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
-            creatureListDictionary.Add(creatureListName,list);
+            List<GameObject> creatureList = Common.CreatureManager_v2.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
+            creatureListDictionary.Add(creatureListName,creatureList);
         }
     }
 
