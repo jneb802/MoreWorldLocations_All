@@ -53,7 +53,7 @@ public class AssetBundles
 
         foreach (string assetPath in assetPathsInBundle)
         {
-            AssetID assetId = Jotunn.Managers.AssetManager.GenerateAssetID(assetPath);
+            AssetID assetId = Jotunn.Managers.AssetManager.Instance.GenerateAssetID(assetPath);
             var location = new AssetLocation(bundleName, assetPath);
             manifest.AddAssetLocation(assetId, location);
         }
@@ -151,6 +151,10 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_Shipyard1.prefab",
         "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_FortBakkarhalt1.prefab",
         "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_Belmont1.prefab",
+        "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_SwampCourtyard1.prefab",
+        "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_SwampBrokenTower1.prefab",
+        "Assets/WarpProjects/More World Locations/Swamp Pack 1/MWL_SwampBrokenTower3.prefab",
+        
 
         // Mountains Pack 1
         "Assets/WarpProjects/More World Locations/Mountain Pack 1/MWL_StoneCastle1.prefab",
@@ -162,6 +166,8 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/Mountain Pack 1/MWL_WoodBarn1.prefab",
         "Assets/WarpProjects/More World Locations/Mountain Pack 1/MWL_WoodFarm1.prefab",
         "Assets/WarpProjects/More World Locations/Mountain Pack 1/MWL_WoodHouse1.prefab",
+        "Assets/WarpProjects/More World Locations/Mountain Pack 1/MWL_TempleShrine1.prefab",
+        "Assets/WarpProjects/More World Locations/Mountain Pack 1/MWL_StoneAltar1.prefab",
 
         // Plains Pack 1
         "Assets/WarpProjects/More World Locations/Plains Pack 1/MWL_GoblinFort1.prefab",
