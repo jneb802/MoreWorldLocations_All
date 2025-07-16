@@ -6,14 +6,16 @@ using Adventure_Map_Pack_1.Utils;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using BlackForest_Pack_1;
 using HarmonyLib;
 using JetBrains.Annotations;
 using LocalizationManager;
 using UnityEngine;
 using Common;
+using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
+using SoftReferenceableAssets;
+using AssetManager = Common.AssetManager;
 using Paths = BepInEx.Paths;
 
 namespace Adventure_Map_Pack_1
@@ -22,7 +24,7 @@ namespace Adventure_Map_Pack_1
     public class Adventure_Map_Pack_1Plugin : BaseUnityPlugin
     {
         internal const string ModName = "Adventure_Map_Pack_1";
-        internal const string ModVersion = "1.0.1";
+        internal const string ModVersion = "1.0.2";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -35,6 +37,7 @@ namespace Adventure_Map_Pack_1
         
         public static AssetBundle assetBundle;
         public static string bundleName = "adventuremap1";
+        public static string bundlePath = Path.Combine(Paths.PluginPath, "warpalicious-Adventure_Map_Pack_1", bundleName);
         
         public static AssetBundle assetBundleTotem;
         public static string bundleNameTotem = "totems";
@@ -48,10 +51,6 @@ namespace Adventure_Map_Pack_1
                 Assembly.GetExecutingAssembly()
             );
             
-            // assetBundleTotem = AssetUtils.LoadAssetBundleFromResources(
-            //     bundleNameTotem,
-            //     Assembly.GetExecutingAssembly()
-            // );
             if (assetBundle == null)
             {
                 WarpLogger.Logger.LogError("Failed to load asset bundle with name: " + bundleName);
@@ -83,7 +82,7 @@ namespace Adventure_Map_Pack_1
             _harmony.PatchAll(assembly);
             SetupWatcher();
             
-            LoadAssetBundle();
+            // LoadAssetBundle();
         
             MWL_CastleCorner1_Configuration =
                 new LocationConfiguration(this.Config, "CastleCorner1", 15, "SwampCreatures1", "SwampLoot1");
@@ -100,107 +99,70 @@ namespace Adventure_Map_Pack_1
             MWL_TreeTowers1_Configuration =
                 new LocationConfiguration(this.Config, "TreeTowers1", 20, "SwampCreatures1", "SwampLoot1");
             
-    //         MWL_CastleCorner1_Quantity_Config = config("1 - MWL_CastleCorner1", "Spawn Quantity", 15,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_CastleCorner1_CreatureYaml_Config = config("1 - MWL_CastleCorner1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_CastleCorner1_CreatureList_Config = config("1 - MWL_CastleCorner1", "Name of Creature List", "SwampCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_CastleCorner1_LootYaml_Config = config("1 - MWL_CastleCorner1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_CastleCorner1_LootList_Config = config("1 - MWL_CastleCorner1", "Name of Loot List", "SwampLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //         
-    //         MWL_ForestCamp1_Quantity_Config = config("2 - MWL_ForestCamp1", "Spawn Quantity", 20,
-    // "Amount of this location the game will attempt to place during world generation");
-    //         MWL_ForestCamp1_CreatureYaml_Config = config("2 - MWL_ForestCamp1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_ForestCamp1_CreatureList_Config = config("2 - MWL_ForestCamp1", "Name of Creature List", "BlackforestCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_ForestCamp1_LootYaml_Config = config("2 - MWL_ForestCamp1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_ForestCamp1_LootList_Config = config("2 - MWL_ForestCamp1", "Name of Loot List", "BlackforestLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //
-    //         MWL_Misthut2_Quantity_Config = config("3 - MWL_Misthut2", "Spawn Quantity", 15,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_Misthut2_CreatureYaml_Config = config("3 - MWL_Misthut2", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_Misthut2_CreatureList_Config = config("3 - MWL_Misthut2", "Name of Creature List", "MistCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_Misthut2_LootYaml_Config = config("3 - MWL_Misthut2", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_Misthut2_LootList_Config = config("3 - MWL_Misthut2", "Name of Loot List", "MistLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //
-    //         MWL_MountainDvergrShrine1_Quantity_Config = config("4 - MWL_MountainDvergrShrine1", "Spawn Quantity", 15,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_MountainDvergrShrine1_CreatureYaml_Config = config("4 - MWL_MountainDvergrShrine1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_MountainDvergrShrine1_CreatureList_Config = config("4 - MWL_MountainDvergrShrine1", "Name of Creature List", "MistCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_MountainDvergrShrine1_LootYaml_Config = config("4 - MWL_MountainDvergrShrine1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_MountainDvergrShrine1_LootList_Config = config("4 - MWL_MountainDvergrShrine1", "Name of Loot List", "MistLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //         
-    //         MWL_MountainDvergrShrine2_Quantity_Config = config("4 - MWL_MountainDvergrShrine2", "Spawn Quantity", 15,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_MountainDvergrShrine2_CreatureYaml_Config = config("4 - MWL_MountainDvergrShrine2", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_MountainDvergrShrine2_CreatureList_Config = config("4 - MWL_MountainDvergrShrine2", "Name of Creature List", "MistCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_MountainDvergrShrine2_LootYaml_Config = config("4 - MWL_MountainDvergrShrine2", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_MountainDvergrShrine2_LootList_Config = config("4 - MWL_MountainDvergrShrine2", "Name of Loot List", "MistLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //
-    //         MWL_MountainShrine1_Quantity_Config = config("5 - MWL_MountainShrine1", "Spawn Quantity", 10,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_MountainShrine1_CreatureYaml_Config = config("5 - MWL_MountainShrine1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_MountainShrine1_CreatureList_Config = config("5 - MWL_MountainShrine1", "Name of Creature List", "MountainCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_MountainShrine1_LootYaml_Config = config("5 - MWL_MountainShrine1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_MountainShrine1_LootList_Config = config("5 - MWL_MountainShrine1", "Name of Loot List", "MountainsLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //
-    //         MWL_RuinedTower1_Quantity_Config = config("6 - MWL_RuinedTower1", "Spawn Quantity", 15,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_RuinedTower1_CreatureYaml_Config = config("6 - MWL_RuinedTower1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_RuinedTower1_CreatureList_Config = config("6 - MWL_RuinedTower1", "Name of Creature List", "BlackforestCreatures2",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_RuinedTower1_LootYaml_Config = config("6 - MWL_RuinedTower1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_RuinedTower1_LootList_Config = config("6 - MWL_RuinedTower1", "Name of Loot List", "BlackforestLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-    //
-    //         MWL_TreeTowers1_Quantity_Config = config("7 - MWL_TreeTowers1", "Spawn Quantity", 20,
-    //             "Amount of this location the game will attempt to place during world generation");
-    //         MWL_TreeTowers1_CreatureYaml_Config = config("7 - MWL_TreeTowers1", "Use Custom Creature YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will spawn default creatures. When On, location will select creatures from list in the warpalicious.More_World_Locations_CreatureLists.yml file in BepinEx config folder");
-    //         MWL_TreeTowers1_CreatureList_Config = config("7 - MWL_TreeTowers1", "Name of Creature List", "SwampCreatures1",
-    //             "The name of the creature list to use from warpalicious.More_World_Locations_CreatureLists.yml file");
-    //         MWL_TreeTowers1_LootYaml_Config = config("7 - MWL_TreeTowers1", "Use Custom Loot YAML file", ConfigurationManager.Toggle.Off,
-    //             "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
-    //         MWL_TreeTowers1_LootList_Config = config("7 - MWL_TreeTowers1", "Name of Loot List", "SwampLoot1",
-    //             "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-            
             adventuremap1YAMLmanager.ParseDefaultYamls();
             adventuremap1YAMLmanager.ParseCustomYamls();
+
+            // BuildManifest();
             
             // PrefabManager.OnVanillaPrefabsAvailable += PrefabUtils.CreateCustomPrefabs;
             // StatusEffectUtils.CreateCustomStatusEffects();
             
-            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
+            ZoneManager.OnVanillaLocationsAvailable += AddLocation;
 
             if (saveOnSet)
             {
                 Config.SaveOnConfigSet = saveOnSet;
                 Config.Save();
             }
+        }
+
+        public string bundle = "assetBundleTest";
+        public string[] assetPathsInBundle = new[]
+        {
+            "Assets/WarpProjects/LocationTesting/Location1.prefab",
+        };
+        
+        public void BuildManifest(string bundleName, string[] assetPathsInBundle)
+        {
+            string manifestPath = Path.Combine(Paths.PluginPath, "assetBundleManifest");
+            string bundleRelativeDir = ".";
+            
+            SoftReferenceableAssets.AssetBundleManifest manifest = new SoftReferenceableAssets.AssetBundleManifest(bundleRelativeDir);
+
+            foreach (string assetPath in assetPathsInBundle)
+            {
+                AssetID assetId = Jotunn.Managers.AssetManager.GenerateAssetID(assetPath);
+                var location = new AssetLocation(bundleName, assetPath);
+                manifest.AddAssetLocation(assetId, location);
+            }
+            
+            manifest.AddBundleDependencies(bundleName, System.Array.Empty<string>());
+            
+            manifest.SerializeToDisk(manifestPath, SerializationFormat.Text);
+        }
+
+        public void AddLocation()
+        {
+
+            SoftReference<GameObject> location1SoftRefPrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>("Location1");
+            SoftReference<GameObject> mountainDvergrShrine2SoftRefPrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>("MWL_MountainDvergrShrine2");
+            
+            CustomLocation customLocation = new 
+                CustomLocation(
+                    location1SoftRefPrefab,
+                    true,
+                    LocationConfigs.MWL_MountainDvergrShrine1_Config);
+            
+            CustomLocation customLocation2 = new 
+                CustomLocation(
+                    mountainDvergrShrine2SoftRefPrefab,
+                    true,
+                    LocationConfigs.MWL_MountainDvergrShrine1_Config);
+        
+            ZoneManager.Instance.AddCustomLocation(customLocation);
+            ZoneManager.Instance.AddCustomLocation(customLocation2);
+            
+            ZoneManager.OnVanillaLocationsAvailable -= AddLocation;
         }
 
         private void OnDestroy()
@@ -241,54 +203,6 @@ namespace Adventure_Map_Pack_1
         public static LocationConfiguration MWL_MountainShrine1_Configuration;
         public static LocationConfiguration MWL_RuinedTower1_Configuration;
         public static LocationConfiguration MWL_TreeTowers1_Configuration;
-        
-        // public static ConfigEntry<int> MWL_CastleCorner1_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_CastleCorner1_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_CastleCorner1_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_CastleCorner1_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_CastleCorner1_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_ForestCamp1_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_ForestCamp1_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_ForestCamp1_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_ForestCamp1_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_ForestCamp1_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_Misthut2_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_Misthut2_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_Misthut2_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_Misthut2_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_Misthut2_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_MountainDvergrShrine1_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MountainDvergrShrine1_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_MountainDvergrShrine1_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MountainDvergrShrine1_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_MountainDvergrShrine1_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_MountainDvergrShrine2_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MountainDvergrShrine2_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_MountainDvergrShrine2_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MountainDvergrShrine2_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_MountainDvergrShrine2_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_MountainShrine1_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MountainShrine1_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_MountainShrine1_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_MountainShrine1_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_MountainShrine1_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_RuinedTower1_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_RuinedTower1_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_RuinedTower1_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_RuinedTower1_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_RuinedTower1_LootList_Config = null!;
-        //
-        // public static ConfigEntry<int> MWL_TreeTowers1_Quantity_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_TreeTowers1_CreatureYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_TreeTowers1_CreatureList_Config = null!;
-        // public static ConfigEntry<ConfigurationManager.Toggle> MWL_TreeTowers1_LootYaml_Config = null!;
-        // public static ConfigEntry<string> MWL_TreeTowers1_LootList_Config = null!;
     }
 
     public static class KeyboardExtensions

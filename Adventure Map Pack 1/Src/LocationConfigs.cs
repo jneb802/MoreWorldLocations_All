@@ -1,7 +1,7 @@
 using Adventure_Map_Pack_1;
 using Jotunn.Configs;
 
-namespace BlackForest_Pack_1;
+namespace Adventure_Map_Pack_1;
 
 public class LocationConfigs
 {

@@ -128,6 +128,11 @@
         <Compile Include="Src\AdventureMapPack1.cs" />
         <Compile Include="Src\LocationConfigs.cs" />
         <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\Patches\AssetLoader_Patch.cs" />
+        <Compile Include="Src\Patches\EntryPatch.cs" />
+        <Compile Include="Src\Patches\HoldReferencePatch.cs" />
+        <Compile Include="Src\Patches\LocationFlow_Patches.cs" />
+        <Compile Include="Src\Patches\ManifestPatch.cs" />
         <Compile Include="Src\StatusEffects\ImmuneShield.cs" />
         <Compile Include="Src\Utils\PrefabUtils.cs" />
         <Compile Include="Src\Utils\StatusEffectUtils.cs" />
@@ -139,6 +144,8 @@
     <ItemGroup>
         <Content Include=".gitignore"/>
         <EmbeddedResource Include="assets\adventuremap1" />
+        <EmbeddedResource Include="assets\adventuremap1.manifest" />
+        <EmbeddedResource Include="assets\00_locationtest" />
         <Content Include="assets\DropAssetBundleInThisFolder.txt"/>
         <EmbeddedResource Include="assets\totems" />
         <Content Include="environment.props"/>
