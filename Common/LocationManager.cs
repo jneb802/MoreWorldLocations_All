@@ -5,6 +5,7 @@ using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using SoftReferenceableAssets;
 using UnityEngine;
 
 namespace Common;
@@ -17,43 +18,45 @@ public class LocationManager
         Exterior
     }
     
+    public static LocationManager instance;
+    public static LocationManager Instance => instance ??= new LocationManager();
     
     // Original method used by most mods
     // Added check for new loot list version
-    public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, int creatureCount, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
-    {
-        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
-        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
-        
-        CreatureManager.SetupCreatures(LocationPosition.Exterior,creatureListName,jotunnLocationContainer,creatureCount,creatureYAMLContent);
-        
-        if (LootManager.isLootListVersion2(lootYAMLContent))
-        {
-            List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
-            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
-            LootManager.SetupChestLoot(locationChestContainers,dropDataList);
-        }
-        else
-        {
-            List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
-            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
-            LootManager.SetupChestLoot(locationChestContainers,lootList);   
-            var locationDropOnDestroyedLoot = LootManager.GetLocationsDropOnDestroyeds(jotunnLocationContainer,LocationPosition.Exterior);
-            if (locationDropOnDestroyedLoot != null)
-            {
-                LootManager.SetupDropOnDestroyedLoot(locationDropOnDestroyedLoot,lootList);
-            }
-        }
-        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
-        
-        ZoneManager.Instance.AddCustomLocation(customLocation);
-    }
+    // public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, int creatureCount, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
+    // {
+    //     var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+    //     GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+    //     
+    //     CreatureManager.SetupCreatures(LocationPosition.Exterior,creatureListName,jotunnLocationContainer,creatureCount,creatureYAMLContent);
+    //     
+    //     if (LootManager.isLootListVersion2(lootYAMLContent))
+    //     {
+    //         List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(lootListName, lootYAMLContent);
+    //         List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+    //         LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+    //     }
+    //     else
+    //     {
+    //         List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+    //         List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+    //         LootManager.SetupChestLoot(locationChestContainers,lootList);   
+    //         var locationDropOnDestroyedLoot = LootManager.GetLocationsDropOnDestroyeds(jotunnLocationContainer,LocationPosition.Exterior);
+    //         if (locationDropOnDestroyedLoot != null)
+    //         {
+    //             LootManager.SetupDropOnDestroyedLoot(locationDropOnDestroyedLoot,lootList);
+    //         }
+    //     }
+    //     CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+    //     
+    //     ZoneManager.Instance.AddCustomLocation(customLocation);
+    // }
     
     // Alternate method that doesn't use creatureCount
     // Alternate method to check for new loot list version
     public static void AddLocation(AssetBundle assetBundle, string locationName, string creatureYAMLContent, string creatureListName, string lootYAMLContent, string lootListName, LocationConfig locationConfig)
     {
-        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
         
         CreatureManager.SetupCreatures(creatureListName,jotunnLocationContainer,creatureYAMLContent);
@@ -67,6 +70,33 @@ public class LocationManager
         else
         {
             List<string> lootList = LootManager.CreateLootList(lootListName, lootYAMLContent);
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,lootList);   
+        }
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
+    // No creature count
+    // Includes new lootList versions
+    // Accept just locationConfiguration
+    public static void AddLocation(AssetBundle assetBundle, string locationName, LocationConfiguration locationConfiguration, LocationConfig locationConfig, YAMLManager yamlManager)
+    {
+        var locationGameObject = assetBundle.LoadAsset<GameObject>(locationName);
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(locationGameObject);
+        
+        CreatureManager.SetupCreatures(locationConfiguration.CreatureList.Value,jotunnLocationContainer,yamlManager.GetCreatureYamlContent(locationConfiguration.CreatureYaml.Value));
+
+        if (LootManager.isLootListVersion2(yamlManager.GetLootYamlContent(locationConfiguration.LootYaml.Value)))
+        {
+            List<DropTable.DropData> dropDataList = LootManager.ParseContainerYaml_v2(locationConfiguration.LootList.Value, yamlManager.GetLootYamlContent(locationConfiguration.LootYaml.Value));
+            List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
+            LootManager.SetupChestLoot(locationChestContainers,dropDataList);
+        }
+        else
+        {
+            List<string> lootList = LootManager.CreateLootList(locationConfiguration.LootList.Value, yamlManager.GetLootYamlContent(locationConfiguration.LootYaml.Value));
             List<Container> locationChestContainers = LootManager.GetLocationsContainers(jotunnLocationContainer);
             LootManager.SetupChestLoot(locationChestContainers,lootList);   
         }
@@ -151,4 +181,42 @@ public class LocationManager
         
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
+    
+    // New Soft Reference method
+    public static void AddLocation(string locationName, LocationConfiguration locationConfiguration, LocationConfig locationConfig, YAMLManager yamlManager)
+    {
+        SoftReference<GameObject> softReferencePrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>(locationName);
+        
+        Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
+            softReferencePrefab.m_assetID,
+            null,
+            resolvedObj => 
+            {
+                Common.CreatureManager.SetupCreatures(
+                    locationConfiguration.CreatureList.Value,
+                    resolvedObj as GameObject,
+                    yamlManager.GetCreatureYamlContent(locationConfiguration.CreatureYaml.Value)
+                );
+            });
+        
+        Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
+            softReferencePrefab.m_assetID,
+            null,
+            resolvedObj => 
+            {
+                Common.LootManager.SetupChestLoot(
+                        LootManager.GetLocationsContainers(resolvedObj as GameObject),
+                        LootManager.ParseContainerYaml_v2(locationConfiguration.LootList.Value, yamlManager.GetLootYamlContent(locationConfiguration.LootYaml.Value))
+                );
+            });
+    
+        CustomLocation customLocation = new 
+            CustomLocation(
+                softReferencePrefab,
+                true,
+                locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+    
 }
