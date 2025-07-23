@@ -29,7 +29,19 @@ public class ShrineConfig
 
     public List<int> durationValues = new List<int>() { 300, 600, 1200, 1800 };
     
-    public ShrineConfig(string internalName, string displayName, StatusEffect statusEffect, Shrine.ShrineOffering shrineOffering)
+    public float healthRegenMultiplier;
+    public List<float> healthRegenMultiplierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    
+    public float staminaRegenMultiplier;
+    public List<float> staminaRegenMultiplierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    
+    public float eitrRegenMultiplier;
+    public List<float> eitrRegenMultiplierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    
+    public float raiseSkillModifier;
+    public List<float> raiseSkillModifierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    
+    public ShrineConfig(string internalName, string displayName, StatusEffect statusEffect, Shrine.ShrineOffering shrineOffering, Heightmap.Biome biome)
     {
         this.internalName = internalName;
         this.displayName = displayName;
@@ -41,6 +53,64 @@ public class ShrineConfig
     public Shrine.ShrineOffering GetShrineOffering()
     {
         return shrineOffering;
+    }
+    
+    public void RollRandomValues()
+    {
+        duration = durationValues[UnityEngine.Random.Range(0, durationValues.Count)];
+        
+        int effectCount = GetRandomEffectAmount();
+        
+        List<string> availableEffects = new List<string>
+        {
+            "healthRegen",
+            "staminaRegen", 
+            "eitrRegen",
+            "raiseSkill"
+        };
+        
+        for (int i = 0; i < effectCount && availableEffects.Count > 0; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, availableEffects.Count);
+            string selectedEffect = availableEffects[randomIndex];
+            availableEffects.RemoveAt(randomIndex); // Remove to prevent duplicates
+            
+            switch (selectedEffect)
+            {
+                case "healthRegen":
+                    healthRegenMultiplier = healthRegenMultiplierValues[UnityEngine.Random.Range(0, healthRegenMultiplierValues.Count)];
+                    break;
+                case "staminaRegen":
+                    staminaRegenMultiplier = staminaRegenMultiplierValues[UnityEngine.Random.Range(0, staminaRegenMultiplierValues.Count)];
+                    break;
+                case "eitrRegen":
+                    eitrRegenMultiplier = eitrRegenMultiplierValues[UnityEngine.Random.Range(0, eitrRegenMultiplierValues.Count)];
+                    break;
+                case "raiseSkill":
+                    raiseSkillModifier = raiseSkillModifierValues[UnityEngine.Random.Range(0, raiseSkillModifierValues.Count)];
+                    break;
+            }
+        }
+    }
+    
+    public int GetRandomEffectAmount()
+    {
+        if (weightedEffectCounts.Count == 0) 
+            return 0;
+        
+        int totalWeight = weightedEffectCounts.Values.Sum();
+        
+        int randomValue = UnityEngine.Random.Range(0, totalWeight);
+        
+        int currentWeight = 0;
+        foreach (var kvp in weightedEffectCounts)
+        {
+            currentWeight += kvp.Value;
+            if (randomValue < currentWeight)
+                return kvp.Key;
+        }
+        
+        return weightedEffectCounts.Keys.First();
     }
     
 }

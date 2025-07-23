@@ -15,22 +15,22 @@ public class StatusEffectDB
     {
         EffectList startEffects =  ObjectDB.instance.GetStatusEffect("GP_Eikthyr".GetStableHashCode()).m_startEffects;
         
-        CreateClonedStatusEffect("GP_Eikthyr", "MWL_GP_Eikthyr", 1800f);
-        CreateClonedStatusEffect("GP_TheElder", "MWL_GP_TheElder", 1800f);
-        CreateClonedStatusEffect("GP_Bonemass", "MWL_GP_Bonemass", 1800f);
-        CreateClonedStatusEffect("GP_Moder", "MWL_GP_Moder", 1800f);
-        CreateClonedStatusEffect("GP_Yagluth", "MWL_GP_Yagluth", 1800f);
-        CreateClonedStatusEffect("GP_Queen", "MWL_GP_Queen", 1800f);
-        CreateClonedStatusEffect("GP_Fader", "MWL_GP_Fader", 1800f);
+        // CreateClonedStatusEffect("GP_Eikthyr", "MWL_GP_Eikthyr", 1800f);
+        // CreateClonedStatusEffect("GP_TheElder", "MWL_GP_TheElder", 1800f);
+        // CreateClonedStatusEffect("GP_Bonemass", "MWL_GP_Bonemass", 1800f);
+        // CreateClonedStatusEffect("GP_Moder", "MWL_GP_Moder", 1800f);
+        // CreateClonedStatusEffect("GP_Yagluth", "MWL_GP_Yagluth", 1800f);
+        // CreateClonedStatusEffect("GP_Queen", "MWL_GP_Queen", 1800f);
+        // CreateClonedStatusEffect("GP_Fader", "MWL_GP_Fader", 1800f);
         
         var increaseHealthRegen = new (string internalName, string displayName, string trophyName)[]
         {
-            ("MWL_SE_Meadows_IncreaseHealthRegen", "Blessing of the Boar", "TrophyBoar"),
-            ("MWL_SE_Blackforest_IncreaseHealthRegen", "Blessing of the Greydwarf", "TrophyGreydwarf"),
-            ("MWL_SE_Swamp_IncreaseHealthRegen", "Blessing of the Draugr", "TrophyDraugr"),
-            ("MWL_SE_Mountains_IncreaseHealthRegen", "Blessing of the Wolf", "TrophyWolf"),
-            ("MWL_SE_Plains_IncreaseHealthRegen", "Blessing of the Goblin", "TrophyGoblin"),
-            ("MWL_SE_Mistlands_IncreaseHealthRegen", "Blessing of the Seeker", "TrophySeeker"),
+            ("MWL_SE_Boar", "Blessing of the Boar", "TrophyBoar"),
+            ("MWL_SE_Greydwarf", "Blessing of the Greydwarf", "TrophyGreydwarf"),
+            ("MWL_SE_Draugr", "Blessing of the Draugr", "TrophyDraugr"),
+            ("MWL_SE_Wolf", "Blessing of the Wolf", "TrophyWolf"),
+            ("MWL_SE_Goblin", "Blessing of the Fuling", "TrophyGoblin"),
+            ("MWL_SE_Seeker", "Blessing of the Seeker", "TrophySeeker"),
             // ("MWL_SE_Ashlands_IncreaseHealthRegen", "Blessing of the Charred", "TrophyCharred"),
         };
 
@@ -38,20 +38,20 @@ public class StatusEffectDB
         {
             CreateCustomStatusEffect(internalName, displayName, trophyName, se =>
             {
-                se.m_healthRegenMultiplier = 2f;
-                se.m_ttl = 1800f;
+                // se.m_healthRegenMultiplier = 1.1f;
+                // se.m_ttl = 1800f;
                 se.m_startEffects = startEffects;
             });
         }
         
         var increaseStamRegen = new (string internalName, string displayName, string trophyName)[]
         {
-            ("MWL_SE_Meadows_IncreaseStamRegen", "Blessing of the Deer", "TrophyDeer"),
-            ("MWL_SE_Blackforest_IncreaseStamRegen", "Blessing of the Skeleton", "TrophySkeleton"),
-            ("MWL_SE_Swamp_IncreaseStamRegen", "Blessing of the Leech", "TrophyLeech"),
-            ("MWL_SE_Mountains_IncreaseStamRegen", "Blessing of the Hatchling", "TrophyHatchling"),
-            ("MWL_SE_Plains_IncreaseStamRegen", "Blessing of the Deathsquito", "TrophyDeathsquito"),
-            ("MWL_SE_Mistlands_IncreaseStamRegen", "Blessing of the Hare", "TrophyHare"),
+            ("MWL_SE_Deer", "Blessing of the Deer", "TrophyDeer"),
+            ("MWL_SE_Skeleton", "Blessing of the Skeleton", "TrophySkeleton"),
+            ("MWL_SE_Leech", "Blessing of the Leech", "TrophyLeech"),
+            ("MWL_SE_Hatchling", "Blessing of the Hatchling", "TrophyHatchling"),
+            ("MWL_SE_Deathsquito", "Blessing of the Deathsquito", "TrophyDeathSquito"),
+            ("MWL_SE_Hare", "Blessing of the Hare", "TrophyHare"),
             // ("MWL_SE_Ashlands_IncreaseStamRegen", "Blessing of the Lox", "TrophyLox"),
         };
 
@@ -59,7 +59,7 @@ public class StatusEffectDB
         {
             CreateCustomStatusEffect(internalName, displayName, trophyName, se =>
             {
-                se.m_staminaRegenMultiplier = 2f;
+                se.m_staminaRegenMultiplier = 1.1f;
                 se.m_ttl = 1800f;
                 se.m_startEffects = startEffects;
             });
@@ -67,12 +67,12 @@ public class StatusEffectDB
         
         var increaseEitrRegen = new (string internalName, string displayName, string trophyName)[]
         {
-            ("MWL_SE_Meadows_IncreaseEitrRegen", "Blessing of the Neck", "TrophyNeck"),
-            ("MWL_SE_Blackforest_IncreaseEitrRegen", "Blessing of the Greydwarf Shaman", "TrophyGreydwarfShaman"),
-            ("MWL_SE_Swamp_IncreaseEitrRegen", "Blessing of the Wraith", "TrophyWraith"),
-            ("MWL_SE_Mountains_IncreaseEitrRegen", "Blessing of the Ulv", "TrophyUlv"),
-            ("MWL_SE_Plains_IncreaseEitrRegen", "Blessing of the Goblin Shaman", "TrophyGoblinShaman"),
-            ("MWL_SE_Mistlands_IncreaseEitrRegen", "Blessing of the Dvergr", "TrophyDvergr"),
+            ("MWL_SE_Neck", "Blessing of the Neck", "TrophyNeck"),
+            ("MWL_SE_GreydwarfShaman", "Blessing of the Greydwarf Shaman", "TrophyGreydwarfShaman"),
+            ("MWL_SE_Wraith", "Blessing of the Wraith", "TrophyWraith"),
+            ("MWL_SE_Ulv", "Blessing of the Ulv", "TrophyUlv"),
+            ("MWL_SE_GoblinShaman", "Blessing of the Fuling Shaman", "TrophyGoblinShaman"),
+            ("MWL_SE_Dvergr", "Blessing of the Dvergr", "TrophyDvergr"),
             // ("MWL_SE_Ashlands_IncreaseEitrRegen", "Blessing of the Lox", "TrophyLox"),
         };
 
@@ -80,7 +80,7 @@ public class StatusEffectDB
         {
             CreateCustomStatusEffect(internalName, displayName, trophyName, se =>
             {
-                se.m_eitrRegenMultiplier = 2f;
+                se.m_eitrRegenMultiplier = 1.1f;
                 se.m_ttl = 1800f;
                 se.m_startEffects = startEffects;
             });
@@ -89,11 +89,11 @@ public class StatusEffectDB
         var increaseSkillGain = new (string internalName, string displayName, string trophyName)[]
         {
             // ("MWL_SE_Meadows_IncreaseSkillGain", "Blessing of the Neck", "TrophyNeck"),
-            ("MWL_SE_Blackforest_IncreaseSkillGain", "Blessing of the Poison Skeleton", "TrophySkeletonPoison"),
-            ("MWL_SE_Swamp_IncreaseSkillGain", "Blessing of the Abomination", "TrophyAbomination"),
-            ("MWL_SE_Mountains_IncreaseSkillGain", "Blessing of the Cultist", "TrophyCultist"),
-            ("MWL_SE_Plains_IncreaseSkillGain", "Blessing of the Goblin Brute", "TrophyGoblinBrute"),
-            ("MWL_SE_Mistlands_IncreaseSkillGain", "Blessing of the Seeker Brute", "TrophySeekerBrute"),
+            ("MWL_SE_SkeletonPoison", "Blessing of the Poison Skeleton", "TrophySkeletonPoison"),
+            ("MWL_SE_Abomination", "Blessing of the Abomination", "TrophyAbomination"),
+            ("MWL_SE_Cultist", "Blessing of the Cultist", "TrophyCultist"),
+            ("MWL_SE_GoblinBrute", "Blessing of the Fuling Berserker", "TrophyGoblinBrute"),
+            ("MWL_SE_SeekerBrute", "Blessing of the Seeker Soldier", "TrophySeekerBrute"),
             // ("MWL_SE_Ashlands_IncreaseSkillGain", "Blessing of the Lox", "TrophyLox"),
         };
 
@@ -102,7 +102,7 @@ public class StatusEffectDB
             CreateCustomStatusEffect(internalName, displayName, trophyName, se =>
             {
                 se.m_raiseSkill = Skills.SkillType.All;
-                se.m_raiseSkillModifier = 2f;
+                se.m_raiseSkillModifier = 1.1f;
                 se.m_ttl = 1800f;
                 se.m_startEffects = startEffects;
             });
