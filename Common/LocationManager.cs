@@ -187,28 +187,28 @@ public class LocationManager
     {
         SoftReference<GameObject> softReferencePrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>(locationName);
         
-        Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
-            softReferencePrefab.m_assetID,
-            null,
-            resolvedObj => 
-            {
-                Common.CreatureManager.SetupCreatures(
-                    locationConfiguration.CreatureList.Value,
-                    resolvedObj as GameObject,
-                    yamlManager.GetCreatureYamlContent(locationConfiguration.CreatureYaml.Value)
-                );
-            });
+        // Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
+        //     softReferencePrefab.m_assetID,
+        //     null,
+        //     resolvedObj => 
+        //     {
+        //         Common.CreatureManager.SetupCreatures(
+        //             locationConfiguration.CreatureList.Value,
+        //             resolvedObj as GameObject,
+        //             yamlManager.GetCreatureYamlContent(locationConfiguration.CreatureYaml.Value)
+        //         );
+        //     });
         
-        Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
-            softReferencePrefab.m_assetID,
-            null,
-            resolvedObj => 
-            {
-                Common.LootManager.SetupChestLoot(
-                        LootManager.GetLocationsContainers(resolvedObj as GameObject),
-                        LootManager.ParseContainerYaml_v2(locationConfiguration.LootList.Value, yamlManager.GetLootYamlContent(locationConfiguration.LootYaml.Value))
-                );
-            });
+        // Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
+        //     softReferencePrefab.m_assetID,
+        //     null,
+        //     resolvedObj => 
+        //     {
+        //         Common.LootManager.SetupChestLoot(
+        //                 LootManager.GetLocationsContainers(resolvedObj as GameObject),
+        //                 LootManager.ParseContainerYaml_v2(locationConfiguration.LootList.Value, yamlManager.GetLootYamlContent(locationConfiguration.LootYaml.Value))
+        //         );
+        //     });
     
         CustomLocation customLocation = new 
             CustomLocation(
