@@ -10,6 +10,8 @@ namespace More_World_Locations_AIO.Shrines;
 public class Shrine : MonoBehaviour, Interactable, Hoverable
 {
     public ShrineConfig shrineConfig;
+    
+    public bool hasBeenUsedOnce = false;
 
     public ZNetView znetView;
 
@@ -93,6 +95,11 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
 
     public bool CheckUserInventory(Humanoid user)
     {
+        if (!hasBeenUsedOnce)
+        {
+            return true;   
+        }
+        
         bool hasRequiredItems = false;
         foreach (var item in user.GetInventory().GetAllItems())
         {
