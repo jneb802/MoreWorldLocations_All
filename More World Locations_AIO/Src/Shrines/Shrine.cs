@@ -28,12 +28,35 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             if (!zdo.GetString(ShrineConfigKey, out string storedName) || string.IsNullOrEmpty(storedName))
             {
                 shrineConfig = ShrineDB.GetRandomShrineConfig();
+                shrineConfig.RollRandomValues();
+                
                 zdo.Set(ShrineConfigKey, shrineConfig.internalName);
+                zdo.Set("MWL_Shrine_Duration", shrineConfig.duration);
+                zdo.Set("MWL_Shrine_HealthRegenMult", shrineConfig.healthRegenMultiplier);
+                zdo.Set("MWL_Shrine_StaminaRegenMult", shrineConfig.staminaRegenMultiplier);
+                zdo.Set("MWL_Shrine_EitrRegenMult", shrineConfig.eitrRegenMultiplier);
+                zdo.Set("MWL_Shrine_RaiseSkillMod", shrineConfig.raiseSkillModifier);
+                zdo.Set("MWL_Shrine_FreeTag", hasBeenUsedOnce);
+                
                 Debug.Log($"Shrine: Set random config '{shrineConfig.internalName}' to ZDO");
+                Debug.Log($"Shrine Values - Duration: {shrineConfig.duration}, HealthRegen: {shrineConfig.healthRegenMultiplier}, StaminaRegen: {shrineConfig.staminaRegenMultiplier}, EitrRegen: {shrineConfig.eitrRegenMultiplier}, RaiseSkill: {shrineConfig.raiseSkillModifier}");
             }
         }
+        
         string configName = zdo.GetString(ShrineConfigKey, "");
         shrineConfig = ShrineDB.GetShrineConfig(configName);
+        
+        shrineConfig.statusEffect.m_ttl = zdo.GetInt("MWL_Shrine_Duration", 900);
+        if (shrineConfig.statusEffect is SE_Stats stats)
+        {
+            stats.m_healthRegenMultiplier = zdo.GetFloat("MWL_Shrine_HealthRegenMult", 1.05f);
+            stats.m_staminaRegenMultiplier = zdo.GetFloat("MWL_Shrine_StaminaRegenMult", 1f);
+            stats.m_eitrRegenMultiplier = zdo.GetFloat("MWL_Shrine_EitrRegenMult", 1f);
+            stats.m_raiseSkillModifier = zdo.GetFloat("MWL_Shrine_RaiseSkillMod", 1f);
+        }
+        
+        hasBeenUsedOnce = zdo.GetBool("MWL_Shrine_FreeTag");
+        
         Debug.Log("Shrine Awake: Loaded shrine config '" + shrineConfig.internalName + "'");
     }
 
