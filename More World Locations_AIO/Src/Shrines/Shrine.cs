@@ -110,6 +110,47 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
 
         return hoverText;
     }
+    
+    public void TryTriggerRaidEvent(Humanoid user)
+    {
+        float raidChance = 0.02f;
+    
+        if (UnityEngine.Random.value <= raidChance)
+        {
+            Debug.Log("Shrine: Triggering raid event!");
+            
+            RandomEvent raidEvent = GetBiomeSpecificRaidEvent(shrineConfig.biome);
+        
+            if (raidEvent != null && RandEventSystem.instance != null)
+            {
+                
+                Vector3 shrinePos = transform.position;
+                RandEventSystem.instance.SetRandomEventByName(raidEvent.m_name, shrinePos);
+                
+                if (user is Player player)
+                {
+                    player.Message(MessageHud.MessageType.Center, "The gods are displeased! Prepare for battle!");
+                }
+            }
+        }
+    }
+    
+    private RandomEvent GetBiomeSpecificRaidEvent(Heightmap.Biome targetBiome)
+    {
+        string[] eventNames = targetBiome switch
+        {
+            Heightmap.Biome.Meadows => new[] { "skeletons", "eikthyr" },
+            Heightmap.Biome.BlackForest => new[] { "skeletons", "foresttrolls" },
+            Heightmap.Biome.Swamp => new[] { "skeletons", "blobs" },
+            Heightmap.Biome.Mountain => new[] { "wolves", "army_moder" },
+            Heightmap.Biome.Plains => new[] { "army_goblin", "army_moder" },
+            Heightmap.Biome.Mistlands => new[] { "army_seekers" },
+            _ => new[] { "skeletons" }
+        };
+    
+        string eventName = eventNames[UnityEngine.Random.Range(0, eventNames.Length)];
+        return RandEventSystem.instance.m_events.Find(e => e.m_name == eventName);
+    }
 
     public string GetHoverName()
     {
