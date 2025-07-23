@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Jotunn.Managers;
+using More_World_Locations_AIO.RPCs;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.Shrines;
@@ -15,7 +16,7 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
 
     public ZNetView znetView;
 
-    public Heightmap.Biome biome = Heightmap.Biome.Meadows;
+    public Heightmap.Biome biome;
     
     public const string ShrineConfigKey = "MWL_ShrineConfigName";
     
@@ -27,7 +28,9 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
         {
             if (!zdo.GetString(ShrineConfigKey, out string storedName) || string.IsNullOrEmpty(storedName))
             {
-                shrineConfig = ShrineDB.GetRandomShrineConfig();
+                biome = WorldGenerator.instance.GetBiome(this.transform.position);
+                
+                shrineConfig = ShrineDB.GetRandomShrineConfig(biome);
                 shrineConfig.RollRandomValues();
                 
                 zdo.Set(ShrineConfigKey, shrineConfig.internalName);
@@ -37,6 +40,8 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
                 zdo.Set("MWL_Shrine_EitrRegenMult", shrineConfig.eitrRegenMultiplier);
                 zdo.Set("MWL_Shrine_RaiseSkillMod", shrineConfig.raiseSkillModifier);
                 zdo.Set("MWL_Shrine_FreeTag", hasBeenUsedOnce);
+                
+                zdo.Set("MWL_Shrine_Biome", biome.ToString());
                 
                 Debug.Log($"Shrine: Set random config '{shrineConfig.internalName}' to ZDO");
                 Debug.Log($"Shrine Values - Duration: {shrineConfig.duration}, HealthRegen: {shrineConfig.healthRegenMultiplier}, StaminaRegen: {shrineConfig.staminaRegenMultiplier}, EitrRegen: {shrineConfig.eitrRegenMultiplier}, RaiseSkill: {shrineConfig.raiseSkillModifier}");
@@ -55,6 +60,10 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             stats.m_raiseSkillModifier = zdo.GetFloat("MWL_Shrine_RaiseSkillMod", 1f);
         }
         
+        string biomeString = zdo.GetString("MWL_Shrine_Biome", "");
+        Enum.TryParse<Heightmap.Biome>(biomeString, out Heightmap.Biome parsedBiome);
+        biome = parsedBiome;
+        
         hasBeenUsedOnce = zdo.GetBool("MWL_Shrine_FreeTag");
         
         Debug.Log("Shrine Awake: Loaded shrine config '" + shrineConfig.internalName + "'");
@@ -71,6 +80,8 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             {
                 character.GetSEMan().AddStatusEffect(shrineConfig.statusEffect);
             }
+
+            TryTriggerRaidEvent(user);
             return true;
         }
 
@@ -113,24 +124,23 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
     
     public void TryTriggerRaidEvent(Humanoid user)
     {
-        float raidChance = 0.02f;
+        float raidChance = 0.5f;
+        
+        if (!ZNet.instance.IsServer())
+        {
+            Debug.Log("Shrine: Not server, cannot trigger raid event");
+            return;
+        }
     
         if (UnityEngine.Random.value <= raidChance)
         {
             Debug.Log("Shrine: Triggering raid event!");
             
-            RandomEvent raidEvent = GetBiomeSpecificRaidEvent(shrineConfig.biome);
+            RandomEvent raidEvent = GetBiomeSpecificRaidEvent(biome);
         
-            if (raidEvent != null && RandEventSystem.instance != null)
+            if (raidEvent != null)
             {
-                
-                Vector3 shrinePos = transform.position;
-                RandEventSystem.instance.SetRandomEventByName(raidEvent.m_name, shrinePos);
-                
-                if (user is Player player)
-                {
-                    player.Message(MessageHud.MessageType.Center, "The gods are displeased! Prepare for battle!");
-                }
+                RPCUtils.SendTriggerRaidEvent(raidEvent.m_name, transform.position);
             }
         }
     }
