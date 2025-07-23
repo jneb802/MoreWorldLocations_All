@@ -13,19 +13,40 @@ namespace More_World_Locations_AIO;
 
 public class Prefabs
 {
+    public static AssetBundle prefabBundle_1;
     public static AssetBundle prefabBundle_2;
+    public static AssetBundle prefabBundle_3;
     
     public static void LoadPrefabBundles()
     {
+        prefabBundle_1 = AssetUtils.LoadAssetBundleFromResources(
+            "moreworldlocations_prefabs_1",
+            Assembly.GetExecutingAssembly());
+        
         prefabBundle_2 = AssetUtils.LoadAssetBundleFromResources(
             "moreworldlocations_prefabs_2",
+            Assembly.GetExecutingAssembly());
+        
+        prefabBundle_3 = AssetUtils.LoadAssetBundleFromResources(
+            "moreworldlocations_prefabs_3",
             Assembly.GetExecutingAssembly());
     }
 
     public static void AddAllPrefabs()
     {
-        GameObject[] gameObjects = prefabBundle_2.LoadAllAssets<GameObject>();
-    
+        GameObject[] gameObjects1 = prefabBundle_1.LoadAllAssets<GameObject>();
+        GameObject[] gameObjects2 = prefabBundle_2.LoadAllAssets<GameObject>();
+        GameObject[] gameObjects3 = prefabBundle_3.LoadAllAssets<GameObject>();
+        
+        AddPrefabsFromBundle(gameObjects1);
+        AddPrefabsFromBundle(gameObjects2);
+        AddPrefabsFromBundle(gameObjects3);
+        
+        ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
+    }
+
+    public static void AddPrefabsFromBundle(GameObject[] gameObjects)
+    {
         foreach (GameObject gameObject in gameObjects)
         {
             // If the prefab is a loot_chest then it needs to mock references
@@ -44,8 +65,6 @@ public class Prefabs
                 PrefabManager.Instance.AddPrefab(customPrefab); 
             }
         }
-        
-        ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
 
     public static void AddContainerPrefab(GameObject prefab)

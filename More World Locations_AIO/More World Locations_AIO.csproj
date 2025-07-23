@@ -149,6 +149,8 @@
         <Content Include="assets\moreworldlocations_assetbundle_2" />
         <Content Include="assets\moreworldlocations_assetbundle_3" />
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_2" />
+        <EmbeddedResource Include="assets\moreworldlocations_prefabs_1" />
+        <EmbeddedResource Include="assets\moreworldlocations_prefabs_3" />
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>
