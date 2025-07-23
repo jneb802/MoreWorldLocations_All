@@ -10,6 +10,7 @@ using Common;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Jotunn.Managers;
+using More_World_Locations_AIO.Shrines;
 using SoftReferenceableAssets;
 using UnityEngine;
 
@@ -50,11 +51,18 @@ namespace More_World_Locations_AIO
             // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
             
             YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+            // YAMLManager.ParseCustomYamls();
             
-            BepinexConfigs.GenerateConfigs();
+            BepinexConfigs.GenerateConfigs(Config);
+            
+            PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
+            PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
+            
             PrefabManager.OnVanillaPrefabsAvailable += Prefabs.AddAllPrefabs;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
+
+            ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
+            ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
 
             if (saveOnSet)
             {

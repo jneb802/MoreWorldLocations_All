@@ -133,6 +133,11 @@
         <Compile Include="Src\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
         <Compile Include="Src\Prefabs.cs" />
+        <Compile Include="Src\Shrines\Shrine.cs" />
+        <Compile Include="Src\Shrines\ShrineConfig.cs" />
+        <Compile Include="Src\Shrines\ShrineDB.cs" />
+        <Compile Include="Src\Shrines\ShrineUtils.cs" />
+        <Compile Include="Src\StatusEffects\StatusEffectDB.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
