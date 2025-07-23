@@ -50,7 +50,7 @@ public class BepinexConfigs
             { "MWL_RuinsCastle3_Configuration", new LocationConfiguration(Config, "MWL_RuinsCastle3", 5, "BlackforestCreatures2", "BlackforestLoot2") },
             { "MWL_RuinsTower3_Configuration", new LocationConfiguration(Config, "MWL_RuinsTower3", 15, "BlackforestCreatures1", "BlackforestLoot2") },
             { "MWL_RuinsTower8_Configuration", new LocationConfiguration(Config, "MWL_RuinsTower8", 10, "BlackforestCreatures1", "BlackforestLoot2") },
-            { "MWL_RuinsTavern1_Configuration", new LocationConfiguration(Config, "MWL_RuinsTavern1", 15, "BlackforestCreatures2", "WoodTavernLoot1") },
+            { "MWL_Tavern1_Configuration", new LocationConfiguration(Config, "MWL_Tavern1", 15, "BlackforestCreatures2", "WoodTavernLoot1") },
             { "MWL_WoodTower1_Configuration", new LocationConfiguration(Config, "MWL_WoodTower1", 10, "BlackforestCreatures1", "BlackforestLoot1") },
             { "MWL_WoodTower2_Configuration", new LocationConfiguration(Config, "MWL_WoodTower2", 10, "BlackforestCreatures2", "BlackforestLoot1") },
             { "MWL_WoodTower3_Configuration", new LocationConfiguration(Config, "MWL_WoodTower3", 10, "BlackforestCreatures3", "BlackforestLoot3") },
