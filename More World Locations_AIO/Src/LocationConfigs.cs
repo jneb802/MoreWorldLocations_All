@@ -19,7 +19,7 @@ public class LocationConfigs
     
     public static int GetQuantity(string key)
     {
-        return BepinexConfigs.LocationConfigs[key].Quantity.Value;
+        return BepinexConfigs.bepinexConfigs[key].Quantity.Value;
     }
 
     public static class LocationRings
