@@ -19,6 +19,7 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
     public Heightmap.Biome biome;
     
     public const string ShrineConfigKey = "MWL_ShrineConfigName";
+    private const string ShrineLastUsedDayKey = "MWL_Shrine_LastUsedDay";
     
     public void Awake()
     {
@@ -54,10 +55,10 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
         shrineConfig.statusEffect.m_ttl = zdo.GetInt("MWL_Shrine_Duration", 900);
         if (shrineConfig.statusEffect is SE_Stats stats)
         {
-            stats.m_healthRegenMultiplier = zdo.GetFloat("MWL_Shrine_HealthRegenMult", 1.05f);
-            stats.m_staminaRegenMultiplier = zdo.GetFloat("MWL_Shrine_StaminaRegenMult", 1f);
-            stats.m_eitrRegenMultiplier = zdo.GetFloat("MWL_Shrine_EitrRegenMult", 1f);
-            stats.m_raiseSkillModifier = zdo.GetFloat("MWL_Shrine_RaiseSkillMod", 1f);
+            stats.m_healthRegenMultiplier += zdo.GetFloat("MWL_Shrine_HealthRegenMult", 0f);
+            stats.m_staminaRegenMultiplier += zdo.GetFloat("MWL_Shrine_StaminaRegenMult", 0f);
+            stats.m_eitrRegenMultiplier += zdo.GetFloat("MWL_Shrine_EitrRegenMult", 0f);
+            stats.m_raiseSkillModifier += zdo.GetFloat("MWL_Shrine_RaiseSkillMod", 0f);
         }
         
         string biomeString = zdo.GetString("MWL_Shrine_Biome", "");
@@ -71,6 +72,15 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
 
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
+        if (IsOnCooldown())
+        {
+            if (user is Player player)
+            {
+                player.Message(MessageHud.MessageType.Center, "Shrine can only be used once per day. Try again tomorrow!");
+            }
+            return false;
+        }
+        
         if (CheckUserInventory(user))
         {
             Debug.Log("User has the requirements, adding status effect");
@@ -80,12 +90,48 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             {
                 character.GetSEMan().AddStatusEffect(shrineConfig.statusEffect);
             }
+            
+            SetCooldown();
 
             TryTriggerRaidEvent(user);
             return true;
         }
 
         return false;
+    }
+    
+    private bool IsOnCooldown()
+    {
+        if (!hasBeenUsedOnce)
+            return false; // First use is always free
+            
+        ZDO zdo = znetView.GetZDO();
+        int lastUsedDay = zdo.GetInt(ShrineLastUsedDayKey, -1);
+        
+        if (lastUsedDay == -1)
+            return false;
+            
+        int currentDay = EnvMan.instance.GetDay();
+        
+        return lastUsedDay >= currentDay;
+    }
+    
+    private void SetCooldown()
+    {
+        if (znetView.IsOwner())
+        {
+            ZDO zdo = znetView.GetZDO();
+            int currentDay = EnvMan.instance.GetDay();
+            zdo.Set(ShrineLastUsedDayKey, currentDay);
+            
+            if (!hasBeenUsedOnce)
+            {
+                hasBeenUsedOnce = true;
+                zdo.Set("MWL_Shrine_FreeTag", hasBeenUsedOnce);
+            }
+            
+            Debug.Log($"Shrine: Set cooldown for day {currentDay}");
+        }
     }
 
     public bool UseItem(Humanoid user, ItemDrop.ItemData item)
@@ -107,11 +153,23 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             float durationMinutes = stats.m_ttl / 60f;
             string durationText = durationMinutes > 0f ? $"Duration: <color=orange>{durationMinutes:0.#} min</color>\n" : "";
             
-            hoverText = Localization.instance.Localize(
-                $"{shrineConfig.displayName}\n" +
-                $"[<color=yellow><b>$KEY_Use</b></color>] Sacrifice {quantity}x <color=orange>{itemName}</color>\n" +
-                $"{durationText}" +
-                $"{effectDetails}");
+            if (IsOnCooldown())
+            {
+                hoverText = Localization.instance.Localize(
+                    $"{shrineConfig.displayName}\n" +
+                    $"<color=red>Can only be used once per day</color>\n"+
+                    $"[<color=yellow><b>$KEY_Use</b></color>] Sacrifice {quantity}x <color=orange>{itemName}</color>\n"+
+                    $"{durationText}" +
+                    $"{effectDetails}");
+            }
+            else
+            {
+                hoverText = Localization.instance.Localize(
+                    $"{shrineConfig.displayName}\n" +
+                    $"[<color=yellow><b>$KEY_Use</b></color>] Sacrifice {quantity}x <color=orange>{itemName}</color>\n" +
+                    $"{durationText}" +
+                    $"{effectDetails}");
+            }
             return hoverText;
         }
 
