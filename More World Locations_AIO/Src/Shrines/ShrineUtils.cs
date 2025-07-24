@@ -29,13 +29,23 @@ public static class ShrineUtils
             }
         }
 
+        void AddMultiplierPercent(string label, float multiplier)
+        {
+            if (Mathf.Abs(multiplier - 1f) > 0.01f)
+            {
+                float percentChange = (multiplier - 1f) * 100f;
+                string sign = percentChange > 0 ? "+" : "";
+                sb.AppendLine($"{label}: {sign}{percentChange:0.#}%");
+            }
+        }
+
         AddStat("HP per tick", effect.m_healthPerTick);
         AddStat("Health over time", effect.m_healthOverTime);
         AddStat("Stamina over time", effect.m_staminaOverTime);
         AddStat("Eitr over time", effect.m_eitrOverTime);
-        AddPercent("Health regen", effect.m_healthRegenMultiplier - 1f);
-        AddPercent("Stamina regen", effect.m_staminaRegenMultiplier - 1f);
-        AddPercent("Eitr regen", effect.m_eitrRegenMultiplier - 1f);
+        AddMultiplierPercent("Health regen", effect.m_healthRegenMultiplier);
+        AddMultiplierPercent("Stamina regen", effect.m_staminaRegenMultiplier);
+        AddMultiplierPercent("Eitr regen", effect.m_eitrRegenMultiplier);
         AddStat("Carry weight", effect.m_addMaxCarryWeight, " kg");
         AddPercent("Speed", effect.m_speedModifier);
         AddPercent("Stealth", effect.m_stealthModifier);

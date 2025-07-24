@@ -30,16 +30,16 @@ public class ShrineConfig
     public List<int> durationValues = new List<int>() { 300, 600, 1200, 1800 };
     
     public float healthRegenMultiplier;
-    public List<float> healthRegenMultiplierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    public List<float> healthRegenMultiplierValues = new List<float>() { 0.05f, 0.1f, 0.2f, };
     
     public float staminaRegenMultiplier;
-    public List<float> staminaRegenMultiplierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    public List<float> staminaRegenMultiplierValues = new List<float>() { 0.05f, 0.1f, 0.2f, };
     
     public float eitrRegenMultiplier;
-    public List<float> eitrRegenMultiplierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    public List<float> eitrRegenMultiplierValues = new List<float>() { 0.05f, 0.1f, 0.2f, };
     
     public float raiseSkillModifier;
-    public List<float> raiseSkillModifierValues = new List<float>() { 1.05f, 1.1f, 1.2f, };
+    public List<float> raiseSkillModifierValues = new List<float>() { 0.05f, 0.1f, 0.2f, };
     
     public ShrineConfig(string internalName, string displayName, StatusEffect statusEffect, Shrine.ShrineOffering shrineOffering, Heightmap.Biome biome)
     {
