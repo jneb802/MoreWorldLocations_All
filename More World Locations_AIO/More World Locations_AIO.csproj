@@ -127,18 +127,25 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="Src\AssetBundles.cs" />
-        <Compile Include="Src\BepinexConfigs.cs" />
-        <Compile Include="Src\LocationConfigs.cs" />
-        <Compile Include="Src\Locations.cs" />
+        <Compile Include="Src\Locations\BepinexConfigs.cs" />
+        <Compile Include="Src\Locations\LocationConfigs.cs" />
+        <Compile Include="Src\Locations\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
-        <Compile Include="Src\Prefabs.cs" />
         <Compile Include="Src\RPCs\RPCUtils.cs" />
         <Compile Include="Src\Shrines\Shrine.cs" />
         <Compile Include="Src\Shrines\ShrineConfig.cs" />
         <Compile Include="Src\Shrines\ShrineDB.cs" />
         <Compile Include="Src\Shrines\ShrineUtils.cs" />
         <Compile Include="Src\StatusEffects\StatusEffectDB.cs" />
+        <Compile Include="Src\Totems\TotemSpawner.cs" />
+        <Compile Include="Src\Totems\TotemSpawnerConfigs.cs" />
+        <Compile Include="Src\UpgradeWorld\UpgradeWorld.cs" />
+        <Compile Include="Src\Utils\AssetBundles.cs" />
+        <Compile Include="Src\Utils\CreatureDB.cs" />
+        <Compile Include="Src\Utils\LocationCreatureMapping.cs" />
+        <Compile Include="Src\Utils\LootDB.cs" />
+        <Compile Include="Src\Utils\Prefabs.cs" />
+        <Compile Include="Src\Utils\UpgradeWorldCommands.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
