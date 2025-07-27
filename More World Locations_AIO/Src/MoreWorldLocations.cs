@@ -9,8 +9,11 @@ using BepInEx.Logging;
 using Common;
 using HarmonyLib;
 using JetBrains.Annotations;
+using Jotunn.Configs;
 using Jotunn.Managers;
+using More_World_Locations_AIO.RPCs;
 using More_World_Locations_AIO.Shrines;
+using More_World_Locations_AIO.Utils;
 using SoftReferenceableAssets;
 using UnityEngine;
 
@@ -32,13 +35,17 @@ namespace More_World_Locations_AIO
             BepInEx.Logging.Logger.CreateLogSource(ModName);
         
         public static YAMLManager YAMLManager = new YAMLManager();
-
+        
         public void Awake()
         {
             BepinexConfigs.Config = Config;
             bool saveOnSet = BepinexConfigs.Config.SaveOnConfigSet;
             BepinexConfigs.Config.SaveOnConfigSet =
                 false;
+
+            RPCUtils.InitializeRPCs();
+            
+            UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
@@ -47,22 +54,24 @@ namespace More_World_Locations_AIO
             Prefabs.LoadPrefabBundles();
 
             // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
-            AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
+            // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
             // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
             
-            YAMLManager.ParseDefaultYamls();
+            // YAMLManager.ParseDefaultYamls();
             // YAMLManager.ParseCustomYamls();
             
             BepinexConfigs.GenerateConfigs(Config);
             
-            PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
-            PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
-            
-            PrefabManager.OnVanillaPrefabsAvailable += Prefabs.AddAllPrefabs;
+            // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
+            // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
+
+            PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
+            
+            
 
             if (saveOnSet)
             {
@@ -71,7 +80,19 @@ namespace More_World_Locations_AIO
             }
         }
         
-        
+        // Add this method to ensure proper initialization order
+        private void Initialize()
+        {
+            More_World_Locations_AIOLogger.LogInfo("Initializing LootDB and CreatureDB...");
+    
+            LootDB.InitializeLootTables();
+            CreatureDB.InitializeCreatureLists();
+            Prefabs.AddAllPrefabs();
+    
+            More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
+
+            PrefabManager.OnVanillaPrefabsAvailable -= Initialize;
+        }
 
         private void OnDestroy()
         {
