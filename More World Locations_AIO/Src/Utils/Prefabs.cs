@@ -7,6 +7,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using More_World_Locations_AIO.Shrines;
+using More_World_Locations_AIO.Utils;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -49,6 +50,13 @@ public class Prefabs
     {
         foreach (GameObject gameObject in gameObjects)
         {
+            if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
+            {
+                // Debug.Log("Prefab with name "+ gameObject.name + " is already in ObjectDB");
+            
+                PrefabManager.Instance.RemovePrefab(gameObject.name);
+            }
+            
             // If the prefab is a loot_chest then it needs to mock references
             if (gameObject.GetComponent<Container>() != null)
             {
@@ -64,6 +72,13 @@ public class Prefabs
                 customPrefab.Prefab.AddComponent<Shrine>();
                 PrefabManager.Instance.AddPrefab(customPrefab); 
             }
+            
+            // else if (gameObject.name.Equals("MWL_Totem_wood_8"))
+            // {
+            //     CustomPrefab customPrefab = new CustomPrefab(gameObject, true);
+            //     customPrefab.Prefab.AddComponent<TotemSpawner>();
+            //     PrefabManager.Instance.AddPrefab(customPrefab); 
+            // }
         }
     }
 
@@ -72,13 +87,29 @@ public class Prefabs
         int index = prefab.name.IndexOf("_loot");
         string locationName = index > 0 ? prefab.name.Substring(0, index) : prefab.name;
         
-        LocationConfiguration locationConfiguration = BepinexConfigs.bepinexConfigs[locationName + "_Configuration"];
-        List<DropTable.DropData> lootList =
-            More_World_Locations_AIOPlugin.YAMLManager.lootListDictionary[locationConfiguration.LootList.Value];
+        // Get the LocationConfig to determine biome
+        LocationConfig locationConfig = LocationConfigs.GetLocationConfig(locationName);
+        if (locationConfig == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not find LocationConfig for {locationName}");
+            return;
+        }
+        
+        // Get the appropriate loot table for the biome
+        DropTable lootTable = LootDB.GetLootTable(locationConfig.Biome);
+        if (lootTable == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not find loot table for biome {locationConfig.Biome}");
+            return;
+        }
         
         CustomPrefab customPrefab = new CustomPrefab(prefab, true);
         Container container = customPrefab.Prefab.GetComponent<Container>();
-        container.m_defaultItems.m_drops = lootList;
+        
+        // Set the container's default items to our biome-specific loot table
+        container.m_defaultItems.m_drops = lootTable.m_drops;
+        
+        // Debug.Log($"Prefabs: Set loot table for {prefab.name} using biome {locationConfig.Biome}");
         
         PrefabManager.Instance.AddPrefab(customPrefab); 
     }
@@ -88,12 +119,27 @@ public class Prefabs
         int index = prefab.name.IndexOf("_Spawner");
         string locationName = index > 0 ? prefab.name.Substring(0, index) : prefab.name;
         
-        LocationConfiguration locationConfiguration = BepinexConfigs.bepinexConfigs[locationName + "_Configuration"];
-        List<GameObject> creatureList =
-            More_World_Locations_AIOPlugin.YAMLManager.creatureListDictionary[locationConfiguration.CreatureList.Value];
+        string creatureListName = LocationCreatureMapping.GetCreatureListForLocation(locationName);
+        if (string.IsNullOrEmpty(creatureListName))
+        {
+            Debug.LogWarning($"Prefabs: Could not find creature list mapping for {locationName}");
+            return;
+        }
         
+        GameObject randomCreature = CreatureDB.GetRandomCreatureFromList(creatureListName);
+        if (randomCreature == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not get random creature from list {creatureListName} for {locationName}");
+            return;
+        }
+    
         CustomPrefab customPrefab = new CustomPrefab(prefab, false);
-        Common.CreatureManager_v2.AddCreatureToSpawner(customPrefab.Prefab, creatureList);
+        CreatureSpawner spawner = customPrefab.Prefab.GetComponent<CreatureSpawner>();
+        
+        spawner.m_creaturePrefab = randomCreature;
+    
+        // Debug.Log($"Prefabs: Set creature {randomCreature.name} from list {creatureListName} for spawner {prefab.name}");
+    
         PrefabManager.Instance.AddPrefab(customPrefab); 
     }
     
