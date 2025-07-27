@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using Jotunn.Managers;
 using Jotunn.Utils;
+using More_World_Locations_AIO;
 using UnityEngine;
 using YamlDotNet.RepresentationModel;
 using Paths = BepInEx.Paths;
@@ -19,7 +20,6 @@ public class YAMLManager
     
     public string defaultlootYamlContent;
     public string customlootYamlContent;
-    public List<DropTable.DropData> lootList;
     public Dictionary<string, List<DropTable.DropData>> lootListDictionary = new Dictionary<string, List<DropTable.DropData>>();
     
     public string defaultPickableItemContent;
@@ -37,6 +37,7 @@ public class YAMLManager
     
     public void ParseDefaultYamls()
     { 
+        Debug.Log("Calling parse yamls");
         defaultCreatureYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_CreatureLists.yml");
         defaultlootYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LootLists.yml");
     }
@@ -153,6 +154,38 @@ public class YAMLManager
             List<GameObject> creatureList = Common.CreatureManager_v2.CreateCreatureList(creatureListName, defaultCreatureYamlContent);
             creatureListDictionary.Add(creatureListName,creatureList);
         }
+    }
+    
+    public void BuildCreatureLists()
+    {
+        Debug.Log("Calling build creature list");
+        foreach (var config in BepinexConfigs.bepinexConfigs)
+        {
+            if (!creatureListDictionary.ContainsKey(config.Value.CreatureList.Value))
+            {
+                Debug.Log("Add creature list with name " + config.Value.CreatureList.Value);
+                List<GameObject> creatureList = Common.CreatureManager_v2.CreateCreatureList(config.Value.CreatureList.Value, defaultCreatureYamlContent);
+                creatureListDictionary.Add(config.Value.CreatureList.Value,creatureList);
+            }
+        }
+        
+        ZoneManager.OnVanillaLocationsAvailable -= BuildCreatureLists;
+    }
+    
+    public void BuildLootLists()
+    {
+        Debug.Log("Calling build loot list");
+        foreach (var config in BepinexConfigs.bepinexConfigs)
+        {
+            if (!lootListDictionary.ContainsKey(config.Value.LootList.Value))
+            {
+                Debug.Log("Add loot list with name " + config.Value.LootList.Value);
+                List<DropTable.DropData> lootList = Common.LootManager.ParseContainerYaml_v2(config.Value.LootList.Value, defaultlootYamlContent);
+                lootListDictionary.Add(config.Value.LootList.Value,lootList);
+            }
+        }
+        
+        ZoneManager.OnVanillaLocationsAvailable -= BuildLootLists;
     }
 
     public void BuildLootList(ConfigurationManager.Toggle useCustomLootYAML, string lootListName)
