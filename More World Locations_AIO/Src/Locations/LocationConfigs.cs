@@ -338,4 +338,45 @@ public class LocationConfigs
 
             { "MWL_TreeTowers1_Config", new LocationConfig { Quantity = GetQuantity("MWL_TreeTowers1_Configuration"), Biome = Heightmap.Biome.Swamp, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "TreeTowers1", MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance } }
         };
+    
+    /// <summary>
+    /// Gets the LocationConfig for a given location name by searching all location config dictionaries
+    /// </summary>
+    public static LocationConfig GetLocationConfig(string locationName)
+    {
+        string configKey = locationName + "_Config";
+        
+        // Search through all location config dictionaries
+        if (LocationConfigs.MeadowsPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.MeadowsPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.MeadowsPack2LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.MeadowsPack2LocationConfigs[configKey];
+            
+        if (LocationConfigs.BlackforestPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.BlackforestPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.BlackforestPack2LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.BlackforestPack2LocationConfigs[configKey];
+            
+        if (LocationConfigs.SwampPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.SwampPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.MountainPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.MountainPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.PlainsPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.PlainsPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.MistlandsPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.MistlandsPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.AshlandsPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.AshlandsPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.AdventureMapPack1LocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.AdventureMapPack1LocationConfigs[configKey];
+        
+        return null;
+    }
 }
