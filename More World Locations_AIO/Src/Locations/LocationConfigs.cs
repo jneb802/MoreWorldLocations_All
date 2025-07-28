@@ -174,7 +174,7 @@ public class LocationConfigs
 
             { "MWL_ForestPillar1_Config", new LocationConfig { Quantity = GetQuantity("MWL_ForestPillar1_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Ruins_small", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 2, MaxDistance = LocationRings.Ring3.MaxDistance } },
 
-            { "MWL_CoastTower1_Config", new LocationConfig { Quantity = GetQuantity("MWL_CoastTower1_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Coastal", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 512, MinAltitude = -2, MaxAltitude = 0 } },
+            { "MWL_CoastTower1_Config", new LocationConfig { Quantity = GetQuantity("MWL_CoastTower1_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Coastal", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 512, MinAltitude = -1, MaxAltitude = 0 } },
         };
 
     
