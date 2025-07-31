@@ -14,6 +14,7 @@ using Jotunn.Managers;
 using More_World_Locations_AIO.RPCs;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
+using More_World_Locations_AIO.Waystones;
 using SoftReferenceableAssets;
 using UnityEngine;
 
@@ -70,8 +71,7 @@ namespace More_World_Locations_AIO
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
-            
-            
+            ItemManager.OnItemsRegistered += WaystoneDB.BuildWaystoneConfigs;
 
             if (saveOnSet)
             {

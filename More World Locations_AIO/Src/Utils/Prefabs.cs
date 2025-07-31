@@ -8,6 +8,7 @@ using Jotunn.Managers;
 using Jotunn.Utils;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
+using More_World_Locations_AIO.Waystones;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -70,6 +71,12 @@ public class Prefabs
             {
                 CustomPrefab customPrefab = new CustomPrefab(gameObject, true);
                 customPrefab.Prefab.AddComponent<Shrine>();
+                PrefabManager.Instance.AddPrefab(customPrefab); 
+            }
+            else if (gameObject.name.Equals("MWL_Waystone"))
+            {
+                CustomPrefab customPrefab = new CustomPrefab(gameObject, true);
+                customPrefab.Prefab.AddComponent<Waystone>();
                 PrefabManager.Instance.AddPrefab(customPrefab); 
             }
             

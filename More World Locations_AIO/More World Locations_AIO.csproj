@@ -146,6 +146,10 @@
         <Compile Include="Src\Utils\LootDB.cs" />
         <Compile Include="Src\Utils\Prefabs.cs" />
         <Compile Include="Src\Utils\UpgradeWorldCommands.cs" />
+        <Compile Include="Src\Waystones\Waystone.cs" />
+        <Compile Include="Src\Waystones\WaystoneConfig.cs" />
+        <Compile Include="Src\Waystones\WaystoneDB.cs" />
+        <Compile Include="Src\Waystones\WaystoneUtils.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
