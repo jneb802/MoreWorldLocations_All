@@ -98,7 +98,7 @@ namespace Dungeon_BlackForest
             examplePiece2.Name.English("Bamboo Wall");
             examplePiece2.Description.English("A wall made of bamboo!");
             examplePiece2.RequiredItems.Add("BambooLog", 20, false);
-            examplePiece2.Category.Set(PieceManager.BuildPieceCategory.Building);
+            examplePiece2.Category.Set(PieceManager.BuildPieceCategory.BuildingWorkbench);
             examplePiece2.Crafting
                 .Set("CUSTOMTABLE"); // If you have a custom table you're adding to the game. Just set it like this.
             examplePiece2.SpecialProperties.AdminOnly = true; // You can declare these one at a time as well!.

@@ -3,3 +3,8 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+.vs/
+*/Thunderstore/*.zip
+*/Thunderstore/README.md
+*/*.csproj.user
+*/Nexus/
