@@ -132,6 +132,8 @@
         <Compile Include="Src\Locations\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
         <Compile Include="Src\RPCs\RPCUtils.cs" />
+        <Compile Include="Src\Ports\PortUI.cs" />
+        <Compile Include="Src\Ports\ShowPortGuiConsolePatch.cs" />
         <Compile Include="Src\Shrines\Shrine.cs" />
         <Compile Include="Src\Shrines\ShrineConfig.cs" />
         <Compile Include="Src\Shrines\ShrineDB.cs" />
@@ -163,6 +165,7 @@
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_2" />
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_1" />
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_3" />
+        <EmbeddedResource Include="assets\ports" />
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>

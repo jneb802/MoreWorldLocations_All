@@ -35,16 +35,17 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
                 zdo.Set("MWL_Waystone_Biome", biome.ToString());
                 
                 Debug.Log($"Waystone: Set random config '{waystoneConfig.internalName}' to ZDO");
+                
                 switch (waystoneConfig.waystoneType)
                 {
                     case WaystoneConfig.WaystoneType.location:
                         Debug.Log($"Waystone Type: Location | Target Location: {waystoneConfig.locationInternalName}");
                         break;
-
+                
                     case WaystoneConfig.WaystoneType.mapReveal:
                         Debug.Log($"Waystone Type: MapReveal | Reveal Radius: {waystoneConfig.mapRevealRadius} | Biome: {biome}");
                         break;
-
+                
                     case WaystoneConfig.WaystoneType.vegetation:
                         Debug.Log($"Waystone Type: Vegetation | Target Vegetation: {waystoneConfig.vegetationInternalName}");
                         break;

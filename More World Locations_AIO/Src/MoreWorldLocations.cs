@@ -12,6 +12,7 @@ using JetBrains.Annotations;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using More_World_Locations_AIO.RPCs;
+using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Waystones;
@@ -24,7 +25,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "1.0.0";
+        internal const string ModVersion = "1.1.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -53,6 +54,8 @@ namespace More_World_Locations_AIO
             SetupWatcher();
 
             Prefabs.LoadPrefabBundles();
+            PortUI.LoadPrefabBundles();
+            PortUI.LoadPrefabs();
 
             // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
             // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
