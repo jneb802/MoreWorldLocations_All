@@ -27,6 +27,7 @@ namespace Valheim_NPCs_Pack_1
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         internal static string ConnectionError = "";
         private readonly Harmony _harmony = new(ModGUID);
+        public static YAMLManager NPCPackYAMLManager = new YAMLManager();
 
         public static readonly ManualLogSource Valheim_NPCs_Pack_1Logger = BepInEx.Logging.Logger.CreateLogSource(ModName);
 
@@ -133,9 +134,9 @@ namespace Valheim_NPCs_Pack_1
                 "When Off, location will use default loot. When On, location will select loot from list in the warpalicious.More_World_Locations_LootLists.yml file in BepinEx config folder");
             MWL_ThirstyRavenInn_LootListConfig = config("5 - MWL_ThirstyRavenInn", "Name of Loot List", "SwampLoot2",
                 "The name of the loot list to use from warpalicious.More_World_Locations_LootLists.yml file");
-            
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls();
+
+            NPCPackYAMLManager.ParseDefaultYamls();
+            NPCPackYAMLManager.ParseCustomYamls();
             
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
 
