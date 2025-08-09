@@ -52,11 +52,13 @@ namespace More_World_Locations_AIO
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
+            
+            PortManager.BuildPorts();
 
             Prefabs.LoadPrefabBundles();
-            PortUI.LoadPrefabBundles();
-            PortUI.LoadPrefabs();
-
+            PortPrefabs.LoadPrefabBundles();
+            PortPrefabs.AddPortUIPrefabs();
+            
             // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
             // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
             // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
@@ -76,6 +78,8 @@ namespace More_World_Locations_AIO
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
             ItemManager.OnItemsRegistered += WaystoneDB.BuildWaystoneConfigs;
 
+            GUIManager.OnCustomGUIAvailable += PortUI.CreatePortUI;
+
             if (saveOnSet)
             {
                 BepinexConfigs.Config.SaveOnConfigSet = saveOnSet;
@@ -91,6 +95,7 @@ namespace More_World_Locations_AIO
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
             Prefabs.AddAllPrefabs();
+            PortPrefabs.AddPortPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 

@@ -124,6 +124,9 @@
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(GamePath)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UIModule">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Properties\AssemblyInfo.cs"/>
@@ -131,9 +134,11 @@
         <Compile Include="Src\Locations\LocationConfigs.cs" />
         <Compile Include="Src\Locations\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
-        <Compile Include="Src\RPCs\RPCUtils.cs" />
+        <Compile Include="Src\Ports\Port.cs" />
+        <Compile Include="Src\Ports\PortManager.cs" />
+        <Compile Include="Src\Ports\PortPrefabs.cs" />
         <Compile Include="Src\Ports\PortUI.cs" />
-        <Compile Include="Src\Ports\ShowPortGuiConsolePatch.cs" />
+        <Compile Include="Src\RPCs\RPCUtils.cs" />
         <Compile Include="Src\Shrines\Shrine.cs" />
         <Compile Include="Src\Shrines\ShrineConfig.cs" />
         <Compile Include="Src\Shrines\ShrineDB.cs" />
