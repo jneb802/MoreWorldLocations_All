@@ -138,6 +138,7 @@
         <Compile Include="Src\Ports\PortManager.cs" />
         <Compile Include="Src\Ports\PortPrefabs.cs" />
         <Compile Include="Src\Ports\PortUI.cs" />
+        <Compile Include="Src\Ports\Shipment.cs" />
         <Compile Include="Src\RPCs\RPCUtils.cs" />
         <Compile Include="Src\Shrines\Shrine.cs" />
         <Compile Include="Src\Shrines\ShrineConfig.cs" />

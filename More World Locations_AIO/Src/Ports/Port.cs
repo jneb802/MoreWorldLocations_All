@@ -25,7 +25,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (PortUI.portUIRoot == null) {Debug.Log("PortUI_new.portUIRoot is null");}
         PortUI.instance.SetTitle(this.name);
         PortUI.instance.SetupListElements();
-        PortUI.portUIRoot.SetActive(true);
+        PortUI.instance.Show();
         return true;
     }
 
