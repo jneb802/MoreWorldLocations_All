@@ -102,7 +102,7 @@ public class CustomPrefabs
         
         foreach (var prefab in roomUpperSpawnerPrefabs)
         {
-            List<string> upperCreatureList =
+            List<GameObject> upperCreatureList =
                 Forbidden_CatacombsPlugin.dungeonCastleYamlManager.creatureListDictionary[
                     Forbidden_CatacombsPlugin.MWD_CastleDungeon_CreatureListUpper.Value];
             int randomIndex = Random.Range(0, upperCreatureList.Count);
@@ -111,7 +111,7 @@ public class CustomPrefabs
         
         foreach (var prefab in roomLowerSpawnerPrefabs)
         {
-            List<string> lowerCreatureList =
+            List<GameObject> lowerCreatureList =
                 Forbidden_CatacombsPlugin.dungeonCastleYamlManager.creatureListDictionary[
                     Forbidden_CatacombsPlugin.MWD_CastleDungeon_CreatureListLower.Value];
             int randomIndex = Random.Range(0, lowerCreatureList.Count);
@@ -160,7 +160,7 @@ public class CustomPrefabs
             return null;
         }
         
-        public static GameObject RegisterCustomPrefabSpawner(AssetBundle bundle, string assetName, string creatureName)
+        public static GameObject RegisterCustomPrefabSpawner(AssetBundle bundle, string assetName, GameObject creatureName)
         {
             string prefabName = assetName.Replace(".prefab", "");
             if (!string.IsNullOrEmpty(prefabName))
@@ -170,7 +170,7 @@ public class CustomPrefabs
                 if (prefab != null && prefab.IsValid())
                 {
                     CreatureSpawner creatureSpawner = prefab.Prefab.GetComponent<CreatureSpawner>();
-                    creatureSpawner.m_creaturePrefab = PrefabManager.Cache.GetPrefab<GameObject>(creatureName);
+                    creatureSpawner.m_creaturePrefab = creatureName;
                     
                     prefab.Prefab.FixReferences(true);
                     

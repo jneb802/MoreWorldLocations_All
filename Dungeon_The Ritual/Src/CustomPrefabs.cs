@@ -124,7 +124,7 @@ public class CustomPrefabs
     
     foreach (var prefab in roomSpawnerPrefabs)
     {
-        List<string> creatureList = Underground_RuinsPlugin.dungeonBFDYamlManager.creatureListDictionary[Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value];
+        List<GameObject> creatureList = Underground_RuinsPlugin.dungeonBFDYamlManager.creatureListDictionary[Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value];
         int randomIndex = Random.Range(0, creatureList.Count);
         RegisterCustomPrefabSpawner(Underground_RuinsPlugin.assetBundle, prefab, creatureList[randomIndex]);
     }
@@ -162,7 +162,7 @@ public class CustomPrefabs
         return null;
     }
     
-    public static GameObject RegisterCustomPrefabSpawner(AssetBundle bundle, string assetName, string creatureName)
+    public static GameObject RegisterCustomPrefabSpawner(AssetBundle bundle, string assetName, GameObject creature)
     {
         string prefabName = assetName.Replace(".prefab", "");
         if (!string.IsNullOrEmpty(prefabName))
@@ -172,7 +172,7 @@ public class CustomPrefabs
             if (prefab != null && prefab.IsValid())
             {
                 CreatureSpawner creatureSpawner = prefab.Prefab.GetComponent<CreatureSpawner>();
-                creatureSpawner.m_creaturePrefab = PrefabManager.Cache.GetPrefab<GameObject>(creatureName);
+                creatureSpawner.m_creaturePrefab = creature;
                 
                 prefab.Prefab.FixReferences(true);
                 

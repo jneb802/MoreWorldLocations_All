@@ -3,5 +3,10 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+.vs/
+*/Thunderstore/*.zip
+*/Thunderstore/README.md
+*/*.csproj.user
+*/Nexus/
 More World Locations_AIO/.DS_Store
 .DS_Store
