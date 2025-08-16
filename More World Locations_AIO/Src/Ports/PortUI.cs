@@ -7,6 +7,7 @@ using Jotunn;
 using Jotunn.Extensions;
 using Jotunn.GUI;
 using Jotunn.Managers;
+using More_World_Locations_AIO.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
@@ -17,25 +18,19 @@ namespace More_World_Locations_AIO.Shipments;
 public class PortUI : MonoBehaviour
 {
     public static GameObject portUIRoot;
-    
     public static PortUI instance;
-
     public Text portTitle;
-    
     public Button tabPort;
     public GameObject portsView;
     public RectTransform tabPortlistContainer;
     public Text tabPortdescription;
-    
     public List<Dropdown> tabPortDropsdowns;
-    
     public static Sprite coinsSprite;
     public static Sprite woodSprite;
     public static Sprite fineWoodSprite;
     public static Sprite ironSprite;
     public static Sprite tarSprite;
     public static Sprite blackMetalSprite;
-
     public Requirement tabPortRequirement1;
     public Requirement tabPortRequirement2;
     public Requirement tabPortRequirement3;
@@ -43,11 +38,9 @@ public class PortUI : MonoBehaviour
     public Requirement tabPortRequirement5;
     public Requirement tabPortRequirement6;
     public List<Requirement> tabPortRequirements = new List<Requirement>();
-
     Dictionary<string, int> requirements = new Dictionary<string, int>();
     public bool requirementsChanged;
     private bool _dropdownsBuilt = false;
-    
     public Button tabPortActionButton;
     public Button tabShipment;
     public GameObject shipmentsView;
@@ -55,84 +48,117 @@ public class PortUI : MonoBehaviour
     public Text tabShipmentdescription;
     public Button tabShipmentActionButton1;
     public Button tabShipmentActionButton2;
-
-    // the port the player is currently at in the world
     public Port currentPort;
-    
-    // The port currently selected in the UI
     public Port selectedPort;
-    
     public Shipment selectedShipment;
     
-    private static readonly Dictionary<string, string> DisplayToShared = new(StringComparer.OrdinalIgnoreCase)
+    public void Awake()
     {
-        { "Coins",       "$item_coins" },
-        { "Wood",        "$item_wood" },
-        { "Finewood",    "$item_finewood" },
-        { "Iron",        "$item_iron" },
-        { "Tar",         "$item_tar" },
-        { "Blackmetal",  "$item_blackmetal" },
-    };
-    
-    private static string ResolveSharedName(string name)
-    {
-        if (DisplayToShared.TryGetValue(name, out var shared)) return shared;
+        instance = this;
         
-        return name;
+        this.gameObject.AddComponent<DragWindowCntrl>();
+
+        tabPortDropsdowns = new List<Dropdown>();
+        portTitle = transform.Find("root/background/verticalLayout1/PortTitle")?.GetComponent<Text>();
+        tabPort = transform.Find("root/background/verticalLayout1/TabPort")?.GetComponent<Button>();
+        portsView = transform.Find("root/background/verticalLayout1/PortsView")?.gameObject;
+        tabPortlistContainer = transform.Find("root/background/verticalLayout1/PortsView/listContainer")?.GetComponent<RectTransform>();
+        tabPortdescription = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/description")?.GetComponent<Text>();
+        tabPortActionButton = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/actionButton")?.GetComponent<Button>();
+        
+        var requirement1 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup1")?.gameObject;
+        var requirement2 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup2")?.gameObject;
+        var requirement3 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup3")?.gameObject;
+        var requirement4 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup4")?.gameObject;
+        var requirement5 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup5")?.gameObject;
+        var requirement6 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup6")?.gameObject;
+
+        tabPortRequirement1 = new Requirement(requirement1);
+        tabPortRequirement2 = new Requirement(requirement2);
+        tabPortRequirement3 = new Requirement(requirement3);
+        tabPortRequirement4 = new Requirement(requirement4);
+        tabPortRequirement5 = new Requirement(requirement5);
+        tabPortRequirement6 = new Requirement(requirement6);
+
+        tabPortRequirements.Clear();
+        tabPortRequirements.Add(tabPortRequirement1);
+        tabPortRequirements.Add(tabPortRequirement2);
+        tabPortRequirements.Add(tabPortRequirement3);
+        tabPortRequirements.Add(tabPortRequirement4);
+        tabPortRequirements.Add(tabPortRequirement5);
+        tabPortRequirements.Add(tabPortRequirement6);
+
+        foreach (var requirment in tabPortRequirements)
+        {
+            requirment.requirementParentObject.SetActive(false);
+        }
+        
+        tabShipment = transform.Find("root/background/verticalLayout1/TabShipments")?.GetComponent<Button>();
+        shipmentsView = transform.Find("root/background/verticalLayout1/ShipmentsView")?.gameObject;
+        tabShipmentlistContainer = transform.Find("root/background/verticalLayout1/ShipmentsView/listContainer")?.GetComponent<RectTransform>();
+        tabShipmentdescription = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/description")?.GetComponent<Text>();
+        tabShipmentActionButton1 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton1")?.GetComponent<Button>();
+        tabShipmentActionButton2 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton2")?.GetComponent<Button>();
+        
+        // listeners
+        if (tabPort) tabPort.onClick.AddListener(ShowPorts);
+        if (tabShipment) tabShipment.onClick.AddListener(ShowShipment);
+        if (tabPortActionButton) tabPortActionButton.onClick.AddListener(PurchaseShipment);
+        if (tabShipmentActionButton1) tabShipmentActionButton1.onClick.AddListener(() => OpenShipment(selectedShipment));
+        if (tabShipmentActionButton2) tabShipmentActionButton2.onClick.AddListener(() => SendShipment(selectedShipment));
+
+        coinsSprite = GUIManager.Instance.GetSprite("coins");
+        woodSprite = GUIManager.Instance.GetSprite("wood");
+        fineWoodSprite = GUIManager.Instance.GetSprite("finewood");
+        ironSprite = GUIManager.Instance.GetSprite("iron");
+        blackMetalSprite = GUIManager.Instance.GetSprite("blackmetal");
+        tarSprite = GUIManager.Instance.GetSprite("tar");
     }
     
-    public struct PortData
+    public void SetupListElements()
     {
-        public Port port;
-        public string PortName;
-        public Vector3 Position;
+        tabPortActionButton.transform.Find("Label").GetComponent<Text>().text = "Purchase Shipment";
+        tabShipmentActionButton1.transform.Find("Label").GetComponent<Text>().text = "Open Shipment";
+        tabShipmentActionButton2.transform.Find("Label").GetComponent<Text>().text = "Send Shipment";
         
-        public PortData(string portName, Vector3 position, Port name)
+        BuildDropdowns();
+        
+        GUIManager.Instance.ApplyButtonStyle(tabPortActionButton);
+        GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton1);
+        GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton2);
+
+        
+        GUIManager.Instance.ApplyTextStyle(portTitle, 36);
+        
+        foreach (Text text in new List<Text> {tabPortdescription, tabShipmentdescription })
         {
-            PortName = portName;
-            Position = position;
-            port = name;
+            GUIManager.Instance.ApplyTextStyle(text, 18);
+        }
+        
+        foreach (Text text in new List<Text> {tabPort.transform.Find("Label").GetComponent<Text>(), tabShipment.transform.Find("Label").GetComponent<Text>() })
+        {
+            GUIManager.Instance.ApplyTextStyle(text,18);
+        }
+
+        Debug.Log("testing a thing");
+        foreach (Text[] textArray in new List<Text[]>
+                 
+                 {
+                     tabPortRequirement1.requirementParentObject.GetComponentsInChildren<Text>(),
+                     tabPortRequirement2.requirementParentObject.GetComponentsInChildren<Text>(),
+                     tabPortRequirement3.requirementParentObject.GetComponentsInChildren<Text>(),
+                     tabPortRequirement4.requirementParentObject.GetComponentsInChildren<Text>(),
+                     tabPortRequirement5.requirementParentObject.GetComponentsInChildren<Text>(),
+                     tabPortRequirement6.requirementParentObject.GetComponentsInChildren<Text>()
+                 })
+        {
+            foreach (Text text in textArray)
+            {
+                GUIManager.Instance.ApplyTextStyle(text, 18);
+            }
         }
     }
-
-    public class Requirement
-    {
-        public GameObject requirementParentObject;
-        public Image requirementImage;
-        public Text requirementText;
-        public Text requirementValue;
-
-        public Requirement(GameObject prefab)
-        {
-            requirementParentObject = prefab;
-            if (prefab == null)
-            {
-                Debug.LogError("Requirement created with null prefab");
-                return;
-            }
-
-            // No leading slashes in Transform.Find
-            var iconT  = prefab.transform.Find("Icon");
-            var labelT = prefab.transform.Find("Label");
-            var valueT = prefab.transform.Find("Value");
-
-            if (!iconT || !labelT || !valueT)
-            {
-                Debug.LogError("Requirement child missing: expected Icon/Label/Value under " + prefab.name);
-                return;
-            }
-
-            requirementImage = iconT.GetComponent<Image>();
-            requirementText  = labelT.GetComponent<Text>();
-            requirementValue = valueT.GetComponent<Text>();
-
-            if (!requirementImage || !requirementText || !requirementValue)
-            {
-                Debug.LogError("Requirement components missing on children of " + prefab.name);
-            }
-        }
-    }
-
+    
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -148,10 +174,8 @@ public class PortUI : MonoBehaviour
 
     public void UpdateRequirements()
     {
-        // 1) prevent re-entrancy / frame loops
         requirementsChanged = false;
 
-        // 2) start from scratch each time
         requirements.Clear();
         
         foreach (Dropdown dropdown in tabPortDropsdowns)
@@ -159,7 +183,6 @@ public class PortUI : MonoBehaviour
             Dictionary<string, int> requirementsDropdown = GetRequirements(dropdown.options[dropdown.value].text);
             foreach (string item in requirementsDropdown.Keys)
             {
-                // in this method I need to somehow sum up the requirements from each dropdwon
                 if (requirements.TryGetValue(item, out int current))
                     requirements[item] = current + requirementsDropdown[item];
                 else
@@ -193,7 +216,6 @@ public class PortUI : MonoBehaviour
         }
      
     }
-
     
     public Sprite GetRequirementSprite(string name)
     {
@@ -235,123 +257,33 @@ public class PortUI : MonoBehaviour
         return requirements;
     }
 
-    public void Awake()
+    
+
+    public void SetSelectedPort(Port port)
     {
-        instance = this;
-        
-        this.gameObject.AddComponent<DragWindowCntrl>();
-
-        tabPortDropsdowns = new List<Dropdown>();
-        
-        portTitle = transform.Find("root/background/verticalLayout1/PortTitle")?.GetComponent<Text>();
-        if (!portTitle) Debug.LogError("Null ref: portTitle path is incorrect");
-
-        tabPort = transform.Find("root/background/verticalLayout1/TabPort")?.GetComponent<Button>();
-        if (!tabPort) Debug.LogError("Null ref: tabPort path is incorrect");
-
-        portsView = transform.Find("root/background/verticalLayout1/PortsView")?.gameObject;
-        if (!portsView) Debug.LogError("Null ref: portsView path is incorrect");
-
-        tabPortlistContainer = transform.Find("root/background/verticalLayout1/PortsView/listContainer")?.GetComponent<RectTransform>();
-        if (!tabPortlistContainer) Debug.LogError("Null ref: tabPortlistContainer path is incorrect");
-
-        tabPortdescription = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/description")?.GetComponent<Text>();
-        if (!tabPortdescription) Debug.LogError("Null ref: tabPortdescription path is incorrect");
-
-        tabPortActionButton = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/actionButton")?.GetComponent<Button>();
-        if (!tabPortActionButton) Debug.LogError("Null ref: tabPortActionButton path is incorrect");
-        
-        var req1GO = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup1")?.gameObject;
-        var req2GO = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup2")?.gameObject;
-        var req3GO = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup3")?.gameObject;
-        var req4GO = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup4")?.gameObject;
-        var req5GO = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup5")?.gameObject;
-        var req6GO = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup6")?.gameObject;
-
-        // Create Requirement objects (ctor wires up Image/Text/Value)
-        tabPortRequirement1 = new Requirement(req1GO);
-        tabPortRequirement2 = new Requirement(req2GO);
-        tabPortRequirement3 = new Requirement(req3GO);
-        tabPortRequirement4 = new Requirement(req4GO);
-        tabPortRequirement5 = new Requirement(req5GO);
-        tabPortRequirement6 = new Requirement(req6GO);
-
-        // Store them
-        tabPortRequirements.Clear();
-        tabPortRequirements.Add(tabPortRequirement1);
-        tabPortRequirements.Add(tabPortRequirement2);
-        tabPortRequirements.Add(tabPortRequirement3);
-        tabPortRequirements.Add(tabPortRequirement4);
-        tabPortRequirements.Add(tabPortRequirement5);
-        tabPortRequirements.Add(tabPortRequirement6);
-
-        foreach (var requirment in tabPortRequirements)
-        {
-            requirment.requirementParentObject.SetActive(false);
-        }
-
-        // Optional: validate none are null
-        for (int i = 0; i < tabPortRequirements.Count; i++)
-        {
-            if (tabPortRequirements[i] == null || tabPortRequirements[i].requirementParentObject == null)
-                Debug.LogError($"Requirement {i+1} failed to initialize");
-        }
-        
-        // --- Shipments tab ---
-        tabShipment = transform.Find("root/background/verticalLayout1/TabShipments")?.GetComponent<Button>();
-        if (!tabShipment) Debug.LogError("Null ref: tabShipment path is incorrect");
-
-        shipmentsView = transform.Find("root/background/verticalLayout1/ShipmentsView")?.gameObject;
-        if (!shipmentsView) Debug.LogError("Null ref: shipmentsView path is incorrect");
-
-        tabShipmentlistContainer = transform.Find("root/background/verticalLayout1/ShipmentsView/listContainer")?.GetComponent<RectTransform>();
-        if (!tabShipmentlistContainer) Debug.LogError("Null ref: tabShipmentlistContainer path is incorrect");
-
-        tabShipmentdescription = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/description")?.GetComponent<Text>();
-        if (!tabShipmentdescription) Debug.LogError("Null ref: tabShipmentdescription path is incorrect");
-
-        tabShipmentActionButton1 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton1")?.GetComponent<Button>();
-        if (!tabShipmentActionButton1) Debug.LogError("Null ref: tabShipmentActionButton1 path is incorrect");
-        
-        tabShipmentActionButton2 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton2")?.GetComponent<Button>();
-        if (!tabShipmentActionButton2) Debug.LogError("Null ref: tabShipmentActionButton2 path is incorrect");
-        
-        // listeners
-        if (tabPort) tabPort.onClick.AddListener(ShowPorts);
-        if (tabShipment) tabShipment.onClick.AddListener(ShowShipment);
-        if (tabPortActionButton) tabPortActionButton.onClick.AddListener(PurchaseShipment);
-        
-        if (tabShipmentActionButton1) tabShipmentActionButton1.onClick.AddListener(() => OpenShipment(selectedShipment));
-        if (tabShipmentActionButton2) tabShipmentActionButton2.onClick.AddListener(() => SendShipment(selectedShipment));
-
-        coinsSprite = GUIManager.Instance.GetSprite("coins");
-        woodSprite = GUIManager.Instance.GetSprite("wood");
-        fineWoodSprite = GUIManager.Instance.GetSprite("finewood");
-        ironSprite = GUIManager.Instance.GetSprite("iron");
-        blackMetalSprite = GUIManager.Instance.GetSprite("blackmetal");
-        tarSprite = GUIManager.Instance.GetSprite("tar");
+        Debug.Log($"Setting selected port to: {port.name}");
+        this.selectedPort = port;
+    }
+    
+    public void SetSelectedShipment(Shipment shipment)
+    {
+        Debug.Log($"Setting selected port to: {shipment.m_shipmentID}");
+        this.selectedShipment = shipment;
     }
 
     public void OpenShipment(Shipment shipment)
     {
-        foreach (GameObject container in shipment.m_containers)
-        {
-            container.gameObject.transform.position = new Vector3(0, 0, 0);
-        }
+        
     }
 
     public void SendShipment(Shipment shipment)
     {
-        
+        ShipmentManager.ClientRequestCreateShipment(shipment);
     }
 
     public void PurchaseShipment()
     {
-        PortData port1 = new PortData(
-            "Shipment A",
-            new Vector3(100f, 0f, 250f),
-            new Port()
-        );
+        Debug.Log("Calling purchase shipment");
         
         if (!CheckPlayerInventory(Player.m_localPlayer, requirements, out var missing))
         {
@@ -362,10 +294,13 @@ public class PortUI : MonoBehaviour
         
         ConsumePlayerInventory(Player.m_localPlayer, requirements);
         ShowShipment();
-        List<GameObject> conatiners = CreateContainers();
-        Shipment shipment = new Shipment(currentPort, selectedPort, 1, conatiners);
+        
+        List<GameObject> containers = CreateContainers();
+        Shipment shipment = new Shipment(currentPort, selectedPort, containers);
+        
         AddShipmentListElement(tabShipmentlistContainer, GUIManager.Instance.GetSprite("longship"), shipment, PortUITab.Shipments);
         selectedPort = null;
+       
     }
     
     private string BuildMissingMessage(Dictionary<string,int> missing)
@@ -382,14 +317,7 @@ public class PortUI : MonoBehaviour
         }
         return sb.ToString();
     }
-
-    /// <summary>
-    /// Check if the player's inventory satisfies all requirements.
-    /// </summary>
-    /// <param name="player">Player to check.</param>
-    /// <param name="requirements">Requirement amounts by display or shared name.</param>
-    /// <param name="missing">Outputs only items still needed (name -> remaining needed).</param>
-    /// <returns>true if everything is present, false otherwise.</returns>
+    
     public bool CheckPlayerInventory(Player player, Dictionary<string, int> requirements, out Dictionary<string, int> missing)
     {
         missing = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -402,8 +330,7 @@ public class PortUI : MonoBehaviour
         {
             string sharedName = ResolveSharedName(kv.Key);
             int needed = kv.Value;
-
-            // Count all stacks regardless of world level / quality
+            
             int have = inv.CountItems(sharedName, quality: -1, matchWorldLevel: false);
 
             if (have < needed)
@@ -446,15 +373,15 @@ public class PortUI : MonoBehaviour
                 break;
 
             case "Wood Chest":
-                prefab = PrefabManager.Instance.GetPrefab("piece_chest_wood");
+                prefab = PrefabManager.Instance.GetPrefab("MWL_portContainer_woodChest");
                 break;
 
             case "Finewood Chest":
-                prefab = PrefabManager.Instance.GetPrefab("piece_chest");
+                prefab = PrefabManager.Instance.GetPrefab("MWL_portContainer_finewoodChest");
                 break;
             
             case "Blackmetal Chest":
-                prefab = PrefabManager.Instance.GetPrefab("piece_chest_blackmetal");
+                prefab = PrefabManager.Instance.GetPrefab("MWL_portContainer_blackmetalChest");
                 break;
 
             default:
@@ -465,25 +392,45 @@ public class PortUI : MonoBehaviour
         
         return prefab;
     }
-
+    
     public List<GameObject> CreateContainers()
     {
-        Vector3 spawnPosition = new Vector3(0f, 0f, 0f);
+        Debug.Log($"CreateContainers: Searching for location in CreateContainer");
+        if (currentPort == null) { Debug.Log($"current port is null in create containersr"); }
+        Debug.Log($"CreateContainers: Player position is {Player.m_localPlayer.transform.position.ToString()}");
+        Debug.Log($"CreateContainers: Current port position is {currentPort.transform.position.ToString()}");
+        
+        LocationProxy location = WorldUtils.GetLocationInRange(currentPort.transform.position, 50);
+
+        if (location == null) { Debug.Log($"Location is null in create containersr"); }
+        
+        GameObject containerPosition1 = location.gameObject.transform.Find("MWL_PortLocation(Clone)/Blueprint/containerPosition1")?.gameObject;
+        GameObject containerPosition2 = location.gameObject.transform.Find("MWL_PortLocation(Clone)/Blueprint/containerPosition2")?.gameObject;
+        GameObject containerPosition3 = location.gameObject.transform.Find("MWL_PortLocation(Clone)/Blueprint/containerPosition3")?.gameObject;
+        // GameObject containerPosition4 = location.gameObject.transform.Find("MWL_PortLoctaion(Clone)/Blueprint/containerPosition4")?.gameObject;
+        
+        List<GameObject> containerPositions = new List<GameObject>();
+        
+        containerPositions.Add(containerPosition1);
+        containerPositions.Add(containerPosition2);
+        containerPositions.Add(containerPosition3);
+        // containerPositions.Add(containerPosition4);
         
         List<GameObject> containers = new List<GameObject>();
 
+        Debug.Log("CreateContainers: Starting dropdown assignment");
         foreach (Dropdown dropdown in tabPortDropsdowns)
         {
-            spawnPosition = Player.m_localPlayer.transform.position;
-            spawnPosition.x += 2f;
-            spawnPosition.y += 2f;
-            
+            if (dropdown == null) { Debug.Log($"CreateContainers: A drop down is null while looping through tabPortDropdowns"); }
             GameObject prefab = GetChestType(dropdown);
-
+            
             if (prefab != null)
             {
-                GameObject chest = Object.Instantiate(prefab, spawnPosition, Player.m_localPlayer.transform.rotation);
-                containers.Add(chest);
+                for (int i = 0; i < containerPositions.Count; i++)
+                {
+                    GameObject chest = Object.Instantiate(prefab, containerPositions[i].transform.position, containerPositions[i].transform.rotation);
+                    containers.Add(chest);
+                }
             }
         }
         return containers;
@@ -525,74 +472,24 @@ public class PortUI : MonoBehaviour
         }
     }
 
-    public void SetupListElements()
+    
+
+    public void SetListElements(List<Port> ports, List<Shipment> shipments)
     {
-        tabPortActionButton.transform.Find("Label").GetComponent<Text>().text = "Purchase Shipment";
-        tabShipmentActionButton1.transform.Find("Label").GetComponent<Text>().text = "Open Shipment";
-        tabShipmentActionButton2.transform.Find("Label").GetComponent<Text>().text = "Send Shipment";
-
-
-        BuildDropdowns();
-        
-        GUIManager.Instance.ApplyButtonStyle(tabPortActionButton);
-        GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton1);
-        GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton2);
-
-        
-        GUIManager.Instance.ApplyTextStyle(portTitle, 36);
-        
-        foreach (Text text in new List<Text> {tabPortdescription, tabShipmentdescription })
+        foreach (Port port in ports)
         {
-            GUIManager.Instance.ApplyTextStyle(text, 18);
+            AddPortListElement(tabPortlistContainer, GUIManager.Instance.GetSprite("longship"), port, PortUITab.Ports);
+            Debug.Log($"PortUI.SetListElements: Adding port with name: {port.name}");
         }
         
-        foreach (Text text in new List<Text> {tabPort.transform.Find("Label").GetComponent<Text>(), tabShipment.transform.Find("Label").GetComponent<Text>() })
+        foreach (Shipment shipment in shipments)
         {
-            GUIManager.Instance.ApplyTextStyle(text,18);
+            AddShipmentListElement(tabShipmentlistContainer, GUIManager.Instance.GetSprite("longship"), shipment, PortUITab.Shipments);
+            Debug.Log($"PortUI.SetListElements: Adding shipment with id: {shipment.m_shipmentID}");
         }
-
-        Debug.Log("testing a thing");
-        foreach (Text[] textArray in new List<Text[]>
-                 
-                 {
-                     tabPortRequirement1.requirementParentObject.GetComponentsInChildren<Text>(),
-                     tabPortRequirement2.requirementParentObject.GetComponentsInChildren<Text>(),
-                     tabPortRequirement3.requirementParentObject.GetComponentsInChildren<Text>(),
-                     tabPortRequirement4.requirementParentObject.GetComponentsInChildren<Text>(),
-                     tabPortRequirement5.requirementParentObject.GetComponentsInChildren<Text>(),
-                     tabPortRequirement6.requirementParentObject.GetComponentsInChildren<Text>()
-                 })
-        {
-            foreach (Text text in textArray)
-            {
-                GUIManager.Instance.ApplyTextStyle(text, 18);
-            }
-        }
-        
-        PortData port1 = new PortData(
-            "Seaside Dock",
-            new Vector3(100f, 0f, 250f),
-            new Port()
-        );
-        
-        PortData port2 = new PortData(
-            "Dangerous Cove",
-            new Vector3(100f, 0f, 250f),
-            new Port()
-        );
-        
-        PortData port3 = new PortData(
-            "Halbur Harbor",
-            new Vector3(100f, 0f, 250f),
-            new Port()
-        );
-
-        AddPortListElement(tabPortlistContainer, GUIManager.Instance.GetSprite("longship"), port1.PortName, port1, PortUITab.Ports);
-        AddPortListElement(tabPortlistContainer, GUIManager.Instance.GetSprite("longship"), port2.PortName, port2, PortUITab.Ports);
-        AddPortListElement(tabPortlistContainer, GUIManager.Instance.GetSprite("longship"), port3.PortName, port3, PortUITab.Ports);
     }
 
-    public void AddPortListElement(RectTransform parent, Sprite icon, string portName, PortData port, PortUITab tab)
+    public void AddPortListElement(RectTransform parent, Sprite icon, Port port, PortUITab tab)
     {
         var element = Object.Instantiate(PortPrefabs.portUIListItem, parent);
         
@@ -600,14 +497,16 @@ public class PortUI : MonoBehaviour
         image.sprite = icon;
         
         var label = element.transform.Find("Label").GetComponent<Text>();
-        GUIManager.Instance.ApplyTextStyle(label);
-        label.text = portName;
+        GUIManager.Instance.ApplyTextStyle(label, 12);
+        label.text = port.name;
 
         string description = BuildDescriptionText(port);
         
         var button = element.GetComponent<Button>();
         button.onClick.AddListener(() => UpdateDescription(description, tab));
-        button.onClick.AddListener(() => selectedPort = port.port);
+        button.onClick.AddListener(() => SetSelectedPort(port));
+        
+        Debug.Log($"Calling AddPortListElement for shipment with ID {port.name}");
     }
     
     public void AddShipmentListElement(RectTransform parent, Sprite icon, Shipment shipment, PortUITab tab)
@@ -619,13 +518,15 @@ public class PortUI : MonoBehaviour
         
         var label = element.transform.Find("Label").GetComponent<Text>();
         GUIManager.Instance.ApplyTextStyle(label);
-        label.text = shipment.m_destinationPort.name;
+        label.text = "temp port name";
 
         string description = BuildDescriptionText(shipment);
         
         var button = element.GetComponent<Button>();
         button.onClick.AddListener(() => UpdateDescription(description, tab));
-        button.onClick.AddListener(() => selectedShipment = shipment);
+        button.onClick.AddListener(() => SetSelectedShipment(shipment));
+        
+        Debug.Log($"Calling AddShipmentListElement for shipment with ID {shipment.m_shipmentID}");
     }
 
     public void ClearRegisteredPlayerList()
@@ -654,16 +555,16 @@ public class PortUI : MonoBehaviour
         return 1;
     }
 
-    public string BuildDescriptionText(PortData portData)
+    public string BuildDescriptionText(Port port)
     {
         var sb = new StringBuilder();
 
         sb.AppendLine("Destination:");
-        sb.AppendLine(portData.PortName);
+        sb.AppendLine(port.name);
         sb.AppendLine();
 
         sb.AppendLine("Distance:");
-        sb.AppendLine(portData.PortName); // change to the correct field
+        sb.AppendLine(port.name); // change to the correct field
         sb.AppendLine();
 
         sb.AppendLine("ETA:");
@@ -677,11 +578,11 @@ public class PortUI : MonoBehaviour
         var sb = new StringBuilder();
 
         sb.AppendLine("Destination:");
-        sb.AppendLine(shipment.m_destinationPort.name);
+        sb.AppendLine("temp port description");
         sb.AppendLine();
 
         sb.AppendLine("Distance:");
-        sb.AppendLine(shipment.m_destinationPort.name); // change to the correct field
+        sb.AppendLine("temp port distance"); // change to the correct field
         sb.AppendLine();
 
         sb.AppendLine("ETA:");
@@ -714,13 +615,14 @@ public class PortUI : MonoBehaviour
         PortUI portUI = portUIRoot.AddComponent<PortUI>();
 
         portUIRoot.GetComponent<RectTransform>().transform.localPosition = new Vector3(1025f, 80f, 0f);
-        
         portUIRoot.SetActive(false);
     }
     
-    public void Show() 
+    public void Show(Port port, List<Port> ports, List<Shipment> shipments) 
     {
         Debug.Log("Calling Show");
+        this.currentPort = port;
+        SetListElements(ports, shipments);
         
         this.gameObject.SetActive(true);
         GUIManager.BlockInput(true);
@@ -728,6 +630,11 @@ public class PortUI : MonoBehaviour
 
     public void Hide()
     {
+        foreach (Transform child in tabPortlistContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        
         this.gameObject.SetActive(false);
         GUIManager.BlockInput(false);
     }
@@ -736,5 +643,60 @@ public class PortUI : MonoBehaviour
     {
         Ports,
         Shipments,
+    }
+    
+    public class Requirement
+    {
+        public GameObject requirementParentObject;
+        public Image requirementImage;
+        public Text requirementText;
+        public Text requirementValue;
+
+        public Requirement(GameObject prefab)
+        {
+            requirementParentObject = prefab;
+            if (prefab == null)
+            {
+                Debug.LogError("Requirement created with null prefab");
+                return;
+            }
+
+            // No leading slashes in Transform.Find
+            var iconT  = prefab.transform.Find("Icon");
+            var labelT = prefab.transform.Find("Label");
+            var valueT = prefab.transform.Find("Value");
+
+            if (!iconT || !labelT || !valueT)
+            {
+                Debug.LogError("Requirement child missing: expected Icon/Label/Value under " + prefab.name);
+                return;
+            }
+
+            requirementImage = iconT.GetComponent<Image>();
+            requirementText  = labelT.GetComponent<Text>();
+            requirementValue = valueT.GetComponent<Text>();
+
+            if (!requirementImage || !requirementText || !requirementValue)
+            {
+                Debug.LogError("Requirement components missing on children of " + prefab.name);
+            }
+        }
+    }
+    
+    private static readonly Dictionary<string, string> DisplayToShared = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Coins",       "$item_coins" },
+        { "Wood",        "$item_wood" },
+        { "Finewood",    "$item_finewood" },
+        { "Iron",        "$item_iron" },
+        { "Tar",         "$item_tar" },
+        { "Blackmetal",  "$item_blackmetal" },
+    };
+    
+    private static string ResolveSharedName(string name)
+    {
+        if (DisplayToShared.TryGetValue(name, out var shared)) return shared;
+        
+        return name;
     }
 }

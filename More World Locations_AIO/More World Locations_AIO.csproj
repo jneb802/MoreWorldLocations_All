@@ -109,6 +109,9 @@
         <Reference Include="UnityEngine.InputLegacyModule">
             <HintPath>$(CorlibPath)\UnityEngine.InputLegacyModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.JSONSerializeModule">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.ParticleSystemModule">
             <HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
         </Reference>
@@ -135,10 +138,14 @@
         <Compile Include="Src\Locations\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
         <Compile Include="Src\Ports\Port.cs" />
+        <Compile Include="Src\Ports\PortCommands.cs" />
         <Compile Include="Src\Ports\PortManager.cs" />
+        <Compile Include="Src\Ports\PortNames.cs" />
         <Compile Include="Src\Ports\PortPrefabs.cs" />
         <Compile Include="Src\Ports\PortUI.cs" />
         <Compile Include="Src\Ports\Shipment.cs" />
+        <Compile Include="Src\Ports\ShipmentManager.cs" />
+        <Compile Include="Src\Ports\ShipmentSerializer.cs" />
         <Compile Include="Src\RPCs\RPCUtils.cs" />
         <Compile Include="Src\Shrines\Shrine.cs" />
         <Compile Include="Src\Shrines\ShrineConfig.cs" />
@@ -154,6 +161,7 @@
         <Compile Include="Src\Utils\LootDB.cs" />
         <Compile Include="Src\Utils\Prefabs.cs" />
         <Compile Include="Src\Utils\UpgradeWorldCommands.cs" />
+        <Compile Include="Src\Utils\WorldUtils.cs" />
         <Compile Include="Src\Waystones\Waystone.cs" />
         <Compile Include="Src\Waystones\WaystoneConfig.cs" />
         <Compile Include="Src\Waystones\WaystoneDB.cs" />

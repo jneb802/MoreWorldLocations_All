@@ -46,14 +46,13 @@ namespace More_World_Locations_AIO
                 false;
 
             RPCUtils.InitializeRPCs();
+            ShipmentManager.RegisterRpcs();
             
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
-            
-            PortManager.BuildPorts();
 
             Prefabs.LoadPrefabBundles();
             PortPrefabs.LoadPrefabBundles();
@@ -70,9 +69,12 @@ namespace More_World_Locations_AIO
             
             // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
             // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
+            
+            PortNames.AddPortLocalizations();
 
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
+            ZoneManager.OnVanillaLocationsAvailable += PortPrefabs.AddPortLocation;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
@@ -46,5 +47,39 @@ public class PortPrefabs
         CustomPrefab portTraderCustomPrefab = new CustomPrefab(portTraderPrefab, true);
         portTraderCustomPrefab.Prefab.AddComponent<Port>();
         PrefabManager.Instance.AddPrefab(portTraderCustomPrefab);
+        
+        GameObject portContainerWoodChest = portsBundle.LoadAsset<GameObject>("MWL_portContainer_woodChest");
+        CustomPrefab MWL_portContainer_woodChest = new CustomPrefab(portContainerWoodChest, true);
+        PrefabManager.Instance.AddPrefab(MWL_portContainer_woodChest);
+        
+        GameObject portContainerFinewoodChest = portsBundle.LoadAsset<GameObject>("MWL_portContainer_finewoodChest");
+        CustomPrefab MWL_portContainer_finewoodChest = new CustomPrefab(portContainerFinewoodChest, true);
+        PrefabManager.Instance.AddPrefab(MWL_portContainer_finewoodChest);
+        
+        GameObject portContainerBlackmetalChest = portsBundle.LoadAsset<GameObject>("MWL_portContainer_blackmetalChest");
+        CustomPrefab MWL_portContainer_blackmetalChest = new CustomPrefab(portContainerBlackmetalChest, true);
+        PrefabManager.Instance.AddPrefab(MWL_portContainer_blackmetalChest);
+        
+    }
+
+    public static void AddPortLocation()
+    {
+        LocationConfig locationConfig = new LocationConfig
+        {
+            Quantity = 20, Biome = Heightmap.Biome.Meadows, Group = "Port", Priotized = true, RandomRotation = false,
+            ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f,
+            MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationConfigs.LocationRings.Ring2.MinDistance,
+            InForest = false, BiomeArea = Heightmap.BiomeArea.Median
+        };
+        
+        
+
+        
+        GameObject portLocation = portsBundle.LoadAsset<GameObject>("MWL_PortLocation");
+        GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(portLocation);
+        CustomLocation customLocation = new CustomLocation(jotunnLocationContainer, fixReference: true, locationConfig);
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+        
+        ZoneManager.OnVanillaLocationsAvailable -= PortPrefabs.AddPortLocation;
     }
 }
