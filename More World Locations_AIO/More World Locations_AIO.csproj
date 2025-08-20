@@ -139,6 +139,7 @@
         <Compile Include="Src\MoreWorldLocations.cs" />
         <Compile Include="Src\Ports\Port.cs" />
         <Compile Include="Src\Ports\PortCommands.cs" />
+        <Compile Include="Src\Ports\PortDB.cs" />
         <Compile Include="Src\Ports\PortManager.cs" />
         <Compile Include="Src\Ports\PortNames.cs" />
         <Compile Include="Src\Ports\PortPrefabs.cs" />

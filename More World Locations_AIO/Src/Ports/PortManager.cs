@@ -13,7 +13,6 @@ public class PortManager : MonoBehaviour
 {
     private const string SaveKey = "mwllocations.knownports.v1";
     public readonly HashSet<string> KnownPortIds = new();
-    public static Dictionary<string, Port> allPorts = new Dictionary<string, Port>();
     
     private class SaveBlob { public List<string> ids = new(); } // JsonUtility needs a wrapper
     
@@ -38,38 +37,18 @@ public class PortManager : MonoBehaviour
         [HarmonyPrefix, HarmonyPatch(typeof(Player), nameof(Player.AddKnownLocationName))]
         private static bool OnPlayerDiscoverLocation(Player __instance, string label)
         {
-            // Debug.Log("Running patch for addknonwnlocationName");
-            if (!__instance || __instance != Player.m_localPlayer)
-            {
-                Debug.Log("Player is null or not local player");
-                return true;
-            }
+            if (!__instance || __instance != Player.m_localPlayer) return true;
 
-            if (!string.Equals(label, "MWL_PortLocation"))
-            {
-                Debug.Log("String does not equal MWL_PortLocation");
-                return true;
-            }
+            if (!string.Equals(label, "MWL_PortLocation")) return true;
 
             PortManager pm = __instance.GetComponent<PortManager>();
-            if (pm == null)
-            {
-                Debug.Log("String does not equal MWL_PortLocation");
-                return true;
-            }
+            if (pm == null) return true;
+            
             Location location = Location.GetLocation(__instance.transform.position, false);
-            if (location == null)
-            {
-                Debug.Log("Location is null");
-                return true;
-            }
+            if (location == null) return true;
 
             Port port = WorldUtils.GetPortInRange(location.transform.position, location.m_exteriorRadius);
-            if (port == null)
-            {
-                Debug.Log("Port is null");
-                return true;
-            }
+            if (port == null) return true;
             
             // Debug.Log($"checking for port with id: {port.m_portID}");
             if (!pm.KnownPortIds.Contains(port.m_portID))
@@ -117,8 +96,10 @@ public class PortManager : MonoBehaviour
     public List<Port> GetPlayerPorts()
     {
         return KnownPortIds
-            .Where(id => allPorts.ContainsKey(id))
-            .Select(id => allPorts[id])
+            .Where(id => PortDB.Instance.allPorts.ContainsKey(id))
+            .Select(id => PortDB.Instance.allPorts[id])
             .ToList();
     }
+    
+    
 }

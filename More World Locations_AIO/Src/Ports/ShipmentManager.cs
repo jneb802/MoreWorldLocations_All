@@ -57,6 +57,8 @@ namespace More_World_Locations_AIO.Shipments
 
         public static void ClientRequestFullSync()
         {
+            Debug.Log("ShipmentManager.ClientRequestFullSync");
+            Debug.Log($"ShipmentManager.ClientRequestFullSync: IsHostOrSinglePlayer = {IsHostOrSinglePlayer().ToString()}");
             // In SP / host: our local dict is authoritative already; no network round trip needed.
             if (IsHostOrSinglePlayer())
             {
@@ -65,7 +67,6 @@ namespace More_World_Locations_AIO.Shipments
                 return;
             }
             
-            Debug.Log("ShipmentManager: ClientRequestFullSync");
             ZNetPeer server = ZNet.instance?.GetServerPeer();
             if (server == null) return;
             ZRoutedRpc.instance.InvokeRoutedRPC(server.m_uid, RPC_ReqFull, new ZPackage());
@@ -74,7 +75,7 @@ namespace More_World_Locations_AIO.Shipments
         // ask the server to create a shipment (clients should NEVER create locally)
         public static void ClientRequestCreateShipment(Shipment shipment)
         {
-            Debug.Log("ShipmentManager: ClientRequestCreateShipment");
+            Debug.Log($"ShipmentManager: ClientRequestCreateShipment for shipment with ID {shipment.m_shipmentID}");
             // In SP / host: execute server logic directly on the client (authoritative in this process)
             if (IsHostOrSinglePlayer())
             {
@@ -98,6 +99,7 @@ namespace More_World_Locations_AIO.Shipments
         {
             if (!IsServer()) { Debug.LogWarning("ServerCreateShipment called on client"); return null; }
 
+            Debug.Log($"ShipmentManager: ServerCreateShipment for shipment with ID {shipment.m_shipmentID}");
             InTransitShipments[shipment.m_shipmentID] = shipment;
             BroadcastAdd(shipment);
             // ShipmentsChanged?.Invoke();
@@ -177,6 +179,7 @@ namespace More_World_Locations_AIO.Shipments
 
         static void BroadcastAdd(Shipment shipment)
         {
+            Debug.Log($"ShipmentManager: BroadcastAdd for shipment with ID {shipment.m_shipmentID}");
             var pkg = ShipmentSerializer.SerializeShipmentPackage(shipment);
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, RPC_Add, pkg);
         }
@@ -231,6 +234,23 @@ namespace More_World_Locations_AIO.Shipments
                 if (s != null && string.Equals(s.m_destinationPortID, portId, StringComparison.Ordinal))
                 {
                     Debug.Log($"ShipmentManager.GetShipmentsForDestination: Found port with matching destintionID:{portId}");
+                    result.Add(s);
+                }
+                
+            }
+            return result;
+        }
+        
+        public static List<Shipment> GetShipmentsForOrigin(string portId)
+        {
+            var result = new List<Shipment>();
+            if (string.IsNullOrEmpty(portId)) return result;
+
+            foreach (var s in InTransitShipments.Values)
+            {
+                if (s != null && string.Equals(s.m_originPortID, portId, StringComparison.Ordinal))
+                {
+                    Debug.Log($"ShipmentManager.GetShipmentsForOrigin: Found port with matching originID:{portId}");
                     result.Add(s);
                 }
                 

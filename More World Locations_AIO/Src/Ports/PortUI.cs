@@ -139,8 +139,7 @@ public class PortUI : MonoBehaviour
         {
             GUIManager.Instance.ApplyTextStyle(text,18);
         }
-
-        Debug.Log("testing a thing");
+        
         foreach (Text[] textArray in new List<Text[]>
                  
                  {
@@ -273,18 +272,44 @@ public class PortUI : MonoBehaviour
 
     public void OpenShipment(Shipment shipment)
     {
-        
+        Debug.Log($"PortUI.OpenShipment: Openning shipment for shipment with ID: {shipment.m_shipmentID}");
+        ShipmentManager.InTransitShipments.TryGetValue(shipment.m_shipmentID, out Shipment shipmentTemp);
+        if (shipmentTemp == null) {Debug.Log($"PortUI.OpenShipment: Failed to get shipment with ID from InTransitShipments: {shipment.m_shipmentID}");}
+        List<GameObject> shipmentChests = shipmentTemp.ReadShipmentItemData(currentPort);
+
+        foreach (GameObject shipmentChest in shipmentChests)
+        {
+            currentPort.m_currentChests.Add(shipmentChest);
+        }
     }
 
     public void SendShipment(Shipment shipment)
     {
+        Debug.Log($"PortUI.SendShipment: Starting send shipment for shipment with ID: {shipment.m_shipmentID}");
+        Debug.Log($"PortUI.SendShipment: Shipment has chests: {currentPort.m_currentChests.Count}");
+        foreach (GameObject chest in currentPort.m_currentChests)
+        {
+            shipment.CreateShipmentItemData(chest);
+        }
+
+        shipment.m_shipmentState = Shipment.ShipmentState.InTransit;
+        
         ShipmentManager.ClientRequestCreateShipment(shipment);
+        
+        currentPort.ClearShipment();
     }
 
     public void PurchaseShipment()
     {
-        Debug.Log("Calling purchase shipment");
+        Debug.Log($"PortUI.PurchaseShipment: Calling purchase shipment");
+        // if (selectedPort == null)
+        // {
+        //     Debug.Log($"PortUI.PurchaseShipment: No selected port");
+        //     Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Please select a destination port");
+        //     return;
+        // }
         
+        currentPort.ClearShipment();
         if (!CheckPlayerInventory(Player.m_localPlayer, requirements, out var missing))
         {
             var msg = BuildMissingMessage(missing); // see helper below
@@ -294,13 +319,15 @@ public class PortUI : MonoBehaviour
         
         ConsumePlayerInventory(Player.m_localPlayer, requirements);
         ShowShipment();
+
+        List<GameObject> chests = GetContainerTypes();
+        currentPort.CreateContainers(chests);
         
-        List<GameObject> containers = CreateContainers();
-        Shipment shipment = new Shipment(currentPort, selectedPort, containers);
+        Shipment shipment = new Shipment(currentPort, selectedPort, Shipment.ShipmentState.InPortOfOrigin);
+        ShipmentManager.ClientRequestCreateShipment(shipment);
         
         AddShipmentListElement(tabShipmentlistContainer, GUIManager.Instance.GetSprite("longship"), shipment, PortUITab.Shipments);
         selectedPort = null;
-       
     }
     
     private string BuildMissingMessage(Dictionary<string,int> missing)
@@ -374,14 +401,17 @@ public class PortUI : MonoBehaviour
 
             case "Wood Chest":
                 prefab = PrefabManager.Instance.GetPrefab("MWL_portContainer_woodChest");
+                if (prefab == null) {Debug.Log($"Failed to get chest with name: {selected} from PrefabManager"); }
                 break;
 
             case "Finewood Chest":
                 prefab = PrefabManager.Instance.GetPrefab("MWL_portContainer_finewoodChest");
+                if (prefab == null) {Debug.Log($"Failed to get chest with name: {selected} from PrefabManager"); }
                 break;
             
             case "Blackmetal Chest":
                 prefab = PrefabManager.Instance.GetPrefab("MWL_portContainer_blackmetalChest");
+                if (prefab == null) {Debug.Log($"Failed to get chest with name: {selected} from PrefabManager"); }
                 break;
 
             default:
@@ -393,46 +423,21 @@ public class PortUI : MonoBehaviour
         return prefab;
     }
     
-    public List<GameObject> CreateContainers()
+    public List<GameObject> GetContainerTypes()
     {
-        Debug.Log($"CreateContainers: Searching for location in CreateContainer");
-        if (currentPort == null) { Debug.Log($"current port is null in create containersr"); }
-        Debug.Log($"CreateContainers: Player position is {Player.m_localPlayer.transform.position.ToString()}");
-        Debug.Log($"CreateContainers: Current port position is {currentPort.transform.position.ToString()}");
-        
-        LocationProxy location = WorldUtils.GetLocationInRange(currentPort.transform.position, 50);
-
-        if (location == null) { Debug.Log($"Location is null in create containersr"); }
-        
-        GameObject containerPosition1 = location.gameObject.transform.Find("MWL_PortLocation(Clone)/Blueprint/containerPosition1")?.gameObject;
-        GameObject containerPosition2 = location.gameObject.transform.Find("MWL_PortLocation(Clone)/Blueprint/containerPosition2")?.gameObject;
-        GameObject containerPosition3 = location.gameObject.transform.Find("MWL_PortLocation(Clone)/Blueprint/containerPosition3")?.gameObject;
-        // GameObject containerPosition4 = location.gameObject.transform.Find("MWL_PortLoctaion(Clone)/Blueprint/containerPosition4")?.gameObject;
-        
-        List<GameObject> containerPositions = new List<GameObject>();
-        
-        containerPositions.Add(containerPosition1);
-        containerPositions.Add(containerPosition2);
-        containerPositions.Add(containerPosition3);
-        // containerPositions.Add(containerPosition4);
-        
         List<GameObject> containers = new List<GameObject>();
 
         Debug.Log("CreateContainers: Starting dropdown assignment");
         foreach (Dropdown dropdown in tabPortDropsdowns)
         {
-            if (dropdown == null) { Debug.Log($"CreateContainers: A drop down is null while looping through tabPortDropdowns"); }
-            GameObject prefab = GetChestType(dropdown);
+            if (dropdown == null) { Debug.Log($"CreateContainers: A drop down is null while looping through tabPortDropdowns"); continue; }
             
-            if (prefab != null)
-            {
-                for (int i = 0; i < containerPositions.Count; i++)
-                {
-                    GameObject chest = Object.Instantiate(prefab, containerPositions[i].transform.position, containerPositions[i].transform.rotation);
-                    containers.Add(chest);
-                }
-            }
+            GameObject prefab = GetChestType(dropdown);
+            if (prefab == null) { Debug.Log($"PortUI.GetContainerTypes: Prefab is null"); continue; }
+            Debug.Log($"PortUI.GetContainerTypes: Adding container: {prefab.name} to containers list");
+            containers.Add(prefab);
         }
+        
         return containers;
     }
 
@@ -478,6 +483,7 @@ public class PortUI : MonoBehaviour
     {
         foreach (Port port in ports)
         {
+            if (port.m_portID == currentPort.m_portID) continue;
             AddPortListElement(tabPortlistContainer, GUIManager.Instance.GetSprite("longship"), port, PortUITab.Ports);
             Debug.Log($"PortUI.SetListElements: Adding port with name: {port.name}");
         }
@@ -506,7 +512,7 @@ public class PortUI : MonoBehaviour
         button.onClick.AddListener(() => UpdateDescription(description, tab));
         button.onClick.AddListener(() => SetSelectedPort(port));
         
-        Debug.Log($"Calling AddPortListElement for shipment with ID {port.name}");
+        Debug.Log($"PortUI.AddPortListElement: Adding port list element for port: {port.name}");
     }
     
     public void AddShipmentListElement(RectTransform parent, Sprite icon, Shipment shipment, PortUITab tab)
@@ -518,7 +524,7 @@ public class PortUI : MonoBehaviour
         
         var label = element.transform.Find("Label").GetComponent<Text>();
         GUIManager.Instance.ApplyTextStyle(label);
-        label.text = "temp port name";
+        label.text = shipment.m_shipmentID.ToString();
 
         string description = BuildDescriptionText(shipment);
         
@@ -526,7 +532,7 @@ public class PortUI : MonoBehaviour
         button.onClick.AddListener(() => UpdateDescription(description, tab));
         button.onClick.AddListener(() => SetSelectedShipment(shipment));
         
-        Debug.Log($"Calling AddShipmentListElement for shipment with ID {shipment.m_shipmentID}");
+        Debug.Log($"PortUI.AddShipmentListElement: Adding shipment list element for shipment: {shipment.m_shipmentID}");
     }
 
     public void ClearRegisteredPlayerList()
@@ -578,7 +584,7 @@ public class PortUI : MonoBehaviour
         var sb = new StringBuilder();
 
         sb.AppendLine("Destination:");
-        sb.AppendLine("temp port description");
+        sb.AppendLine(PortDB.Instance.GetPort(shipment.m_destinationPortID).name);
         sb.AppendLine();
 
         sb.AppendLine("Distance:");
@@ -620,11 +626,12 @@ public class PortUI : MonoBehaviour
     
     public void Show(Port port, List<Port> ports, List<Shipment> shipments) 
     {
-        Debug.Log("Calling Show");
+        Debug.Log($"$PortUI.Show: Show port {port.name} with {ports.Count} ports and {shipments.Count} shipments");
         this.currentPort = port;
         SetListElements(ports, shipments);
         
         this.gameObject.SetActive(true);
+        
         GUIManager.BlockInput(true);
     }
 
@@ -635,6 +642,14 @@ public class PortUI : MonoBehaviour
             Destroy(child.gameObject);
         }
         
+        foreach (Transform child in tabShipmentlistContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        currentPort = null;
+        selectedPort = null;
+        selectedShipment = null;
         this.gameObject.SetActive(false);
         GUIManager.BlockInput(false);
     }

@@ -13,11 +13,12 @@ public class ShipmentSerializer
         pkg.Write(shipment.m_shipmentID.ToString());
         pkg.Write(shipment.m_originPortID);
         pkg.Write(shipment.m_destinationPortID);
+        pkg.Write(shipment.m_shipmentState.ToString());
         
         int shipmentContainerCount = shipment.shipmentContainers.Count;
         if (shipmentContainerCount == 0)
         {
-            Debug.Log($"The list of shipmentContainers is empty for shipment with id: {shipment.m_shipmentID}");
+            Debug.Log($"ShipmentSerializer.SerializeShipmentPackage: The list of shipmentContainers is empty for shipment with id: {shipment.m_shipmentID}");
             return null;
         }
         
@@ -38,6 +39,9 @@ public class ShipmentSerializer
         shipment.m_shipmentID = Guid.Parse(package.ReadString());
         shipment.m_originPortID = package.ReadString();
         shipment.m_destinationPortID = package.ReadString();
+        
+        string state = package.ReadString();
+        shipment.m_shipmentState = (Shipment.ShipmentState)Enum.Parse(typeof(Shipment.ShipmentState), state, true);
         
         int shipmentContainerCount = package.ReadInt();
         shipment.shipmentContainers = new List<KeyValuePair<string, List<Shipment.ShipmentItemData>>>();
