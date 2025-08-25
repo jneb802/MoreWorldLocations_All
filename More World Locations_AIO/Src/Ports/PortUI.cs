@@ -8,6 +8,7 @@ using Jotunn.Extensions;
 using Jotunn.GUI;
 using Jotunn.Managers;
 using More_World_Locations_AIO.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
@@ -42,15 +43,20 @@ public class PortUI : MonoBehaviour
     public bool requirementsChanged;
     private bool _dropdownsBuilt = false;
     public Button tabPortActionButton;
+    // Locate button
+    public Button tabPortActionButton2;
     public Button tabShipment;
     public GameObject shipmentsView;
     public RectTransform tabShipmentlistContainer;
     public Text tabShipmentdescription;
     public Button tabShipmentActionButton1;
     public Button tabShipmentActionButton2;
+    public Button tabShipmentActionButton3;
     public Port currentPort;
     public Port selectedPort;
     public Shipment selectedShipment;
+    public List<GameObject> selectedPortListItem = new List<GameObject>();
+    public List<GameObject> selectedShipmentListItem = new List<GameObject>();
     
     public void Awake()
     {
@@ -59,12 +65,14 @@ public class PortUI : MonoBehaviour
         this.gameObject.AddComponent<DragWindowCntrl>();
 
         tabPortDropsdowns = new List<Dropdown>();
-        portTitle = transform.Find("root/background/verticalLayout1/PortTitle")?.GetComponent<Text>();
         tabPort = transform.Find("root/background/verticalLayout1/TabPort")?.GetComponent<Button>();
+        Button tabPorttUpgrade = transform.Find("root/background/verticalLayout1/TabPort/UPGRADE")?.GetComponent<Button>();
+        portTitle = transform.Find("root/background/verticalLayout1/PortTitle")?.GetComponent<Text>();
         portsView = transform.Find("root/background/verticalLayout1/PortsView")?.gameObject;
         tabPortlistContainer = transform.Find("root/background/verticalLayout1/PortsView/listContainer")?.GetComponent<RectTransform>();
         tabPortdescription = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/description")?.GetComponent<Text>();
         tabPortActionButton = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/actionButton")?.GetComponent<Button>();
+        tabPortActionButton2 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/actionButton2")?.GetComponent<Button>();
         
         var requirement1 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup1")?.gameObject;
         var requirement2 = transform.Find("root/background/verticalLayout1/PortsView/descriptionContainer/requirements/requirementGroup2")?.gameObject;
@@ -93,19 +101,23 @@ public class PortUI : MonoBehaviour
             requirment.requirementParentObject.SetActive(false);
         }
         
-        tabShipment = transform.Find("root/background/verticalLayout1/TabShipments")?.GetComponent<Button>();
+        tabShipment = transform.Find("root/background/verticalLayout1/TabPort")?.GetComponent<Button>();
+        Button tabShipmentUpgrade = transform.Find("root/background/verticalLayout1/TabShipments/UPGRADE")?.GetComponent<Button>();
         shipmentsView = transform.Find("root/background/verticalLayout1/ShipmentsView")?.gameObject;
         tabShipmentlistContainer = transform.Find("root/background/verticalLayout1/ShipmentsView/listContainer")?.GetComponent<RectTransform>();
         tabShipmentdescription = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/description")?.GetComponent<Text>();
         tabShipmentActionButton1 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton1")?.GetComponent<Button>();
         tabShipmentActionButton2 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton2")?.GetComponent<Button>();
+        tabShipmentActionButton3 = transform.Find("root/background/verticalLayout1/ShipmentsView/descriptionContainer/actionButton3")?.GetComponent<Button>();
         
-        // listeners
-        if (tabPort) tabPort.onClick.AddListener(ShowPorts);
-        if (tabShipment) tabShipment.onClick.AddListener(ShowShipment);
+        if (tabPorttUpgrade) tabPorttUpgrade.onClick.AddListener(ShowPorts);
+        if (tabShipmentUpgrade) tabShipmentUpgrade.onClick.AddListener(ShowShipment);
+        
         if (tabPortActionButton) tabPortActionButton.onClick.AddListener(PurchaseShipment);
+        if (tabPortActionButton2) tabPortActionButton2.onClick.AddListener(LocatePort);
         if (tabShipmentActionButton1) tabShipmentActionButton1.onClick.AddListener(() => OpenShipment(selectedShipment));
         if (tabShipmentActionButton2) tabShipmentActionButton2.onClick.AddListener(() => SendShipment(selectedShipment));
+        if (tabShipmentActionButton3) tabShipmentActionButton3.onClick.AddListener(() => CloseShipment(selectedShipment));
 
         coinsSprite = GUIManager.Instance.GetSprite("coins");
         woodSprite = GUIManager.Instance.GetSprite("wood");
@@ -115,18 +127,54 @@ public class PortUI : MonoBehaviour
         tarSprite = GUIManager.Instance.GetSprite("tar");
     }
     
+    public void SetupTabs()
+    {
+        var tabPortTransform = transform.Find("root/background/verticalLayout1/TabPort");
+        GameObject portTabButtonGameObject = Object.Instantiate(InventoryGui.instance.m_tabUpgrade, tabPortTransform.transform).gameObject;
+        Button portTabButton = portTabButtonGameObject.GetComponent<Button>();
+        GameObject portTabGameObject = portTabButton.gameObject;
+        RectTransform rectTransformPort = portTabGameObject.GetComponent<RectTransform>();
+        rectTransformPort.pivot = new Vector2(0, 1);
+        rectTransformPort.localPosition = new Vector3(0, 0, 0);
+        Transform portTabLabelTransform = portTabGameObject.transform.Find("Text");
+        TextMeshProUGUI portTabText = portTabLabelTransform.GetComponent<TextMeshProUGUI>();
+        portTabText.text = "Ports";
+        if (portTabButton) portTabButton.onClick.AddListener(ShowPorts);
+        
+        var tabShipmentTransform = transform.Find("root/background/verticalLayout1/TabShipments");
+        GameObject shipmentTabButtonGameObject = Object.Instantiate(InventoryGui.instance.m_tabUpgrade, tabShipmentTransform.transform).gameObject;
+        Button shipmentTabButton = shipmentTabButtonGameObject.GetComponent<Button>();
+        GameObject shipmentTabGameObject = shipmentTabButton.gameObject;
+        RectTransform rectTransformShipment = shipmentTabGameObject.GetComponent<RectTransform>();
+        rectTransformShipment.pivot = new Vector2(0, 1);
+        rectTransformShipment.localPosition = new Vector3(0, 0, 0);
+        Transform shipmentTabLabelTransform = shipmentTabGameObject.transform.Find("Text");
+        TextMeshProUGUI shipmentTabText = shipmentTabLabelTransform.GetComponent<TextMeshProUGUI>();
+        shipmentTabText.text = "Shipments";
+        if (shipmentTabButton) shipmentTabButton.onClick.AddListener(ShowShipment);
+    }
+
+    public void LocatePort()
+    {
+        if (selectedPort == null) return;
+        this.Hide();
+        Minimap.instance.ShowPointOnMap(selectedPort.worldPosition);
+    }
+    
     public void SetupListElements()
     {
         tabPortActionButton.transform.Find("Label").GetComponent<Text>().text = "Purchase Shipment";
         tabShipmentActionButton1.transform.Find("Label").GetComponent<Text>().text = "Open Shipment";
         tabShipmentActionButton2.transform.Find("Label").GetComponent<Text>().text = "Send Shipment";
+        tabShipmentActionButton3.transform.Find("Label").GetComponent<Text>().text = "Close Shipment";
         
         BuildDropdowns();
         
         GUIManager.Instance.ApplyButtonStyle(tabPortActionButton);
+        GUIManager.Instance.ApplyButtonStyle(tabPortActionButton2);
         GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton1);
         GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton2);
-
+        GUIManager.Instance.ApplyButtonStyle(tabShipmentActionButton3);
         
         GUIManager.Instance.ApplyTextStyle(portTitle, 36);
         
@@ -135,7 +183,7 @@ public class PortUI : MonoBehaviour
             GUIManager.Instance.ApplyTextStyle(text, 18);
         }
         
-        foreach (Text text in new List<Text> {tabPort.transform.Find("Label").GetComponent<Text>(), tabShipment.transform.Find("Label").GetComponent<Text>() })
+        foreach (Text text in new List<Text> {tabPort.transform.Find("UPGRADE/Text").GetComponent<Text>(), tabShipment.transform.Find("UPGRADE/Text").GetComponent<Text>() })
         {
             GUIManager.Instance.ApplyTextStyle(text,18);
         }
@@ -258,14 +306,36 @@ public class PortUI : MonoBehaviour
 
     
 
-    public void SetSelectedPort(Port port)
+    public void SetSelectedPort(Port port, GameObject selectedMarker)
     {
+        // deactivate previous if one exists
+        if (selectedPortListItem.Count > 0)
+        {
+            selectedPortListItem[0].SetActive(false);
+            selectedPortListItem.Clear();
+        }
+
+        // activate the new one and store it
+        selectedMarker.SetActive(true);
+        selectedPortListItem.Add(selectedMarker);
+
         Debug.Log($"Setting selected port to: {port.name}");
         this.selectedPort = port;
     }
     
-    public void SetSelectedShipment(Shipment shipment)
+    public void SetSelectedShipment(Shipment shipment, GameObject selectedMarker)
     {
+        // deactivate previous if one exists
+        if (selectedShipmentListItem.Count > 0)
+        {
+            selectedShipmentListItem[0].SetActive(false);
+            selectedShipmentListItem.Clear();
+        }
+
+        // activate the new one and store it
+        selectedMarker.SetActive(true);
+        selectedShipmentListItem.Add(selectedMarker);
+        
         Debug.Log($"Setting selected port to: {shipment.m_shipmentID}");
         this.selectedShipment = shipment;
     }
@@ -293,6 +363,19 @@ public class PortUI : MonoBehaviour
         }
 
         shipment.m_shipmentState = Shipment.ShipmentState.InTransit;
+        
+        ShipmentManager.ClientRequestCreateShipment(shipment);
+        
+        currentPort.ClearShipment();
+    }
+    
+    public void CloseShipment(Shipment shipment)
+    {
+        Debug.Log($"PortUI.ClearShipment: Clearing shipment for shipment with ID: {shipment.m_shipmentID}");
+        for (int i = 0; i < currentPort.m_currentChests.Count; i++)
+        {
+            shipment.UpdateShipmentItemData(currentPort.m_currentChests[i], i);
+        }
         
         ShipmentManager.ClientRequestCreateShipment(shipment);
         
@@ -508,9 +591,11 @@ public class PortUI : MonoBehaviour
 
         string description = BuildDescriptionText(port);
         
+        Transform selected = element.transform.Find("selected");
+        
         var button = element.GetComponent<Button>();
         button.onClick.AddListener(() => UpdateDescription(description, tab));
-        button.onClick.AddListener(() => SetSelectedPort(port));
+        button.onClick.AddListener(() => SetSelectedPort(port, selected.gameObject));
         
         Debug.Log($"PortUI.AddPortListElement: Adding port list element for port: {port.name}");
     }
@@ -528,9 +613,11 @@ public class PortUI : MonoBehaviour
 
         string description = BuildDescriptionText(shipment);
         
+        Transform selected = element.transform.Find("selected");
+        
         var button = element.GetComponent<Button>();
         button.onClick.AddListener(() => UpdateDescription(description, tab));
-        button.onClick.AddListener(() => SetSelectedShipment(shipment));
+        button.onClick.AddListener(() => SetSelectedShipment(shipment, selected.gameObject));
         
         Debug.Log($"PortUI.AddShipmentListElement: Adding shipment list element for shipment: {shipment.m_shipmentID}");
     }
@@ -569,12 +656,8 @@ public class PortUI : MonoBehaviour
         sb.AppendLine(port.name);
         sb.AppendLine();
 
-        sb.AppendLine("Distance:");
-        sb.AppendLine(port.name); // change to the correct field
-        sb.AppendLine();
-
-        sb.AppendLine("ETA:");
-        sb.AppendLine("destinationPortETA"); // replace with correct value
+        sb.AppendLine("Travel Time:");
+        sb.AppendLine("destinationPortETA");
 
         return sb.ToString();
     }
@@ -587,12 +670,8 @@ public class PortUI : MonoBehaviour
         sb.AppendLine(PortDB.Instance.GetPort(shipment.m_destinationPortID).name);
         sb.AppendLine();
 
-        sb.AppendLine("Distance:");
-        sb.AppendLine("temp port distance"); // change to the correct field
-        sb.AppendLine();
-
-        sb.AppendLine("ETA:");
-        sb.AppendLine("destinationPortETA"); // replace with correct value
+        sb.AppendLine("Travel Time:");
+        sb.AppendLine("destinationPortETA");
 
         return sb.ToString();
     }
@@ -646,6 +725,9 @@ public class PortUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        
+        selectedPortListItem.Clear();
+        selectedShipmentListItem.Clear();
 
         currentPort = null;
         selectedPort = null;

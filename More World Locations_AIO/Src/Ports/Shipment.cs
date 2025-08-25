@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Jotunn.Managers;
+using More_World_Locations_AIO.Utils;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.Shipments;
@@ -38,7 +39,7 @@ public class Shipment
     {
         
     }
-
+    
     public void CreateShipmentItemData(GameObject chest)
     {
         string chestName = chest.name.Split('(')[0];
@@ -57,6 +58,8 @@ public class Shipment
             Debug.Log($"m_variant:      {itemData.m_variant}");
             Debug.Log($"m_crafterID:    {itemData.m_crafterID}");
             Debug.Log($"m_crafterName:  {itemData.m_crafterName}");
+            Debug.Log($"m_worldLevel:   {itemData.m_worldLevel}");
+            Debug.Log($"m_pickedUp:     {itemData.m_pickedUp}");
             
             ShipmentItemData shipmentItemData = new ShipmentItemData(
                 itemData.m_dropPrefab.name,
@@ -66,12 +69,60 @@ public class Shipment
                 itemData.m_variant,
                 itemData.m_crafterID,
                 itemData.m_crafterName,
+                itemData.m_worldLevel,
+                itemData.m_pickedUp,
                 itemData.m_customData
             );               
             shipmentItems.Add(shipmentItemData);
         }
            
         shipmentContainers.Add(new KeyValuePair<string, List<ShipmentItemData>>(chestName, shipmentItems));
+    }
+    
+    public void UpdateShipmentItemData(GameObject chest, int index)
+    {
+        string chestName = chest.name.Split('(')[0];
+        List<ShipmentItemData> shipmentItems = new List<ShipmentItemData>();
+            
+        Container container = chest.GetComponent<Container>();
+        Inventory inventory = container.GetInventory();
+        List<ItemDrop.ItemData> chestItems = inventory.GetAllItems();
+            
+        foreach (ItemDrop.ItemData itemData in chestItems)
+        {
+            Debug.Log($"m_dropPrefab:   {itemData.m_dropPrefab?.name ?? "null"}");
+            Debug.Log($"m_stack:        {itemData.m_stack}");
+            Debug.Log($"m_durability:   {itemData.m_durability}");
+            Debug.Log($"m_quality:      {itemData.m_quality}");
+            Debug.Log($"m_variant:      {itemData.m_variant}");
+            Debug.Log($"m_crafterID:    {itemData.m_crafterID}");
+            Debug.Log($"m_crafterName:  {itemData.m_crafterName}");
+            Debug.Log($"m_worldLevel:   {itemData.m_worldLevel}");
+            Debug.Log($"m_pickedUp:     {itemData.m_pickedUp}");
+            
+            ShipmentItemData shipmentItemData = new ShipmentItemData(
+                itemData.m_dropPrefab.name,
+                itemData.m_stack,
+                itemData.m_durability,
+                itemData.m_quality,
+                itemData.m_variant,
+                itemData.m_crafterID,
+                itemData.m_crafterName,
+                itemData.m_worldLevel,
+                itemData.m_pickedUp,
+                itemData.m_customData
+            );               
+            shipmentItems.Add(shipmentItemData);
+        }
+           
+        if (index < shipmentContainers.Count)
+        {
+            shipmentContainers[index] = new KeyValuePair<string, List<ShipmentItemData>>(chestName, shipmentItems);
+        }
+        else
+        {
+            shipmentContainers.Add(new KeyValuePair<string, List<ShipmentItemData>>(chestName, shipmentItems));
+        }
     }
     
     public List<GameObject> ReadShipmentItemData(Port port)
@@ -93,32 +144,36 @@ public class Shipment
                 foreach (ShipmentItemData shipmentItemData in shipmentContainers[i].Value)
                 {
                     Debug.Log($"Shipment.ReadShipmentItemData: Reading ShipmentItemData item with name {shipmentItemData.m_itemName}");
-                    ItemDrop.ItemData itemData = new ItemDrop.ItemData();
                     Debug.Log($"Shipment.ReadShipmentItemData: Initialized new ItemData instance");
-                    GameObject prefab = PrefabManager.Instance.GetPrefab(shipmentItemData.m_itemName);
-                    if (prefab == null) { Debug.Log($"Shipment.ReadShipmentItemData: Failed to get prefab with name {shipmentItemData.m_itemName} from Jotunn PrefabManager"); }
-                    Debug.Log($"Shipment.ReadShipmentItemData: Jotunn Prefab Manager returned: {prefab}");
                     
-                    ItemDrop itemDrop = prefab.GetComponent<ItemDrop>();
-                    itemData = itemDrop.m_itemData;
-                    itemData.m_dropPrefab = prefab;
-                    itemData.m_stack = shipmentItemData.m_stack;
-                    itemData.m_durability = shipmentItemData.m_durability;
-                    itemData.m_quality = shipmentItemData.m_quality;
-                    itemData.m_variant = shipmentItemData.m_variant;
-                    itemData.m_crafterID = shipmentItemData.m_crafterID;
-                    itemData.m_crafterName = shipmentItemData.m_crafterName;
-                    itemData.m_customData = shipmentItemData.m_customData;
+                    GameObject prefab = PrefabManager.Instance.GetPrefab(shipmentItemData.m_itemName);
+                    GameObject clone = GameObject.Instantiate(prefab);
+                        
+                    if (!prefab) { Debug.Log($"Shipment.ReadShipmentItemData: Failed to get prefab with name {shipmentItemData.m_itemName} from Jotunn PrefabManager"); }
+                    Debug.Log($"Shipment.ReadShipmentItemData: Jotunn Prefab Manager returned: {prefab}");
+                    ItemDrop cloneItemDrop = clone.GetComponent<ItemDrop>();
+                    
+                    cloneItemDrop.m_itemData.m_stack = shipmentItemData.m_stack;
+                    cloneItemDrop.m_itemData.m_durability = shipmentItemData.m_durability;
+                    cloneItemDrop.m_itemData.m_quality = shipmentItemData.m_quality;
+                    cloneItemDrop.m_itemData.m_variant = shipmentItemData.m_variant;
+                    cloneItemDrop.m_itemData.m_crafterID = shipmentItemData.m_crafterID;
+                    cloneItemDrop.m_itemData.m_crafterName = shipmentItemData.m_crafterName;
+                    cloneItemDrop.m_itemData.m_worldLevel = shipmentItemData.m_worldLevel;
+                    cloneItemDrop.m_itemData.m_pickedUp = shipmentItemData.m_pickedUp;
+                    cloneItemDrop.m_itemData.m_customData = shipmentItemData.m_customData;
 
-                    Debug.Log($"m_dropPrefab:   {itemData.m_dropPrefab?.name ?? "null"}");
-                    Debug.Log($"m_stack:        {itemData.m_stack}");
-                    Debug.Log($"m_durability:   {itemData.m_durability}");
-                    Debug.Log($"m_quality:      {itemData.m_quality}");
-                    Debug.Log($"m_variant:      {itemData.m_variant}");
-                    Debug.Log($"m_crafterID:    {itemData.m_crafterID}");
-                    Debug.Log($"m_crafterName:  {itemData.m_crafterName}");
+                    Debug.Log($"m_dropPrefab:   {cloneItemDrop.m_itemData.m_dropPrefab?.name ?? "null"}");
+                    Debug.Log($"m_stack:        {cloneItemDrop.m_itemData.m_stack}");
+                    Debug.Log($"m_durability:   {cloneItemDrop.m_itemData.m_durability}");
+                    Debug.Log($"m_quality:      {cloneItemDrop.m_itemData.m_quality}");
+                    Debug.Log($"m_variant:      {cloneItemDrop.m_itemData.m_variant}");
+                    Debug.Log($"m_crafterID:    {cloneItemDrop.m_itemData.m_crafterID}");
+                    Debug.Log($"m_crafterName:  {cloneItemDrop.m_itemData.m_crafterName}");
+                    Debug.Log($"m_worldLevel:   {cloneItemDrop.m_itemData.m_worldLevel}");
+                    Debug.Log($"m_pickedUp:     {cloneItemDrop.m_itemData.m_pickedUp}");
                 
-                    inventory.AddItem(itemData);
+                    inventory.AddItem(cloneItemDrop.m_itemData);
                 }
             
                 shipmentChests.Add(chest);
@@ -138,9 +193,11 @@ public class Shipment
         public int m_variant;
         public long m_crafterID;
         public string m_crafterName = "";
+        public int m_worldLevel;
+        public bool m_pickedUp;
         public Dictionary<string, string> m_customData = new Dictionary<string, string>();
 
-        public ShipmentItemData(string itemName, int stack, float durability, int quality, int variant, long crafterID, string crafterName, Dictionary<string, string> customData)
+        public ShipmentItemData(string itemName, int stack, float durability, int quality, int variant, long crafterID, string crafterName, int worldLevel, bool pickedUp, Dictionary<string, string> customData)
         {
             m_itemName = itemName;
             m_stack = stack;
@@ -149,6 +206,8 @@ public class Shipment
             m_variant = variant;
             m_crafterID = crafterID;
             m_crafterName = crafterName;
+            m_worldLevel = worldLevel;
+            m_pickedUp = pickedUp;
             m_customData = customData;
         }
     }

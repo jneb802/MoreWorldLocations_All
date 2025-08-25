@@ -67,6 +67,8 @@ public class ShipmentSerializer
             pkg.Write(containerItems[i].m_variant);
             pkg.Write(containerItems[i].m_crafterID);
             pkg.Write(containerItems[i].m_crafterName);
+            pkg.Write(containerItems[i].m_worldLevel);
+            pkg.Write(containerItems[i].m_pickedUp);
 
             List<KeyValuePair<string, string>> dictionaryList = containerItems[i].m_customData.ToList();
             int customDataCount = dictionaryList.Count;
@@ -95,6 +97,8 @@ public class ShipmentSerializer
             int variant = pkg.ReadInt();
             long crafterID = pkg.ReadLong();
             string crafterName = pkg.ReadString();
+            int worldLevel = pkg.ReadInt();
+            bool pickedUp = pkg.ReadBool();
             int dictionarySize = pkg.ReadInt();
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
             
@@ -106,7 +110,7 @@ public class ShipmentSerializer
                 dictionary.Add(key, value);
             }
             
-            Shipment.ShipmentItemData shipmentItemData = new Shipment.ShipmentItemData(itemName, stack, (float)durability, quality, variant, crafterID, crafterName, dictionary);
+            Shipment.ShipmentItemData shipmentItemData = new Shipment.ShipmentItemData(itemName, stack, (float)durability, quality, variant, crafterID, crafterName, worldLevel, pickedUp, dictionary);
             shipmentItems.Add(shipmentItemData);
             
         }

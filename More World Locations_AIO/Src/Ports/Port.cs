@@ -12,15 +12,20 @@ namespace More_World_Locations_AIO.Shipments;
 
 public class Port : MonoBehaviour, Interactable, Hoverable
 {
+    // Persistent fields
     public string m_portID;
     public ZNetView m_view;
     public string localizationKey;
     public string name;
+    public Vector3 worldPosition;
+    
+    // Non-persistent fields
     public Location m_location;
     private bool m_locationInitialized = false;
     public List<GameObject> m_containerPositions;
     public List<GameObject> m_currentChests;
     public List<Shipment> shipmentsToThisPort = new List<Shipment>();
+    
 
     public void Awake()
     {
@@ -38,12 +43,14 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         
         if (PortDB.Instance.allPorts.ContainsKey(m_portID))
         {
+            worldPosition = PortDB.Instance.allPorts[m_portID].worldPosition;
             localizationKey = PortDB.Instance.allPorts[m_portID].localizationKey;
             name = LocalizationManager.Instance.TryTranslate(localizationKey);
             Debug.Log($"Port with name: {name} has id {m_portID}");
         }
         else
         {
+            worldPosition = this.transform.position;
             localizationKey = PortNames.GetRandomPortName();
             name = LocalizationManager.Instance.TryTranslate(localizationKey);
             PortDB.Instance.allPorts.Add(m_portID, this);
@@ -52,6 +59,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         
         Debug.Log($"Port with name: {name} called awake");
         Debug.Log($"Port with name: {name} has id {m_portID}");
+        Debug.Log($"Port with name: {name} has worldPosition {worldPosition}");
     }
 
     // public void GetLocationAndContainers()
@@ -143,7 +151,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (user is not Player player)
             return true;
         
-        PortManager portManager = player.gameObject.GetComponent<PortManager>();
+        PortManager portManager = player.GetComponent<PortManager>();
 
         ShipmentManager.ClientRequestFullSync();
         

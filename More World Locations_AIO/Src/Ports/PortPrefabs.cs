@@ -12,6 +12,7 @@ namespace More_World_Locations_AIO.Shipments;
 public class PortPrefabs
 {
     public static AssetBundle portsBundle;
+    public static AssetBundle portsLocationBundle;
     public static GameObject portUI;
     public static GameObject portUIListItem;
     
@@ -19,6 +20,10 @@ public class PortPrefabs
     {
         portsBundle = AssetUtils.LoadAssetBundleFromResources(
             "ports",
+            Assembly.GetExecutingAssembly());
+        
+        portsLocationBundle = AssetUtils.LoadAssetBundleFromResources(
+            "portlocation",
             Assembly.GetExecutingAssembly());
     }
     
@@ -72,8 +77,18 @@ public class PortPrefabs
             InForest = false, BiomeArea = Heightmap.BiomeArea.Median
         };
         
+        LocationConfig locationConfig2 = new LocationConfig
+        {
+            Quantity = 20, Biome = Heightmap.Biome.Meadows, Group = "Port", Priotized = true, RandomRotation = false,
+            ExteriorRadius = 16, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, SlopeRotation = true,
+            MaxTerrainDelta = 10f, MinAltitude = 0f, MaxAltitude = 1f, MinDistance = LocationConfigs.LocationRings.Ring2.MinDistance,
+            InForest = false, BiomeArea = Heightmap.BiomeArea.Everything
+        };
         
-
+        GameObject portLocation2 = portsLocationBundle.LoadAsset<GameObject>("MWL_DragonPort1");
+        GameObject jotunnLocationContainer2 = ZoneManager.Instance.CreateLocationContainer(portLocation2);
+        CustomLocation customLocation2 = new CustomLocation(jotunnLocationContainer2, fixReference: true, locationConfig2);
+        ZoneManager.Instance.AddCustomLocation(customLocation2);
         
         GameObject portLocation = portsBundle.LoadAsset<GameObject>("MWL_PortLocation");
         GameObject jotunnLocationContainer = ZoneManager.Instance.CreateLocationContainer(portLocation);

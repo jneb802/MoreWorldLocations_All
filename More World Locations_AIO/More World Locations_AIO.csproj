@@ -158,9 +158,12 @@
         <Compile Include="Src\UpgradeWorld\UpgradeWorld.cs" />
         <Compile Include="Src\Utils\AssetBundles.cs" />
         <Compile Include="Src\Utils\CreatureDB.cs" />
+        <Compile Include="Src\Utils\ItemDropUtils.cs" />
         <Compile Include="Src\Utils\LocationCreatureMapping.cs" />
         <Compile Include="Src\Utils\LootDB.cs" />
         <Compile Include="Src\Utils\Prefabs.cs" />
+        <Compile Include="Src\Utils\SaveUtils.cs" />
+        <Compile Include="Src\Utils\SaveUtilsPatches.cs" />
         <Compile Include="Src\Utils\UpgradeWorldCommands.cs" />
         <Compile Include="Src\Utils\WorldUtils.cs" />
         <Compile Include="Src\Waystones\Waystone.cs" />
@@ -181,6 +184,7 @@
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_1" />
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_3" />
         <EmbeddedResource Include="assets\ports" />
+        <EmbeddedResource Include="assets\portlocation" />
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>

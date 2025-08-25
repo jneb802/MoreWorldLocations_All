@@ -33,13 +33,13 @@ namespace More_World_Locations_AIO.Shipments
             System.Collections.IEnumerator Co(System.Action a) { a(); yield break; }
 
             // Server -> Clients
-            Jotunn.Managers.NetworkManager.Instance.AddRPC(RPC_Add,    (s, p) => Co(() => Client_Add(p)),    null);
-            Jotunn.Managers.NetworkManager.Instance.AddRPC(RPC_Remove, (s, p) => Co(() => Client_Remove(p)), null);
-            Jotunn.Managers.NetworkManager.Instance.AddRPC(RPC_Full,   (s, p) => Co(() => Client_Full(p)),   null);
+            NetworkManager.Instance.AddRPC(RPC_Add,    (s, p) => Co(() => Client_Add(p)),    null);
+            NetworkManager.Instance.AddRPC(RPC_Remove, (s, p) => Co(() => Client_Remove(p)), null);
+            NetworkManager.Instance.AddRPC(RPC_Full,   (s, p) => Co(() => Client_Full(p)),   null);
             
             // Clients -> Server
-            Jotunn.Managers.NetworkManager.Instance.AddRPC(RPC_ReqFull,   null, (s, p) => Co(() => Server_HandleFullRequest(s)));
-            Jotunn.Managers.NetworkManager.Instance.AddRPC(RPC_CreateReq, null, (s, p) => Co(() => Server_HandleCreate(s, p)));
+            NetworkManager.Instance.AddRPC(RPC_ReqFull,   null, (s, p) => Co(() => Server_HandleFullRequest(s)));
+            NetworkManager.Instance.AddRPC(RPC_CreateReq, null, (s, p) => Co(() => Server_HandleCreate(s, p)));
         }
 
 
