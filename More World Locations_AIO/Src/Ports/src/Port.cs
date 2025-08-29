@@ -20,25 +20,18 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public void Awake()
     {
         m_view = GetComponent<ZNetView>();
-        // make sure znetview is valid before we access it
         if (!m_view.IsValid()) return;
         if (m_containers.Placements.Count <= 0)
         {
-            // find all the relevant Transform that has the position and rotation of where
-            // we want to place our containers
             foreach (Transform child in transform.FindAll("containerPosition"))
             {
                 TempContainer temp = new TempContainer(child);
                 m_containers.Placements.Add(temp);
             }
         }
-        // get the name from ZDO, if it does not exist, use random name
         m_name = m_view.GetZDO().GetString(PortVars.Name, NameGenerator.GenerateName());
-        // get the Guid from ZDO, if it does not exist, generate a new one
         m_portID.GUID = m_view.GetZDO().GetString(PortVars.GUID, Guid.NewGuid().ToString());
-        // save it within our PortID struct
         m_portID.Name = m_name;
-        // save them to ZDO, to make sure our new random name, or new Guid is saved
         m_view.GetZDO().Set(PortVars.GUID, m_portID.GUID);
         m_view.GetZDO().Set(PortVars.Name, m_name);
         
@@ -48,16 +41,12 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public void Start()
     {
-        // defensive programming, znetview should be valid at this point, but who knows ??
         if (!m_view.IsValid()) return;
-        // spawn our containers and load them with saved data
         LoadSavedItems();
     }
 
     public void OnDestroy()
     {
-        // make sure to delete spawned containers
-        // I set them as non-persistant, when I cloned original, so they should get deleted anyway
         DestroyContainers();
         // TODO: check multiplayer, if a player leaves, does it affect another player still interacting with port ??
         Manifest.ResetPurchasedManifests();
@@ -65,79 +54,49 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public void SaveItems()
     {
-        // temp items changed to handle more dynamic changes
-        // it now is a real-time reference to the contents
-        // anytime contents change, items are saved as ShipmentItem
-        // and cached in temp items
-        // ready to be loaded into containers, sent as a shipment, and get tooltip
         m_tempItems.Clear();
-        // make sure znetview is valid before trying to save data to it
         if (!m_view.IsValid())
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug("ZNETVIEW not valid when trying to save items");
             return;
         }
-        // has item checks spawned containers, if no spawned containers, returns false
-        // else checks contents
         if (m_containers.HasItems())
         {
-            // iterate through our containers and add them to the temp list
             m_tempItems.Add(m_containers.GetSpawnedContainers());
-            // I use ZPackage since it's optimized for networking
-            // instead of Json, but we could use Json if you wanted to
             ZPackage pkg = new ZPackage();
-            // save the amount of items, so we know how to parse it later
             pkg.Write(m_tempItems.Items.Count);
             foreach (ShipmentItem? item in m_tempItems.Items)
             {
-                // created a function within shipment item class
-                // to easily write each item data to package
                 item.Write(pkg);
-                // to keep the packaging, and parsing next to each other
             }
-            // save it as a string
             m_view.GetZDO().Set(PortVars.Items, pkg.GetBase64());
         }
         else
         {
-            // if containers are empty, make sure to set ZDO to that
             m_view.GetZDO().Set(PortVars.Items, "");
         }
     }
 
     private bool LoadSavedItems()
     {
-        // get the serialized items from ZDO
         string? data = m_view.GetZDO().GetString(PortVars.Items);
-        // make sure it's not null
         if (string.IsNullOrWhiteSpace(data)) return false;
         ZPackage pkg = new ZPackage(data);
-        // we designed the first line to be the amount of items
         int itemCount = pkg.ReadInt();
-        // so we know how long our for loop should be
         for (int i = 0; i < itemCount; i++)
         {
-            // shipment item class has a built-in ZPackage input
-            // to parse the package
             ShipmentItem temp = new ShipmentItem(pkg);
             m_tempItems.Add(temp);
         }
-        // load the items into the containers
         return LoadItems(m_tempItems.Items);
     }
     
     public Container? SpawnContainer(Manifest manifest)
     {
-        // modified to handle manifests
-        // containers are dynamic instead of static objects
-        // that way they can be formatted to reference back to the manifest that triggered them
         foreach (TempContainer? temp in m_containers.Placements)
         {
             if (temp.IsSpawned) continue;
-            // set temp container to manifest
             temp.manifest = manifest;
-            // spawn container and rename container to manifest name
-            // that way when they are saved to shipment, they can take container name (manifest name) ID
             Container? container = temp.Spawn();
             if (container == null) return null;
             container.GetInventory().m_onChanged = OnContainersChanged;
@@ -159,15 +118,13 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (m_containers.HasItems() || m_selectedDelivery == null) return;
         m_selectedDelivery.OnCollected();
         m_selectedDelivery = null;
-        if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, "Selected delivery marked as collected!");
+        if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.DeliveryCollected);
         DestroyContainers();
     }
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
-        // make sure PortUI is there if some weirdo used tools to destroy our UI ???
         if (PortUI.instance == null) return false;
         PortUI.instance.Show(this);
-        // save user so we can spam them with messages
         if (user is Player player) player.AddKnownPort(m_portID);
         m_currentHumanoid = user;
         return false;
@@ -216,18 +173,12 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public bool LoadDelivery(Shipment delivery)
     {
-        // this is used when a player selects a delivery from PortUI
         if (m_containers.HasItems())
         {
-            // since containers reference to specific manifests
-            // we do not want random containers that exist without being formatted to manifests
-            // so stop loading delivery if current containers are active
-            // that is, are spawned
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.FailedToLoadDelivery);
             return false;
         }
         LoadItems(delivery.Items);
-        // transfer reference of shipment to Port to manage from this point forward
         m_selectedDelivery = delivery;
         OnContainersChanged(); // checks if containers are loaded and saves to ZDO
         return m_containers.HasItems(); // if true, can use this statement to make containers visible ??
@@ -477,7 +428,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
                     ? delivery.GetTimeToArrivalSeconds() 
                     : delivery.GetTimeToExpirationSeconds();
                 string time = Shipment.FormatTime(remainingTime);
-                sb.AppendFormat($"\n{LocalKeys.Origin}: <color=orange>{0}</color> (<color=yellow>{1}</color>{2})", delivery.OriginPortName, delivery.State.ToKey(), string.IsNullOrEmpty(time) ? "" : $", {time}");
+                sb.AppendFormat("\n{3}: <color=orange>{0}</color> (<color=yellow>{1}</color>{2})", delivery.OriginPortName, delivery.State.ToKey(), string.IsNullOrEmpty(time) ? "" : $", {time}", LocalKeys.Origin);
             }
             sb.Append($"\n\nShipments (<color=yellow>{shipments.Count}</color>): ");
             foreach (Shipment? shipment in shipments)
@@ -486,7 +437,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
                     ? shipment.GetTimeToArrivalSeconds() 
                     : shipment.GetTimeToExpirationSeconds();
                 string time = Shipment.FormatTime(remainingTime);
-                sb.AppendFormat("\nDestination: <color=orange>{0}</color> (<color=yellow>{1}</color>{2})", shipment.DestinationPortName, shipment.State.ToKey(), string.IsNullOrEmpty(time) ? "" : $", {time}");
+                sb.AppendFormat("\n{3}: <color=orange>{0}</color> (<color=yellow>{1}</color>{2})", shipment.DestinationPortName, shipment.State.ToKey(), string.IsNullOrEmpty(time) ? "" : $", {time}", LocalKeys.Destination);
             }
             return sb.ToString();
         }

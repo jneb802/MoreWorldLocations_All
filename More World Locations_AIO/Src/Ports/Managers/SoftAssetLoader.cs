@@ -120,7 +120,7 @@ public static class SoftAssetLoader
     public static AssetID AddAsset(UnityEngine.Object asset)
     {
         AssetID assetID = GenerateID(asset);
-        AssetRef assetRef = new(PortInit.instance.Info.Metadata, asset, assetID);
+        AssetRef assetRef = new(PortInit.plugin.Info.Metadata, asset, assetID);
         m_assets[assetID] = assetRef;
         return assetID;
     }
@@ -128,7 +128,7 @@ public static class SoftAssetLoader
     public static AssetID AddBlueprintAsset(UnityEngine.Object asset)
     {
         AssetID assetID = GenerateID(asset);
-        AssetRef assetRef = new(PortInit.instance.Info.Metadata, asset, assetID);
+        AssetRef assetRef = new(PortInit.plugin.Info.Metadata, asset, assetID);
         m_blueprintAssets[assetID] = assetRef;
         return assetID;
     }

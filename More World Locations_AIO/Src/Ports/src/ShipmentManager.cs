@@ -24,7 +24,7 @@ public class ShipmentManager : MonoBehaviour
     public static ConfigEntry<PortInit.Toggle> OverrideTransitTime = null!;
     public static ConfigEntry<float> ExpirationTime = null!;
     public static ConfigEntry<PortInit.Toggle> ExpirationEnabled = null!;
-    //private static CustomSyncedValue<string> ServerSyncedShipments = new (More_World_Locations_AIOPlugin.ConfigSync, "MWL_SyncedShipments", "");
+    private static CustomSyncedValue<string>? ServerSyncedShipments;
     
     public static ShipmentManager? instance;
     
@@ -66,7 +66,15 @@ public class ShipmentManager : MonoBehaviour
     public void Awake()
     {
         instance = this;
-        // ServerSyncedShipments.ValueChanged += OnClientUpdateShipments;
+        if (PortInit.configSync is ConfigSync configSync)
+        {
+            ServerSyncedShipments = new CustomSyncedValue<string>(configSync, "MWL_ServerSyncedShipments", "");
+            ServerSyncedShipments.ValueChanged += OnClientUpdateShipments;
+        }
+        else
+        {
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("[Shipment Manager] Failed to find ServerSync");
+        }
     }
 
     public void Update()
@@ -221,8 +229,7 @@ public class ShipmentManager : MonoBehaviour
     {
         if (!ZNet.instance) return;
         if (!Directory.Exists(MWL_FolderPath)) Directory.CreateDirectory(MWL_FolderPath);
-        // use world name as a prefix to the file name
-        // to keep each unique between worlds
+
         string path = GetFilePath(ZNet.m_world.m_name);
         if (!File.Exists(path)) return;
         string json;
@@ -247,13 +254,10 @@ public class ShipmentManager : MonoBehaviour
     public static void UpdateShipments()
     {
         if (!ZNet.instance || !ZNet.instance.IsServer()) return;
-        // serialize entire dictionary of shipments
         string json = JsonConvert.SerializeObject(Shipments, Formatting.Indented);
-        // share it with all the clients
-        // ServerSyncedShipments.Value = json;
+        if (ServerSyncedShipments != null) ServerSyncedShipments.Value = json;
         if (!Directory.Exists(MWL_FolderPath)) Directory.CreateDirectory(MWL_FolderPath);
         string path = GetFilePath(ZNet.m_world.m_name);
-        // save it on disk
         if (COMPRESS_DATA)
         {
             byte[] rawBytes = Encoding.UTF8.GetBytes(json);
@@ -280,13 +284,8 @@ public class ShipmentManager : MonoBehaviour
             ZRoutedRpc.instance.Register<string, string>(nameof(RPC_ServerShipmentCollected), RPC_ServerShipmentCollected);
         }
     }
-
     public static void RPC_ServerReceiveShipment(long sender, string senderName, string serializedShipment)
     {
-        // client sends a JSON serialized shipment
-        // parse it, add it
-        // share updated dictionary with all clients
-        // save to disk
         Shipment newShipment = new Shipment(serializedShipment);
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug(newShipment.IsValid // make sure that the shipment is deserialized correctly
             ? $"Shipment from {senderName} registered!"
@@ -296,10 +295,6 @@ public class ShipmentManager : MonoBehaviour
 
     public static void RPC_ServerShipmentCollected(long sender, string senderName, string shipmentID)
     {
-        // when client fully collects delivery
-        // it will automatically send the shipment ID to the server
-        // to remove from dictionary
-        // and update all clients
         if (!Shipments.Remove(shipmentID))
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} said that they collected shipment {shipmentID}, but not found in dictionary");

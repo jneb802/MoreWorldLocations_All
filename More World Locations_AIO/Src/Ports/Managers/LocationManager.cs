@@ -178,6 +178,13 @@ public class LocationManager
 			    if (registeredLocation == null) return;
 			    registeredLocation.m_enable = configs.Enabled.Value is PortInit.Toggle.On;
 		    };
+		    configs.Quantity = config(Prefab.name, "Quantity", Placement.Quantity, "Set initial amount to spawn in world");
+		    configs.Quantity.SettingChanged += (_, _) =>
+		    {
+			    Placement.Quantity = configs.Quantity.Value;
+			    if (registeredLocation == null) return;
+			    registeredLocation.m_quantity = configs.Quantity.Value;
+		    };
 	    }
 	    
 	    private void Load()
@@ -253,6 +260,7 @@ public class LocationManager
     public class Configs
     {
 	    internal ConfigEntry<PortInit.Toggle>? Enabled;
+	    internal ConfigEntry<int> Quantity;
     }
 
     [PublicAPI]

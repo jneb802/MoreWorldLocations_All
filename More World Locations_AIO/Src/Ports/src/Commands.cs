@@ -22,7 +22,7 @@ public static class Commands
 
         ConsoleCommand ports = new ConsoleCommand("mwl_ports", "pins port locations on map", args =>
         {
-            if (!Minimap.instance) return;
+            if (!Minimap.instance || !ZNet.instance || !ZNet.instance.LocalPlayerIsAdminOrHost()) return;
             foreach (Minimap.PinData? pin in tempPins)
             {
                 Minimap.instance.RemovePin(pin);
