@@ -2,33 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common", "Common\Common.shproj", "{B0E30E55-7AAA-49EF-BC46-EC9EC919DAE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadows Pack 1", "Meadows Pack 1\Meadows Pack 1.csproj", "{FCA46F01-F67E-434E-844D-1528E2CCD85C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackForest Pack 1", "BlackForest Pack 1\BlackForest Pack 1.csproj", "{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mountains Pack 1", "Mountains Pack 1\Mountains Pack 1.csproj", "{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swamp Pack 1", "Swamp Pack 1\Swamp Pack 1.csproj", "{00000000-0000-0000-0000-000000000000}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mistlands Pack 1", "Mistlands Pack 1\Mistlands Pack 1.csproj", "{A787FC6C-140B-4CEA-8626-C541548EA684}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plains Pack 1", "Plains Pack 1\Plains Pack 1.csproj", "{1B3479D3-5FCE-448B-8C82-6F939C510E9E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon_The Ritual", "Dungeon_The Ritual\Dungeon_The Ritual.csproj", "{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon BlackForest", "Dungeon BlackForest\Dungeon BlackForest.csproj", "{A732FBD3-6B4E-4F1A-8B9D-C4974A20DE37}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackForest Pack 2", "BlackForest Pack 2\BlackForest Pack 2.csproj", "{B6473A52-06C5-4B03-99E5-63395E0DD1F3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "More World Traders", "More World Traders\More World Traders.csproj", "{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon_Mountain", "Dungeon_Mountain\Dungeon_Mountain.csproj", "{C21E5CC3-F422-47E9-A1B8-47D179A6108C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adventure Map Pack 1", "Adventure Map Pack 1\Adventure Map Pack 1.csproj", "{D4E3A2B1-C5F6-487C-9D8E-123456789ABC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AshlandsPack1", "AshlandsPack1\AshlandsPack1.csproj", "{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadows Pack 2", "Meadows Pack 2\Meadows Pack 2.csproj", "{6FC7213D-593B-4EF0-B53F-5989F7C9C3DF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon_Castle", "Dungeon_Castle\Dungeon_Castle.csproj", "{9C8F2F18-3C73-4F4F-A2E0-1F9C0D72B62D}"
 EndProject
@@ -40,35 +16,11 @@ Global
 								Release|Any CPU = Release|Any CPU
 				EndGlobalSection
 				GlobalSection(ProjectConfigurationPlatforms) = postSolution
-					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-					{0AC3C0EA-9CC9-495E-8694-32EC05B6E8AB}.Release|Any CPU.Build.0 = Release|Any CPU
-					{FCA46F01-F67E-434E-844D-1528E2CCD85C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{FCA46F01-F67E-434E-844D-1528E2CCD85C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-					{FCA46F01-F67E-434E-844D-1528E2CCD85C}.Release|Any CPU.Build.0 = Release|Any CPU
 					{B0E30E55-7AAA-49EF-BC46-EC9EC919DAE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Release|Any CPU.ActiveCfg = Release|Any CPU
-					{D805E8FB-0E9A-4D9E-88EC-2165EF6AC738}.Release|Any CPU.Build.0 = Release|Any CPU
-					{00000000-0000-0000-0000-000000000000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{A787FC6C-140B-4CEA-8626-C541548EA684}.Release|Any CPU.ActiveCfg = Release|Any CPU
-					{A787FC6C-140B-4CEA-8626-C541548EA684}.Release|Any CPU.Build.0 = Release|Any CPU
-					{A787FC6C-140B-4CEA-8626-C541548EA684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{1B3479D3-5FCE-448B-8C82-6F939C510E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{1B3479D3-5FCE-448B-8C82-6F939C510E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-					{1B3479D3-5FCE-448B-8C82-6F939C510E9E}.Release|Any CPU.Build.0 = Release|Any CPU
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Release|Any CPU.Build.0 = Release|Any CPU
-					{A732FBD3-6B4E-4F1A-8B9D-C4974A20DE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{B6473A52-06C5-4B03-99E5-63395E0DD1F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{C21E5CC3-F422-47E9-A1B8-47D179A6108C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{D4E3A2B1-C5F6-487C-9D8E-123456789ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-					{E0E2F92E-557C-4A05-9D89-AA92A0BD75C4}.Release|Any CPU.Build.0 = Release|Any CPU
-					{6FC7213D-593B-4EF0-B53F-5989F7C9C3DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{9C8F2F18-3C73-4F4F-A2E0-1F9C0D72B62D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{A4F9E3C1-2D58-4C3B-8F0B-9D17F6B7D0A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{A4F9E3C1-2D58-4C3B-8F0B-9D17F6B7D0A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
