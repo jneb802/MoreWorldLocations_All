@@ -87,12 +87,18 @@
         <Reference Include="SoftReferenceableAssets">
             <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
         </Reference>
+        <Reference Include="Splatform">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\Splatform_publicized.dll</HintPath>
+        </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
         <Reference Include="UnityEngine">
             <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AnimationModule">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.AssetBundleModule">
             <HintPath>$(CorlibPath)\UnityEngine.AssetBundleModule.dll</HintPath>
@@ -139,18 +145,35 @@
         <Compile Include="Src\Locations\LocationConfigs.cs" />
         <Compile Include="Src\Locations\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
-        <Compile Include="Src\Ports\Port.cs" />
-        <Compile Include="Src\Ports\PortCommands.cs" />
-        <Compile Include="Src\Ports\PortDB.cs" />
-        <Compile Include="Src\Ports\PortManager.cs" />
-        <Compile Include="Src\Ports\PortNames.cs" />
+        <Compile Include="Src\Ports\Managers\AssetBundleManager.cs" />
+        <Compile Include="Src\Ports\Managers\Blueprint.cs" />
+        <Compile Include="Src\Ports\Managers\BlueprintLocation.cs" />
+        <Compile Include="Src\Ports\Managers\Clone.cs" />
+        <Compile Include="Src\Ports\Managers\FontManager.cs" />
+        <Compile Include="Src\Ports\Managers\Helpers.cs" />
+        <Compile Include="Src\Ports\Managers\LocalizeKey.cs" />
+        <Compile Include="Src\Ports\Managers\LocationManager.cs" />
+        <Compile Include="Src\Ports\Managers\PrefabManager.cs" />
+        <Compile Include="Src\Ports\Managers\SoftAssetLoader.cs" />
+        <Compile Include="Src\Ports\PortMain\Plugin.cs" />
+        <Compile Include="Src\Ports\PortMain\PortInit.cs" />
         <Compile Include="Src\Ports\PortPrefabs.cs" />
-        <Compile Include="Src\Ports\PortUI.cs" />
-        <Compile Include="Src\Ports\SaveUtils.cs" />
-        <Compile Include="Src\Ports\SaveUtilsPatches.cs" />
-        <Compile Include="Src\Ports\Shipment.cs" />
-        <Compile Include="Src\Ports\ShipmentManager.cs" />
-        <Compile Include="Src\Ports\ShipmentSerializer.cs" />
+        <Compile Include="Src\Ports\src\Commands.cs" />
+        <Compile Include="Src\Ports\src\KnownPorts.cs" />
+        <Compile Include="Src\Ports\src\LocalKeys.cs" />
+        <Compile Include="Src\Ports\src\Manifest.cs" />
+        <Compile Include="Src\Ports\src\NameGenerator.cs" />
+        <Compile Include="Src\Ports\src\Port.cs" />
+        <Compile Include="Src\Ports\src\PortManager.cs" />
+        <Compile Include="Src\Ports\src\PortNames.cs" />
+        <Compile Include="Src\Ports\src\PortTrader.cs" />
+        <Compile Include="Src\Ports\src\PortUI.cs" />
+        <Compile Include="Src\Ports\src\Shipment.cs" />
+        <Compile Include="Src\Ports\src\ShipmentHelpers.cs" />
+        <Compile Include="Src\Ports\src\ShipmentManager.cs" />
+        <Compile Include="Src\Ports\src\TraderNames.cs" />
+        <Compile Include="Src\Ports\src\tutorials\PortTutorial.cs" />
+        <Compile Include="Src\Ports\src\WearNTearPatch.cs" />
         <Compile Include="Src\RPCs\RPCUtils.cs" />
         <Compile Include="Src\Shrines\Shrine.cs" />
         <Compile Include="Src\Shrines\ShrineConfig.cs" />
@@ -172,13 +195,13 @@
         <Compile Include="Src\Waystones\WaystoneConfig.cs" />
         <Compile Include="Src\Waystones\WaystoneDB.cs" />
         <Compile Include="Src\Waystones\WaystoneUtils.cs" />
-        <Compile Include="VersionHandshake.cs"/>
+        <Compile Include="VersionHandshake.cs" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="App.config"/>
+        <None Include="App.config" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include=".gitignore"/>
+        <Content Include=".gitignore" />
         <Content Include="assets\moreworldlocations_assetbundle_1" />
         <Content Include="assets\moreworldlocations_assetbundle_2" />
         <Content Include="assets\moreworldlocations_assetbundle_3" />
@@ -188,18 +211,26 @@
         <EmbeddedResource Include="assets\ports" />
         <EmbeddedResource Include="assets\portlocation" />
         <Content Include="assets\moreworldlocations_assetbundle_4" />
-        <Content Include="environment.props"/>
-        <Content Include="ILRepack.targets"/>
-        <Content Include="LICENSE.md"/>
-        <Content Include="UpdateManifest.ps1"/>
+        <EmbeddedResource Include="assets\portbundle" />
+        <Content Include="environment.props" />
+        <Content Include="ILRepack.targets" />
+        <Content Include="Libs\ServerSync.dll" />
+        <Content Include="LICENSE.md" />
+        <EmbeddedResource Include="Src\Ports\src\tutorials\delivery.md" />
+        <EmbeddedResource Include="Src\Ports\src\tutorials\manifest.md" />
+        <EmbeddedResource Include="Src\Ports\src\tutorials\port.md" />
+        <EmbeddedResource Include="Src\Ports\src\tutorials\shipment.md" />
+        <EmbeddedResource Include="Src\Ports\src\tutorials\teleport.md" />
+        <Content Include="UpdateManifest.ps1" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2"/>
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
         <PackageReference Include="Mono.Cecil" Version="0.11.6" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
-        <PackageReference Include="YamlDotNet" Version="13.2.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="YamlDotNet" Version="13.2.0" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />

@@ -16,6 +16,7 @@ using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Waystones;
+using ServerSync;
 using SoftReferenceableAssets;
 using UnityEngine;
 
@@ -38,15 +39,26 @@ namespace More_World_Locations_AIO
         
         public static YAMLManager YAMLManager = new YAMLManager();
         
+        public static GameObject root = null!;
+        
+        //public static readonly ConfigSync ConfigSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
+        
         public void Awake()
         {
             BepinexConfigs.Config = Config;
             bool saveOnSet = BepinexConfigs.Config.SaveOnConfigSet;
             BepinexConfigs.Config.SaveOnConfigSet =
                 false;
+            
+            // create a root object to contain all clones, necessary to hold reference to -int game objects
+            root = new GameObject("root");
+            DontDestroyOnLoad(root);
+            root.SetActive(false);
+            
+            PortInit.Init(this, root);
 
-            RPCUtils.InitializeRPCs();
-            ShipmentManager.RegisterRpcs();
+            // RPCUtils.InitializeRPCs();
+            // ShipmentManager.RegisterRpcs();
             
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
@@ -61,10 +73,10 @@ namespace More_World_Locations_AIO
             // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
             // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
             // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
-            AssetBundles.BuildManifest(AssetBundles.bundle4, 
-                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "moreworldlocations_assetbundle_4.manifest"),
-                AssetBundles.assetPathsInBundle4, 
-                "4");
+            // AssetBundles.BuildManifest(AssetBundles.bundle4, 
+            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "moreworldlocations_assetbundle_4.manifest"),
+            //     AssetBundles.assetPathsInBundle4, 
+            //     "4");
             
             // YAMLManager.ParseDefaultYamls();
             // YAMLManager.ParseCustomYamls();
@@ -73,8 +85,6 @@ namespace More_World_Locations_AIO
             
             // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
             // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
-            
-            PortNames.AddPortLocalizations();
 
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
@@ -83,8 +93,6 @@ namespace More_World_Locations_AIO
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
             ItemManager.OnItemsRegistered += WaystoneDB.BuildWaystoneConfigs;
-
-            GUIManager.OnCustomGUIAvailable += PortUI.CreatePortUI;
 
             if (saveOnSet)
             {
