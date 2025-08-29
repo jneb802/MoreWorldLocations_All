@@ -692,17 +692,18 @@ public class PortUI : MonoBehaviour
     {
         portTitle.text = text;
     }
-    
+
     public static void CreatePortUI()
     {
         Debug.Log("Creating PortUI");
-        portUIRoot = Object.Instantiate(PortPrefabs.portUI, GUIManager.CustomGUIFront ? GUIManager.CustomGUIFront.transform : null);
+        portUIRoot = Object.Instantiate(PortPrefabs.portUI,
+            GUIManager.CustomGUIFront ? GUIManager.CustomGUIFront.transform : null);
         PortUI portUI = portUIRoot.AddComponent<PortUI>();
 
         portUIRoot.GetComponent<RectTransform>().transform.localPosition = new Vector3(1025f, 80f, 0f);
         portUIRoot.SetActive(false);
     }
-    
+
     public void Show(Port port, List<Port> ports, List<Shipment> shipments) 
     {
         Debug.Log($"$PortUI.Show: Show port {port.name} with {ports.Count} ports and {shipments.Count} shipments");

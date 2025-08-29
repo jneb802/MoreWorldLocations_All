@@ -219,6 +219,19 @@ public class LocationManager
         
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
+    
+    public static void AddLocation(string locationName , LocationConfig locationConfig)
+    {
+        SoftReference<GameObject> softReferencePrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>(locationName);
+        
+        CustomLocation customLocation = new 
+            CustomLocation(
+                softReferencePrefab,
+                false,
+                locationConfig);
+        
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
 
     
     

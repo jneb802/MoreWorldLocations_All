@@ -162,7 +162,7 @@ public class Shipment
                     cloneItemDrop.m_itemData.m_worldLevel = shipmentItemData.m_worldLevel;
                     cloneItemDrop.m_itemData.m_pickedUp = shipmentItemData.m_pickedUp;
                     cloneItemDrop.m_itemData.m_customData = shipmentItemData.m_customData;
-
+                    
                     Debug.Log($"m_dropPrefab:   {cloneItemDrop.m_itemData.m_dropPrefab?.name ?? "null"}");
                     Debug.Log($"m_stack:        {cloneItemDrop.m_itemData.m_stack}");
                     Debug.Log($"m_durability:   {cloneItemDrop.m_itemData.m_durability}");

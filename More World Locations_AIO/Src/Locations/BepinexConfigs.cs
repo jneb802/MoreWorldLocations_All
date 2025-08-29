@@ -156,6 +156,10 @@ public class BepinexConfigs
             { "MWL_MountainShrine1_Configuration", new LocationConfiguration(Config, "MountainShrine1", 20) },
             { "MWL_RuinedTower1_Configuration", new LocationConfiguration(Config, "RuinedTower1", 15) },
             { "MWL_TreeTowers1_Configuration", new LocationConfiguration(Config, "TreeTowers1", 20) },
+            
+            // SpawnTesting
+            { "Location1_Configuration", new LocationConfiguration(Config, "Location1", 20) },
+            
         };
     }
 }

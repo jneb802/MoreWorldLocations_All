@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Common;
@@ -14,6 +16,7 @@ public class AssetBundles
     public static string bundle1 = "moreworldlocations_assetbundle_1";
     public static string bundle2 = "moreworldlocations_assetbundle_2";
     public static string bundle3 = "moreworldlocations_assetbundle_3";
+    public static string bundle4 = "moreworldlocations_assetbundle_4";
     
     [HarmonyPatch(typeof(EntryPointSceneLoader), "Start")]
     public static class EntryPatch
@@ -23,10 +26,13 @@ public class AssetBundles
             string manifestPath1 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_1"));
             string manifestPath2 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_2"));
             string manifestPath3 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_3"));
+            string manifestPath4 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_4"));
+
 
             if (manifestPath1 != null) Runtime.AddManifest(manifestPath1);
             if (manifestPath2 != null) Runtime.AddManifest(manifestPath2);
             if (manifestPath3 != null) Runtime.AddManifest(manifestPath3);
+            if (manifestPath4 != null) Runtime.AddManifest(manifestPath4);
         }
     }
     
@@ -44,9 +50,10 @@ public class AssetBundles
     }
 
 
-    public static void BuildManifest(string bundleName, string[] assetPathsInBundle, string suffix)
+    public static void BuildManifest(string bundleName, string manifestPath, string[] assetPathsInBundle, string suffix)
     {
-        string manifestPath = Path.Combine(BepInEx.Paths.PluginPath, "assetBundleManifest_" + suffix);
+        Debug.Log($"Calling build manifest: {bundleName}");
+        string softRefmanifestPath = Path.Combine(BepInEx.Paths.PluginPath, "assetBundleManifest_" + suffix);
         string bundleRelativeDir = ".";
             
         SoftReferenceableAssets.AssetBundleManifest manifest = new SoftReferenceableAssets.AssetBundleManifest(bundleRelativeDir);
@@ -57,10 +64,55 @@ public class AssetBundles
             var location = new AssetLocation(bundleName, assetPath);
             manifest.AddAssetLocation(assetId, location);
         }
+        
+        string[] dependencies = ExtractDependenciesFromTextManifest(manifestPath);
+        manifest.AddBundleDependencies(bundleName, dependencies);
             
-        manifest.AddBundleDependencies(bundleName, System.Array.Empty<string>());
-            
-        manifest.SerializeToDisk(manifestPath, SerializationFormat.Text);
+        manifest.SerializeToDisk(softRefmanifestPath, SerializationFormat.Text);
+    }
+    
+    private static string[] ExtractDependenciesFromTextManifest(string manifestPath)
+    {
+        if (!File.Exists(manifestPath)) 
+        {
+            Debug.LogWarning($"Manifest file not found: {manifestPath}");
+            return new string[0];
+        }
+    
+        try
+        {
+            string[] lines = File.ReadAllLines(manifestPath);
+            bool inDependencies = false;
+            List<string> dependencies = new List<string>();
+        
+            foreach (string line in lines)
+            {
+                if (line.StartsWith("Dependencies:"))
+                {
+                    inDependencies = true;
+                    continue;
+                }
+                if (inDependencies && line.StartsWith("- "))
+                {
+                    // Extract just the filename from the full path
+                    string fullPath = line.Substring(2).Trim();
+                    string dep = Path.GetFileName(fullPath);
+                    dependencies.Add(dep);
+                }
+                else if (inDependencies && !line.StartsWith("- ") && !string.IsNullOrWhiteSpace(line))
+                {
+                    break; // End of dependencies section
+                }
+            }
+        
+            Debug.Log($"Found {dependencies.Count} dependencies: {string.Join(", ", dependencies)}");
+            return dependencies.ToArray();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to parse manifest file {manifestPath}: {e.Message}");
+            return new string[0];
+        }
     }
     
     public static string[] assetPathsInBundle1 = new[]
@@ -212,6 +264,12 @@ public class AssetBundles
         "Assets/WarpProjects/AshlandsPack1/MWL_AshlandsFort1.prefab",
         "Assets/WarpProjects/AshlandsPack1/MWL_AshlandsFort2.prefab",
         "Assets/WarpProjects/AshlandsPack1/MWL_AshlandsFort3.prefab"
+    };
+    
+    public static string[] assetPathsInBundle4 = new[]
+    {
+        // Ashlands Pack 1
+        "Assets/WarpProjects/LocationTesting/Location1.prefab",
     };
 
 }

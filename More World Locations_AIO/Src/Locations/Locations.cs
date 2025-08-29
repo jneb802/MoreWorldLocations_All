@@ -179,5 +179,8 @@ public class Locations
         Common.LocationManager.AddLocation("MWL_MountainShrine1", BepinexConfigs.bepinexConfigs["MWL_MountainShrine1_Configuration"], LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MountainShrine1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_RuinedTower1", BepinexConfigs.bepinexConfigs["MWL_RuinedTower1_Configuration"], LocationConfigs.AdventureMapPack1LocationConfigs["MWL_RuinedTower1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
         Common.LocationManager.AddLocation("MWL_TreeTowers1", BepinexConfigs.bepinexConfigs["MWL_TreeTowers1_Configuration"], LocationConfigs.AdventureMapPack1LocationConfigs["MWL_TreeTowers1_Config"], More_World_Locations_AIOPlugin.YAMLManager);
+        
+        Common.LocationManager.AddLocation("Location1", LocationConfigs.AdventureMapPack1LocationConfigs["Location1_Config"]);
+
     }
 }

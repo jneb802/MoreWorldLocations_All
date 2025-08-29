@@ -25,7 +25,6 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public List<GameObject> m_containerPositions;
     public List<GameObject> m_currentChests;
     public List<Shipment> shipmentsToThisPort = new List<Shipment>();
-    
 
     public void Awake()
     {
@@ -41,21 +40,31 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             }
         }
         
-        if (PortDB.Instance.allPorts.ContainsKey(m_portID))
+        if (PortDB.Instance.allPortData.TryGetValue(m_portID, out var data))
         {
-            worldPosition = PortDB.Instance.allPorts[m_portID].worldPosition;
-            localizationKey = PortDB.Instance.allPorts[m_portID].localizationKey;
+            worldPosition = data.m_worldPosition;
+            localizationKey = data.m_localizationKey;
             name = LocalizationManager.Instance.TryTranslate(localizationKey);
-            Debug.Log($"Port with name: {name} has id {m_portID}");
+
+            Debug.Log($"Port.Awake: Hydrated port {name} ({m_portID}) from saved data");
         }
         else
         {
             worldPosition = this.transform.position;
             localizationKey = PortNames.GetRandomPortName();
             name = LocalizationManager.Instance.TryTranslate(localizationKey);
-            PortDB.Instance.allPorts.Add(m_portID, this);
-            Debug.Log($"Port.Awake: Adding port with name: {name} and id {m_portID} to PortDB.allPorts");
+            
+            PortDB.Instance.allPortData[m_portID] = new PortDB.PortData
+            {
+                m_portID = m_portID,
+                m_localizationKey = localizationKey,
+                m_worldPosition = worldPosition
+            };
+
+            Debug.Log($"Port.Awake: Created NEW port {name} ({m_portID})");
         }
+        
+        PortDB.Instance.allPorts[m_portID] = this;
         
         Debug.Log($"Port with name: {name} called awake");
         Debug.Log($"Port with name: {name} has id {m_portID}");

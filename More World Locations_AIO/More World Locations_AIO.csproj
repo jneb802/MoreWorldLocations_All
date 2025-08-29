@@ -144,6 +144,8 @@
         <Compile Include="Src\Ports\PortNames.cs" />
         <Compile Include="Src\Ports\PortPrefabs.cs" />
         <Compile Include="Src\Ports\PortUI.cs" />
+        <Compile Include="Src\Ports\SaveUtils.cs" />
+        <Compile Include="Src\Ports\SaveUtilsPatches.cs" />
         <Compile Include="Src\Ports\Shipment.cs" />
         <Compile Include="Src\Ports\ShipmentManager.cs" />
         <Compile Include="Src\Ports\ShipmentSerializer.cs" />
@@ -152,6 +154,7 @@
         <Compile Include="Src\Shrines\ShrineConfig.cs" />
         <Compile Include="Src\Shrines\ShrineDB.cs" />
         <Compile Include="Src\Shrines\ShrineUtils.cs" />
+        <Compile Include="Src\SpawnFixing\SpawnLocationPatch.cs" />
         <Compile Include="Src\StatusEffects\StatusEffectDB.cs" />
         <Compile Include="Src\Totems\TotemSpawner.cs" />
         <Compile Include="Src\Totems\TotemSpawnerConfigs.cs" />
@@ -162,8 +165,6 @@
         <Compile Include="Src\Utils\LocationCreatureMapping.cs" />
         <Compile Include="Src\Utils\LootDB.cs" />
         <Compile Include="Src\Utils\Prefabs.cs" />
-        <Compile Include="Src\Utils\SaveUtils.cs" />
-        <Compile Include="Src\Utils\SaveUtilsPatches.cs" />
         <Compile Include="Src\Utils\UpgradeWorldCommands.cs" />
         <Compile Include="Src\Utils\WorldUtils.cs" />
         <Compile Include="Src\Waystones\Waystone.cs" />
@@ -185,6 +186,7 @@
         <EmbeddedResource Include="assets\moreworldlocations_prefabs_3" />
         <EmbeddedResource Include="assets\ports" />
         <EmbeddedResource Include="assets\portlocation" />
+        <Content Include="assets\moreworldlocations_assetbundle_4" />
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>
         <Content Include="LICENSE.md"/>
