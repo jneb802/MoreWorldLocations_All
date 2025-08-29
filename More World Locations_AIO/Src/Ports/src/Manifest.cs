@@ -72,9 +72,9 @@ public class Manifest
     {
         int size = Chest.m_width * Chest.m_height;
         sb.Clear();
-        if (!string.IsNullOrEmpty(CreatureName)) sb.Append($"\nRequired To Defeat: <color=yellow>{CreatureName}</color>");
-        sb.Append($"\nCapacity: <color=yellow>{size}</color>");
-        sb.Append($"\nCost To Ship: <color=yellow>{CostToShip}</color>");
+        if (!string.IsNullOrEmpty(CreatureName)) sb.Append($"\n{LocalKeys.RequiredToDefeat}: <color=yellow>{CreatureName}</color>");
+        sb.Append($"\n{LocalKeys.Capacity}: <color=yellow>{size}</color>");
+        sb.Append($"\n{LocalKeys.CostToShip}: <color=yellow>{CostToShip}</color>");
         return sb.ToString();
     }
 

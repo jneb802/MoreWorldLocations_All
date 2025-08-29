@@ -1,94 +1,93 @@
-using Jotunn.Entities;
 using UnityEngine;
 using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.Logging;
-using HarmonyLib;
 using JetBrains.Annotations;
-using More_World_Locations_AIO;
+using Jotunn;
 using More_World_Locations_AIO.Managers;
 using More_World_Locations_AIO.tutorials;
-using ServerSync;
-using UnityEngine;
 
 namespace More_World_Locations_AIO;
 
-public class PortInit
+public static class PortInit
 {
+    private static BaseUnityPlugin? _plugin;
+    public static BaseUnityPlugin plugin
+    {
+        get
+        {
+            if (_plugin is null)
+            {
+                IEnumerable<TypeInfo> types;
+                try
+                {
+                    types = Assembly.GetExecutingAssembly().DefinedTypes.ToList();
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    types = e.Types.Where(t => t != null).Select(t => t.GetTypeInfo());
+                }
+                _plugin = (BaseUnityPlugin)BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(types.First(t => t.IsClass && typeof(BaseUnityPlugin).IsAssignableFrom(t)));
+            }
+            return _plugin;
+        }
+    }
+    private static bool hasConfigSync = true;
+    private static object? _configSync;
+    public static object? configSync
+    {
+        get
+        {
+            if (_configSync == null && hasConfigSync)
+            {
+                if (Assembly.GetExecutingAssembly().GetType("ServerSync.ConfigSync") is { } configSyncType)
+                {
+                    _configSync = Activator.CreateInstance(configSyncType, plugin.Info.Metadata.GUID + " RS_PortInitManager");
+                    configSyncType.GetField("CurrentVersion").SetValue(_configSync, plugin.Info.Metadata.Version.ToString());
+                    configSyncType.GetProperty("IsLocked")!.SetValue(_configSync, true);
+                }
+                else
+                {
+                    hasConfigSync = false;
+                }
+            }
+
+            return _configSync;
+        }
+    }
+    
     public static GameObject root = null!;
-    public static BaseUnityPlugin instance = null!;
 
     public enum Toggle { On = 1, Off = 0 }
-    
-    public static void Init(BaseUnityPlugin plugin, GameObject m_root)
+
+    private static void SetupManagers()
     {
-        instance = plugin;
-        root = m_root;
-        
-        // PortNames.Setup();
-        Commands.Setup();
-        
-        // make shipment manager a monobehavior to keep functions within it's scope while taking advantages of monobehaviors
         plugin.gameObject.AddComponent<ShipmentManager>();
         plugin.gameObject.AddComponent<PortManager>();
-        
-        ShipmentManager.PrefabsToSearch.Add("MWL_Port", "MWL_PortTrader"); // add port variants to search for
-        // this is used by server to iterate through ZDOs and send them to players
-        // this is how portals work
+    }
 
-        PortUI.PanelPositionConfig = config("3 - UI", "Panel Position", new Vector3(1760f, 850f, 0f), "Set position of UI", false);
+    private static void SetupConfigs()
+    {
+        PortUI.PanelPositionConfig = config("Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "Set position of UI", false);
         PortUI.PanelPositionConfig.SettingChanged += PortUI.OnPanelPositionConfigChange;
-        ShipmentManager.TransitByDistance = config("2 - Settings", "Time Per Meter", 2f, "Set seconds per meter for shipment transit");
-        ShipmentManager.CurrencyConfig = config("2 - Settings", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items");
+        ShipmentManager.TransitByDistance = config("Shipment Ports", "Time Per Meter", 2f, "Set seconds per meter for shipment transit");
+        ShipmentManager.CurrencyConfig = config("Shipment Ports", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items");
         ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
-        ShipmentManager.OverrideTransitTime = config("2 - Settings", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance");
-        ShipmentManager.TransitTime = config("2 - Settings", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min");
-        ShipmentManager.ExpirationEnabled = config("2 - Settings", "Expires", Toggle.On, "If on, shipments can expire");
-        ShipmentManager.ExpirationTime = config("2 - Settings", "Expiration Time", 3600f, "Set time until expiration, 3600 = 1 hour");
-        PortUI.BkgOption = config("3 - UI", "Background", PortUI.BackgroundOption.Opaque, "Set background type", false);
+        ShipmentManager.OverrideTransitTime = config("Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance");
+        ShipmentManager.TransitTime = config("Shipment Ports", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min");
+        ShipmentManager.ExpirationEnabled = config("Shipment Ports", "Expires", Toggle.On, "If on, shipments can expire");
+        ShipmentManager.ExpirationTime = config("Shipment Ports", "Expiration Time", 3600f, "Set time until expiration, 3600 = 1 hour");
+        PortUI.BkgOption = config("Shipment Ports", "Background", PortUI.BackgroundOption.Opaque, "Set background type", false);
         PortUI.BkgOption.SettingChanged += PortUI.OnBackgroundOptionChange;
-        PortUI.UseTeleportTab = config("2 - Settings", "Teleport To Ports", Toggle.Off, "If on, players can teleport to ports");
+        PortUI.UseTeleportTab = config("Shipment Ports", "Teleport To Ports", Toggle.Off, "If on, players can teleport to ports");
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
-        // this gets created after blueprints
-        // it will iterate through children to find prefabs
-        // and replace them
-        BlueprintLocation location = new BlueprintLocation("portbundle", "MWL_Port_Location");
-        location.OnCreated += blueprint =>
-        {
-            if (blueprint.Location == null) return;
-            blueprint.Location.Setup();
-            blueprint.Location.Biome = Heightmap.Biome.All;
-            blueprint.Location.Placement.Altitude.Min = 10f;
-            blueprint.Location.Placement.ClearArea = true;
-            blueprint.Location.Placement.Quantity = 100;
-            blueprint.Location.Placement.Prioritized = true;
-            blueprint.Location.Group.Name = "MWL_Ports";
-            blueprint.Location.Placement.DistanceFromSimilar.Min = 300f;
-            blueprint.Location.Icon.Enabled = false;
-            // blueprint.Location.Icon.Icon = MySprite ----> if you want to use a custom sprite
-            // blueprint.Location.Icon.InGameIcon = LocationManager.IconSettings.LocationIcon.Hildir;
-        };
-        
-        // this gets created before blueprint location
-        // since this prefab has a ZNetView, we make sure to create it as its own prefab first
-        // then the location uses it when creating itself
-        Blueprint port = new Blueprint("portbundle", "MWL_Port");
-        port.Prefab.AddComponent<Port>();
-        port.OnCreated += blueprint =>
-        {
-            foreach (Transform child in blueprint.Prefab.transform)
-            {
-                if (child.gameObject.HasComponent<TerrainModifier>()) continue;
-                child.gameObject.RemoveAllComponents<MonoBehaviour>(false, typeof(SnapToGround));
-            }
-            
-            PrefabManager.RegisterPrefab(blueprint.Prefab);
-        };
-        
+    }
+
+    private static void SetupLocations()
+    {
         BlueprintLocation large = new BlueprintLocation("portbundle", "MWL_Port_Location_Large");
         large.OnCreated += blueprint =>
         {
@@ -103,11 +102,11 @@ public class PortInit
             blueprint.Location.Placement.Prioritized = true;
             blueprint.Location.Group.Name = "MWL_Ports";
             blueprint.Location.Placement.DistanceFromSimilar.Min = 300f;
-            blueprint.Location.Icon.Enabled = false;
-            // blueprint.Location.Icon.Icon = MySprite ----> if you want to use a custom sprite
-            // blueprint.Location.Icon.InGameIcon = LocationManager.IconSettings.LocationIcon.Boss;
         };
-        
+    }
+
+    private static void SetupPort()
+    {
         Blueprint portTrader = new Blueprint("portbundle", "MWL_PortTrader");
         portTrader.Prefab.AddComponent<Port>();
         portTrader.OnCreated += blueprint =>
@@ -116,9 +115,8 @@ public class PortInit
             {
                 if (child.TryGetComponent(out Trader component))
                 {
-                    Debug.LogWarning("Adding port trader component on: " + child.name);
                     child.gameObject.name = "PortTrader";
-                    var trader = child.gameObject.AddComponent<PortTrader>();
+                    PortTrader? trader = child.gameObject.AddComponent<PortTrader>();
                     trader.m_standRange = component.m_standRange;
                     trader.m_greetRange = component.m_greetRange;
                     trader.m_byeRange = component.m_byeRange;
@@ -131,11 +129,12 @@ public class PortInit
                 }
                 child.gameObject.RemoveAllComponents<MonoBehaviour>(false, typeof(PortTrader));
             }
-
-            
             PrefabManager.RegisterPrefab(blueprint.Prefab);
         };
-        
+    }
+
+    private static void SetupManifests()
+    {
         // simple class to clone in-game assets
         Clone piece_chest_wood = new Clone("piece_chest_wood", "MWL_port_chest_wood");
         piece_chest_wood.OnCreated += prefab =>
@@ -223,33 +222,27 @@ public class PortInit
             manifest.Recipe.Add("YggdrasilWood", 10);
             manifest.Recipe.Add("Copper", 2);
         };
-
-        PortTutorial.Setup();
     }
     
-    private static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
-        bool synchronizedSetting = true)
+    public static void Init(GameObject m_root)
     {
-        ConfigDescription extendedDescription =
-            new(
-                description.Description +
-                (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"),
-                description.AcceptableValues, description.Tags);
-        ConfigEntry<T> configEntry = BepinexConfigs.Config.Bind(group, name, value, extendedDescription);
-        //var configEntry = Config.Bind(group, name, value, description);
-
-        // SyncedConfigEntry<T> syncedConfigEntry = More_World_Locations_AIOPlugin.ConfigSync.AddConfigEntry(configEntry);
-        // syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
-
+        root = m_root;
+        Commands.Setup();
+        SetupManagers();
+        SetupConfigs();
+        ShipmentManager.PrefabsToSearch.Add("MWL_PortTrader");
+        SetupLocations();
+        SetupPort();
+        SetupManifests();
+        PortTutorial.Setup();
+    }
+    private static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+    {
+        ConfigEntry<T> configEntry = plugin.Config.Bind(group, name, value, description);
+        if (synchronizedSetting) configSync?.GetType().GetMethod("AddConfigEntry")!.MakeGenericMethod(typeof(T)).Invoke(_configSync, new object[] { configEntry });
         return configEntry;
     }
-
-    private static ConfigEntry<T> config<T>(string group, string name, T value, string description,
-        bool synchronizedSetting = true)
-    {
-        return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-    }
-
+    private static ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
     private class ConfigurationManagerAttributes
     {
         [UsedImplicitly] public int? Order = null!;

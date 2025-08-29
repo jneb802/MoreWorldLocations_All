@@ -1,23 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Logging;
 using Common;
 using HarmonyLib;
-using JetBrains.Annotations;
-using Jotunn.Configs;
 using Jotunn.Managers;
-using More_World_Locations_AIO.RPCs;
 using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Waystones;
-using ServerSync;
-using SoftReferenceableAssets;
 using UnityEngine;
 
 namespace More_World_Locations_AIO
@@ -55,7 +46,7 @@ namespace More_World_Locations_AIO
             DontDestroyOnLoad(root);
             root.SetActive(false);
             
-            PortInit.Init(this, root);
+            PortInit.Init(root);
 
             // RPCUtils.InitializeRPCs();
             // ShipmentManager.RegisterRpcs();
