@@ -133,7 +133,9 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Src\Locations\AssetBundles.cs" />
         <Compile Include="Src\Locations\BepinexConfigs.cs" />
+        <Compile Include="Src\Locations\WarpLocation.cs" />
         <Compile Include="Src\Locations\LocationConfigs.cs" />
         <Compile Include="Src\Locations\Locations.cs" />
         <Compile Include="Src\MoreWorldLocations.cs" />
@@ -159,7 +161,6 @@
         <Compile Include="Src\Totems\TotemSpawner.cs" />
         <Compile Include="Src\Totems\TotemSpawnerConfigs.cs" />
         <Compile Include="Src\UpgradeWorld\UpgradeWorld.cs" />
-        <Compile Include="Src\Utils\AssetBundles.cs" />
         <Compile Include="Src\Utils\CreatureDB.cs" />
         <Compile Include="Src\Utils\ItemDropUtils.cs" />
         <Compile Include="Src\Utils\LocationCreatureMapping.cs" />
