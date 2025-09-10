@@ -22,8 +22,7 @@ public static class ZoneSystem_GenerateLocationsIfNeeded_Patch
 }
 public class PortManager : MonoBehaviour
 {
-    // todo add it back
-    //private static readonly CustomSyncedValue<string> ServerSyncedPortLocations = new(More_World_Locations_AIOPlugin.ConfigSync, "ServerPortLocations", "");
+    private static CustomSyncedValue<string>? ServerSyncedPortLocations;
 
     private static PortLocations? locations;
     public static PortManager? instance;
@@ -31,13 +30,16 @@ public class PortManager : MonoBehaviour
     public void Awake()
     {
         instance = this;
-        //todo add it back
-        // ServerSyncedPortLocations.ValueChanged += () =>
-        // {
-        //     if (!ZNet.instance || ZNet.instance.IsServer()) return;
-        //     if (string.IsNullOrEmpty(ServerSyncedPortLocations.Value)) return;
-        //     locations = new PortLocations(ServerSyncedPortLocations.Value);
-        // };
+        if (PortInit.configSync is ConfigSync configSync)
+        {
+            ServerSyncedPortLocations = new(configSync, "ServerPortLocations", "");
+            ServerSyncedPortLocations.ValueChanged += () =>
+            {
+                if (!ZNet.instance || ZNet.instance.IsServer()) return;
+                if (string.IsNullOrEmpty(ServerSyncedPortLocations.Value)) return;
+                locations = new PortLocations(ServerSyncedPortLocations.Value);
+            };
+        }
     }
 
     public static List<PortLocation> GetPortLocations() => locations?.ports ?? new();
@@ -50,9 +52,7 @@ public class PortManager : MonoBehaviour
         if (ports.Count == 0) return;
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"Registered {ports.Count} ports");
         locations = new PortLocations(ports);
-        
-        //todo add it back
-        // ServerSyncedPortLocations.Value = locations.ToJson();
+        if (ServerSyncedPortLocations != null) ServerSyncedPortLocations.Value = locations.ToJson();
     }
 
     [Serializable]

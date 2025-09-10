@@ -79,7 +79,7 @@
             <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="Jotunn">
-          <HintPath>..\..\Jotunn\JotunnLib\bin\Debug\net462\Jotunn.dll</HintPath>
+          <HintPath>Libs\Jotunn.dll</HintPath>
         </Reference>
         <Reference Include="ServerSync">
             <HintPath>Libs\ServerSync.dll</HintPath>
@@ -88,7 +88,7 @@
             <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
         </Reference>
         <Reference Include="Splatform">
-          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\Splatform_publicized.dll</HintPath>
+          <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\Splatform_publicized.dll</HintPath>
         </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
@@ -98,7 +98,7 @@
             <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.AnimationModule">
-          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+          <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.AssetBundleModule">
             <HintPath>$(CorlibPath)\UnityEngine.AssetBundleModule.dll</HintPath>
@@ -115,9 +115,6 @@
         <Reference Include="UnityEngine.InputLegacyModule">
             <HintPath>$(CorlibPath)\UnityEngine.InputLegacyModule.dll</HintPath>
         </Reference>
-        <Reference Include="UnityEngine.JSONSerializeModule">
-          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
-        </Reference>
         <Reference Include="UnityEngine.ParticleSystemModule">
             <HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
         </Reference>
@@ -132,9 +129,6 @@
         </Reference>
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(GamePath)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-        </Reference>
-        <Reference Include="UnityEngine.UIModule">
-          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UIModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -155,7 +149,6 @@
         <Compile Include="Src\Ports\Managers\LocationManager.cs" />
         <Compile Include="Src\Ports\Managers\PrefabManager.cs" />
         <Compile Include="Src\Ports\Managers\SoftAssetLoader.cs" />
-        <Compile Include="Src\Ports\PortMain\Plugin.cs" />
         <Compile Include="Src\Ports\PortMain\PortInit.cs" />
         <Compile Include="Src\Ports\PortPrefabs.cs" />
         <Compile Include="Src\Ports\src\Commands.cs" />
@@ -214,6 +207,7 @@
         <EmbeddedResource Include="assets\portbundle" />
         <Content Include="environment.props" />
         <Content Include="ILRepack.targets" />
+        <Content Include="Libs\Jotunn.dll" />
         <Content Include="Libs\ServerSync.dll" />
         <Content Include="LICENSE.md" />
         <EmbeddedResource Include="Src\Ports\src\tutorials\delivery.md" />

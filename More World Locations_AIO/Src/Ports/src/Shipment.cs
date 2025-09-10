@@ -156,10 +156,10 @@ public class Shipment
 
         string time = FormatTime(remainingTime);
         StringBuilder stringBuilder = new();
-        stringBuilder.Append($"Origin Port: <color=orange>{OriginPortName}</color>");
-        stringBuilder.Append($"\nDestination Port:  <color=orange>{DestinationPortName}</color>");
-        stringBuilder.AppendFormat("\nState: <color=yellow>{0}</color>{1}\n", State.ToKey(), string.IsNullOrEmpty(time) ? "" : $" ({time})");
-        stringBuilder.Append("\nItems: ");
+        stringBuilder.Append($"{LocalKeys.OriginPort}: <color=orange>{OriginPortName}</color>");
+        stringBuilder.Append($"\n{LocalKeys.DestinationPort}:  <color=orange>{DestinationPortName}</color>");
+        stringBuilder.AppendFormat("\n{2}: <color=yellow>{0}</color>{1}\n", State.ToKey(), string.IsNullOrEmpty(time) ? "" : $" ({time})", LocalKeys.State);
+        stringBuilder.Append($"\n{LocalKeys.Items}: ");
         foreach (ShipmentItem? shipmentItem in Items)
         {
             if (ObjectDB.instance.GetItemPrefab(shipmentItem.ItemName) is not { } itemPrefab || !itemPrefab.TryGetComponent(out ItemDrop component)) continue;
