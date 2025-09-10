@@ -207,7 +207,6 @@
         <EmbeddedResource Include="assets\portbundle" />
         <Content Include="environment.props" />
         <Content Include="ILRepack.targets" />
-        <Content Include="Libs\Jotunn.dll" />
         <Content Include="Libs\ServerSync.dll" />
         <Content Include="LICENSE.md" />
         <EmbeddedResource Include="Src\Ports\src\tutorials\delivery.md" />
