@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Common;
 using HarmonyLib;
@@ -18,21 +19,25 @@ public class AssetBundles
     public static string bundle3 = "moreworldlocations_assetbundle_3";
     public static string bundle4 = "moreworldlocations_assetbundle_4";
     
+    public static string bundleFull = "moreworldlocations_assetbundle_full";
+    
     [HarmonyPatch(typeof(EntryPointSceneLoader), "Start")]
     public static class EntryPatch
     {
         public static void Prefix()
         {
-            string manifestPath1 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_1"));
-            string manifestPath2 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_2"));
-            string manifestPath3 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_3"));
-            string manifestPath4 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_4"));
+            //string manifestPath1 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_1"));
+            //string manifestPath2 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_2"));
+            //string manifestPath3 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_3"));
+            //string manifestPath4 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_4"));
 
-
-            if (manifestPath1 != null) Runtime.AddManifest(manifestPath1);
-            if (manifestPath2 != null) Runtime.AddManifest(manifestPath2);
-            if (manifestPath3 != null) Runtime.AddManifest(manifestPath3);
-            if (manifestPath4 != null) Runtime.AddManifest(manifestPath4);
+            string manifestPathFull = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_Full"));
+            
+            //if (manifestPath1 != null) Runtime.AddManifest(manifestPath1);
+            //if (manifestPath2 != null) Runtime.AddManifest(manifestPath2);
+            //if (manifestPath3 != null) Runtime.AddManifest(manifestPath3);
+            //if (manifestPath4 != null) Runtime.AddManifest(manifestPath4);
+            if (manifestPathFull != null) Runtime.AddManifest(manifestPathFull);
         }
     }
     
@@ -48,6 +53,63 @@ public class AssetBundles
             return null;
         }
     }
+    
+    public static void BuildCombinedManifest(string bundleFolder, string suffix, string[] assetPathsInBundleFull)
+    {
+        Debug.Log($"Building combined manifest from folder: {bundleFolder}");
+
+        // Where to save the final combined manifest
+        string softRefManifestPath = Path.Combine(BepInEx.Paths.PluginPath, "assetBundleManifest_" + suffix);
+
+        // Relative path (Valheim’s asset loader usually expects this)
+        string bundleRelativeDir = "./Bundles";
+        var manifest = new SoftReferenceableAssets.AssetBundleManifest(bundleRelativeDir);
+
+        // --- Step 1: Gather all bundle files (.manifest pairs too)
+        string[] bundleFiles = Directory.GetFiles(bundleFolder, "*", SearchOption.TopDirectoryOnly)
+            .Where(f => !f.EndsWith(".manifest", StringComparison.OrdinalIgnoreCase)) // skip manifest files
+            .ToArray();
+
+        // --- Step 2: Loop through each bundle file
+        foreach (string bundleFile in bundleFiles)
+        {
+            string bundleName = Path.GetFileName(bundleFile);
+            string unityManifestPath = bundleFile + ".manifest"; // Unity’s text manifest lives here
+
+            Debug.Log($"Processing bundle: {bundleName}");
+
+            // --- Step 2a: Match prefabs from your AssetPaths list into this bundle
+            foreach (string assetPath in assetPathsInBundleFull)
+            {
+                if (!assetPath.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // Convention: bundleName == prefabName (lowercase, no extension)
+                string prefabName = Path.GetFileNameWithoutExtension(assetPath).ToLower();
+                if (bundleName.StartsWith(prefabName, StringComparison.OrdinalIgnoreCase))
+                {
+                    AssetID assetId = Jotunn.Managers.AssetManager.Instance.GenerateAssetID(assetPath);
+                    var location = new AssetLocation(bundleName, assetPath);
+                    manifest.AddAssetLocation(assetId, location);
+
+                    Debug.Log($"  Added {assetPath} to bundle {bundleName}");
+                }
+            }
+
+            // --- Step 2b: Add dependencies
+            if (File.Exists(unityManifestPath))
+            {
+                string[] dependencies = ExtractDependenciesFromTextManifest(unityManifestPath);
+                manifest.AddBundleDependencies(bundleName, dependencies);
+            }
+        }
+
+        // --- Step 3: Save once at the end
+        manifest.SerializeToDisk(softRefManifestPath, SerializationFormat.Text);
+
+        Debug.Log($"✅ Combined manifest written to {softRefManifestPath}");
+    }
+
 
 
     public static void BuildManifest(string bundleName, string manifestPath, string[] assetPathsInBundle, string suffix)

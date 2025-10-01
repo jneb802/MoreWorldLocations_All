@@ -17,7 +17,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "1.1.0";
+        internal const string ModVersion = "2.0.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -46,10 +46,7 @@ namespace More_World_Locations_AIO
             DontDestroyOnLoad(root);
             root.SetActive(false);
             
-            PortInit.Init(root);
-
-            // RPCUtils.InitializeRPCs();
-            // ShipmentManager.RegisterRpcs();
+            //PortInit.Init(root);
             
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
@@ -57,9 +54,9 @@ namespace More_World_Locations_AIO
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
-            Prefabs.LoadPrefabBundles();
-            PortPrefabs.LoadPrefabBundles();
-            PortPrefabs.AddPortUIPrefabs();
+            // Prefabs.LoadPrefabBundles();
+            // PortPrefabs.LoadPrefabBundles();
+            // PortPrefabs.AddPortUIPrefabs();
             
             // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
             // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
@@ -68,6 +65,12 @@ namespace More_World_Locations_AIO
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "moreworldlocations_assetbundle_4.manifest"),
             //     AssetBundles.assetPathsInBundle4, 
             //     "4");
+            
+            // AssetBundles.BuildCombinedManifest(
+            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
+            //     "full",
+            //     AssetPaths.assetPathsInBundleFull
+            // );   
             
             // YAMLManager.ParseDefaultYamls();
             // YAMLManager.ParseCustomYamls();
@@ -78,8 +81,8 @@ namespace More_World_Locations_AIO
             // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
 
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
-            ZoneManager.OnVanillaLocationsAvailable += Locations.AddAllLocations;
-            ZoneManager.OnVanillaLocationsAvailable += PortPrefabs.AddPortLocation;
+            ZoneManager.OnVanillaLocationsAvailable += LocationsNEW.AddAllLocations;
+            // ZoneManager.OnVanillaLocationsAvailable += PortPrefabs.AddPortLocation;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
@@ -97,10 +100,11 @@ namespace More_World_Locations_AIO
         {
             More_World_Locations_AIOLogger.LogInfo("Initializing LootDB and CreatureDB...");
     
-            LootDB.InitializeLootTables();
-            CreatureDB.InitializeCreatureLists();
+            // LootDB.InitializeLootTables();
+            // CreatureDB.InitializeCreatureLists();
+            Prefabs.LoadPrefabBundles();
             Prefabs.AddAllPrefabs();
-            PortPrefabs.AddPortPrefabs();
+            // PortPrefabs.AddPortPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 
