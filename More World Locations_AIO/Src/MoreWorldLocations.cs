@@ -13,11 +13,12 @@ using UnityEngine;
 
 namespace More_World_Locations_AIO
 {
+    [BepInIncompatibility("hyleanlegend.RuneMagic")]
     [BepInPlugin(ModGUID, ModName, ModVersion)]
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "2.0.0";
+        internal const string ModVersion = "2.0.1";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
