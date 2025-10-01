@@ -22,28 +22,28 @@ public class Prefabs
     
     public static void LoadPrefabBundles()
     {
-        // prefabBundle_1 = AssetUtils.LoadAssetBundleFromResources(
-        //     "moreworldlocations_prefabs_1",
-        //     Assembly.GetExecutingAssembly());
+        prefabBundle_1 = AssetUtils.LoadAssetBundleFromResources(
+            "moreworldlocations_prefabs_1",
+            Assembly.GetExecutingAssembly());
         
         prefabBundle_2 = AssetUtils.LoadAssetBundleFromResources(
             "moreworldlocations_prefabs_2",
             Assembly.GetExecutingAssembly());
         
-        // prefabBundle_3 = AssetUtils.LoadAssetBundleFromResources(
-        //     "moreworldlocations_prefabs_3",
-        //     Assembly.GetExecutingAssembly());
+        prefabBundle_3 = AssetUtils.LoadAssetBundleFromResources(
+            "moreworldlocations_prefabs_3",
+            Assembly.GetExecutingAssembly());
     }
 
     public static void AddAllPrefabs()
     {
-        //GameObject[] gameObjects1 = prefabBundle_1.LoadAllAssets<GameObject>();
+        GameObject[] gameObjects1 = prefabBundle_1.LoadAllAssets<GameObject>();
         GameObject[] gameObjects2 = prefabBundle_2.LoadAllAssets<GameObject>();
-        //GameObject[] gameObjects3 = prefabBundle_3.LoadAllAssets<GameObject>();
+        GameObject[] gameObjects3 = prefabBundle_3.LoadAllAssets<GameObject>();
         
-        //AddPrefabsFromBundle(gameObjects1);
+        AddPrefabsFromBundle(gameObjects1);
         AddPrefabsFromBundle(gameObjects2);
-        //AddPrefabsFromBundle(gameObjects3);
+        AddPrefabsFromBundle(gameObjects3);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
@@ -62,11 +62,11 @@ public class Prefabs
             // If the prefab is a loot_chest then it needs to mock references
             if (gameObject.GetComponent<Container>() != null)
             {
-                //AddContainerPrefab(gameObject);
+                AddContainerPrefab(gameObject);
             }
             else if (gameObject.GetComponent<CreatureSpawner>() != null)
             {
-                //AddSpawnerPrefab(gameObject);
+                AddSpawnerPrefab(gameObject);
             }
             else if (gameObject.name.Equals("MWL_Shrine"))
             {
