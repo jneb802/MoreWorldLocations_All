@@ -101,7 +101,7 @@ public static class PlayerTakeInput_Patch
     [UsedImplicitly]
     private static void Postfix(ref bool __result)
     {
-        __result |= !PortUI.IsVisible();
+        __result &= !PortUI.IsVisible();
     } 
 }
 
