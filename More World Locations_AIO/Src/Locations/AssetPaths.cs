@@ -105,8 +105,8 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mountain/MWL_WoodHouse1.prefab",
         "Assets/WarpProjects/More World Locations/Mountain/MWL_TempleShrine1.prefab",
         "Assets/WarpProjects/More World Locations/Mountain/MWL_StoneAltar1.prefab",
-        "Assets/WarpProjects/More World Locations/Adventure/MWL_MountainDvergrShrine1.prefab",
-        "Assets/WarpProjects/More World Locations/Adventure/MWL_MountainShrine1.prefab",
+        "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainDvergrShrine1.prefab",
+        "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainShrine1.prefab",
 
         // Plains Pack 1
         "Assets/WarpProjects/More World Locations/Plains/MWL_GoblinFort1.prefab",
@@ -129,7 +129,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistWall1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistTower2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistHut1.prefab",
-        "Assets/WarpProjects/More World Locations/Adventure/MWL_MistHut2.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistHut2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrEitrSingularity1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouse1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrKnowledgeExtractor1.prefab",
