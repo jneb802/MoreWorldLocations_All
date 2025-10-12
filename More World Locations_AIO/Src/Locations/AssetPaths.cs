@@ -137,9 +137,9 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistShrine1.prefab",
         
         // Ashlands Pack 1
-        "Assets/WarpProjects/Ashlands/MWL_AshlandsFort1.prefab",
-        "Assets/WarpProjects/Ashlands/MWL_AshlandsFort2.prefab",
-        "Assets/WarpProjects/Ashlands/MWL_AshlandsFort3.prefab"
+        "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort1.prefab",
+        "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort2.prefab",
+        "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort3.prefab"
         
     };
     

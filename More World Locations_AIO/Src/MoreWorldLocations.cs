@@ -13,12 +13,11 @@ using UnityEngine;
 
 namespace More_World_Locations_AIO
 {
-    [BepInIncompatibility("hyleanlegend.RuneMagic")]
     [BepInPlugin(ModGUID, ModName, ModVersion)]
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "2.0.6";
+        internal const string ModVersion = "2.0.9";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -58,14 +57,6 @@ namespace More_World_Locations_AIO
             // Prefabs.LoadPrefabBundles();
             // PortPrefabs.LoadPrefabBundles();
             // PortPrefabs.AddPortUIPrefabs();
-            
-            // AssetBundles.BuildManifest(AssetBundles.bundle1, AssetBundles.assetPathsInBundle1, "1");
-            // AssetBundles.BuildManifest(AssetBundles.bundle2, AssetBundles.assetPathsInBundle2, "2");
-            // AssetBundles.BuildManifest(AssetBundles.bundle3, AssetBundles.assetPathsInBundle3, "3");
-            // AssetBundles.BuildManifest(AssetBundles.bundle4, 
-            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "moreworldlocations_assetbundle_4.manifest"),
-            //     AssetBundles.assetPathsInBundle4, 
-            //     "4");
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
