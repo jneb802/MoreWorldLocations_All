@@ -32,9 +32,17 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
                 biome = WorldGenerator.instance.GetBiome(this.transform.position);
                 
                 shrineConfig = ShrineDB.GetRandomShrineConfig(biome);
+                
+                // Null safety: GetRandomShrineConfig should never return null now, but double-check
+                if (shrineConfig == null)
+                {
+                    Debug.LogError("MoreWorldLocations_AIO: ShrineDB.GetRandomShrineConfig returned null!");
+                    return;
+                }
+                
                 shrineConfig.RollRandomValues();
                 
-                zdo.Set(ShrineConfigKey, shrineConfig.internalName);
+                zdo.Set(ShrineConfigKey, shrineConfig.internalName ?? "");
                 zdo.Set("MWL_Shrine_Duration", shrineConfig.duration);
                 zdo.Set("MWL_Shrine_HealthRegenMult", shrineConfig.healthRegenMultiplier);
                 zdo.Set("MWL_Shrine_StaminaRegenMult", shrineConfig.staminaRegenMultiplier);
@@ -52,18 +60,39 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
         string configName = zdo.GetString(ShrineConfigKey, "");
         shrineConfig = ShrineDB.GetShrineConfig(configName);
         
-        shrineConfig.statusEffect.m_ttl = zdo.GetInt("MWL_Shrine_Duration", 900);
-        if (shrineConfig.statusEffect is SE_Stats stats)
+        // GetShrineConfig now returns a default config instead of null, but verify
+        if (shrineConfig == null)
         {
-            stats.m_healthRegenMultiplier += zdo.GetFloat("MWL_Shrine_HealthRegenMult", 0f);
-            stats.m_staminaRegenMultiplier += zdo.GetFloat("MWL_Shrine_StaminaRegenMult", 0f);
-            stats.m_eitrRegenMultiplier += zdo.GetFloat("MWL_Shrine_EitrRegenMult", 0f);
-            stats.m_raiseSkillModifier += zdo.GetFloat("MWL_Shrine_RaiseSkillMod", 0f);
+            Debug.LogError("MoreWorldLocations_AIO: ShrineDB.GetShrineConfig returned null!");
+            return;
+        }
+        
+        // Null-safe status effect access
+        if (shrineConfig.statusEffect != null)
+        {
+            shrineConfig.statusEffect.m_ttl = zdo.GetInt("MWL_Shrine_Duration", 900);
+            if (shrineConfig.statusEffect is SE_Stats stats)
+            {
+                stats.m_healthRegenMultiplier += zdo.GetFloat("MWL_Shrine_HealthRegenMult", 0f);
+                stats.m_staminaRegenMultiplier += zdo.GetFloat("MWL_Shrine_StaminaRegenMult", 0f);
+                stats.m_eitrRegenMultiplier += zdo.GetFloat("MWL_Shrine_EitrRegenMult", 0f);
+                stats.m_raiseSkillModifier += zdo.GetFloat("MWL_Shrine_RaiseSkillMod", 0f);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Shrine status effect is null!");
         }
         
         string biomeString = zdo.GetString("MWL_Shrine_Biome", "");
-        Enum.TryParse<Heightmap.Biome>(biomeString, out Heightmap.Biome parsedBiome);
-        biome = parsedBiome;
+        if (!string.IsNullOrEmpty(biomeString) && Enum.TryParse<Heightmap.Biome>(biomeString, out Heightmap.Biome parsedBiome))
+        {
+            biome = parsedBiome;
+        }
+        else
+        {
+            biome = Heightmap.Biome.None;
+        }
         
         hasBeenUsedOnce = zdo.GetBool("MWL_Shrine_FreeTag");
         
@@ -72,6 +101,13 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
 
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
+        // Null safety check
+        if (shrineConfig == null || shrineConfig.statusEffect == null)
+        {
+            Debug.LogError("Shrine config or status effect is null, cannot interact!");
+            return false;
+        }
+        
         if (IsOnCooldown())
         {
             if (user is Player player)
@@ -141,7 +177,19 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
 
     public string GetHoverText()
     {
+        // Null safety: ensure shrineConfig is never null
+        if (shrineConfig == null)
+        {
+            return "Unknown Shrine";
+        }
+        
         ShrineOffering offering = shrineConfig.shrineOffering;
+        
+        // Additional null safety for offering
+        if (offering == null || offering.offeringItem == null)
+        {
+            return Localization.instance.Localize($"{shrineConfig.displayName ?? "Shrine"}\n<color=red>Shrine is misconfigured</color>");
+        }
         
         string hoverText;
         string itemName = offering.offeringItem.m_shared.m_name;
@@ -156,7 +204,7 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             if (IsOnCooldown())
             {
                 hoverText = Localization.instance.Localize(
-                    $"{shrineConfig.displayName}\n" +
+                    $"{shrineConfig.displayName ?? "Shrine"}\n" +
                     $"<color=red>Can only be used once per day</color>\n"+
                     $"[<color=yellow><b>$KEY_Use</b></color>] Sacrifice {quantity}x <color=orange>{itemName}</color>\n"+
                     $"{durationText}" +
@@ -165,7 +213,7 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             else
             {
                 hoverText = Localization.instance.Localize(
-                    $"{shrineConfig.displayName}\n" +
+                    $"{shrineConfig.displayName ?? "Shrine"}\n" +
                     $"[<color=yellow><b>$KEY_Use</b></color>] Sacrifice {quantity}x <color=orange>{itemName}</color>\n" +
                     $"{durationText}" +
                     $"{effectDetails}");
@@ -174,7 +222,7 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
         }
 
         hoverText = Localization.instance.Localize(
-            $"{shrineConfig.displayName}\n" +
+            $"{shrineConfig.displayName ?? "Shrine"}\n" +
             $"[<color=yellow><b>$KEY_Use</b></color>] Sacrifice {quantity}x <color=orange>{itemName}</color>\n");
 
         return hoverText;
@@ -232,13 +280,26 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
             return true;   
         }
         
+        // Null safety checks
+        if (shrineConfig == null || shrineConfig.shrineOffering == null)
+        {
+            Debug.LogError("Shrine config or offering is null!");
+            return false;
+        }
+        
+        ShrineOffering offering = shrineConfig.shrineOffering;
+        
+        if (offering.offeringItem == null)
+        {
+            Debug.LogError("Offering item is null!");
+            return false;
+        }
+        
         bool hasRequiredItems = false;
         foreach (var item in user.GetInventory().GetAllItems())
         {
             Debug.Log(item.m_shared.m_name);
         }
-        
-        ShrineOffering offering = shrineConfig.shrineOffering;
         
         Debug.Log(offering.itemQuantity + " " + offering.offeringItem.m_shared.m_name);
         

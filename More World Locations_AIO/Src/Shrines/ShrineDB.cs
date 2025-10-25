@@ -53,13 +53,39 @@ public class ShrineDB
         
         ItemManager.OnItemsRegistered -= ShrineDB.BuildShrineConfigs;
     }
+    
+    /// <summary>
+    /// Gets a default fallback shrine config to prevent null references
+    /// </summary>
+    private static ShrineConfig GetDefaultShrineConfig()
+    {
+        // Create a safe default shrine with basic health regen
+        var defaultOffering = new Shrine.ShrineOffering("Coins", 20);
+        var defaultStatusEffect = StatusEffectDB.StatusEffects.ContainsKey("MWL_SE_Boar") 
+            ? StatusEffectDB.StatusEffects["MWL_SE_Boar"].StatusEffect 
+            : null;
+        
+        if (defaultStatusEffect == null)
+        {
+            Debug.LogError("MoreWorldLocations_AIO ERROR: Cannot create default shrine config - status effects not initialized!");
+            return null;
+        }
+        
+        return new ShrineConfig("shrineDefault", "Odin's Shrine", defaultStatusEffect, defaultOffering, Heightmap.Biome.Meadows);
+    }
 
     public static ShrineConfig GetRandomShrineConfig()
     {
         if (shrinesConfigs == null || shrinesConfigs.Count == 0)
         {
-            Debug.Log("Failed to find shrine configs");
-            return null;  
+            Debug.LogWarning("ShrineDB not initialized! Building configs now.");
+            BuildShrineConfigs();
+        }
+        
+        if (shrinesConfigs == null || shrinesConfigs.Count == 0)
+        {
+            Debug.LogError("ShrineDB failed to initialize, using default.");
+            return GetDefaultShrineConfig();
         }
         
         int randomIndex = UnityEngine.Random.Range(0, shrinesConfigs.Count);
@@ -68,22 +94,47 @@ public class ShrineDB
     
     public static ShrineConfig GetRandomShrineConfig(Heightmap.Biome biome)
     {
+        // Safety check: ensure dictionary is initialized
+        if (shrinesConfigs == null || shrinesConfigs.Count == 0)
+        {
+            Debug.LogWarning("ShrineDB not initialized! Building configs now.");
+            BuildShrineConfigs();
+        }
+        
         var biomeShrines = shrinesConfigs.Values.Where(s => s.biome == biome).ToList();
     
-        if (biomeShrines.Count == 0) return null;
+        if (biomeShrines.Count == 0)
+        {
+            Debug.LogWarning($"No shrine configs found for biome {biome}, using default.");
+            return GetDefaultShrineConfig();
+        }
     
         return biomeShrines[UnityEngine.Random.Range(0, biomeShrines.Count)];
     }
 
     public static ShrineConfig GetShrineConfig(string shrineConfigName)
     {
+        // Safety check: ensure dictionary is initialized
+        if (shrinesConfigs == null || shrinesConfigs.Count == 0)
+        {
+            Debug.LogWarning("ShrineDB not initialized! Building configs now.");
+            BuildShrineConfigs();
+        }
+        
+        // Handle empty or null config names
+        if (string.IsNullOrEmpty(shrineConfigName))
+        {
+            Debug.LogWarning("Empty shrine config name, using default.");
+            return GetDefaultShrineConfig();
+        }
+        
         if (shrinesConfigs.TryGetValue(shrineConfigName, out ShrineConfig shrineConfig))
         {
             return shrineConfig;
         }
         
-        Debug.LogWarning($"ShrineConfig '{shrineConfigName}' not found in ShrineDB");
-        return null;
+        Debug.LogWarning($"ShrineConfig '{shrineConfigName}' not found in ShrineDB, using default.");
+        return GetDefaultShrineConfig();
     }
 
     

@@ -28,9 +28,15 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
                 
                 waystoneConfig = WaystoneDB.GetRandomWaystoneConfig(biome);
                 
-                zdo.Set(WaystoneConfigKey, waystoneConfig.internalName);
-                zdo.Set("MWL_Waystone_Location", waystoneConfig.locationInternalName);
-                zdo.Set("MWL_Waystone_Vegetation", waystoneConfig.vegetationInternalName);
+                if (waystoneConfig == null)
+                {
+                    Debug.LogError("MoreWorldLocations_AIO Error: WaystoneDB.GetRandomWaystoneConfig returned null!");
+                    return;
+                }
+                
+                zdo.Set(WaystoneConfigKey, waystoneConfig.internalName ?? "");
+                zdo.Set("MWL_Waystone_Location", waystoneConfig.locationInternalName ?? "");
+                zdo.Set("MWL_Waystone_Vegetation", waystoneConfig.vegetationInternalName ?? "");
                 zdo.Set("MWL_Waystone_Radius", waystoneConfig.mapRevealRadius);
                 zdo.Set("MWL_Waystone_Biome", biome.ToString());
                 
@@ -56,9 +62,22 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
         string configName = zdo.GetString(WaystoneConfigKey, "");
         waystoneConfig = WaystoneDB.GetWaystoneConfig(configName);
         
+        // GetWaystoneConfig now returns a default config instead of null, but verify
+        if (waystoneConfig == null)
+        {
+            Debug.LogError("MoreWorldLocations_AIO Error: WaystoneDB.GetRandomWaystoneConfig returned null!");
+            return;
+        }
+        
         string biomeString = zdo.GetString("MWL_Waystone_Biome", "");
-        Enum.TryParse<Heightmap.Biome>(biomeString, out Heightmap.Biome parsedBiome);
-        biome = parsedBiome;
+        if (!string.IsNullOrEmpty(biomeString) && Enum.TryParse<Heightmap.Biome>(biomeString, out Heightmap.Biome parsedBiome))
+        {
+            biome = parsedBiome;
+        }
+        else
+        {
+            biome = Heightmap.Biome.None;
+        }
         
         Debug.Log("Waystone Awake: Loaded waystone config '" + waystoneConfig.internalName + "'");
     }
@@ -89,13 +108,18 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
 
     public string GetHoverText()
     {
-        string hoverText;
         string waystoneDetails = "";
+        
+        // Null safety: ensure waystoneConfig is never null
+        if (waystoneConfig == null)
+        {
+            return "Unknown Waystone";
+        }
 
         waystoneDetails = WaystoneUtils.GetWaystoneDetails(waystoneConfig);
             
-        hoverText = Localization.instance.Localize(
-            $"{waystoneConfig.displayName}\n" +
+        string hoverText = Localization.instance.Localize(
+            $"{waystoneConfig.displayName ?? "Waystone"}\n" +
             $"[<color=yellow><b>$KEY_Use</b></color>] Use Waystone\n" +
             $"{waystoneDetails}");
             
