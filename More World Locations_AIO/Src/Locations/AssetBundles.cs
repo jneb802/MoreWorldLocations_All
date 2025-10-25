@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using Common;
 using HarmonyLib;
 using Jotunn.Utils;
@@ -31,7 +33,8 @@ public class AssetBundles
             //string manifestPath3 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_3"));
             //string manifestPath4 = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_4"));
 
-            string manifestPathFull = GetManifest(Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "assetBundleManifest_Full"));
+            string manifestPathFull = GetManifest();
+            
             
             //if (manifestPath1 != null) Runtime.AddManifest(manifestPath1);
             //if (manifestPath2 != null) Runtime.AddManifest(manifestPath2);
@@ -41,11 +44,20 @@ public class AssetBundles
         }
     }
     
-    public static string GetManifest(string path)
+    public static string GetManifest()
     {
-        if (File.Exists(path))
+        string path = Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO");
+
+        string manifestFull = Path.Combine(path, "assetBundleManifest_Full");
+        string manifestLower = Path.Combine(path, "assetBundleManifest_full");
+
+        if (File.Exists(manifestFull))
         {
-            return path;
+            return manifestFull;
+        }
+        else if (File.Exists(manifestLower))
+        {
+            return manifestLower;
         }
         else
         {
