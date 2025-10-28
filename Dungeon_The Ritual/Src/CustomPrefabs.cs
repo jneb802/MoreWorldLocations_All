@@ -124,9 +124,9 @@ public class CustomPrefabs
     
     foreach (var prefab in roomSpawnerPrefabs)
     {
-        List<string> creatureList = Underground_RuinsPlugin.dungeonBFDYamlManager.creatureListDictionary[Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value];
+        List<GameObject> creatureList = Underground_RuinsPlugin.dungeonBFDYamlManager.creatureListDictionary[Underground_RuinsPlugin.MWD_UndergroundRuins_Configuration.CreatureList.Value];
         int randomIndex = Random.Range(0, creatureList.Count);
-        RegisterCustomPrefabSpawner(Underground_RuinsPlugin.assetBundle, prefab, creatureList[randomIndex]);
+        RegisterCustomPrefabSpawner(Underground_RuinsPlugin.assetBundle, prefab, creatureList[randomIndex].name);
     }
     
     foreach (var prefab in roomContainerPrefabs)

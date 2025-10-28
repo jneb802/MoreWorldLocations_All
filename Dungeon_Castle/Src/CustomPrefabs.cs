@@ -100,22 +100,26 @@ public class CustomPrefabs
             RegisterCustomPrefab(Forbidden_CatacombsPlugin.assetBundle, prefab);
         }
         
+        // Fix for CS0029: Convert List<GameObject> to List<string> by extracting the prefab names
+
         foreach (var prefab in roomUpperSpawnerPrefabs)
         {
-            List<string> upperCreatureList =
+            List<GameObject> upperCreatureList =
                 Forbidden_CatacombsPlugin.dungeonCastleYamlManager.creatureListDictionary[
                     Forbidden_CatacombsPlugin.MWD_CastleDungeon_CreatureListUpper.Value];
             int randomIndex = Random.Range(0, upperCreatureList.Count);
-            RegisterCustomPrefabSpawner(Forbidden_CatacombsPlugin.assetBundle, prefab, upperCreatureList[randomIndex]);
+            string creatureName = upperCreatureList[randomIndex].name;
+            RegisterCustomPrefabSpawner(Forbidden_CatacombsPlugin.assetBundle, prefab, creatureName);
         }
         
         foreach (var prefab in roomLowerSpawnerPrefabs)
         {
-            List<string> lowerCreatureList =
+            List<GameObject> lowerCreatureList =
                 Forbidden_CatacombsPlugin.dungeonCastleYamlManager.creatureListDictionary[
                     Forbidden_CatacombsPlugin.MWD_CastleDungeon_CreatureListLower.Value];
             int randomIndex = Random.Range(0, lowerCreatureList.Count);
-            RegisterCustomPrefabSpawner(Forbidden_CatacombsPlugin.assetBundle, prefab, lowerCreatureList[randomIndex]);
+            string creatureName = lowerCreatureList[randomIndex].name;
+            RegisterCustomPrefabSpawner(Forbidden_CatacombsPlugin.assetBundle, prefab, creatureName);
         }
         
         foreach (var prefab in roomUpperContainerPrefabs)

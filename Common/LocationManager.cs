@@ -8,6 +8,7 @@ using Jotunn.Managers;
 using More_World_Locations_AIO.Utils;
 using SoftReferenceableAssets;
 using UnityEngine;
+using LootManager = Common.LootManager;
 
 namespace Common;
 

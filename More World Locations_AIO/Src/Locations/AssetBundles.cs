@@ -46,8 +46,10 @@ public class AssetBundles
     
     public static string GetManifest()
     {
-        string path = Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO");
-
+        // Gets the path to the DLL plugin file
+        string path = Assembly.GetExecutingAssembly().Location;
+        path = Path.GetDirectoryName(path);
+        
         string manifestFull = Path.Combine(path, "assetBundleManifest_Full");
         string manifestLower = Path.Combine(path, "assetBundleManifest_full");
 

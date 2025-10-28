@@ -1,6 +1,5 @@
-using Mono.Security.X509;
 using More_World_Traders.Utils;
-using UnityEngine;
+using System;
 
 namespace More_World_Traders.StatusEffects;
 
@@ -8,13 +7,13 @@ public class BlacksmithStone_SE : StatusEffect
 {
     private bool shouldRemove = false;
     private int m_qualityIncreaseAmount = 1;
-    private Player player;
+    private Player? player; // Fix: Make 'player' nullable to resolve CS8618, ensure null checks are in place
     public int stoneTier = 1;
     
     public override void Setup(Character character)
     {
         base.Setup(character);
-        player = character as Player;
+        player = character as Player ?? throw new InvalidCastException("Character is not a Player.");
         this.m_character.Message(this.m_startMessageType, "Using Blacksmith Stone to enhance an item...");
     }
     
@@ -97,9 +96,12 @@ public class BlacksmithStone_SE : StatusEffect
         }
         else
         {
-            Inventory inventory = player.GetInventory();
-            inventory.AddItem(GetBlacksmithStoneItemData(), inventory.FindEmptySlot(true));
-            shouldRemove = true;
+            if (player != null)
+            {
+                Inventory inventory = player.GetInventory();
+                inventory.AddItem(GetBlacksmithStoneItemData(), inventory.FindEmptySlot(true));
+                shouldRemove = true;
+            }
         }
     }
 

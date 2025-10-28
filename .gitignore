@@ -1,7 +1,207 @@
-bin/
-obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
-More World Locations_AIO/.DS_Store
-.DS_Store
+############################
+# Valheim Specific for this project
+############################
+Directory.Build.Props
+
+############################
+# Visual Studio / .NET
+############################
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+.log
+
+# Visual Studio user-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+# NuGet local packages / cache
+*.nuget.props
+*.nuget.targets
+# Package restore folders
+packages/
+# Optional: keep empty folder for packages if needed
+!packages/README.*
+
+# MSBuild
+*.cache
+*.dbmdl
+*.dbproj.schemaview
+*.msscci
+*.pdb
+*.obj
+*.pch
+*.aps
+*.ilk
+*.tmp
+*.log
+*.vspscc
+*.vssscc
+
+# Roslyn
+*.ide
+*.tlog
+
+############################
+# Rider / JetBrains (if used)
+############################
+.idea/
+*.sln.iml
+
+############################
+# .NET / C# artifacts
+############################
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+*.lib
+*.a
+*.idb
+*.ipch
+*.iobj
+*.ipdb
+*.obj
+*.bak
+*.bkp
+*.tmp
+*.cache
+*.svclog
+*.pidb
+*.mdb
+*.db
+*.stackdump
+*.ilk
+*.pdb
+
+# Allow DLLs in Libs and GlobalLibs
+!Libs/**/*.dll
+!GlobalLibs/**/*.dll
+
+# Test results
+TestResults/
+*.VisualState.xml
+*.TestResult.xml
+*.coverage
+*.coveragexml
+
+############################
+# Logs and generated data
+############################
+*.log
+*.tlog
+*.err
+*.wrn
+*.out
+*.csv
+
+############################
+# Build system folders
+############################
+_debug/
+_release/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+[Bb]uilds/
+
+############################
+# Temporary / cache files
+############################
+*.tmp
+*.temp
+~$*
+*~
+*.swp
+*.swo
+*.bak
+*.orig
+
+############################
+# Configuration / secrets
+############################
+appsettings.Development.json
+secrets.json
+*.secret.*
+*.env
+.env.*
+*.userprefs
+
+############################
+# Unity / BepInEx / Game modding
+############################
+
+# Unity temp data (if used with modding projects)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+UserSettings/
+MemoryCaptures/
+Logs/
+sysinfo.txt
+
+# BepInEx build artifacts
+BepInEx/cache/
+BepInEx/patchers/
+BepInEx/plugins/**/*.pdb
+BepInEx/core/**/*.pdb
+
+# Ignore game-managed DLLs and generated assemblies
+valheim_Data/
+*_Data/
+*.mmdb
+*.meta
+
+############################
+# Miscellaneous
+############################
+*.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# StyleCop
+StyleCopReport.xml
+
+# DotCover
+*.dotCover
+
+# Rider cache
+.idea/
+*.sln.iml
+
+############################
+# Git-related
+############################
+*.orig
+*.rej
+*.patch
+*.diff
+
+############################
+# Optional keeps
+############################
+!*.md
+!LICENSE*
+!README*
