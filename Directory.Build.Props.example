@@ -1,0 +1,13 @@
+<Project>
+    <PropertyGroup>
+
+        <!-- Change your valheim path, and rename this file to Directory.Build.Props -->
+
+        <ValheimGamePath>E:\SteamLibrary\steamapps\common\Valheim</ValheimGamePath>
+        <BepInExPath>$(ValheimGamePath)\BepInEx</BepInExPath>
+        <CorlibPath>$(ValheimGamePath)\valheim_Data\Managed</CorlibPath>
+        <PublicizedAssembliesPath>$(ValheimGamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
+        <CopyOutputDLLPath>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath>
+        <AfterTargets>ILRepacker</AfterTargets>
+    </PropertyGroup>
+</Project>
