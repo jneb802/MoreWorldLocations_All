@@ -117,8 +117,8 @@ namespace Forbidden_Catacombs
         
         public void BuildYamlLists()
         {
-            dungeonCastleYamlManager.BuildCreatureList(MWD_CastleDungeon_CreatureYaml.Value, MWD_CastleDungeon_CreatureListUpper.Value);
-            dungeonCastleYamlManager.BuildCreatureList(MWD_CastleDungeon_CreatureYaml.Value, MWD_CastleDungeon_CreatureListLower.Value);
+            dungeonCastleYamlManager.BuildCreatureLists(MWD_CastleDungeon_CreatureYaml.Value, MWD_CastleDungeon_CreatureListUpper.Value);
+            dungeonCastleYamlManager.BuildCreatureLists(MWD_CastleDungeon_CreatureYaml.Value, MWD_CastleDungeon_CreatureListLower.Value);
             dungeonCastleYamlManager.BuildLootList(MWD_CastleDungeon_LootYaml.Value, MWD_CastleDungeon_LootListUpper.Value);
             dungeonCastleYamlManager.BuildLootList(MWD_CastleDungeon_LootYaml.Value, MWD_CastleDungeon_LootListLower.Value);
             dungeonCastleYamlManager.BuildPickableList(MWD_CastleDungeon_PickableYaml.Value, MWD_CastleDungeon_PickableList.Value);

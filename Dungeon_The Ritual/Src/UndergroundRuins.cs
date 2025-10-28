@@ -107,7 +107,7 @@ namespace Underground_Ruins
 
         public void BuildYamlLists()
         {
-            dungeonBFDYamlManager.BuildCreatureList(MWD_UndergroundRuins_Configuration.CreatureYaml.Value, MWD_UndergroundRuins_Configuration.CreatureList.Value);
+            dungeonBFDYamlManager.BuildCreatureLists(MWD_UndergroundRuins_Configuration.CreatureYaml.Value, MWD_UndergroundRuins_Configuration.CreatureList.Value);
             dungeonBFDYamlManager.BuildLootList(MWD_UndergroundRuins_Configuration.LootYaml.Value, MWD_UndergroundRuins_Configuration.LootList.Value);
             dungeonBFDYamlManager.BuildPickableList(MWD_UndergroundRuins_Configuration.PickableItemYaml.Value, MWD_UndergroundRuins_Configuration.PickableItemList.Value);
             
