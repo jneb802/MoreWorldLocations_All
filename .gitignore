@@ -1,4 +1,9 @@
 ############################
+# Valheim Specific for this project
+############################
+Directory.Build.Props
+
+############################
 # Visual Studio / .NET
 ############################
 
@@ -78,6 +83,10 @@ packages/
 *.stackdump
 *.ilk
 *.pdb
+
+# Allow DLLs in Libs and GlobalLibs
+!Libs/**/*.dll
+!GlobalLibs/**/*.dll
 
 # Test results
 TestResults/
