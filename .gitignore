@@ -12,6 +12,7 @@ Directory.Build.Props
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+.log
 
 # Visual Studio user-specific files
 .vs/
