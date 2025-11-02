@@ -181,6 +181,7 @@
         <Compile Include="Src\Totems\TotemSpawnerConfigs.cs" />
         <Compile Include="Src\UpgradeWorld\UpgradeWorld.cs" />
         <Compile Include="Src\Utils\CreatureDB.cs" />
+        <Compile Include="Src\Utils\DebugUtils.cs" />
         <Compile Include="Src\Utils\ItemDropUtils.cs" />
         <Compile Include="Src\Utils\LocationCreatureMapping.cs" />
         <Compile Include="Src\Utils\LootDB.cs" />

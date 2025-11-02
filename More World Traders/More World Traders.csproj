@@ -191,13 +191,22 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
-        <PackageReference Include="JotunnLib" Version="2.26.1" />
+        <PackageReference Include="JotunnLib" Version="2.26.0" />
         <PackageReference Include="Mono.Cecil" Version="0.11.5" />
         <PackageReference Include="MonoMod" Version="21.9.19.1" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="YamlDotNet" Version="13.2.0" />
     </ItemGroup>
+    <ItemGroup>
+        <Reference Remove="UnityEngine.ProfilerModule" />
+    </ItemGroup>
+    <Target Name="RemoveBadUnityReferences" BeforeTargets="ResolveAssemblyReferences">
+        <ItemGroup>
+            <ReferencePath Remove="@(ReferencePath)" Condition=" '%(FileName)' == 'UnityEngine.ProfilerModule' " />
+            <Reference Remove="UnityEngine.ProfilerModule" />
+        </ItemGroup>
+    </Target>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
