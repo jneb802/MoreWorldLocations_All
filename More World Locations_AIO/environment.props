@@ -124,13 +124,29 @@
         </Reference>
     </ItemGroup>
 
-    <!-- Post-build: Copy DLL to BepInEx plugins -->
-    <Target Name="DeployToBepInEx" AfterTargets="Build">
-        <Copy
-                SourceFiles="$(TargetPath)"
-                DestinationFolder="$(BEPINEX_PLUGINS)"
-                SkipUnchangedFiles="true" />
-        <Message Importance="high" Text="Deployed $(TargetFileName) to $(BEPINEX_PLUGINS)" />
+    <!-- Post-build: Merge ServerSync via ILRepack, then deploy -->
+    <Target Name="ILRepackAndDeploy" AfterTargets="Build">
+        <PropertyGroup>
+            <ILRepackExe>$(ProjectDir)tools/ILRepack.exe</ILRepackExe>
+            <MergedDLL>$(TargetDir)$(TargetName).merged.dll</MergedDLL>
+            <NuGetPackages>$(HOME)/.nuget/packages</NuGetPackages>
+        </PropertyGroup>
+
+        <!-- macOS/Linux: run via mono with lib paths -->
+        <Exec Command="mono &quot;$(ILRepackExe)&quot; /internalize /lib:&quot;$(NuGetPackages)/newtonsoft.json/13.0.3/lib/net45&quot; /lib:&quot;$(NuGetPackages)/yamldotnet/13.2.0/lib/net47&quot; /lib:&quot;$(VALHEIM_MANAGED)&quot; /lib:&quot;$(BEPINEX_CORE)&quot; /out:&quot;$(MergedDLL)&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Libs/ServerSync.dll&quot;"
+              Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'" />
+
+        <!-- Windows: run directly with lib paths -->
+        <Exec Command="&quot;$(ILRepackExe)&quot; /internalize /lib:&quot;$(NuGetPackages)\newtonsoft.json\13.0.3\lib\net45&quot; /lib:&quot;$(NuGetPackages)\yamldotnet\13.2.0\lib\net47&quot; /lib:&quot;$(VALHEIM_MANAGED)&quot; /lib:&quot;$(BEPINEX_CORE)&quot; /out:&quot;$(MergedDLL)&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Libs\ServerSync.dll&quot;"
+              Condition="$(OS) == 'Windows_NT'" />
+
+        <!-- Replace original with merged -->
+        <Delete Files="$(TargetPath)" />
+        <Move SourceFiles="$(MergedDLL)" DestinationFiles="$(TargetPath)" />
+
+        <!-- Deploy to BepInEx -->
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BEPINEX_PLUGINS)" SkipUnchangedFiles="false" />
+        <Message Importance="high" Text="Merged ServerSync → $(TargetFileName) deployed to $(BEPINEX_PLUGINS)" />
     </Target>
 
 </Project>

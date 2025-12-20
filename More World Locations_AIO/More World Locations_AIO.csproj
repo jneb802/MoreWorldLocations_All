@@ -63,6 +63,9 @@
         <None Include="assets/moreworldlocations_assetbundle_3" CopyToOutputDirectory="PreserveNewest" />
         <None Include="assets/moreworldlocations_assetbundle_4" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="tools\" />
+    </ItemGroup>
 
     <!-- Import Common if it exists -->
     <Import Project="..\Common\Common.projitems" Label="Shared" Condition="Exists('..\Common\Common.projitems')" />
