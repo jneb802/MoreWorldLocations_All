@@ -1,12 +1,29 @@
-<Project>
-    <PropertyGroup>
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- 
+        macOS Valheim Modding Environment Configuration
+        Update VALHEIM_INSTALL to your Steam installation path if different.
+    -->
+    <PropertyGroup Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'">
+        <VALHEIM_INSTALL>/Users/benjmarston/Library/Application Support/Steam/steamapps/common/Valheim</VALHEIM_INSTALL>
+        <GamePath>$(VALHEIM_INSTALL)</GamePath>
+        <ValheimAppPath>$(GamePath)/Valheim.app</ValheimAppPath>
+        <CorlibPath>$(ValheimAppPath)/Contents/Resources/Data/Managed</CorlibPath>
+        <BepInExPath>$(GamePath)/BepInEx</BepInExPath>
+        <PublicizedAssembliesPath>$(CorlibPath)/publicized_assemblies</PublicizedAssembliesPath>
+        <CopyOutputDLLPath>$(BepInExPath)/plugins</CopyOutputDLLPath>
+        <!-- ILRepack doesn't work well on macOS with this project, skip it -->
+        <AfterTargets>Build</AfterTargets>
+    </PropertyGroup>
+
+    <!-- Windows configuration (original) -->
+    <PropertyGroup Condition="$(OS) == 'Windows_NT'">
         <ValheimGamePath>C:\Program Files (x86)\Steam\steamapps\common\Valheim</ValheimGamePath>
+        <GamePath>$(ValheimGamePath)</GamePath>
         <BepInExPath>$(ValheimGamePath)\BepInEx</BepInExPath>
         <CorlibPath>$(ValheimGamePath)\valheim_Data\Managed</CorlibPath>
         <PublicizedAssembliesPath>$(ValheimGamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
-        <CopyOutputDLLPath>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath> <!-- This is where the output DLL will be copied to after building. The templates support doing this for up to three locations. Duplicate this line and append a number. Example below -->
-        <!--<CopyOutputDLLPath2>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath2>-->
-        <!--<CopyOutputDLLPath3>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath3>-->
-        <AfterTargets>ILRepacker</AfterTargets> <!-- If you are using KeyManager, change this to KeyManager as suggested in step 5.2 in the instructions -->
+        <CopyOutputDLLPath>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath>
+        <AfterTargets>ILRepacker</AfterTargets>
     </PropertyGroup>
 </Project>

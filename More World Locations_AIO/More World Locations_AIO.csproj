@@ -39,10 +39,12 @@
     <Choose>
         <When Condition="($(OS) == 'Unix' OR $(OS) == 'OSX') AND $(GamePath) == ''">
             <PropertyGroup>
-                <GamePath Condition="!Exists('$(GamePath)')">$(HOME)/.steam/steam/steamapps/common/Valheim</GamePath>
-                <GamePath Condition="!Exists('$(GamePath)')">$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim/Contents/MacOS</GamePath>
-                <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
-                <CorlibPath Condition="!Exists('$(CorlibPath)')">$(GamePath)/unstripped_corelib</CorlibPath>
+                <GamePath>$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim</GamePath>
+                <ValheimAppPath>$(GamePath)/Valheim.app</ValheimAppPath>
+                <ManagedPath>$(ValheimAppPath)/Contents/Resources/Data/Managed</ManagedPath>
+                <BepInExPath>$(GamePath)/BepInEx</BepInExPath>
+                <PublicizedAssembliesPath>$(ManagedPath)/publicized_assemblies</PublicizedAssembliesPath>
+                <CorlibPath>$(ManagedPath)</CorlibPath>
             </PropertyGroup>
         </When>
         <When Condition="($(OS) == 'Windows_NT') AND $(GamePath) == ''">
@@ -64,71 +66,74 @@
     </Choose>
     <ItemGroup>
         <Reference Include="0Harmony">
-            <HintPath>$(BepInExPath)\core\0Harmony.dll</HintPath>
+            <HintPath>$(BepInExPath)/core/0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="assembly_guiutils">
-            <HintPath>$(PublicizedAssembliesPath)\assembly_guiutils_publicized.dll</HintPath>
+            <HintPath>$(PublicizedAssembliesPath)/assembly_guiutils_publicized.dll</HintPath>
         </Reference>
         <Reference Include="assembly_utils">
-            <HintPath>$(PublicizedAssembliesPath)\assembly_utils_publicized.dll</HintPath>
+            <HintPath>$(PublicizedAssembliesPath)/assembly_utils_publicized.dll</HintPath>
         </Reference>
         <Reference Include="assembly_valheim">
-            <HintPath>$(PublicizedAssembliesPath)\assembly_valheim_publicized.dll</HintPath>
+            <HintPath>$(PublicizedAssembliesPath)/assembly_valheim_publicized.dll</HintPath>
         </Reference>
         <Reference Include="BepInEx">
-            <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
+            <HintPath>$(BepInExPath)/core/BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="Jotunn">
-          <HintPath>Libs\Jotunn.dll</HintPath>
+            <HintPath>Libs/Jotunn.dll</HintPath>
         </Reference>
         <Reference Include="ServerSync">
-            <HintPath>Libs\ServerSync.dll</HintPath>
+            <HintPath>Libs/ServerSync.dll</HintPath>
         </Reference>
         <Reference Include="SoftReferenceableAssets">
-            <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
+            <HintPath>$(PublicizedAssembliesPath)/SoftReferenceableAssets_publicized.dll</HintPath>
         </Reference>
+        <!-- FIXED: Was hardcoded Windows path -->
         <Reference Include="Splatform">
-          <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\Splatform_publicized.dll</HintPath>
+            <HintPath>$(PublicizedAssembliesPath)/Splatform_publicized.dll</HintPath>
         </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
         <Reference Include="UnityEngine">
-            <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.dll</HintPath>
         </Reference>
+        <!-- FIXED: Was hardcoded Windows path -->
         <Reference Include="UnityEngine.AnimationModule">
-          <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.AnimationModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.AssetBundleModule">
-            <HintPath>$(CorlibPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.AssetBundleModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-            <HintPath>$(CorlibPath)\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.ImageConversionModule">
-            <HintPath>$(CorlibPath)\UnityEngine.ImageConversionModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.ImageConversionModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.IMGUIModule">
-            <HintPath>$(CorlibPath)\UnityEngine.IMGUIModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.IMGUIModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputLegacyModule">
-            <HintPath>$(CorlibPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.InputLegacyModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.ParticleSystemModule">
-            <HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.ParticleSystemModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.PhysicsModule">
-            <HintPath>$(CorlibPath)\UnityEngine.PhysicsModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.PhysicsModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.TextRenderingModule">
-            <HintPath>$(CorlibPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.TextRenderingModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.UI">
-            <HintPath>$(CorlibPath)\UnityEngine.UI.dll</HintPath>
+            <HintPath>$(CorlibPath)/UnityEngine.UI.dll</HintPath>
         </Reference>
+        <!-- FIXED: Was hardcoded Windows-style path -->
         <Reference Include="Unity.TextMeshPro">
-            <HintPath>$(GamePath)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+            <HintPath>$(CorlibPath)/Unity.TextMeshPro.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -211,6 +216,7 @@
         <EmbeddedResource Include="assets\portbundle" />
         <Content Include="environment.props" />
         <Content Include="ILRepack.targets" />
+        <Content Include="Libs\Jotunn.dll" />
         <Content Include="Libs\ServerSync.dll" />
         <Content Include="LICENSE.md" />
         <EmbeddedResource Include="Src\Ports\src\tutorials\delivery.md" />
@@ -230,8 +236,8 @@
         <PackageReference Include="YamlDotNet" Version="13.2.0" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
-      <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_CreatureLists.yml" />
+        <EmbeddedResource Include="YAML\warpalicious.More_World_Locations_LootLists.yml" />
     </ItemGroup>
     <ItemGroup>
         <Reference Remove="UnityEngine.ProfilerModule" />
@@ -243,13 +249,6 @@
         </ItemGroup>
     </Target>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-    -->
 
     <UsingTask AssemblyFile="KeyManager.dll" TaskName="KeyManager.Seal" Condition="'$(AfterTargets)' == 'KeyManager'"/>
     <Target Name="KeyManager" AfterTargets="ILRepack" Condition="'$(AfterTargets)' == 'KeyManager'">
@@ -273,11 +272,16 @@
             <PackageDir>$(ProjectDir)\Thunderstore\$(PackageName)</PackageDir>
         </PropertyGroup>
     </Target>
-    <Target Name="CopyOutputDLL" AfterTargets="GetAssemblyVersion">
+    <!-- FIXED: Added Windows-only condition -->
+    <Target Name="CopyOutputDLL" AfterTargets="GetAssemblyVersion" Condition="'$(OS)' == 'Windows_NT'">
         <Error Text="DLL not found in target directory." Condition="!Exists('$(TargetDir)$(AssemblyName).dll')"/>
         <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true"/>
         <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath2)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath2)')"/>
         <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath3)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath3)')"/>
+    </Target>
+    <!-- macOS: Simple copy to BepInEx plugins -->
+    <Target Name="CopyOutputDLLMacOS" AfterTargets="GetAssemblyVersion" Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'">
+        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="'$(CopyOutputDLLPath)' != ''"/>
     </Target>
     <Target Name="CopyReadMeToTSFolder" AfterTargets="CopyOutputDLL" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
         <Warning Text="README.md not found in project directory. A default README.md file will be created for the Thunderstore package" Condition="!Exists('README.md')"/>
@@ -285,7 +289,7 @@
         <Copy SourceFiles="README.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
         <Copy SourceFiles="README.md" DestinationFolder="$(ProjectDir)\Thunderstore" OverwriteReadOnlyFiles="true"/>
     </Target>
-    <UsingTask TaskName="WriteManifestFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <UsingTask TaskName="WriteManifestFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" Condition="'$(OS)' == 'Windows_NT'">
         <ParameterGroup>
             <ManifestFile ParameterType="System.String" Required="true"/>
             <AssemblyName ParameterType="System.String" Required="true"/>
@@ -307,7 +311,6 @@ string content = @"{
 System.IO.File.WriteAllText(ManifestFile, content);
 }
 ]]>
-
             </Code>
         </Task>
     </UsingTask>
@@ -320,7 +323,8 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <Message Text="Updating version number in Thunderstore\manifest.json" Condition="Exists(@(ManifestFile))"/>
         <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ManifestFile)' -versionString '$(PackageVersion)' }&quot;"/>
     </Target>
-    <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <!-- FIXED: Added Windows-only condition -->
+    <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
         <Error Text="manifest.json not found in Thunderstore directory." Condition="!Exists('$(ProjectDir)\Thunderstore\manifest.json')"/>
         <Error Text="icon.png not found in Thunderstore directory. Please note that Thunderstore requires this image to be 256x256 in dimension" Condition="!Exists('$(ProjectDir)\Thunderstore\icon.png')"/>
         <ItemGroup>
@@ -334,7 +338,8 @@ System.IO.File.WriteAllText(ManifestFile, content);
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Thunderstore\$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
-    <Target Name="MakeNexusPackage" AfterTargets="MakeThunderstorePackage" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <!-- FIXED: Added Windows-only condition -->
+    <Target Name="MakeNexusPackage" AfterTargets="MakeThunderstorePackage" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
         <MakeDir Directories="$(ProjectDir)\Nexus"/>
         <ItemGroup>
             <NexusPackageFiles Include="$(TargetDir)$(AssemblyName).dll;"/>
