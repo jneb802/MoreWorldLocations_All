@@ -64,17 +64,10 @@ namespace More_World_Locations_AIO
             //     AssetPaths.assetPathsInBundleFull
             // );   
             
-            // YAMLManager.ParseDefaultYamls();
-            // YAMLManager.ParseCustomYamls();
-            
             BepinexConfigs.GenerateConfigs(Config);
             
-            // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
-            // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
-
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += LocationsNEW.AddAllLocations;
-            // ZoneManager.OnVanillaLocationsAvailable += PortPrefabs.AddPortLocation;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
