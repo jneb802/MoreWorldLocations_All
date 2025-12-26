@@ -139,8 +139,10 @@ public class AssetPaths
         // Ashlands Pack 1
         "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort1.prefab",
         "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort2.prefab",
-        "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort3.prefab"
+        "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort3.prefab",
         
+        // Ports
+        "Assets/WarpProjects/More World Locations/Ports/MWL_Port1.prefab",
     };
     
     public static string[] assetPathsInBundle4 = new[]

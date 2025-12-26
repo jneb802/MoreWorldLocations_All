@@ -157,9 +157,9 @@ public class BepinexConfigs
             { "MWL_RuinedTower1_Configuration", new LocationConfiguration(Config, "RuinedTower1", 15) },
             { "MWL_TreeTowers1_Configuration", new LocationConfiguration(Config, "TreeTowers1", 20) },
             
-            // SpawnTesting
-            { "Location1_Configuration", new LocationConfiguration(Config, "Location1", 20) },
-            
+            // Ports
+            { "MWL_Port1_Configuration", new LocationConfiguration(Config, "Port1", 10) },
+
         };
     }
 }

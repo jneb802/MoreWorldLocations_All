@@ -18,6 +18,7 @@ public class LocationsNEW
         AddMistlandsPack1Locations();
         AddAshlandsPack1Locations();
         AddAdventureMapPack1Locations();
+        AddPortLocations();
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
     }
@@ -188,5 +189,9 @@ public class LocationsNEW
     
         //Common.LocationManager.AddLocation("Location1", LocationConfigs.AdventureMapPack1LocationConfigs["Location1_Config"]);
     }
-
+    
+    public static void AddPortLocations()
+    {
+        Common.LocationManager.AddLocation("MWL_Port1", LocationConfigs.PortLocationConfigs["MWL_Port1_Config"]);
+    }
 }
