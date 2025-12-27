@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using More_World_Locations_AIO.Managers;
+using More_World_Locations_AIO.Utils;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -21,12 +22,18 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         m_view = GetComponent<ZNetView>();
         if (!m_view.IsValid()) return;
+        Transform locationRoot = WorldUtils.GetLocationInRange(this.transform.position, 10).transform;
         if (m_containers.Placements.Count <= 0)
         {
             foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
             {
                 TempContainer temp = new TempContainer(child);
                 m_containers.Placements.Add(temp);
+            }
+
+            if (m_containers.Placements.Count == 0)
+            {
+                Debug.LogWarning("No containers found");
             }
         }
         m_name = m_view.GetZDO().GetString(PortVars.Name, NameGenerator.GenerateName());
