@@ -36,7 +36,7 @@ public static class WorldUtils
     
             if (location != null && InBounds(center, obj.transform.position, distance))
             {
-                Debug.Log($"GetLocationInRange: Found locationProxy with name {location.name}");
+                // Debug.Log($"GetLocationInRange: Found locationProxy with name {location.name}");
                 return location;
             }
         }
