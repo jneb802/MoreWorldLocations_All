@@ -342,7 +342,7 @@ public class LocationConfigs
     public static Dictionary<string, LocationConfig> PortLocationConfigs =
         new Dictionary<string, LocationConfig>
         {
-            { "MWL_Port1_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port1_Configuration"), Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2, MaxAltitude = 1, SlopeRotation = true} }
+            { "MWL_Port1_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port1_Configuration"), Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -1.5f, MaxAltitude = 1, SlopeRotation = true} }
         };
     
     /// <summary>
