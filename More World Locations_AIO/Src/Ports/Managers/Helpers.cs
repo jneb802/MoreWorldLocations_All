@@ -68,6 +68,19 @@ public static class Helpers
         return result;
     }
     
+    public static List<Transform> FindAllRecursive(this Transform parent, string name)
+    {
+        List<Transform> result = new List<Transform>();
+        if (parent == null) return result;
+    
+        foreach (Transform child in parent.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == name)
+                result.Add(child);
+        }
+        return result;
+    }
+    
     internal static string GetInternalName(this LocationManager.IconSettings.LocationIcon table)
     {
         Type type = typeof(LocationManager.IconSettings.LocationIcon);

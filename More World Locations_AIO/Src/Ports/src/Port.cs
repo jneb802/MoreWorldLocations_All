@@ -23,7 +23,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (!m_view.IsValid()) return;
         if (m_containers.Placements.Count <= 0)
         {
-            foreach (Transform child in transform.FindAll("containerPosition"))
+            foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
             {
                 TempContainer temp = new TempContainer(child);
                 m_containers.Placements.Add(temp);
