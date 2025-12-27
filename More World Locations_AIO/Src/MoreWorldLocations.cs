@@ -46,7 +46,7 @@ namespace More_World_Locations_AIO
             DontDestroyOnLoad(root);
             root.SetActive(false);
             
-            //PortInit.Init(root);
+            PortInit.Init(root);
             
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
@@ -54,9 +54,8 @@ namespace More_World_Locations_AIO
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
-            // Prefabs.LoadPrefabBundles();
-            // PortPrefabs.LoadPrefabBundles();
-            // PortPrefabs.AddPortUIPrefabs();
+            Prefabs.LoadPrefabBundles();
+            PortPrefabs.LoadPrefabBundles();
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
@@ -87,9 +86,8 @@ namespace More_World_Locations_AIO
     
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
-            Prefabs.LoadPrefabBundles();
             Prefabs.AddAllPrefabs();
-            // PortPrefabs.AddPortPrefabs();
+            PortPrefabs.AddPortPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 
