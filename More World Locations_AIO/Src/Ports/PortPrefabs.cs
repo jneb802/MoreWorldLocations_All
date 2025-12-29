@@ -33,7 +33,10 @@ public class PortPrefabs
         }
         CustomPrefab portTraderCustomPrefab = new CustomPrefab(portTraderPrefab, true);
         portTraderCustomPrefab.Prefab.AddComponent<Port>();
+        portTraderCustomPrefab.Prefab.AddComponent<PortTrader>();
+        
         PrefabManager.Instance.AddPrefab(portTraderCustomPrefab);
+        ShipmentManager.PrefabsToSearch.Add("PortTrader");
         
         GameObject portContainerWoodChest = portsBundle.LoadAsset<GameObject>("MWL_portContainer_woodChest");
         CustomPrefab MWL_portContainer_woodChest = new CustomPrefab(portContainerWoodChest, true);
