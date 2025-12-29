@@ -143,6 +143,7 @@ public class AssetPaths
         
         // Ports
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port1.prefab",
+        "Assets/WarpProjects/More World Locations/Ports/MWL_Port2.prefab",
     };
     
     public static string[] assetPathsInBundle4 = new[]

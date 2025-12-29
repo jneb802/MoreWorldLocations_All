@@ -228,7 +228,7 @@ public class LocationConfigs
     public static Dictionary<string, LocationConfig> MountainPack1LocationConfigs =
         new Dictionary<string, LocationConfig>
         {
-            { "MWL_StoneCastle1_Config", new LocationConfig { Quantity = GetQuantity("MWL_StoneCastle1_Configuration"), Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 1024, SlopeRotation = true, MinTerrainDelta = 7f, MaxTerrainDelta = 15f, MinAltitude = 80, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
+            { "MWL_StoneCastle1_Config", new LocationConfig { Quantity = GetQuantity("MWL_StoneCastle1_Configuration"), Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 1024, SlopeRotation = true, MinTerrainDelta = 10f, MaxTerrainDelta = 15f, MinAltitude = 80, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
 
             { "MWL_StoneFort1_Config", new LocationConfig { Quantity = GetQuantity("MWL_StoneFort1_Configuration"), Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Small", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 256, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 70, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
 
@@ -342,7 +342,8 @@ public class LocationConfigs
     public static Dictionary<string, LocationConfig> PortLocationConfigs =
         new Dictionary<string, LocationConfig>
         {
-            { "MWL_Port1_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port1_Configuration"), Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -1.5f, MaxAltitude = 1, SlopeRotation = true} }
+            { "MWL_Port1_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port1_Configuration"), Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports"} },
+            { "MWL_Port2_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port2_Configuration"), Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", BiomeArea = Heightmap.BiomeArea.Edge } },
         };
     
     /// <summary>
@@ -382,7 +383,6 @@ public class LocationConfigs
             
         if (LocationConfigs.AdventureMapPack1LocationConfigs.ContainsKey(configKey))
             return LocationConfigs.AdventureMapPack1LocationConfigs[configKey];
-        
         return null;
     }
 }
