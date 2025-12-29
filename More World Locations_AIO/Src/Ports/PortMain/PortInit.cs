@@ -140,6 +140,8 @@ public static class PortInit
         piece_chest_wood.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
+
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -150,12 +152,14 @@ public static class PortInit
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("Resin", 5);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone piece_chest_barrel = new Clone("piece_chest_barrel", "MWL_port_chest_barrel");
         piece_chest_barrel.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -166,12 +170,14 @@ public static class PortInit
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("BarrelRings", 1);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone piece_chest = new Clone("piece_chest", "MWL_port_chest_finewood");
         piece_chest.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -183,12 +189,14 @@ public static class PortInit
             manifest.Recipe.Add("Iron", 2);
             manifest.Recipe.Add("BlackMetal", 6);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone piece_chest_blackmetal = new Clone("piece_chest_blackmetal", "MWL_port_chest_blackmetal");
         piece_chest_blackmetal.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -200,12 +208,16 @@ public static class PortInit
             manifest.Recipe.Add("Tar", 2);
             manifest.Recipe.Add("BlackMetal", 6);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone TreasureChest_dvergrtower = new Clone("TreasureChest_dvergrtower", "MWL_port_chest_dvergr");
         TreasureChest_dvergrtower.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            
+            // use the same place effect as the blackmetal chest
+            var placeEffect = Jotunn.Managers.PrefabManager.Cache.GetPrefab<Piece>("piece_chest_blackmetal").m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -221,6 +233,7 @@ public static class PortInit
             manifest.CostToShip = 410;
             manifest.Recipe.Add("YggdrasilWood", 10);
             manifest.Recipe.Add("Copper", 2);
+            manifest.PlaceEffect = placeEffect;
         };
     }
     
