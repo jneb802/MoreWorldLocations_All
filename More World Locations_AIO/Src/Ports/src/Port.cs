@@ -22,20 +22,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         m_view = GetComponent<ZNetView>();
         if (!m_view.IsValid()) return;
-        Transform locationRoot = WorldUtils.GetLocationInRange(this.transform.position, 10).transform;
-        if (m_containers.Placements.Count <= 0)
-        {
-            foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
-            {
-                TempContainer temp = new TempContainer(child);
-                m_containers.Placements.Add(temp);
-            }
-
-            if (m_containers.Placements.Count == 0)
-            {
-                Debug.LogWarning("No containers found");
-            }
-        }
+        
         m_name = m_view.GetZDO().GetString(PortVars.Name, NameGenerator.GenerateName());
         m_portID.GUID = m_view.GetZDO().GetString(PortVars.GUID, Guid.NewGuid().ToString());
         m_portID.Name = m_name;
@@ -50,6 +37,21 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         if (!m_view.IsValid()) return;
         LoadSavedItems();
+        
+        Transform locationRoot = WorldUtils.GetLocationInRange(this.transform.position, 10).transform;
+        if (m_containers.Placements.Count <= 0)
+        {
+            foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
+            {
+                TempContainer temp = new TempContainer(child);
+                m_containers.Placements.Add(temp);
+            }
+
+            if (m_containers.Placements.Count == 0)
+            {
+                Debug.LogWarning("No containers found");
+            }
+        }
     }
 
     public void OnDestroy()
@@ -111,6 +113,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         }
         return null;
     }
+    
     public void DestroyContainers()
     {
         foreach (TempContainer? temp in m_containers.Placements)
@@ -355,6 +358,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             SpawnedContainer = container;
             // set manifest to purchased to remove from UI list
             manifest.IsPurchased = true;
+            manifest.PlaceEffect?.Create(chest.transform.position, chest.transform.rotation);
             return container;
         }
 
