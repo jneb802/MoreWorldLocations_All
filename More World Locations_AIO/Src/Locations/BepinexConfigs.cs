@@ -161,6 +161,7 @@ public class BepinexConfigs
             { "MWL_Port1_Configuration", new LocationConfiguration(Config, "Port1", 10) },
             { "MWL_Port2_Configuration", new LocationConfiguration(Config, "Port2", 10) },
             { "MWL_Port3_Configuration", new LocationConfiguration(Config, "Port3", 10) },
+            { "MWL_Port4_Configuration", new LocationConfiguration(Config, "Port4", 10) },
         };
     }
 }

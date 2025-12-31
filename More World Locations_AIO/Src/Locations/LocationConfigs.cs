@@ -344,7 +344,8 @@ public class LocationConfigs
         {
             { "MWL_Port1_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port1_Configuration"), Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports"} },
             { "MWL_Port2_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port2_Configuration"), Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", BiomeArea = Heightmap.BiomeArea.Edge } },
-            { "MWL_Port3_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port3_Configuration"), Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", BiomeArea = Heightmap.BiomeArea.Median } },
+            { "MWL_Port3_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port3_Configuration"), Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports" } },
+            { "MWL_Port4_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port4_Configuration"), Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports" } },
         };
     
     /// <summary>

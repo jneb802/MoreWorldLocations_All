@@ -195,5 +195,6 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_Port1", LocationConfigs.PortLocationConfigs["MWL_Port1_Config"]);
         Common.LocationManager.AddLocation("MWL_Port2", LocationConfigs.PortLocationConfigs["MWL_Port2_Config"]);
         Common.LocationManager.AddLocation("MWL_Port3", LocationConfigs.PortLocationConfigs["MWL_Port3_Config"]);
+        Common.LocationManager.AddLocation("MWL_Port4", LocationConfigs.PortLocationConfigs["MWL_Port4_Config"]);
     }
 }
