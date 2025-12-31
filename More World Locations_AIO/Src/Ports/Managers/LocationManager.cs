@@ -5,6 +5,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using JetBrains.Annotations;
+using Jotunn.Extensions;
 using SoftReferenceableAssets;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -35,40 +36,6 @@ public class LocationManager
 			return _plugin;
 		}
 	}
-	private static bool hasConfigSync = true;
-	private static object? _configSync;
-	private static object? configSync
-	{
-		get
-		{
-			if (_configSync == null && hasConfigSync)
-			{
-				if (Assembly.GetExecutingAssembly().GetType("ServerSync.ConfigSync") is { } configSyncType)
-				{
-					_configSync = Activator.CreateInstance(configSyncType, plugin.Info.Metadata.GUID + " RS_LocationManager");
-					configSyncType.GetField("CurrentVersion").SetValue(_configSync, plugin.Info.Metadata.Version.ToString());
-					configSyncType.GetProperty("IsLocked")!.SetValue(_configSync, true);
-				}
-				else
-				{
-					hasConfigSync = false;
-				}
-			}
-
-			return _configSync;
-		}
-	}
-	
-	[PublicAPI]
-	internal static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description)
-	{
-		ConfigEntry<T> configEntry = plugin.Config.Bind(group, name, value, description);
-		configSync?.GetType().GetMethod("AddConfigEntry")!.MakeGenericMethod(typeof(T)).Invoke(_configSync, new object[] { configEntry });
-		return configEntry;
-	}
-
-	[PublicAPI]
-	internal static ConfigEntry<T> config<T>(string group, string name, T value, string description) => config(group, name, value, new ConfigDescription(description));
 	
     private static Dictionary<string, Sprite>? _inGameOptions;
     private static Dictionary<string, Sprite> InGameOptions
@@ -172,13 +139,13 @@ public class LocationManager
 
 	    internal void Setup()
 	    {
-		    configs.Enabled = config(Prefab.name, "Enabled", PortInit.Toggle.On, $"If on, {Prefab.name} will load");
+		    configs.Enabled = ConfigFileExtensions.BindConfigInOrder(plugin.Config, Prefab.name, "Enabled", PortInit.Toggle.On, $"If on, {Prefab.name} will load");
 		    configs.Enabled.SettingChanged += (_, _) =>
 		    {
 			    if (registeredLocation == null) return;
 			    registeredLocation.m_enable = configs.Enabled.Value is PortInit.Toggle.On;
 		    };
-		    configs.Quantity = config(Prefab.name, "Quantity", Placement.Quantity, "Set initial amount to spawn in world");
+		    configs.Quantity = ConfigFileExtensions.BindConfigInOrder(plugin.Config, Prefab.name, "Quantity", Placement.Quantity, "Set initial amount to spawn in world");
 		    configs.Quantity.SettingChanged += (_, _) =>
 		    {
 			    Placement.Quantity = configs.Quantity.Value;
