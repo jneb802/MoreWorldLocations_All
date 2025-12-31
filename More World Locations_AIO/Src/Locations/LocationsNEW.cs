@@ -192,6 +192,9 @@ public class LocationsNEW
     
     public static void AddPortLocations()
     {
+        // Skip if port locations are disabled via config
+        if (PortInit.EnablePortLocations.Value == PortInit.Toggle.Off) return;
+        
         Common.LocationManager.AddLocation("MWL_Port1", LocationConfigs.PortLocationConfigs["MWL_Port1_Config"]);
         Common.LocationManager.AddLocation("MWL_Port2", LocationConfigs.PortLocationConfigs["MWL_Port2_Config"]);
         Common.LocationManager.AddLocation("MWL_Port3", LocationConfigs.PortLocationConfigs["MWL_Port3_Config"]);

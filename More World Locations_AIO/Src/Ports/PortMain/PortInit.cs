@@ -61,6 +61,7 @@ public static class PortInit
     }
     
     public static GameObject root = null!;
+    public static ConfigEntry<Toggle> EnablePortLocations = null!;
 
     public enum Toggle { On = 1, Off = 0 }
 
@@ -72,6 +73,9 @@ public static class PortInit
 
     private static void SetupConfigs()
     {
+        // Master toggle for port locations
+        EnablePortLocations = plugin.Config.BindConfig("0 - Shipment Ports", "Enable Port Locations", Toggle.On, "If Off, port locations will not spawn in the world", synced: true);
+        
         // Client-only configs (not synced - personal UI preferences)
         PortUI.PanelPositionConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "Set position of UI", synced: false);
         PortUI.PanelPositionConfig.SettingChanged += PortUI.OnPanelPositionConfigChange;
