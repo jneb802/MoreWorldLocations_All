@@ -84,6 +84,7 @@ public static class PortInit
         PortUI.BkgOption.SettingChanged += PortUI.OnBackgroundOptionChange;
         PortUI.UseTeleportTab = config("Shipment Ports", "Teleport To Ports", Toggle.Off, "If on, players can teleport to ports");
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
+        PortUI.TeleportCostPerMeter = config("Shipment Ports", "Teleport Cost Per Meter", 0.5f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.5 = 1 coin per 2 meters");
     }
 
     private static void SetupLocations()
