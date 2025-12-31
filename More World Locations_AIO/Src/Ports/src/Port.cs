@@ -38,7 +38,14 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (!m_view.IsValid()) return;
         LoadSavedItems();
         
-        Transform locationRoot = WorldUtils.GetLocationInRange(this.transform.position, 10).transform;
+        var locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
+        if (locationProxy == null)
+        {
+            Debug.LogWarning($"Port '{m_name}' could not find a LocationProxy within range. Container positions unavailable.");
+            return;
+        }
+        
+        Transform locationRoot = locationProxy.transform;
         if (m_containers.Placements.Count <= 0)
         {
             foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
