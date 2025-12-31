@@ -244,7 +244,7 @@ public static class PortInit
         SetupManagers();
         SetupConfigs();
         ShipmentManager.PrefabsToSearch.Add("MWL_PortTrader");
-        SetupLocations();
+        // SetupLocations();
         SetupPort();
         SetupManifests();
         PortTutorial.Setup();
