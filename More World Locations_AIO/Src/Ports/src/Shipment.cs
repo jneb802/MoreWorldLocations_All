@@ -129,6 +129,8 @@ public class Shipment
     public double GetTimeToArrivalSeconds() => GetTimeTo(ArrivalTime);
     public double GetTimeToExpirationSeconds() => GetTimeTo(ExpirationTime);
     
+    // Formats duration as human-readable time, with Valheim days for longer durations.
+    // Reads day length from EnvMan to support mods that change day duration.
     public static string FormatTime(double totalSeconds)
     {
         if (totalSeconds < 0) totalSeconds = 0;
@@ -138,12 +140,20 @@ public class Shipment
         int seconds = (int)(totalSeconds % 60);
 
         List<string> parts = new List<string>();
-
         if (hours > 0)   parts.Add($"{hours}h");
         if (minutes > 0) parts.Add($"{minutes}m");
         if (seconds > 0) parts.Add($"{seconds}s");
-
-        return string.Join(" ", parts);
+        
+        string realTime = string.Join(" ", parts);
+        
+        // Use game's actual day length (supports mods like LongerDays).
+        long dayLengthSec = EnvMan.instance != null ? EnvMan.instance.m_dayLengthSec : 1200L;
+        double valheimDays = totalSeconds / dayLengthSec;
+        if (valheimDays >= 1)
+        {
+            return $"~{valheimDays:0.#} days ({realTime})";
+        }
+        return realTime;
     }
     
     public string ToJson() => JsonConvert.SerializeObject(this);
