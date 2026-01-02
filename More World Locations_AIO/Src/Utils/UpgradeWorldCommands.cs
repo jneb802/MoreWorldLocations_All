@@ -82,5 +82,11 @@ public static class UpgradeWorldCommands
             "locations_add " +
             "MWL_AshlandsFort1,MWL_AshlandsFort2,MWL_AshlandsFort3" +
             " start");
+        
+        // Ports command (4 locations)
+        UpgradeWorld.Upgrade.Register("mwl_ports", "Adds MWL shipping port locations to corresponding biomes.", 
+            "locations_add " +
+            "MWL_Port1,MWL_Port2,MWL_Port3,MWL_Port4" +
+            " start");
     }
 }
