@@ -83,13 +83,13 @@ public static class PortInit
         PortUI.BkgOption.SettingChanged += PortUI.OnBackgroundOptionChange;
         
         // Server-synced configs (enforced by server for all clients)
-        ShipmentManager.TransitByDistance = plugin.Config.BindConfig("0 - Shipment Ports", "Time Per Meter", 2f, "Set seconds per meter for shipment transit", synced: true);
+        ShipmentManager.TransitByDistance = plugin.Config.BindConfig("0 - Shipment Ports", "Time Per Meter", 0.5f, "Set seconds per meter for shipment transit", synced: true);
         ShipmentManager.CurrencyConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items", synced: true);
         ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
         ShipmentManager.OverrideTransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance", synced: true);
         ShipmentManager.TransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min", synced: true);
         ShipmentManager.ExpirationEnabled = plugin.Config.BindConfig("0 - Shipment Ports", "Expires", Toggle.On, "If on, shipments can expire", synced: true);
-        ShipmentManager.ExpirationTime = plugin.Config.BindConfig("0 - Shipment Ports", "Expiration Time", 3600f, "Set time until expiration, 3600 = 1 hour", synced: true);
+        ShipmentManager.ExpirationTime = plugin.Config.BindConfig("0 - Shipment Ports", "Expiration Time", 7200f, "Set time until expiration, 3600 = 1 hour", synced: true);
         PortUI.UseTeleportTab = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
         PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.5f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.5 = 1 coin per 2 meters", synced: true);
