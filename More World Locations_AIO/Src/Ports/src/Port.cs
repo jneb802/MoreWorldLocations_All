@@ -36,8 +36,6 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public void Start()
     {
         if (!m_view.IsValid()) return;
-        LoadSavedItems();
-        
         var locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
         if (locationProxy == null)
         {
@@ -59,6 +57,8 @@ public class Port : MonoBehaviour, Interactable, Hoverable
                 Debug.LogWarning("No containers found");
             }
         }
+        
+        LoadSavedItems();
     }
 
     public void OnDestroy()
