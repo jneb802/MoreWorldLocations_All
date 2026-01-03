@@ -11,6 +11,7 @@ using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Waystones;
 using UnityEngine;
+using YamlDotNet.Serialization;
 
 namespace More_World_Locations_AIO;
 
@@ -150,6 +151,65 @@ public class Prefabs
     
         PrefabManager.Instance.AddPrefab(customPrefab); 
     }
+
+    public static GameObject AddDoorPrefab(string doorName, string vanillaDoorName)
+    {
+        GameObject doorPrefab = PrefabManager.Instance.CreateClonedPrefab(doorName, vanillaDoorName);
+        if (doorPrefab == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not create cloned prefab for {doorName}");
+            return null;
+        }
+        
+        CustomPrefab customPrefab = new CustomPrefab(doorPrefab, false);
+        PrefabManager.Instance.AddPrefab(customPrefab); 
+        return doorPrefab;
+    }
+
+    public static GameObject AddKeyPrefab(string keyName, string vanillaKeyName)
+    {
+        GameObject keyPrefab = PrefabManager.Instance.CreateClonedPrefab(keyName, vanillaKeyName);
+        if (keyPrefab == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not create cloned prefab for {keyName}");
+            return null;
+        }
+        
+        // Items must be registered via ItemManager (not just PrefabManager) so they appear
+        // in ObjectDB.m_items. Without this, dropping the item fails because m_dropPrefab is null.
+        CustomItem customItem = new CustomItem(keyPrefab, false);
+        ItemManager.Instance.AddItem(customItem); 
+        return keyPrefab;
+    }
+
+    public static GameObject AddRuneStonePrefab(string runeStoneName, string vanillaRuneStoneName)
+    {
+        GameObject runeStonePrefab = PrefabManager.Instance.CreateClonedPrefab(runeStoneName, vanillaRuneStoneName);
+        if (runeStonePrefab == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not create cloned prefab for {runeStoneName}");
+            return null;
+        }
     
-    
+        CustomPrefab customPrefab = new CustomPrefab(runeStonePrefab, false);
+        PrefabManager.Instance.AddPrefab(customPrefab); 
+        return runeStonePrefab;
+    }
+
+    public static GameObject AddPickableItemPrefab(string pickableItemName, string vanillaPickableItemName)
+    {
+        GameObject pickableItemPrefab = PrefabManager.Instance.CreateClonedPrefab(pickableItemName, vanillaPickableItemName);
+        if (pickableItemPrefab == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not create cloned prefab for {pickableItemName}");
+            return null;
+        }
+
+        CustomPrefab customPrefab = new CustomPrefab(pickableItemPrefab, false);
+        PickableItem pickableItem = customPrefab.Prefab.GetComponent<PickableItem>();
+        pickableItem.m_randomItemPrefabs = System.Array.Empty<PickableItem.RandomItem>();
+        PrefabManager.Instance.AddPrefab(customPrefab); 
+        return pickableItemPrefab;
+    }
+
 }
