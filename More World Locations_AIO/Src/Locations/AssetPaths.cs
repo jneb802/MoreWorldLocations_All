@@ -67,6 +67,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_CoastTower1.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestCamp1.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedTower1.prefab",
+        "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestGrove1.prefab",
 
         // Swamp Pack 1
         "Assets/WarpProjects/More World Locations/Swamp/MWL_GuckPit1.prefab",
@@ -92,6 +93,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampBrokenTower3.prefab",
         "Assets/WarpProjects/More World Locations/Swamp/MWL_TreeTowers1.prefab",
         "Assets/WarpProjects/More World Locations/Swamp/MWL_CastleCorner1.prefab",
+        "Assets/WarpProjects/More World Locations/Swamp/MWL_StoneCircle1.prefab",
         
         // Mountains Pack 1
         "Assets/WarpProjects/More World Locations/Mountain/MWL_StoneCastle1.prefab",
@@ -106,6 +108,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mountain/MWL_TempleShrine1.prefab",
         "Assets/WarpProjects/More World Locations/Mountain/MWL_StoneAltar1.prefab",
         "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainDvergrShrine1.prefab",
+        "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainDvergrShrine2.prefab",
         "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainShrine1.prefab",
 
         // Plains Pack 1
@@ -117,6 +120,8 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple1.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple2.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple3.prefab",
+        "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTempleBroken1.prefab",
+        "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple4.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingWall1.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTower1.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_RockGarden1.prefab",
@@ -132,6 +137,9 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistHut2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrEitrSingularity1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouse1.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouseWood1.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouseWood2.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleJail1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrKnowledgeExtractor1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_AncientShrine1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistShrine1.prefab",

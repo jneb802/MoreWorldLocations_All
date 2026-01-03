@@ -17,7 +17,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "3.0.0";
+        internal const string ModVersion = "3.1.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -87,6 +87,7 @@ namespace More_World_Locations_AIO
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
             Prefabs.AddAllPrefabs();
+            LocationCustomPrefabs.AddMarbleJail1Prefabs();
             PortPrefabs.AddPortPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
