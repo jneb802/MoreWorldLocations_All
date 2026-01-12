@@ -18,6 +18,7 @@ public class Manifest
     public string RequiredDefeatKey = "";
     public int CostToShip = 50;
     public Sprite? Icon;
+    public EffectList? PlaceEffect;
 
     public bool IsPurchased;
     private static StringBuilder sb = new StringBuilder();

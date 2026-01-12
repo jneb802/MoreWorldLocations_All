@@ -1,12 +1,152 @@
-<Project>
-    <PropertyGroup>
-        <ValheimGamePath>C:\Program Files (x86)\Steam\steamapps\common\Valheim</ValheimGamePath>
-        <BepInExPath>$(ValheimGamePath)\BepInEx</BepInExPath>
-        <CorlibPath>$(ValheimGamePath)\valheim_Data\Managed</CorlibPath>
-        <PublicizedAssembliesPath>$(ValheimGamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
-        <CopyOutputDLLPath>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath> <!-- This is where the output DLL will be copied to after building. The templates support doing this for up to three locations. Duplicate this line and append a number. Example below -->
-        <!--<CopyOutputDLLPath2>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath2>-->
-        <!--<CopyOutputDLLPath3>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath3>-->
-        <AfterTargets>ILRepacker</AfterTargets> <!-- If you are using KeyManager, change this to KeyManager as suggested in step 5.2 in the instructions -->
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <!-- 
+      macOS/Linux: Valheim paths
+      Update VALHEIM_INSTALL if your Steam library is elsewhere.
+    -->
+    <PropertyGroup Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'">
+        <VALHEIM_INSTALL>/Users/benjmarston/Library/Application Support/Steam/steamapps/common/Valheim</VALHEIM_INSTALL>
+        <VALHEIM_MANAGED>$(VALHEIM_INSTALL)/Valheim.app/Contents/Resources/Data/Managed</VALHEIM_MANAGED>
+        <BEPINEX_PATH>$(VALHEIM_INSTALL)/BepInEx</BEPINEX_PATH>
+        <BEPINEX_CORE>$(BEPINEX_PATH)/core</BEPINEX_CORE>
+        <BEPINEX_PLUGINS>$(BEPINEX_PATH)/plugins</BEPINEX_PLUGINS>
+        <PUBLICIZED_PATH>$(VALHEIM_MANAGED)/publicized_assemblies</PUBLICIZED_PATH>
     </PropertyGroup>
+
+    <!-- Windows paths -->
+    <PropertyGroup Condition="$(OS) == 'Windows_NT'">
+        <VALHEIM_INSTALL>C:\Program Files (x86)\Steam\steamapps\common\Valheim</VALHEIM_INSTALL>
+        <VALHEIM_MANAGED>$(VALHEIM_INSTALL)\valheim_Data\Managed</VALHEIM_MANAGED>
+        <BEPINEX_PATH>$(VALHEIM_INSTALL)\BepInEx</BEPINEX_PATH>
+        <BEPINEX_CORE>$(BEPINEX_PATH)\core</BEPINEX_CORE>
+        <BEPINEX_PLUGINS>$(BEPINEX_PATH)\plugins</BEPINEX_PLUGINS>
+        <PUBLICIZED_PATH>$(VALHEIM_MANAGED)\publicized_assemblies</PUBLICIZED_PATH>
+    </PropertyGroup>
+
+    <!-- BepInEx and Harmony -->
+    <ItemGroup>
+        <Reference Include="BepInEx">
+            <HintPath>$(BEPINEX_CORE)/BepInEx.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="0Harmony">
+            <HintPath>$(BEPINEX_CORE)/0Harmony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Unity Engine -->
+    <ItemGroup>
+        <Reference Include="UnityEngine">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.UI.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.AssetBundleModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.ImageConversionModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.ImageConversionModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.InputLegacyModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.IMGUIModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.TextRenderingModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AnimationModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.AnimationModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.PhysicsModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.ParticleSystemModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(VALHEIM_MANAGED)/Unity.TextMeshPro.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Valheim Game Assemblies (publicized) -->
+    <ItemGroup>
+        <Reference Include="assembly_valheim">
+            <HintPath>$(PUBLICIZED_PATH)/assembly_valheim_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="assembly_guiutils">
+            <HintPath>$(PUBLICIZED_PATH)/assembly_guiutils_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="assembly_utils">
+            <HintPath>$(PUBLICIZED_PATH)/assembly_utils_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="SoftReferenceableAssets">
+            <HintPath>$(PUBLICIZED_PATH)/SoftReferenceableAssets_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Splatform">
+            <HintPath>$(PUBLICIZED_PATH)/Splatform_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Local Libs (bundled with project) -->
+    <ItemGroup>
+        <Reference Include="Jotunn">
+            <HintPath>Libs/Jotunn.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="ServerSync">
+            <HintPath>Libs/ServerSync.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Post-build: Merge ServerSync via ILRepack, then deploy -->
+    <Target Name="ILRepackAndDeploy" AfterTargets="Build">
+        <PropertyGroup>
+            <ILRepackExe>$(ProjectDir)tools/ILRepack.exe</ILRepackExe>
+            <MergedDLL>$(TargetDir)$(TargetName).merged.dll</MergedDLL>
+            <NuGetPackages>$(HOME)/.nuget/packages</NuGetPackages>
+        </PropertyGroup>
+
+        <!-- macOS/Linux: run via mono with lib paths -->
+        <Exec Command="mono &quot;$(ILRepackExe)&quot; /internalize /lib:&quot;$(NuGetPackages)/newtonsoft.json/13.0.3/lib/net45&quot; /lib:&quot;$(NuGetPackages)/yamldotnet/13.2.0/lib/net47&quot; /lib:&quot;$(VALHEIM_MANAGED)&quot; /lib:&quot;$(BEPINEX_CORE)&quot; /out:&quot;$(MergedDLL)&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Libs/ServerSync.dll&quot;"
+              Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'" />
+
+        <!-- Windows: run directly with lib paths -->
+        <Exec Command="&quot;$(ILRepackExe)&quot; /internalize /lib:&quot;$(NuGetPackages)\newtonsoft.json\13.0.3\lib\net45&quot; /lib:&quot;$(NuGetPackages)\yamldotnet\13.2.0\lib\net47&quot; /lib:&quot;$(VALHEIM_MANAGED)&quot; /lib:&quot;$(BEPINEX_CORE)&quot; /out:&quot;$(MergedDLL)&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Libs\ServerSync.dll&quot;"
+              Condition="$(OS) == 'Windows_NT'" />
+
+        <!-- Replace original with merged -->
+        <Delete Files="$(TargetPath)" />
+        <Move SourceFiles="$(MergedDLL)" DestinationFiles="$(TargetPath)" />
+
+        <!-- Deploy to BepInEx -->
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BEPINEX_PLUGINS)" SkipUnchangedFiles="false" />
+        <Message Importance="high" Text="Merged ServerSync → $(TargetFileName) deployed to $(BEPINEX_PLUGINS)" />
+    </Target>
+
 </Project>

@@ -18,6 +18,7 @@ public class LocationsNEW
         AddMistlandsPack1Locations();
         AddAshlandsPack1Locations();
         AddAdventureMapPack1Locations();
+        AddPortLocations();
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
     }
@@ -34,6 +35,7 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_RuinsArena3", LocationConfigs.MeadowsPack1LocationConfigs["MWL_RuinsArena3_Config"]);
         Common.LocationManager.AddLocation("MWL_RuinsChurch1", LocationConfigs.MeadowsPack1LocationConfigs["MWL_RuinsChurch1_Config"]);
         Common.LocationManager.AddLocation("MWL_RuinsWell1", LocationConfigs.MeadowsPack1LocationConfigs["MWL_RuinsWell1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MaypoleHut1", LocationConfigs.MeadowsPack1LocationConfigs["MWL_MaypoleHut1_Config"]);
     }
     
     public static void AddMeadowsPack2Locations()
@@ -92,6 +94,8 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_ForestTower5", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestTower5_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestPillar1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestPillar1_Config"]);
         Common.LocationManager.AddLocation("MWL_CoastTower1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_CoastTower1_Config"]);
+        Common.LocationManager.AddLocation("MWL_ForestGrove1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestGrove1_Config"]);
+        Common.LocationManager.AddLocation("MWL_RockShrine1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RockShrine1_Config"]);
     }
 
     
@@ -118,6 +122,8 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_SwampCourtyard1", LocationConfigs.SwampPack1LocationConfigs["MWL_SwampCourtyard1_Config"]);
         Common.LocationManager.AddLocation("MWL_SwampBrokenTower1", LocationConfigs.SwampPack1LocationConfigs["MWL_SwampBrokenTower1_Config"]);
         Common.LocationManager.AddLocation("MWL_SwampBrokenTower3", LocationConfigs.SwampPack1LocationConfigs["MWL_SwampBrokenTower3_Config"]);
+        Common.LocationManager.AddLocation("MWL_StoneCircle1", LocationConfigs.SwampPack1LocationConfigs["MWL_StoneCircle1_Config"]);
+        Common.LocationManager.AddLocation("MWL_SwampTemple1", LocationConfigs.SwampPack1LocationConfigs["MWL_SwampTemple1_Config"]);
     }
     
     public static void AddMountainsPack1Locations()
@@ -146,6 +152,8 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_FulingTemple1", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTemple1_Config"]);
         Common.LocationManager.AddLocation("MWL_FulingTemple2", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTemple2_Config"]);
         Common.LocationManager.AddLocation("MWL_FulingTemple3", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTemple3_Config"]);
+        Common.LocationManager.AddLocation("MWL_FulingTempleBroken1", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTempleBroken1_Config"]);
+        Common.LocationManager.AddLocation("MWL_FulingTemple4", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTemple4_Config"]);
         Common.LocationManager.AddLocation("MWL_FulingWall1", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingWall1_Config"]);
         Common.LocationManager.AddLocation("MWL_FulingTower1", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTower1_Config"]);
         Common.LocationManager.AddLocation("MWL_RockGarden1", LocationConfigs.PlainsPack1LocationConfigs["MWL_RockGarden1_Config"]);
@@ -162,6 +170,13 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_MistHut1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MistHut1_Config"]);
         Common.LocationManager.AddLocation("MWL_DvergrEitrSingularity1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrEitrSingularity1_Config"]);
         Common.LocationManager.AddLocation("MWL_DvergrHouse1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrHouse1_Config"]);
+        Common.LocationManager.AddLocation("MWL_DvergrHouseWood1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrHouseWood1_Config"]);
+        Common.LocationManager.AddLocation("MWL_DvergrHouseWood2", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrHouseWood2_Config"]);
+        Common.LocationManager.AddLocation("MWL_MarbleJail1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleJail1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MarbleHome1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleHome1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MarbleCliffAltar1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleCliffAltar1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MistPond1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MistPond1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MarbleCage1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleCage1_Config"]);
         Common.LocationManager.AddLocation("MWL_DvergrKnowledgeExtractor1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrKnowledgeExtractor1_Config"]);
         Common.LocationManager.AddLocation("MWL_AncientShrine1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_AncientShrine1_Config"]);
         Common.LocationManager.AddLocation("MWL_MistShrine1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MistShrine1_Config"]);
@@ -182,11 +197,25 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_ForestCamp1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_ForestCamp1_Config"]);
         Common.LocationManager.AddLocation("MWL_MistHut2", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MistHut2_Config"]);
         Common.LocationManager.AddLocation("MWL_MountainDvergrShrine1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MountainDvergrShrine1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MountainDvergrShrine2", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MountainDvergrShrine2_Config"]);
+        Common.LocationManager.AddLocation("MWL_MountainOverlook1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MountainOverlook1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MountainCultShrine1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MountainCultShrine1_Config"]);
+        Common.LocationManager.AddLocation("MWL_RuinsChurch2", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_RuinsChurch2_Config"]);
         Common.LocationManager.AddLocation("MWL_MountainShrine1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_MountainShrine1_Config"]);
         Common.LocationManager.AddLocation("MWL_RuinedTower1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_RuinedTower1_Config"]);
         Common.LocationManager.AddLocation("MWL_TreeTowers1", LocationConfigs.AdventureMapPack1LocationConfigs["MWL_TreeTowers1_Config"]);
     
         //Common.LocationManager.AddLocation("Location1", LocationConfigs.AdventureMapPack1LocationConfigs["Location1_Config"]);
     }
-
+    
+    public static void AddPortLocations()
+    {
+        // Skip if port locations are disabled via config
+        if (PortInit.EnablePortLocations.Value == PortInit.Toggle.Off) return;
+        
+        Common.LocationManager.AddLocation("MWL_Port1", LocationConfigs.PortLocationConfigs["MWL_Port1_Config"]);
+        Common.LocationManager.AddLocation("MWL_Port2", LocationConfigs.PortLocationConfigs["MWL_Port2_Config"]);
+        Common.LocationManager.AddLocation("MWL_Port3", LocationConfigs.PortLocationConfigs["MWL_Port3_Config"]);
+        Common.LocationManager.AddLocation("MWL_Port4", LocationConfigs.PortLocationConfigs["MWL_Port4_Config"]);
+    }
 }

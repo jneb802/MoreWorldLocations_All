@@ -134,6 +134,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     internal static ConfigEntry<BackgroundOption>? BkgOption;
     public static ConfigEntry<Vector3>? PanelPositionConfig;
     public static ConfigEntry<PortInit.Toggle>? UseTeleportTab;
+    public static ConfigEntry<float>? TeleportCostPerMeter;
     
     public static PortUI? instance;
     private static Minimap.PinData? m_tempPin; // let's keep this static so we only ever have one port pin on the map
@@ -533,6 +534,17 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                     Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_noteleport");
                     return;
                 }
+                // Check and consume teleport requirements before teleporting.
+                if (!Player.m_localPlayer.NoCostCheat())
+                {
+                    var teleportCost = GetTeleportRequirements(m_selectedDestination);
+                    if (!HasTeleportRequirements(Player.m_localPlayer, teleportCost))
+                    {
+                        Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
+                        return;
+                    }
+                    ConsumeTeleportRequirements(Player.m_localPlayer, teleportCost);
+                }
                 Player.m_localPlayer.TeleportTo(m_selectedDestination.position, Quaternion.identity, true);
                 Hide();
                 break;
@@ -765,7 +777,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             SetMainButtonText(LocalKeys.Teleport);
             
             Requirements.SetActive(true);
-            Requirements.LoadTeleportCost(info);
+            Requirements.LoadTeleportCost(GetTeleportRequirements(info));
             Requirements.SetLevel(1.ToString());
             MainButton.interactable = true;
             float timer = 0f;
@@ -1051,26 +1063,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             }
         }
 
-        public void LoadTeleportCost(Port.PortInfo destination)
+        public void LoadTeleportCost(List<Manifest.Requirement> requirements)
         {
-            List<Manifest.Requirement> requirements = new List<Manifest.Requirement>()
-            {
-                new Manifest.Requirement()
-                {
-                    Item = ShipmentManager.CurrencyItem ??  ObjectDB.instance.GetItemPrefab("Coins").GetComponent<ItemDrop>().m_itemData,
-                    Amount = Mathf.FloorToInt(destination.GetDistance(Player.m_localPlayer) / 2)
-                },
-                new Manifest.Requirement()
-                {
-                    Item = ObjectDB.instance.GetItemPrefab("SurtlingCore").GetComponent<ItemDrop>().m_itemData,
-                    Amount = 2
-                },
-                new Manifest.Requirement()
-                {
-                    Item = ObjectDB.instance.GetItemPrefab("GreydwarfEye").GetComponent<ItemDrop>().m_itemData,
-                    Amount = 10
-                }
-            };
             for (int i = 0; i < items.Count; ++i)
             {
                 RequirementItem item = items[i];
@@ -1155,6 +1149,45 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     
     private Vector3 mouseDifference = Vector3.zero;
+
+    // Helper methods for teleport cost calculation and consumption.
+    private static List<Manifest.Requirement> GetTeleportRequirements(Port.PortInfo destination)
+    {
+        float costPerMeter = TeleportCostPerMeter?.Value ?? 0.5f;
+        int coinCost = Mathf.FloorToInt(destination.GetDistance(Player.m_localPlayer) * costPerMeter);
+        
+        // Free teleport if cost is zero
+        if (coinCost <= 0) return new List<Manifest.Requirement>();
+        
+        return new List<Manifest.Requirement>
+        {
+            new Manifest.Requirement
+            {
+                Item = ShipmentManager.CurrencyItem ?? ObjectDB.instance.GetItemPrefab("Coins").GetComponent<ItemDrop>().m_itemData,
+                Amount = coinCost
+            }
+        };
+    }
+
+    private static bool HasTeleportRequirements(Player player, List<Manifest.Requirement> requirements)
+    {
+        Inventory inventory = player.GetInventory();
+        foreach (Manifest.Requirement req in requirements)
+        {
+            if (inventory.CountItems(req.Item.m_shared.m_name) < req.Amount)
+                return false;
+        }
+        return true;
+    }
+
+    private static void ConsumeTeleportRequirements(Player player, List<Manifest.Requirement> requirements)
+    {
+        Inventory inventory = player.GetInventory();
+        foreach (Manifest.Requirement req in requirements)
+        {
+            inventory.RemoveItem(req.Item.m_shared.m_name, req.Amount);
+        }
+    }
 
     public void OnDrag(PointerEventData eventData)
     {

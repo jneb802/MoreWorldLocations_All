@@ -17,7 +17,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "2.0.12";
+        internal const string ModVersion = "3.2.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -46,7 +46,7 @@ namespace More_World_Locations_AIO
             DontDestroyOnLoad(root);
             root.SetActive(false);
             
-            //PortInit.Init(root);
+            PortInit.Init(root);
             
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
@@ -54,9 +54,8 @@ namespace More_World_Locations_AIO
             _harmony.PatchAll(assembly);
             SetupWatcher();
 
-            // Prefabs.LoadPrefabBundles();
-            // PortPrefabs.LoadPrefabBundles();
-            // PortPrefabs.AddPortUIPrefabs();
+            Prefabs.LoadPrefabBundles();
+            PortPrefabs.LoadPrefabBundles();
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
@@ -64,17 +63,10 @@ namespace More_World_Locations_AIO
             //     AssetPaths.assetPathsInBundleFull
             // );   
             
-            // YAMLManager.ParseDefaultYamls();
-            // YAMLManager.ParseCustomYamls();
-            
             BepinexConfigs.GenerateConfigs(Config);
             
-            // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildCreatureLists;
-            // PrefabManager.OnVanillaPrefabsAvailable += YAMLManager.BuildLootLists;
-
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += LocationsNEW.AddAllLocations;
-            // ZoneManager.OnVanillaLocationsAvailable += PortPrefabs.AddPortLocation;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
@@ -94,9 +86,10 @@ namespace More_World_Locations_AIO
     
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
-            Prefabs.LoadPrefabBundles();
             Prefabs.AddAllPrefabs();
-            // PortPrefabs.AddPortPrefabs();
+            LocationCustomPrefabs.AddMarbleJail1Prefabs();
+            LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
+            PortPrefabs.AddPortPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 

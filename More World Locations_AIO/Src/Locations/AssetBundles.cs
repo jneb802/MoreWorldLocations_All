@@ -329,7 +329,7 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/Adventure Map 1/MWL_MountainDvergrShrine1.prefab",
         "Assets/WarpProjects/More World Locations/Adventure Map 1/MWL_MountainShrine1.prefab",
         "Assets/WarpProjects/More World Locations/Adventure Map 1/MWL_RuinedTower1.prefab",
-        "Assets/WarpProjects/More World Locations/Adventure Map 1/MWL_TreeTowers1.prefab"
+        "Assets/WarpProjects/More World Locations/Adventure Map 1/MWL_TreeTowers1.prefab",
     };
     
     public static string[] assetPathsInBundle3 = new[]

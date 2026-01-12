@@ -7,6 +7,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using JetBrains.Annotations;
 using Jotunn;
+using Jotunn.Extensions;
 using More_World_Locations_AIO.Managers;
 using More_World_Locations_AIO.tutorials;
 
@@ -60,6 +61,7 @@ public static class PortInit
     }
     
     public static GameObject root = null!;
+    public static ConfigEntry<Toggle> EnablePortLocations = null!;
 
     public enum Toggle { On = 1, Off = 0 }
 
@@ -71,19 +73,26 @@ public static class PortInit
 
     private static void SetupConfigs()
     {
-        PortUI.PanelPositionConfig = config("Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "Set position of UI", false);
+        // Master toggle for port locations
+        EnablePortLocations = plugin.Config.BindConfig("0 - Shipment Ports", "Enable Port Locations", Toggle.On, "If Off, port locations will not spawn in the world", synced: true);
+        
+        // Client-only configs (not synced - personal UI preferences)
+        PortUI.PanelPositionConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "Set position of UI", synced: false);
         PortUI.PanelPositionConfig.SettingChanged += PortUI.OnPanelPositionConfigChange;
-        ShipmentManager.TransitByDistance = config("Shipment Ports", "Time Per Meter", 2f, "Set seconds per meter for shipment transit");
-        ShipmentManager.CurrencyConfig = config("Shipment Ports", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items");
-        ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
-        ShipmentManager.OverrideTransitTime = config("Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance");
-        ShipmentManager.TransitTime = config("Shipment Ports", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min");
-        ShipmentManager.ExpirationEnabled = config("Shipment Ports", "Expires", Toggle.On, "If on, shipments can expire");
-        ShipmentManager.ExpirationTime = config("Shipment Ports", "Expiration Time", 3600f, "Set time until expiration, 3600 = 1 hour");
-        PortUI.BkgOption = config("Shipment Ports", "Background", PortUI.BackgroundOption.Opaque, "Set background type", false);
+        PortUI.BkgOption = plugin.Config.BindConfig("0 - Shipment Ports", "Background", PortUI.BackgroundOption.Opaque, "Set background type", synced: false);
         PortUI.BkgOption.SettingChanged += PortUI.OnBackgroundOptionChange;
-        PortUI.UseTeleportTab = config("Shipment Ports", "Teleport To Ports", Toggle.Off, "If on, players can teleport to ports");
+        
+        // Server-synced configs (enforced by server for all clients)
+        ShipmentManager.TransitByDistance = plugin.Config.BindConfig("0 - Shipment Ports", "Time Per Meter", 0.5f, "Set seconds per meter for shipment transit", synced: true);
+        ShipmentManager.CurrencyConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items", synced: true);
+        ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
+        ShipmentManager.OverrideTransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance", synced: true);
+        ShipmentManager.TransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min", synced: true);
+        ShipmentManager.ExpirationEnabled = plugin.Config.BindConfig("0 - Shipment Ports", "Expires", Toggle.On, "If on, shipments can expire", synced: true);
+        ShipmentManager.ExpirationTime = plugin.Config.BindConfig("0 - Shipment Ports", "Expiration Time", 7200f, "Set time until expiration, 3600 = 1 hour", synced: true);
+        PortUI.UseTeleportTab = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
+        PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.5f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.5 = 1 coin per 2 meters", synced: true);
     }
 
     private static void SetupLocations()
@@ -140,6 +149,8 @@ public static class PortInit
         piece_chest_wood.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
+
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -150,12 +161,14 @@ public static class PortInit
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("Resin", 5);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone piece_chest_barrel = new Clone("piece_chest_barrel", "MWL_port_chest_barrel");
         piece_chest_barrel.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -166,12 +179,14 @@ public static class PortInit
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("BarrelRings", 1);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone piece_chest = new Clone("piece_chest", "MWL_port_chest_finewood");
         piece_chest.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -183,12 +198,14 @@ public static class PortInit
             manifest.Recipe.Add("Iron", 2);
             manifest.Recipe.Add("BlackMetal", 6);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone piece_chest_blackmetal = new Clone("piece_chest_blackmetal", "MWL_port_chest_blackmetal");
         piece_chest_blackmetal.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -200,12 +217,16 @@ public static class PortInit
             manifest.Recipe.Add("Tar", 2);
             manifest.Recipe.Add("BlackMetal", 6);
             manifest.Icon = icon;
+            manifest.PlaceEffect = placeEffect;
         };
         
         Clone TreasureChest_dvergrtower = new Clone("TreasureChest_dvergrtower", "MWL_port_chest_dvergr");
         TreasureChest_dvergrtower.OnCreated += prefab =>
         {
             var icon = prefab.GetComponent<Piece>().m_icon;
+            
+            // use the same place effect as the blackmetal chest
+            var placeEffect = Jotunn.Managers.PrefabManager.Cache.GetPrefab<Piece>("piece_chest_blackmetal").m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
             prefab.GetComponent<ZNetView>().m_persistent = false;
@@ -221,6 +242,7 @@ public static class PortInit
             manifest.CostToShip = 410;
             manifest.Recipe.Add("YggdrasilWood", 10);
             manifest.Recipe.Add("Copper", 2);
+            manifest.PlaceEffect = placeEffect;
         };
     }
     
@@ -231,24 +253,9 @@ public static class PortInit
         SetupManagers();
         SetupConfigs();
         ShipmentManager.PrefabsToSearch.Add("MWL_PortTrader");
-        SetupLocations();
+        // SetupLocations();
         SetupPort();
         SetupManifests();
         PortTutorial.Setup();
     }
-    private static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
-    {
-        ConfigEntry<T> configEntry = plugin.Config.Bind(group, name, value, description);
-        if (synchronizedSetting) configSync?.GetType().GetMethod("AddConfigEntry")!.MakeGenericMethod(typeof(T)).Invoke(_configSync, new object[] { configEntry });
-        return configEntry;
-    }
-    private static ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-    private class ConfigurationManagerAttributes
-    {
-        [UsedImplicitly] public int? Order = null!;
-        [UsedImplicitly] public bool? Browsable = null!;
-        [UsedImplicitly] public string? Category = null!;
-        [UsedImplicitly] public Action<ConfigEntryBase>? CustomDrawer = null!;
-    }
-    
 }

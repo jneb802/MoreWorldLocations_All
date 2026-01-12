@@ -13,9 +13,6 @@ public class PortPrefabs
 {
     public static AssetBundle portsBundle;
     public static AssetBundle portsLocationBundle;
-    public static GameObject portUI;
-    public static GameObject portUIListItem;
-    
     public static void LoadPrefabBundles()
     {
         portsBundle = AssetUtils.LoadAssetBundleFromResources(
@@ -27,21 +24,6 @@ public class PortPrefabs
             Assembly.GetExecutingAssembly());
     }
     
-    public static void AddPortUIPrefabs()
-    {
-        portUI = portsBundle.LoadAsset<GameObject>("PortUI1");
-        if (portUI == null)
-        {
-            Debug.LogError("Error: Could not load PortUI1 prefab from bundle");
-        }
-        
-        portUIListItem = portsBundle.LoadAsset<GameObject>("ListItem");
-        if (portUI == null)
-        {
-            Debug.LogError("Error: Could not load PortUI1 prefab from bundle");
-        }
-    }
-    
     public static void AddPortPrefabs()
     {
         GameObject portTraderPrefab = portsBundle.LoadAsset<GameObject>("PortTrader");
@@ -51,7 +33,10 @@ public class PortPrefabs
         }
         CustomPrefab portTraderCustomPrefab = new CustomPrefab(portTraderPrefab, true);
         portTraderCustomPrefab.Prefab.AddComponent<Port>();
+        portTraderCustomPrefab.Prefab.AddComponent<PortTrader>();
+        
         PrefabManager.Instance.AddPrefab(portTraderCustomPrefab);
+        ShipmentManager.PrefabsToSearch.Add("PortTrader");
         
         GameObject portContainerWoodChest = portsBundle.LoadAsset<GameObject>("MWL_portContainer_woodChest");
         CustomPrefab MWL_portContainer_woodChest = new CustomPrefab(portContainerWoodChest, true);

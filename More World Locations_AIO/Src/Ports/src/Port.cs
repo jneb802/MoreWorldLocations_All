@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using More_World_Locations_AIO.Managers;
+using More_World_Locations_AIO.Utils;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -21,14 +22,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         m_view = GetComponent<ZNetView>();
         if (!m_view.IsValid()) return;
-        if (m_containers.Placements.Count <= 0)
-        {
-            foreach (Transform child in transform.FindAll("containerPosition"))
-            {
-                TempContainer temp = new TempContainer(child);
-                m_containers.Placements.Add(temp);
-            }
-        }
+        
         m_name = m_view.GetZDO().GetString(PortVars.Name, NameGenerator.GenerateName());
         m_portID.GUID = m_view.GetZDO().GetString(PortVars.GUID, Guid.NewGuid().ToString());
         m_portID.Name = m_name;
@@ -42,6 +36,28 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public void Start()
     {
         if (!m_view.IsValid()) return;
+        var locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
+        if (locationProxy == null)
+        {
+            Debug.LogWarning($"Port '{m_name}' could not find a LocationProxy within range. Container positions unavailable.");
+            return;
+        }
+        
+        Transform locationRoot = locationProxy.transform;
+        if (m_containers.Placements.Count <= 0)
+        {
+            foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
+            {
+                TempContainer temp = new TempContainer(child);
+                m_containers.Placements.Add(temp);
+            }
+
+            if (m_containers.Placements.Count == 0)
+            {
+                Debug.LogWarning("No containers found");
+            }
+        }
+        
         LoadSavedItems();
     }
 
@@ -104,6 +120,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         }
         return null;
     }
+    
     public void DestroyContainers()
     {
         foreach (TempContainer? temp in m_containers.Placements)
@@ -348,6 +365,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             SpawnedContainer = container;
             // set manifest to purchased to remove from UI list
             manifest.IsPurchased = true;
+            manifest.PlaceEffect?.Create(chest.transform.position, chest.transform.rotation);
             return container;
         }
 
