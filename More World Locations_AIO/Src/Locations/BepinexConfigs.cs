@@ -27,6 +27,7 @@ public class BepinexConfigs
             { "MWL_RuinsArena3_Configuration", new LocationConfiguration(Config, "MWL_RuinsArena3", 25) },
             { "MWL_RuinsChurch1_Configuration", new LocationConfiguration(Config, "MWL_RuinsChurch1", 25) },
             { "MWL_RuinsWell1_Configuration", new LocationConfiguration(Config, "MWL_RuinsWell1", 5) },
+            { "MWL_MaypoleHut1_Configuration", new LocationConfiguration(Config, "MaypoleHut1", 10) },
     
             // Meadows Pack 2
             { "MWL_DeerShrine1_Configuration", new LocationConfiguration(Config, "MWL_DeerShrine1", 10) },
@@ -79,6 +80,7 @@ public class BepinexConfigs
             { "MWL_ForestPillar1_Configuration", new LocationConfiguration(Config, "ForestPillar1", 15) },
             { "MWL_CoastTower1_Configuration", new LocationConfiguration(Config, "CoastTower1", 15) },
             { "MWL_ForestGrove1_Configuration", new LocationConfiguration(Config, "ForestGrove1", 15) },
+            { "MWL_RockShrine1_Configuration", new LocationConfiguration(Config, "RockShrine1", 15) },
     
             // Swamp Pack 1
             { "MWL_GuckPit1_Configuration", new LocationConfiguration(Config, "GuckPit1", 15) },
@@ -103,6 +105,7 @@ public class BepinexConfigs
             { "MWL_SwampBrokenTower1_Configuration", new LocationConfiguration(Config, "SwampBrokenTower1", 15) },
             { "MWL_SwampBrokenTower3_Configuration", new LocationConfiguration(Config, "SwampBrokenTower3", 10) },
             { "MWL_StoneCircle1_Configuration", new LocationConfiguration(Config, "StoneCircle1", 10) },
+            { "MWL_SwampTemple1_Configuration", new LocationConfiguration(Config, "SwampTemple1", 10) },
     
             // Mountain Pack 1
             { "MWL_StoneCastle1_Configuration", new LocationConfiguration(Config, "StoneCastle1", 5) },
@@ -146,6 +149,10 @@ public class BepinexConfigs
             { "MWL_DvergrHouseWood1_Configuration", new LocationConfiguration(Config, "DvergrHouseWood1", 10) },
             { "MWL_DvergrHouseWood2_Configuration", new LocationConfiguration(Config, "DvergrHouseWood2", 10) },
             { "MWL_MarbleJail1_Configuration", new LocationConfiguration(Config, "MarbleJail1", 10) },
+            { "MWL_MarbleHome1_Configuration", new LocationConfiguration(Config, "MarbleHome1", 10) },
+            { "MWL_MarbleCliffAltar1_Configuration", new LocationConfiguration(Config, "MarbleCliffAltar1", 10) },
+            { "MWL_MistPond1_Configuration", new LocationConfiguration(Config, "MistPond1", 10) },
+            { "MWL_MarbleCage1_Configuration", new LocationConfiguration(Config, "MarbleCage1", 10) },
             { "MWL_DvergrKnowledgeExtractor1_Configuration", new LocationConfiguration(Config, "DvergrKnowledgeExtractor1", 15) },
             { "MWL_AncientShrine1_Configuration", new LocationConfiguration(Config, "AncientShrine1", 15) },
             { "MWL_MistShrine1_Configuration", new LocationConfiguration(Config, "MistShrine1", 15) },
@@ -161,6 +168,9 @@ public class BepinexConfigs
             { "MWL_Misthut2_Configuration", new LocationConfiguration(Config, "Misthut2", 15) },
             { "MWL_MountainDvergrShrine1_Configuration", new LocationConfiguration(Config, "MountainDvergrShrine1", 15) },
             { "MWL_MountainDvergrShrine2_Configuration", new LocationConfiguration(Config, "MountainDvergrShrine2", 15) },
+            { "MWL_MountainOverlook1_Configuration", new LocationConfiguration(Config, "MountainOverlook1", 15) },
+            { "MWL_MountainCultShrine1_Configuration", new LocationConfiguration(Config, "MountainCultShrine1", 15) },
+            { "MWL_RuinsChurch2_Configuration", new LocationConfiguration(Config, "RuinsChurch2", 15) },
             { "MWL_MountainShrine1_Configuration", new LocationConfiguration(Config, "MountainShrine1", 20) },
             { "MWL_RuinedTower1_Configuration", new LocationConfiguration(Config, "RuinedTower1", 15) },
             { "MWL_TreeTowers1_Configuration", new LocationConfiguration(Config, "TreeTowers1", 20) },
