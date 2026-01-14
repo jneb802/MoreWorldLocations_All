@@ -77,8 +77,11 @@ public static class PortInit
         EnablePortLocations = plugin.Config.BindConfig("0 - Shipment Ports", "Enable Port Locations", Toggle.On, "If Off, port locations will not spawn in the world", synced: true);
         
         // Client-only configs (not synced - personal UI preferences)
-        PortUI.PanelPositionConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "Set position of UI", synced: false);
-        PortUI.PanelPositionConfig.SettingChanged += PortUI.OnPanelPositionConfigChange;
+        // Legacy config - kept for compatibility but no longer used
+        PortUI.PanelPositionConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "[Legacy] No longer used", synced: false);
+        
+        // New anchor-relative offset config (offset from top-right corner)
+        PortUI.PanelOffsetConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Offset", new Vector2(-160f, -230f), "Offset from top-right corner (drag with Left Alt to reposition)", synced: false);
         PortUI.BkgOption = plugin.Config.BindConfig("0 - Shipment Ports", "Background", PortUI.BackgroundOption.Opaque, "Set background type", synced: false);
         PortUI.BkgOption.SettingChanged += PortUI.OnBackgroundOptionChange;
         

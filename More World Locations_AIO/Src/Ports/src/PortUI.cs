@@ -84,7 +84,12 @@ public static class LoadPortUI
         go.CopyButtonState(craftingPanel, "Panel/HowToButton", "RepairButton");
         go.CopySpriteAndMaterial(craftingPanel, "Panel/HowToButton/Glow", "RepairButton/Glow");
         go.CopySpriteAndMaterial(craftingPanel, "Panel/RepairSimple", "RepairSimple");
-        go.transform.position = new Vector3(1760f, 850f, 0f);
+        // Setup anchor-relative positioning (top-right corner)
+        RectTransform rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(1f, 1f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(1f, 1f);
+        rect.anchoredPosition = PortUI.PanelOffsetConfig?.Value ?? new Vector2(-160f, -230f);
         PortUI.ListItem.CopySpriteAndMaterial(craftingPanel, "Icon", "RecipeList/Recipes/RecipeElement/icon");
         
         GameObject? sfx = craftingPanel.GetComponentInChildren<ButtonSfx>().m_sfxPrefab;
@@ -132,7 +137,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     internal static readonly GameObject ListItem = AssetBundleManager.LoadAsset<GameObject>("portbundle", "ListItem")!;
     internal static GameObject? _tooltipPrefab;
     internal static ConfigEntry<BackgroundOption>? BkgOption;
-    public static ConfigEntry<Vector3>? PanelPositionConfig;
+    public static ConfigEntry<Vector3>? PanelPositionConfig;  // legacy, unused
+    public static ConfigEntry<Vector2>? PanelOffsetConfig;    // new anchor-relative offset
     public static ConfigEntry<PortInit.Toggle>? UseTeleportTab;
     public static ConfigEntry<float>? TeleportCostPerMeter;
     
@@ -240,7 +246,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         Requirements.SetActive(false);
         
         SetBackground(BkgOption?.Value ?? BackgroundOption.Opaque);
-        SetPanelPosition(PanelPositionConfig?.Value ?? new Vector3(1760f, 850f, 0f));
+        // Apply saved offset if available (anchors already set at instantiation)
+        if (PanelOffsetConfig != null)
+            m_rect.anchoredPosition = PanelOffsetConfig.Value;
         TeleportTab.Enable(UseTeleportTab?.Value is PortInit.Toggle.On);
         Hide();
     }
@@ -1148,7 +1156,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     }
 
     
-    private Vector3 mouseDifference = Vector3.zero;
+    private Vector2 dragStartOffset;
+    private Vector2 dragStartMouse;
 
     // Helper methods for teleport cost calculation and consumption.
     private static List<Manifest.Requirement> GetTeleportRequirements(Port.PortInfo destination)
@@ -1189,25 +1198,24 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         }
     }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        // only allow drag if L.Alt is held down
-        if (!Input.GetKey(KeyCode.LeftAlt)) return;
-        // move panel
-        m_rect.position = Input.mousePosition + mouseDifference;
-    }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // get the mouse position to make the drag point linked to the mouse position
-        Vector2 pos = eventData.position;
-        mouseDifference = m_rect.position - new Vector3(pos.x, pos.y, 0);
+        if (!Input.GetKey(KeyCode.LeftAlt)) return;
+        dragStartOffset = m_rect.anchoredPosition;
+        dragStartMouse = eventData.position;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!Input.GetKey(KeyCode.LeftAlt)) return;
+        Vector2 delta = eventData.position - dragStartMouse;
+        m_rect.anchoredPosition = dragStartOffset + delta;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // save new position to config file
-        if (PanelPositionConfig != null) PanelPositionConfig.Value = m_rect.position;
+        if (PanelOffsetConfig != null)
+            PanelOffsetConfig.Value = m_rect.anchoredPosition;
     }
 
     private class HowTo
