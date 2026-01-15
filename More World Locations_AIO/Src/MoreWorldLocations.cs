@@ -17,7 +17,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "3.2.0";
+        internal const string ModVersion = "3.3.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
