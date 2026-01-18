@@ -6,7 +6,7 @@
       Update VALHEIM_INSTALL if your Steam library is elsewhere.
     -->
     <PropertyGroup Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'">
-        <VALHEIM_INSTALL>/Users/benjmarston/Library/Application Support/Steam/steamapps/common/Valheim</VALHEIM_INSTALL>
+        <VALHEIM_INSTALL>$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim</VALHEIM_INSTALL>
         <VALHEIM_MANAGED>$(VALHEIM_INSTALL)/Valheim.app/Contents/Resources/Data/Managed</VALHEIM_MANAGED>
         <BEPINEX_PATH>$(VALHEIM_INSTALL)/BepInEx</BEPINEX_PATH>
         <BEPINEX_CORE>$(BEPINEX_PATH)/core</BEPINEX_CORE>
