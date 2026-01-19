@@ -1,6 +1,8 @@
 using BepInEx;
 using Jotunn.Managers;
 using UnityEngine;
+using System;
+using System.Linq;
 
 namespace More_World_Locations_AIO;
 
@@ -19,8 +21,49 @@ public class LocationsNEW
         AddAshlandsPack1Locations();
         AddAdventureMapPack1Locations();
         AddPortLocations();
+
+        RegisterRoadLocations();
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
+    }
+
+    private static void RegisterRoadLocation(string locationName)
+    {
+        var assembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => a.GetName().Name == "ProceduralRoads");
+    
+        if (assembly == null) return;
+    
+        var generatorType = assembly.GetType("ProceduralRoads.RoadNetworkGenerator");
+        var method = generatorType?.GetMethod("RegisterLocation", 
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+    
+        method?.Invoke(null, new object[] { locationName });
+    }
+
+    public static void RegisterRoadLocations()
+    {
+        RegisterRoadLocation("MWL_Port1");
+        RegisterRoadLocation("MWL_Port2");
+        RegisterRoadLocation("MWL_Port3");
+        RegisterRoadLocation("MWL_Port4");
+        RegisterRoadLocation("MWL_RuinsChurch1");
+        RegisterRoadLocation("MWL_MaypoleHut1");
+        RegisterRoadLocation("MWL_MeadowsFarm1");
+        RegisterRoadLocation("MWL_MeadowsLighthouse1");
+        RegisterRoadLocation("MWL_MeadowsSawmill1");
+        RegisterRoadLocation("MWL_MeadowsTavern1");
+        RegisterRoadLocation("MWL_FortBakkarhalt1");
+        RegisterRoadLocation("MWL_Belmont1");
+        RegisterRoadLocation("MWL_TempleShrine1");
+        RegisterRoadLocation("MWL_GoblinFort1");
+        RegisterRoadLocation("MWL_FulingRock1");
+        RegisterRoadLocation("MWL_DvergrKnowledgeExtractor1");
+        RegisterRoadLocation("MWL_MarbleJail1");
+        RegisterRoadLocation("MWL_DvergrEitrSingularity1");
+        RegisterRoadLocation("MWL_MistPond1");
+        RegisterRoadLocation("MWL_MountainCultShrine1");
+        RegisterRoadLocation("MWL_MountainDvergrShrine1");
     }
 
     public static void AddMeadowsPack1Locations()
