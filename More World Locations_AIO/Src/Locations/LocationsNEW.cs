@@ -43,27 +43,46 @@ public class LocationsNEW
 
     public static void RegisterRoadLocations()
     {
-        RegisterRoadLocation("MWL_Port1");
-        RegisterRoadLocation("MWL_Port2");
-        RegisterRoadLocation("MWL_Port3");
-        RegisterRoadLocation("MWL_Port4");
+        // --- Meadows ---
         RegisterRoadLocation("MWL_RuinsChurch1");
         RegisterRoadLocation("MWL_MaypoleHut1");
         RegisterRoadLocation("MWL_MeadowsFarm1");
         RegisterRoadLocation("MWL_MeadowsLighthouse1");
         RegisterRoadLocation("MWL_MeadowsSawmill1");
         RegisterRoadLocation("MWL_MeadowsTavern1");
+        RegisterRoadLocation("MWL_OakHut1");
+        RegisterRoadLocation("MWL_Port1");
+
+        // --- Black Forest ---
+        RegisterRoadLocation("MWL_RuinsCastle3");
+        RegisterRoadLocation("MWL_GuardTower1");
+        RegisterRoadLocation("MWL_Port4");
+
+        // --- Swamp ---
+        RegisterRoadLocation("MWL_SwampCourtyard1");
         RegisterRoadLocation("MWL_FortBakkarhalt1");
+        RegisterRoadLocation("MWL_AbandonedHouse1");
         RegisterRoadLocation("MWL_Belmont1");
+
+        // --- Mountain ---
+        RegisterRoadLocation("MWL_MountainCultShrine1");
+        RegisterRoadLocation("MWL_MountainDvergrShrine1");
+        RegisterRoadLocation("MWL_StoneAltar1");
         RegisterRoadLocation("MWL_TempleShrine1");
+
+        // --- Plains ---
         RegisterRoadLocation("MWL_GoblinFort1");
-        RegisterRoadLocation("MWL_FulingRock1");
+        RegisterRoadLocation("MWL_PlainsPillar1");
+        RegisterRoadLocation("MWL_FulingVillage1");
+        RegisterRoadLocation("MWL_Port2");
+
+        // --- Mistlands ---
         RegisterRoadLocation("MWL_DvergrKnowledgeExtractor1");
         RegisterRoadLocation("MWL_MarbleJail1");
         RegisterRoadLocation("MWL_DvergrEitrSingularity1");
         RegisterRoadLocation("MWL_MistPond1");
-        RegisterRoadLocation("MWL_MountainCultShrine1");
-        RegisterRoadLocation("MWL_MountainDvergrShrine1");
+        RegisterRoadLocation("MWL_SecretRoom1");
+        RegisterRoadLocation("MWL_Port3");
     }
 
     public static void AddMeadowsPack1Locations()
