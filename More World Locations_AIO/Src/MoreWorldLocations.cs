@@ -9,6 +9,7 @@ using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Waystones;
+using More_World_Locations_AIO.Gambling;
 using UnityEngine;
 
 namespace More_World_Locations_AIO
@@ -57,11 +58,11 @@ namespace More_World_Locations_AIO
             Prefabs.LoadPrefabBundles();
             PortPrefabs.LoadPrefabBundles();
             
-            // AssetBundles.BuildCombinedManifest(
-            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
-            //     "full",
-            //     AssetPaths.assetPathsInBundleFull
-            // );   
+            AssetBundles.BuildCombinedManifest(
+                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
+                "full",
+                AssetPaths.assetPathsInBundleFull
+            );   
             
             BepinexConfigs.GenerateConfigs(Config);
             
@@ -89,6 +90,7 @@ namespace More_World_Locations_AIO
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
+            GoblinGamblerPrefabs.AddGoblinGamblerPrefab();
             PortPrefabs.AddPortPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");

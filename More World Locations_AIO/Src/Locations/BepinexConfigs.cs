@@ -135,6 +135,7 @@ public class BepinexConfigs
             { "MWL_FulingTower1_Configuration", new LocationConfiguration(Config, "FulingTower1", 20) },
             // { "MWL_GoblinCave1_Configuration", new LocationConfiguration(Config, "GoblinCave1", 20, "PlainsCreatures2", "PlainsLoot1") },
             { "MWL_RockGarden1_Configuration", new LocationConfiguration(Config, "RockGarden1", 15) },
+            { "MWL_GoblinDen1_Configuration", new LocationConfiguration(Config, "GoblinDen1", 10) },
             
             // Mistlands Pack 1
             { "MWL_MistFort2_Configuration", new LocationConfiguration(Config, "MistFort2", 20) },

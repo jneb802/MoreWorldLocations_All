@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using BepInEx;
 using Jotunn.Managers;
 using UnityEngine;
@@ -20,7 +22,28 @@ public class LocationsNEW
         AddAdventureMapPack1Locations();
         AddPortLocations();
         
+        RegisterRoadLocation("MWL_Port1");
+        RegisterRoadLocation("MWL_Port2");
+        RegisterRoadLocation("MWL_Port3");
+        RegisterRoadLocation("MWL_Port4");
+        RegisterRoadLocation("MWL_Ruins1");
+        RegisterRoadLocation("MWL_Ruins2");
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
+    }
+
+    private static void RegisterRoadLocation(string locationName)
+    {
+        var assembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => a.GetName().Name == "ProceduralRoads");
+    
+        if (assembly == null) return;
+    
+        var generatorType = assembly.GetType("ProceduralRoads.RoadNetworkGenerator");
+        var method = generatorType?.GetMethod("RegisterLocation", 
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+    
+        method?.Invoke(null, new object[] { locationName });
     }
 
     public static void AddMeadowsPack1Locations()
@@ -157,6 +180,7 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_FulingWall1", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingWall1_Config"]);
         Common.LocationManager.AddLocation("MWL_FulingTower1", LocationConfigs.PlainsPack1LocationConfigs["MWL_FulingTower1_Config"]);
         Common.LocationManager.AddLocation("MWL_RockGarden1", LocationConfigs.PlainsPack1LocationConfigs["MWL_RockGarden1_Config"]);
+        Common.LocationManager.AddLocation("MWL_GoblinDen1", LocationConfigs.PlainsPack1LocationConfigs["MWL_GoblinDen1_Config"]);
     }
     
     public static void AddMistlandsPack1Locations()

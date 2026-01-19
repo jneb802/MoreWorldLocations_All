@@ -131,6 +131,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingWall1.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTower1.prefab",
         "Assets/WarpProjects/More World Locations/Plains/MWL_RockGarden1.prefab",
+        "Assets/WarpProjects/More World Locations/Plains/MWL_GoblinDen1.prefab",
 
         // Mistlands Pack 1
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistFort2.prefab",
