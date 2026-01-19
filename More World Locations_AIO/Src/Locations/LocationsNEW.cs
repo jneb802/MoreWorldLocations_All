@@ -22,28 +22,7 @@ public class LocationsNEW
         AddAdventureMapPack1Locations();
         AddPortLocations();
         
-        RegisterRoadLocation("MWL_Port1");
-        RegisterRoadLocation("MWL_Port2");
-        RegisterRoadLocation("MWL_Port3");
-        RegisterRoadLocation("MWL_Port4");
-        RegisterRoadLocation("MWL_Ruins1");
-        RegisterRoadLocation("MWL_Ruins2");
-        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
-    }
-
-    private static void RegisterRoadLocation(string locationName)
-    {
-        var assembly = AppDomain.CurrentDomain.GetAssemblies()
-            .FirstOrDefault(a => a.GetName().Name == "ProceduralRoads");
-    
-        if (assembly == null) return;
-    
-        var generatorType = assembly.GetType("ProceduralRoads.RoadNetworkGenerator");
-        var method = generatorType?.GetMethod("RegisterLocation", 
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-    
-        method?.Invoke(null, new object[] { locationName });
     }
 
     public static void AddMeadowsPack1Locations()
