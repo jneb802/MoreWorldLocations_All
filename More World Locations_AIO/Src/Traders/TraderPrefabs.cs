@@ -10,35 +10,29 @@ public class TraderPrefabs
     public static void AddTraderPrefabs()
     {
         var assetBundle = Prefabs.vendorNpcBundle;
-        
-        AddTraderPrefab(assetBundle, "MWL_VendorNPC", "MWL_PlainsTavern1_Trader", "$mwl_plainstavern1_trader");
-        AddTraderPrefab(assetBundle, "MWL_VendorNPC", "MWL_PlainsCamp1_Trader", "$mwl_plainscamp1_trader");
-        AddTraderPrefab(assetBundle, "MWL_VendorNPC", "MWL_BlackForestBlacksmith1_Trader", "$mwl_blackforestblacksmith1_trader");
-        AddTraderPrefab(assetBundle, "MWL_VendorNPC", "MWL_BlackForestBlacksmith2_Trader", "$mwl_blackforestblacksmith2_trader");
-        AddTraderPrefab(assetBundle, "MWL_VendorNPC", "MWL_MountainsBlacksmith1_Trader", "$mwl_mountainsblacksmith1_trader");
-        AddTraderPrefab(assetBundle, "MWL_VendorNPC", "MWL_MistlandsBlacksmith1_Trader", "$mwl_mistlandsblacksmith1_trader");
+
+        AddVendorPrefab(assetBundle, "MWL_PlainsTavern1_Vendor", "$mwl_plainstavern1_trader");
+        AddVendorPrefab(assetBundle, "MWL_PlainsCamp1_Vendor", "$mwl_plainscamp1_trader");
+        AddVendorPrefab(assetBundle, "MWL_BlackForestBlacksmith1_Vendor", "$mwl_blackforestblacksmith1_trader");
+        AddVendorPrefab(assetBundle, "MWL_BlackForestBlacksmith2_Vendor", "$mwl_blackforestblacksmith2_trader");
+        AddVendorPrefab(assetBundle, "MWL_MountainsBlacksmith1_Vendor", "$mwl_mountainsblacksmith1_trader");
+        AddVendorPrefab(assetBundle, "MWL_MistlandsBlacksmith1_Vendor", "$mwl_mistlandsblacksmith1_trader");
+        AddVendorPrefab(assetBundle, "MWL_OceanTavern1_Vendor", "$mwl_oceantavern1_trader");
     }
-    
-    private static void AddTraderPrefab(AssetBundle assetBundle, string basePrefabName, string cloneName, string traderName)
+
+    private static void AddVendorPrefab(AssetBundle assetBundle, string prefabName, string traderName)
     {
-        GameObject basePrefab = assetBundle.LoadAsset<GameObject>(basePrefabName);
-        if (basePrefab == null)
+        GameObject prefab = assetBundle.LoadAsset<GameObject>(prefabName);
+        if (prefab == null)
         {
-            Debug.LogWarning($"TraderPrefabs: Could not load {basePrefabName} from bundle");
+            Debug.LogWarning($"TraderPrefabs: Could not load {prefabName} from bundle");
             return;
         }
-        
-        GameObject clonedPrefab = PrefabManager.Instance.CreateClonedPrefab(cloneName, basePrefab);
-        if (clonedPrefab == null)
-        {
-            Debug.LogWarning($"TraderPrefabs: Could not clone {basePrefabName} as {cloneName}");
-            return;
-        }
-        
-        CustomPrefab customPrefab = new CustomPrefab(clonedPrefab, true);
+
+        CustomPrefab customPrefab = new CustomPrefab(prefab, true);
         Trader trader = customPrefab.Prefab.GetComponent<Trader>();
         trader.m_name = traderName;
-        
+
         PrefabManager.Instance.AddPrefab(customPrefab);
     }
 }

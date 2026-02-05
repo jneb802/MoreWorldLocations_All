@@ -28,6 +28,7 @@ public class TraderLocalizations
             {"$mwl_blackforestblacksmith2_trader", "Sindri"},
             {"$mwl_mountainsblacksmith1_trader", "Thorgrim"},
             {"$mwl_mistlandsblacksmith1_trader", "Dvalin"},
+            {"$mwl_oceantavern1_trader", "Bjorn"},
         });
         
         BuildSkillBookLocalizations();
