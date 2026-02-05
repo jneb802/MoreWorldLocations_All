@@ -20,6 +20,8 @@ public class Prefabs
     public static AssetBundle prefabBundle_1;
     public static AssetBundle prefabBundle_2;
     public static AssetBundle prefabBundle_3;
+    public static AssetBundle vendorsPrefabBundle;
+    public static AssetBundle vendorNpcBundle;
     
     public static void LoadPrefabBundles()
     {
@@ -33,6 +35,14 @@ public class Prefabs
         
         prefabBundle_3 = AssetUtils.LoadAssetBundleFromResources(
             "moreworldlocations_prefabs_3",
+            Assembly.GetExecutingAssembly());
+        
+        vendorsPrefabBundle = AssetUtils.LoadAssetBundleFromResources(
+            "moreworldvendors",
+            Assembly.GetExecutingAssembly());
+        
+        vendorNpcBundle = AssetUtils.LoadAssetBundleFromResources(
+            "vendornpc",
             Assembly.GetExecutingAssembly());
     }
 

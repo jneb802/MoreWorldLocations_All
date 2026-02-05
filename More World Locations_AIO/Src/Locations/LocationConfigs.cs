@@ -386,6 +386,18 @@ public class LocationConfigs
             { "MWL_Port4_Config", new LocationConfig { Quantity = GetQuantity("MWL_Port4_Configuration"), Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = -1f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports" } },
         };
     
+    public static Dictionary<string, LocationConfig> TraderLocationConfigs =
+        new Dictionary<string, LocationConfig>
+        {
+            { "MWL_PlainsTavern1_Config", new LocationConfig { Quantity = GetQuantity("MWL_PlainsTavern1_Configuration"), Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 32, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            { "MWL_OceanTavern1_Config", new LocationConfig { Quantity = GetQuantity("MWL_OceanTavern1_Configuration"), Biome = Heightmap.Biome.Ocean, Priotized = true, ExteriorRadius = 50, ClearArea = false, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            { "MWL_PlainsCamp1_Config", new LocationConfig { Quantity = GetQuantity("MWL_PlainsCamp1_Configuration"), Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            { "MWL_BlackForestBlacksmith1_Config", new LocationConfig { Quantity = GetQuantity("MWL_BlackForestBlacksmith1_Configuration"), Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            { "MWL_BlackForestBlacksmith2_Config", new LocationConfig { Quantity = GetQuantity("MWL_BlackForestBlacksmith2_Configuration"), Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            { "MWL_MountainsBlacksmith1_Config", new LocationConfig { Quantity = GetQuantity("MWL_MountainsBlacksmith1_Configuration"), Biome = Heightmap.Biome.Mountain, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            { "MWL_MistlandsBlacksmith1_Config", new LocationConfig { Quantity = GetQuantity("MWL_MistlandsBlacksmith1_Configuration"), Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 12f, MinAltitude = 1f, InForest = false, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+        };
+    
     /// <summary>
     /// Gets the LocationConfig for a given location name by searching all location config dictionaries
     /// </summary>
@@ -423,6 +435,9 @@ public class LocationConfigs
             
         if (LocationConfigs.AdventureMapPack1LocationConfigs.ContainsKey(configKey))
             return LocationConfigs.AdventureMapPack1LocationConfigs[configKey];
+            
+        if (LocationConfigs.TraderLocationConfigs.ContainsKey(configKey))
+            return LocationConfigs.TraderLocationConfigs[configKey];
         return null;
     }
 }

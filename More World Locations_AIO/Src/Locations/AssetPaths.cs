@@ -165,6 +165,14 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port2.prefab",
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port3.prefab",
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port4.prefab",
+        
+        // Traders
+        "Assets/WarpProjects/MoreWorldTraders/MWL_BlackForestBlacksmith1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_BlackForestBlacksmith2.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MistlandsBlacksmith1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MountainsBlacksmith1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsCamp1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTavern1.prefab",
     };
     
     public static string[] assetPathsInBundle4 = new[]

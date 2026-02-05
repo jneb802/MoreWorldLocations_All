@@ -181,6 +181,15 @@ public class BepinexConfigs
             { "MWL_Port2_Configuration", new LocationConfiguration(Config, "Port2", 5) },
             { "MWL_Port3_Configuration", new LocationConfiguration(Config, "Port3", 5) },
             { "MWL_Port4_Configuration", new LocationConfiguration(Config, "Port4", 5) },
+            
+            // Traders
+            { "MWL_PlainsTavern1_Configuration", new LocationConfiguration(Config, "MWL_PlainsTavern1", 5) },
+            { "MWL_PlainsCamp1_Configuration", new LocationConfiguration(Config, "MWL_PlainsCamp1", 5) },
+            { "MWL_BlackForestBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_BlackForestBlacksmith1", 5) },
+            { "MWL_BlackForestBlacksmith2_Configuration", new LocationConfiguration(Config, "MWL_BlackForestBlacksmith2", 5) },
+            { "MWL_MountainsBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_MountainsBlacksmith1", 5) },
+            { "MWL_MistlandsBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_MistlandsBlacksmith1", 5) },
+            { "MWL_OceanTavern1_Configuration", new LocationConfiguration(Config, "MWL_OceanTavern1", 5) },
         };
     }
 }

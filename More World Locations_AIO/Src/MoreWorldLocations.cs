@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
@@ -8,6 +8,7 @@ using Jotunn.Managers;
 using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
+using More_World_Locations_AIO.Traders;
 using More_World_Locations_AIO.Waystones;
 using UnityEngine;
 
@@ -57,11 +58,16 @@ namespace More_World_Locations_AIO
             Prefabs.LoadPrefabBundles();
             PortPrefabs.LoadPrefabBundles();
             
-            // AssetBundles.BuildCombinedManifest(
-            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
-            //     "full",
-            //     AssetPaths.assetPathsInBundleFull
-            // );   
+            // Trader setup
+            MinimapTraderIcons.LoadIcons();
+            MinimapTraderIcons.BuildLocationSpriteData();
+            TraderLocalizations.AddLocalizations();
+            
+            AssetBundles.BuildCombinedManifest(
+                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
+                "full",
+                AssetPaths.assetPathsInBundleFull
+            );   
             
             BepinexConfigs.GenerateConfigs(Config);
             
@@ -90,6 +96,8 @@ namespace More_World_Locations_AIO
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
             PortPrefabs.AddPortPrefabs();
+            TraderItems.CreateCustomItems();
+            TraderPrefabs.AddTraderPrefabs();
     
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 
