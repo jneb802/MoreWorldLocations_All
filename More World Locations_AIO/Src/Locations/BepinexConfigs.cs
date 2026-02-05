@@ -150,6 +150,7 @@ public class BepinexConfigs
             { "MWL_DvergrHouseWood2_Configuration", new LocationConfiguration(Config, "DvergrHouseWood2", 10) },
             { "MWL_MarbleJail1_Configuration", new LocationConfiguration(Config, "MarbleJail1", 10) },
             { "MWL_MarbleHome1_Configuration", new LocationConfiguration(Config, "MarbleHome1", 10) },
+            { "MWL_MarbleHome2_Configuration", new LocationConfiguration(Config, "MarbleHome2", 10) },
             { "MWL_MarbleCliffAltar1_Configuration", new LocationConfiguration(Config, "MarbleCliffAltar1", 10) },
             { "MWL_MistPond1_Configuration", new LocationConfiguration(Config, "MistPond1", 10) },
             { "MWL_MarbleCage1_Configuration", new LocationConfiguration(Config, "MarbleCage1", 10) },

@@ -176,6 +176,7 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_DvergrHouseWood2", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrHouseWood2_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleJail1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleJail1_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleHome1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleHome1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MarbleHome2", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleHome2_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleCliffAltar1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleCliffAltar1_Config"]);
         Common.LocationManager.AddLocation("MWL_MistPond1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MistPond1_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleCage1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleCage1_Config"]);

@@ -147,6 +147,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouseWood2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleJail1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleHome1.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleHome2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleCliffAltar1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistPond1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleCage1.prefab",
