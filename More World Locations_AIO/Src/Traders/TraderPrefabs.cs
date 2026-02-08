@@ -24,10 +24,10 @@ public class TraderPrefabs
     {
         var assetBundle = Prefabs.vendorNpcBundle;
 
-        AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", new List<Trader.TradeItem>());
-        AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", new List<Trader.TradeItem>());
-        AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", new List<Trader.TradeItem>());
-        AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", new List<Trader.TradeItem>());
+        AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", GetMeadowsTrainer1Items());
+        AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", GetSwampTrainer1Items());
+        AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", GetPlainsTrainer1Items());
+        AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", GetMistTrainer1Items());
     }
 
     private static void AddVendorPrefab(AssetBundle assetBundle, string prefabName, string traderName, List<Trader.TradeItem> items)
@@ -206,5 +206,65 @@ public class TraderPrefabs
         var item = CreateTradeItem(prefabName, stack, price, requiredGlobalKey);
         if (item != null)
             items.Add(item);
+    }
+
+    private static void AddTrainerItem(List<Trader.TradeItem> items, Skills.SkillType skill, int tier, int price, string requiredKey, string notRequiredKey = "")
+    {
+        string prefabName = $"MWL_skillBook_{skill}_bookTier{tier}";
+        AddItem(items, prefabName, 1, price, requiredKey);
+        if (!string.IsNullOrEmpty(notRequiredKey))
+            TraderAvailabilityPatch.Register(prefabName, notRequiredKey);
+    }
+
+    private static List<Trader.TradeItem> GetMeadowsTrainer1Items()
+    {
+        var items = new List<Trader.TradeItem>();
+        Skills.SkillType[] skills = { Skills.SkillType.Run, Skills.SkillType.Jump, Skills.SkillType.Swim, Skills.SkillType.Sneak, Skills.SkillType.WoodCutting, Skills.SkillType.Fishing, Skills.SkillType.Pickaxes };
+        foreach (var skill in skills)
+        {
+            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
+            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
+            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
+        }
+        return items;
+    }
+
+    private static List<Trader.TradeItem> GetSwampTrainer1Items()
+    {
+        var items = new List<Trader.TradeItem>();
+        Skills.SkillType[] skills = { Skills.SkillType.Swords, Skills.SkillType.Knives, Skills.SkillType.Clubs, Skills.SkillType.Polearms, Skills.SkillType.Spears, Skills.SkillType.Axes };
+        foreach (var skill in skills)
+        {
+            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
+            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
+            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
+        }
+        return items;
+    }
+
+    private static List<Trader.TradeItem> GetPlainsTrainer1Items()
+    {
+        var items = new List<Trader.TradeItem>();
+        Skills.SkillType[] skills = { Skills.SkillType.Bows, Skills.SkillType.Crossbows, Skills.SkillType.Blocking, Skills.SkillType.Dodge, Skills.SkillType.Ride };
+        foreach (var skill in skills)
+        {
+            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
+            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
+            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
+        }
+        return items;
+    }
+
+    private static List<Trader.TradeItem> GetMistTrainer1Items()
+    {
+        var items = new List<Trader.TradeItem>();
+        Skills.SkillType[] skills = { Skills.SkillType.ElementalMagic, Skills.SkillType.BloodMagic };
+        foreach (var skill in skills)
+        {
+            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
+            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
+            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
+        }
+        return items;
     }
 }
