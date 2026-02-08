@@ -175,6 +175,12 @@ public class AssetPaths
         "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsCamp1.prefab",
         "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTavern1.prefab",
         "Assets/WarpProjects/MoreWorldTraders/MWL_OceanTavern1.prefab",
+
+        // Trainers
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MeadowsTrainer1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_SwampTrainer1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTrainer1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MistTrainer1.prefab",
     };
     
     public static string[] assetPathsInBundle4 = new[]

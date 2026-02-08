@@ -191,6 +191,12 @@ public class BepinexConfigs
             { "MWL_MountainsBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_MountainsBlacksmith1", 5) },
             { "MWL_MistlandsBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_MistlandsBlacksmith1", 5) },
             { "MWL_OceanTavern1_Configuration", new LocationConfiguration(Config, "MWL_OceanTavern1", 5) },
+
+            // Trainers
+            { "MWL_MeadowsTrainer1_Configuration", new LocationConfiguration(Config, "MWL_MeadowsTrainer1", 5) },
+            { "MWL_SwampTrainer1_Configuration", new LocationConfiguration(Config, "MWL_SwampTrainer1", 5) },
+            { "MWL_PlainsTrainer1_Configuration", new LocationConfiguration(Config, "MWL_PlainsTrainer1", 5) },
+            { "MWL_MistTrainer1_Configuration", new LocationConfiguration(Config, "MWL_MistTrainer1", 5) },
         };
     }
 }

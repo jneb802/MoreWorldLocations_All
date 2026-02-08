@@ -20,6 +20,16 @@ public class TraderPrefabs
         AddVendorPrefab(assetBundle, "MWL_OceanTavern1_Vendor", "$mwl_oceantavern1_trader", GetOceanTavern1Items());
     }
 
+    public static void AddTrainerPrefabs()
+    {
+        var assetBundle = Prefabs.vendorNpcBundle;
+
+        AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", new List<Trader.TradeItem>());
+        AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", new List<Trader.TradeItem>());
+        AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", new List<Trader.TradeItem>());
+        AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", new List<Trader.TradeItem>());
+    }
+
     private static void AddVendorPrefab(AssetBundle assetBundle, string prefabName, string traderName, List<Trader.TradeItem> items)
     {
         GameObject prefab = assetBundle.LoadAsset<GameObject>(prefabName);

@@ -98,7 +98,8 @@ namespace More_World_Locations_AIO
             PortPrefabs.AddPortPrefabs();
             TraderItems.CreateCustomItems();
             TraderPrefabs.AddTraderPrefabs();
-    
+            TraderPrefabs.AddTrainerPrefabs();
+
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 
             PrefabManager.OnVanillaPrefabsAvailable -= Initialize;

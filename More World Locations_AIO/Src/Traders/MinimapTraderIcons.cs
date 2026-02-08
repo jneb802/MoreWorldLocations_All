@@ -16,6 +16,10 @@ public class MinimapTraderIcons
     public static Minimap.LocationSpriteData plainsTavern1Icon;
     public static Minimap.LocationSpriteData oceanTavern1Icon;
     public static Minimap.LocationSpriteData plainsCamp1Icon;
+    public static Minimap.LocationSpriteData meadowsTrainer1Icon;
+    public static Minimap.LocationSpriteData swampTrainer1Icon;
+    public static Minimap.LocationSpriteData plainsTrainer1Icon;
+    public static Minimap.LocationSpriteData mistTrainer1Icon;
 
     public static void LoadIcons()
     {
@@ -69,6 +73,30 @@ public class MinimapTraderIcons
             m_name = "MWL_PlainsCamp1",
             m_icon = coinSprite
         };
+
+        meadowsTrainer1Icon = new Minimap.LocationSpriteData
+        {
+            m_name = "MWL_MeadowsTrainer1",
+            m_icon = coinSprite
+        };
+
+        swampTrainer1Icon = new Minimap.LocationSpriteData
+        {
+            m_name = "MWL_SwampTrainer1",
+            m_icon = coinSprite
+        };
+
+        plainsTrainer1Icon = new Minimap.LocationSpriteData
+        {
+            m_name = "MWL_PlainsTrainer1",
+            m_icon = coinSprite
+        };
+
+        mistTrainer1Icon = new Minimap.LocationSpriteData
+        {
+            m_name = "MWL_MistTrainer1",
+            m_icon = coinSprite
+        };
     }
     
     [HarmonyPatch(typeof(Minimap), nameof(Minimap.Awake))]
@@ -103,6 +131,22 @@ public class MinimapTraderIcons
             if (__instance.GetLocationIcon(plainsCamp1Icon.m_name) == null)
             {
                 __instance.m_locationIcons.Add(plainsCamp1Icon);
+            }
+            if (__instance.GetLocationIcon(meadowsTrainer1Icon.m_name) == null)
+            {
+                __instance.m_locationIcons.Add(meadowsTrainer1Icon);
+            }
+            if (__instance.GetLocationIcon(swampTrainer1Icon.m_name) == null)
+            {
+                __instance.m_locationIcons.Add(swampTrainer1Icon);
+            }
+            if (__instance.GetLocationIcon(plainsTrainer1Icon.m_name) == null)
+            {
+                __instance.m_locationIcons.Add(plainsTrainer1Icon);
+            }
+            if (__instance.GetLocationIcon(mistTrainer1Icon.m_name) == null)
+            {
+                __instance.m_locationIcons.Add(mistTrainer1Icon);
             }
         }
     }
