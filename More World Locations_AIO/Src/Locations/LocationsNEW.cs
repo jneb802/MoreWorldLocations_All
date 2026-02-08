@@ -90,6 +90,7 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_RootRuins1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RootRuins1_Config"]);
         Common.LocationManager.AddLocation("MWL_RootsTower1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RootsTower1_Config"]);
         Common.LocationManager.AddLocation("MWL_RootsTower2", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RootsTower2_Config"]);
+        Common.LocationManager.AddLocation("MWL_RuinedRootTower5", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RuinedRootTower5_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestRuin2", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestRuin2_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestRuin3", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestRuin3_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestSkull1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestSkull1_Config"]);

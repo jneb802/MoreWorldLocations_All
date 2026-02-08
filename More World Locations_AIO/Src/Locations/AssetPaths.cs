@@ -59,6 +59,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RootRuins1.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RootsTower1.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RootsTower2.prefab",
+        "Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedRootTower5.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin2.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin3.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestSkull1.prefab",

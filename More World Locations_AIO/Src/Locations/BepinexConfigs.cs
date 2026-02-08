@@ -71,6 +71,7 @@ public class BepinexConfigs
             { "MWL_RootRuins1_Configuration", new LocationConfiguration(Config, "RootRuins1", 15) },
             { "MWL_RootsTower1_Configuration", new LocationConfiguration(Config, "RootsTower1", 20) },
             { "MWL_RootsTower2_Configuration", new LocationConfiguration(Config, "RootsTower2", 10) },
+            { "MWL_RuinedRootTower5_Configuration", new LocationConfiguration(Config, "RuinedRootTower5", 10) },
             { "MWL_StoneOutlook1_Configuration", new LocationConfiguration(Config, "StoneOutlook1", 10) },
             { "MWL_ForestRuin2_Configuration", new LocationConfiguration(Config, "ForestRuin2", 15) },
             { "MWL_ForestRuin3_Configuration", new LocationConfiguration(Config, "ForestRuin3", 15) },

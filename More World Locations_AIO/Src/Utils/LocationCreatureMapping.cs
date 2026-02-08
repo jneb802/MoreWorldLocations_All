@@ -61,6 +61,7 @@ namespace More_World_Locations_AIO.Utils
             { "MWL_RootRuins1", "BlackforestCreatures3" },
             { "MWL_RootsTower1", "BlackforestCreatures3" },
             { "MWL_RootsTower2", "BlackforestCreatures3" },
+            { "MWL_RuinedRootTower5", "BlackforestCreatures3" },
             { "MWL_StoneOutlook1", "BlackforestCreatures3" },
             { "MWL_ForestRuin2", "BlackforestCreatures2" },
             { "MWL_ForestRuin3", "BlackforestCreatures3" },

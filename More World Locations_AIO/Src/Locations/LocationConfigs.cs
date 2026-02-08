@@ -162,6 +162,8 @@ public class LocationConfigs
 
             { "MWL_RootsTower2_Config", new LocationConfig { Quantity = GetQuantity("MWL_RootsTower2_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Ruins_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 5, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 10, MinDistance = LocationRings.Ring2.MinDistance } },
 
+            { "MWL_RuinedRootTower5_Config", new LocationConfig { Quantity = GetQuantity("MWL_RuinedRootTower5_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Ruins_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 5, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 10, MinDistance = LocationRings.Ring2.MinDistance } },
+
             { "MWL_StoneOutlook1_Config", new LocationConfig { Quantity = GetQuantity("MWL_StoneOutlook1_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Coastal", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 1024, MinAltitude = -2, MaxAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, SlopeRotation = true } },
 
             { "MWL_ForestRuin2_Config", new LocationConfig { Quantity = GetQuantity("MWL_ForestRuin2_Configuration"), Biome = Heightmap.Biome.BlackForest, Group = "Ruins_medium", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 1024, MinAltitude = 2, MinDistance = LocationRings.Ring2.MinDistance } },
