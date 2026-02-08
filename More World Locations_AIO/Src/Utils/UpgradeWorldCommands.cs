@@ -32,7 +32,10 @@ public static class UpgradeWorldCommands
             "MWL_MistHut2," +
             
             // Ashlands Pack 1 (3 locations)
-            "MWL_AshlandsFort1,MWL_AshlandsFort2,MWL_AshlandsFort3" +
+            "MWL_AshlandsFort1,MWL_AshlandsFort2,MWL_AshlandsFort3," +
+
+            // Traders (7 locations)
+            "MWL_PlainsTavern1,MWL_PlainsCamp1,MWL_BlackForestBlacksmith1,MWL_BlackForestBlacksmith2,MWL_MountainsBlacksmith1,MWL_MistlandsBlacksmith1,MWL_OceanTavern1" +
             " start");
 
         // Meadows biome command (24 locations)
@@ -84,9 +87,15 @@ public static class UpgradeWorldCommands
             " start");
         
         // Ports command (4 locations)
-        UpgradeWorld.Upgrade.Register("mwl_ports", "Adds MWL shipping port locations to corresponding biomes.", 
+        UpgradeWorld.Upgrade.Register("mwl_ports", "Adds MWL shipping port locations to corresponding biomes.",
             "locations_add " +
             "MWL_Port1,MWL_Port2,MWL_Port3,MWL_Port4" +
+            " start");
+
+        // Traders command (7 locations)
+        UpgradeWorld.Upgrade.Register("mwl_traders", "Adds MWL trader locations to corresponding biomes.",
+            "locations_add " +
+            "MWL_PlainsTavern1,MWL_PlainsCamp1,MWL_BlackForestBlacksmith1,MWL_BlackForestBlacksmith2,MWL_MountainsBlacksmith1,MWL_MistlandsBlacksmith1,MWL_OceanTavern1" +
             " start");
     }
 }

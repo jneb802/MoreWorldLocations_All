@@ -173,6 +173,7 @@ public class AssetPaths
         "Assets/WarpProjects/MoreWorldTraders/MWL_MountainsBlacksmith1.prefab",
         "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsCamp1.prefab",
         "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTavern1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_OceanTavern1.prefab",
     };
     
     public static string[] assetPathsInBundle4 = new[]

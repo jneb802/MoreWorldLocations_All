@@ -63,6 +63,8 @@ public class TraderItems
         
         foreach (Skills.SkillType skill in Enum.GetValues(typeof(Skills.SkillType)))
         {
+            if (skill == Skills.SkillType.None || skill == Skills.SkillType.All) continue;
+
             for (int tier = 1; tier <= 3; tier++)
             {
                 CreateSkillBook(skill, tier);
@@ -80,6 +82,8 @@ public class TraderItems
         itemDrop.m_itemData.m_shared.m_name = "$item_mwl_skillBook_" + skill.ToString() + "_bookTier" + tier;
         itemDrop.m_itemData.m_shared.m_description = "$item_mwl_skillBook_description_" + skill.ToString() + "_bookTier" + tier;
         SkillBook_SE skillBook_SE = ScriptableObject.CreateInstance<SkillBook_SE>();
+        skillBook_SE.name = "MWL_SkillBook_SE_" + skill + "_tier" + tier;
+        skillBook_SE.m_name = "$se_skillBook";
         skillBook_SE.skillType = skill;
         skillBook_SE.bookTier = tier;
         itemDrop.m_itemData.m_shared.m_consumeStatusEffect = skillBook_SE;

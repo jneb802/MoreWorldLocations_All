@@ -37,11 +37,14 @@ public class TraderLocalizations
     public static void AddSkillBookLocalization(Skills.SkillType skill, int tier)
     {
         Localization = Jotunn.Managers.LocalizationManager.Instance.GetLocalization();
-    
+
+        int levels = tier switch { 1 => 1, 2 => 3, 3 => 5, _ => 1 };
+        string levelWord = levels == 1 ? "level" : "levels";
+
         Localization.AddTranslation("English", new Dictionary<string, string>
         {
             {"$item_mwl_skillBook_" + skill.ToString() + "_bookTier" + tier, skill.ToString() + " Skill Book " + "(" + tier + ")"},
-            {"$item_mwl_skillBook_description_" + skill.ToString() + "_bookTier" + tier, "A skill book to raise " + skill + " skill"},
+            {"$item_mwl_skillBook_description_" + skill.ToString() + "_bookTier" + tier, "Raises " + skill + " by " + levels + " " + levelWord},
         });
     }
     
