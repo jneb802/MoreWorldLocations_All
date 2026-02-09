@@ -226,16 +226,23 @@ public class LocationsNEW
     
     public static void AddTraderLocations()
     {
-        Common.LocationManager.AddLocation("MWL_PlainsTavern1", LocationConfigs.TraderLocationConfigs["MWL_PlainsTavern1_Config"]);
-        Common.LocationManager.AddLocation("MWL_OceanTavern1", LocationConfigs.TraderLocationConfigs["MWL_OceanTavern1_Config"]);
-        Common.LocationManager.AddLocation("MWL_PlainsCamp1", LocationConfigs.TraderLocationConfigs["MWL_PlainsCamp1_Config"]);
-        Common.LocationManager.AddLocation("MWL_BlackForestBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_BlackForestBlacksmith1_Config"]);
-        Common.LocationManager.AddLocation("MWL_BlackForestBlacksmith2", LocationConfigs.TraderLocationConfigs["MWL_BlackForestBlacksmith2_Config"]);
-        Common.LocationManager.AddLocation("MWL_MountainsBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_MountainsBlacksmith1_Config"]);
-        Common.LocationManager.AddLocation("MWL_MistlandsBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_MistlandsBlacksmith1_Config"]);
-        Common.LocationManager.AddLocation("MWL_MeadowsTrainer1", LocationConfigs.TraderLocationConfigs["MWL_MeadowsTrainer1_Config"]);
-        Common.LocationManager.AddLocation("MWL_SwampTrainer1", LocationConfigs.TraderLocationConfigs["MWL_SwampTrainer1_Config"]);
-        Common.LocationManager.AddLocation("MWL_PlainsTrainer1", LocationConfigs.TraderLocationConfigs["MWL_PlainsTrainer1_Config"]);
-        Common.LocationManager.AddLocation("MWL_MistTrainer1", LocationConfigs.TraderLocationConfigs["MWL_MistTrainer1_Config"]);
+        if (BepinexConfigs.EnableTraders.Value == PortInit.Toggle.On)
+        {
+            Common.LocationManager.AddLocation("MWL_PlainsTavern1", LocationConfigs.TraderLocationConfigs["MWL_PlainsTavern1_Config"]);
+            Common.LocationManager.AddLocation("MWL_OceanTavern1", LocationConfigs.TraderLocationConfigs["MWL_OceanTavern1_Config"]);
+            Common.LocationManager.AddLocation("MWL_PlainsCamp1", LocationConfigs.TraderLocationConfigs["MWL_PlainsCamp1_Config"]);
+            Common.LocationManager.AddLocation("MWL_BlackForestBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_BlackForestBlacksmith1_Config"]);
+            Common.LocationManager.AddLocation("MWL_BlackForestBlacksmith2", LocationConfigs.TraderLocationConfigs["MWL_BlackForestBlacksmith2_Config"]);
+            Common.LocationManager.AddLocation("MWL_MountainsBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_MountainsBlacksmith1_Config"]);
+            Common.LocationManager.AddLocation("MWL_MistlandsBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_MistlandsBlacksmith1_Config"]);
+        }
+
+        if (BepinexConfigs.EnableTrainers.Value == PortInit.Toggle.On)
+        {
+            Common.LocationManager.AddLocation("MWL_MeadowsTrainer1", LocationConfigs.TraderLocationConfigs["MWL_MeadowsTrainer1_Config"]);
+            Common.LocationManager.AddLocation("MWL_SwampTrainer1", LocationConfigs.TraderLocationConfigs["MWL_SwampTrainer1_Config"]);
+            Common.LocationManager.AddLocation("MWL_PlainsTrainer1", LocationConfigs.TraderLocationConfigs["MWL_PlainsTrainer1_Config"]);
+            Common.LocationManager.AddLocation("MWL_MistTrainer1", LocationConfigs.TraderLocationConfigs["MWL_MistTrainer1_Config"]);
+        }
     }
 }

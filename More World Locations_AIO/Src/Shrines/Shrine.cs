@@ -23,6 +23,12 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
     
     public void Awake()
     {
+        if (BepinexConfigs.EnableShrines.Value == PortInit.Toggle.Off)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         znetView = GetComponent<ZNetView>();
         ZDO zdo = znetView.GetZDO();
         if (znetView.IsOwner())

@@ -18,6 +18,12 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
 
     public void Awake()
     {
+        if (BepinexConfigs.EnableWaystones.Value == PortInit.Toggle.Off)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         znetView = GetComponent<ZNetView>();
         ZDO zdo = znetView.GetZDO();
         if (znetView.IsOwner())
