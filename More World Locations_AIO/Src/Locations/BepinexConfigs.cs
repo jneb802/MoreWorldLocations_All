@@ -71,6 +71,7 @@ public class BepinexConfigs
             { "MWL_RootRuins1_Configuration", new LocationConfiguration(Config, "RootRuins1", 15) },
             { "MWL_RootsTower1_Configuration", new LocationConfiguration(Config, "RootsTower1", 20) },
             { "MWL_RootsTower2_Configuration", new LocationConfiguration(Config, "RootsTower2", 10) },
+            { "MWL_RuinedRootTower5_Configuration", new LocationConfiguration(Config, "RuinedRootTower5", 10) },
             { "MWL_StoneOutlook1_Configuration", new LocationConfiguration(Config, "StoneOutlook1", 10) },
             { "MWL_ForestRuin2_Configuration", new LocationConfiguration(Config, "ForestRuin2", 15) },
             { "MWL_ForestRuin3_Configuration", new LocationConfiguration(Config, "ForestRuin3", 15) },
@@ -150,6 +151,7 @@ public class BepinexConfigs
             { "MWL_DvergrHouseWood2_Configuration", new LocationConfiguration(Config, "DvergrHouseWood2", 10) },
             { "MWL_MarbleJail1_Configuration", new LocationConfiguration(Config, "MarbleJail1", 10) },
             { "MWL_MarbleHome1_Configuration", new LocationConfiguration(Config, "MarbleHome1", 10) },
+            { "MWL_MarbleHome2_Configuration", new LocationConfiguration(Config, "MarbleHome2", 10) },
             { "MWL_MarbleCliffAltar1_Configuration", new LocationConfiguration(Config, "MarbleCliffAltar1", 10) },
             { "MWL_MistPond1_Configuration", new LocationConfiguration(Config, "MistPond1", 10) },
             { "MWL_MarbleCage1_Configuration", new LocationConfiguration(Config, "MarbleCage1", 10) },
@@ -180,6 +182,21 @@ public class BepinexConfigs
             { "MWL_Port2_Configuration", new LocationConfiguration(Config, "Port2", 5) },
             { "MWL_Port3_Configuration", new LocationConfiguration(Config, "Port3", 5) },
             { "MWL_Port4_Configuration", new LocationConfiguration(Config, "Port4", 5) },
+            
+            // Traders
+            { "MWL_PlainsTavern1_Configuration", new LocationConfiguration(Config, "MWL_PlainsTavern1", 5) },
+            { "MWL_PlainsCamp1_Configuration", new LocationConfiguration(Config, "MWL_PlainsCamp1", 5) },
+            { "MWL_BlackForestBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_BlackForestBlacksmith1", 5) },
+            { "MWL_BlackForestBlacksmith2_Configuration", new LocationConfiguration(Config, "MWL_BlackForestBlacksmith2", 5) },
+            { "MWL_MountainsBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_MountainsBlacksmith1", 5) },
+            { "MWL_MistlandsBlacksmith1_Configuration", new LocationConfiguration(Config, "MWL_MistlandsBlacksmith1", 5) },
+            { "MWL_OceanTavern1_Configuration", new LocationConfiguration(Config, "MWL_OceanTavern1", 5) },
+
+            // Trainers
+            { "MWL_MeadowsTrainer1_Configuration", new LocationConfiguration(Config, "MWL_MeadowsTrainer1", 5) },
+            { "MWL_SwampTrainer1_Configuration", new LocationConfiguration(Config, "MWL_SwampTrainer1", 5) },
+            { "MWL_PlainsTrainer1_Configuration", new LocationConfiguration(Config, "MWL_PlainsTrainer1", 5) },
+            { "MWL_MistTrainer1_Configuration", new LocationConfiguration(Config, "MWL_MistTrainer1", 5) },
         };
     }
 }

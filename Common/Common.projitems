@@ -23,5 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)WarpLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LootManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)YAMLManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Analytics.cs" />
   </ItemGroup>
 </Project>

@@ -11,11 +11,11 @@ public static class UpgradeWorldCommands
             "MWL_Ruins1,MWL_Ruins2,MWL_Ruins3,MWL_Ruins6,MWL_Ruins7,MWL_Ruins8,MWL_RuinsArena1,MWL_RuinsArena3,MWL_RuinsChurch1,MWL_RuinsWell1,MWL_MaypoleHut1," +
             "MWL_DeerShrine1,MWL_DeerShrine2,MWL_MeadowsBarn1,MWL_MeadowsHouse2,MWL_MeadowsRuin1,MWL_MeadowsTomb4,MWL_MeadowsTower1,MWL_OakHut1,MWL_SmallHouse1,MWL_MeadowsFarm1,MWL_MeadowsLighthouse1,MWL_MeadowsSawmill1,MWL_MeadowsWall1,MWL_MeadowsTavern1," +
             
-            // Black Forest Pack 1 & 2 + Adventure (32 locations)
+            // Black Forest Pack 1 & 2 + Adventure (33 locations)
             "MWL_RuinsArena2,MWL_RuinsCastle1,MWL_RuinsCastle3,MWL_RuinsTower3,MWL_RuinsTower6,MWL_RuinsTower8,MWL_Tavern1,MWL_WoodTower1,MWL_WoodTower2,MWL_WoodTower3," +
-            "MWL_ForestForge1,MWL_ForestForge2,MWL_ForestGreatHouse2,MWL_ForestHouse2,MWL_ForestRuin1,MWL_ForestTower2,MWL_ForestTower3,MWL_MassGrave1,MWL_StoneFormation1,MWL_GuardTower1,MWL_RootRuins1,MWL_RootsTower1,MWL_RootsTower2,MWL_ForestRuin2,MWL_ForestRuin3,MWL_ForestSkull1,MWL_ForestTower4,MWL_ForestTower5,MWL_ForestPillar1,MWL_CoastTower1,MWL_ForestGrove1,MWL_RockShrine1," +
+            "MWL_ForestForge1,MWL_ForestForge2,MWL_ForestGreatHouse2,MWL_ForestHouse2,MWL_ForestRuin1,MWL_ForestTower2,MWL_ForestTower3,MWL_MassGrave1,MWL_StoneFormation1,MWL_GuardTower1,MWL_RootRuins1,MWL_RootsTower1,MWL_RootsTower2,MWL_RuinedRootTower5,MWL_ForestRuin2,MWL_ForestRuin3,MWL_ForestSkull1,MWL_ForestTower4,MWL_ForestTower5,MWL_ForestPillar1,MWL_CoastTower1,MWL_ForestGrove1,MWL_RockShrine1," +
             "MWL_ForestCamp1,MWL_RuinedTower1," +
-            
+
             // Swamp Pack 1 + Adventure (24 locations)
             "MWL_GuckPit1,MWL_SwampAltar1,MWL_SwampAltar2,MWL_SwampAltar3,MWL_SwampAltar4,MWL_SwampCastle2,MWL_SwampGrave1,MWL_SwampHouse1,MWL_SwampRuin1,MWL_SwampTower1,MWL_SwampTower2,MWL_SwampTower3,MWL_SwampWell1,MWL_AbandonedHouse1,MWL_Treehouse1,MWL_Shipyard1,MWL_FortBakkarhalt1,MWL_Belmont1,MWL_SwampCourtyard1,MWL_SwampBrokenTower1,MWL_SwampBrokenTower3,MWL_StoneCircle1,MWL_SwampTemple1," +
             "MWL_CastleCorner1,MWL_TreeTowers1," +
@@ -32,7 +32,11 @@ public static class UpgradeWorldCommands
             "MWL_MistHut2," +
             
             // Ashlands Pack 1 (3 locations)
-            "MWL_AshlandsFort1,MWL_AshlandsFort2,MWL_AshlandsFort3" +
+            "MWL_AshlandsFort1,MWL_AshlandsFort2,MWL_AshlandsFort3," +
+
+            // Traders (11 locations)
+            "MWL_PlainsTavern1,MWL_PlainsCamp1,MWL_BlackForestBlacksmith1,MWL_BlackForestBlacksmith2,MWL_MountainsBlacksmith1,MWL_MistlandsBlacksmith1,MWL_OceanTavern1," +
+            "MWL_MeadowsTrainer1,MWL_SwampTrainer1,MWL_PlainsTrainer1,MWL_MistTrainer1" +
             " start");
 
         // Meadows biome command (24 locations)
@@ -42,11 +46,11 @@ public static class UpgradeWorldCommands
             "MWL_DeerShrine1,MWL_DeerShrine2,MWL_MeadowsBarn1,MWL_MeadowsHouse2,MWL_MeadowsRuin1,MWL_MeadowsTomb4,MWL_MeadowsTower1,MWL_OakHut1,MWL_SmallHouse1,MWL_MeadowsFarm1,MWL_MeadowsLighthouse1,MWL_MeadowsSawmill1,MWL_MeadowsWall1,MWL_MeadowsTavern1" +
             " start");
 
-        // Black Forest biome command (32 locations)
+        // Black Forest biome command (33 locations)
         UpgradeWorld.Upgrade.Register("mwl_blackforest", "Adds MWL locations to the Black Forest biome.", 
             "locations_add " +
             "MWL_RuinsArena2,MWL_RuinsCastle1,MWL_RuinsCastle3,MWL_RuinsTower3,MWL_RuinsTower6,MWL_RuinsTower8,MWL_Tavern1,MWL_WoodTower1,MWL_WoodTower2,MWL_WoodTower3," +
-            "MWL_ForestForge1,MWL_ForestForge2,MWL_ForestGreatHouse2,MWL_ForestHouse2,MWL_ForestRuin1,MWL_ForestTower2,MWL_ForestTower3,MWL_MassGrave1,MWL_StoneFormation1,MWL_GuardTower1,MWL_RootRuins1,MWL_RootsTower1,MWL_RootsTower2,MWL_ForestRuin2,MWL_ForestRuin3,MWL_ForestSkull1,MWL_ForestTower4,MWL_ForestTower5,MWL_ForestPillar1,MWL_CoastTower1,MWL_ForestGrove1,MWL_RockShrine1," +
+            "MWL_ForestForge1,MWL_ForestForge2,MWL_ForestGreatHouse2,MWL_ForestHouse2,MWL_ForestRuin1,MWL_ForestTower2,MWL_ForestTower3,MWL_MassGrave1,MWL_StoneFormation1,MWL_GuardTower1,MWL_RootRuins1,MWL_RootsTower1,MWL_RootsTower2,MWL_RuinedRootTower5,MWL_ForestRuin2,MWL_ForestRuin3,MWL_ForestSkull1,MWL_ForestTower4,MWL_ForestTower5,MWL_ForestPillar1,MWL_CoastTower1,MWL_ForestGrove1,MWL_RockShrine1," +
             "MWL_ForestCamp1,MWL_RuinedTower1" +
             " start");
 
@@ -84,9 +88,16 @@ public static class UpgradeWorldCommands
             " start");
         
         // Ports command (4 locations)
-        UpgradeWorld.Upgrade.Register("mwl_ports", "Adds MWL shipping port locations to corresponding biomes.", 
+        UpgradeWorld.Upgrade.Register("mwl_ports", "Adds MWL shipping port locations to corresponding biomes.",
             "locations_add " +
             "MWL_Port1,MWL_Port2,MWL_Port3,MWL_Port4" +
+            " start");
+
+        // Traders command (11 locations)
+        UpgradeWorld.Upgrade.Register("mwl_traders", "Adds MWL trader locations to corresponding biomes.",
+            "locations_add " +
+            "MWL_PlainsTavern1,MWL_PlainsCamp1,MWL_BlackForestBlacksmith1,MWL_BlackForestBlacksmith2,MWL_MountainsBlacksmith1,MWL_MistlandsBlacksmith1,MWL_OceanTavern1," +
+            "MWL_MeadowsTrainer1,MWL_SwampTrainer1,MWL_PlainsTrainer1,MWL_MistTrainer1" +
             " start");
     }
 }

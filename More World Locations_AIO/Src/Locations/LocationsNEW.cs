@@ -21,6 +21,7 @@ public class LocationsNEW
         AddAshlandsPack1Locations();
         AddAdventureMapPack1Locations();
         AddPortLocations();
+        AddTraderLocations();
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllLocations;
     }
@@ -89,6 +90,7 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_RootRuins1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RootRuins1_Config"]);
         Common.LocationManager.AddLocation("MWL_RootsTower1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RootsTower1_Config"]);
         Common.LocationManager.AddLocation("MWL_RootsTower2", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RootsTower2_Config"]);
+        Common.LocationManager.AddLocation("MWL_RuinedRootTower5", LocationConfigs.BlackforestPack2LocationConfigs["MWL_RuinedRootTower5_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestRuin2", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestRuin2_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestRuin3", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestRuin3_Config"]);
         Common.LocationManager.AddLocation("MWL_ForestSkull1", LocationConfigs.BlackforestPack2LocationConfigs["MWL_ForestSkull1_Config"]);
@@ -176,6 +178,7 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_DvergrHouseWood2", LocationConfigs.MistlandsPack1LocationConfigs["MWL_DvergrHouseWood2_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleJail1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleJail1_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleHome1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleHome1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MarbleHome2", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleHome2_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleCliffAltar1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleCliffAltar1_Config"]);
         Common.LocationManager.AddLocation("MWL_MistPond1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MistPond1_Config"]);
         Common.LocationManager.AddLocation("MWL_MarbleCage1", LocationConfigs.MistlandsPack1LocationConfigs["MWL_MarbleCage1_Config"]);
@@ -219,5 +222,20 @@ public class LocationsNEW
         Common.LocationManager.AddLocation("MWL_Port2", LocationConfigs.PortLocationConfigs["MWL_Port2_Config"]);
         Common.LocationManager.AddLocation("MWL_Port3", LocationConfigs.PortLocationConfigs["MWL_Port3_Config"]);
         Common.LocationManager.AddLocation("MWL_Port4", LocationConfigs.PortLocationConfigs["MWL_Port4_Config"]);
+    }
+    
+    public static void AddTraderLocations()
+    {
+        Common.LocationManager.AddLocation("MWL_PlainsTavern1", LocationConfigs.TraderLocationConfigs["MWL_PlainsTavern1_Config"]);
+        Common.LocationManager.AddLocation("MWL_OceanTavern1", LocationConfigs.TraderLocationConfigs["MWL_OceanTavern1_Config"]);
+        Common.LocationManager.AddLocation("MWL_PlainsCamp1", LocationConfigs.TraderLocationConfigs["MWL_PlainsCamp1_Config"]);
+        Common.LocationManager.AddLocation("MWL_BlackForestBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_BlackForestBlacksmith1_Config"]);
+        Common.LocationManager.AddLocation("MWL_BlackForestBlacksmith2", LocationConfigs.TraderLocationConfigs["MWL_BlackForestBlacksmith2_Config"]);
+        Common.LocationManager.AddLocation("MWL_MountainsBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_MountainsBlacksmith1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MistlandsBlacksmith1", LocationConfigs.TraderLocationConfigs["MWL_MistlandsBlacksmith1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MeadowsTrainer1", LocationConfigs.TraderLocationConfigs["MWL_MeadowsTrainer1_Config"]);
+        Common.LocationManager.AddLocation("MWL_SwampTrainer1", LocationConfigs.TraderLocationConfigs["MWL_SwampTrainer1_Config"]);
+        Common.LocationManager.AddLocation("MWL_PlainsTrainer1", LocationConfigs.TraderLocationConfigs["MWL_PlainsTrainer1_Config"]);
+        Common.LocationManager.AddLocation("MWL_MistTrainer1", LocationConfigs.TraderLocationConfigs["MWL_MistTrainer1_Config"]);
     }
 }

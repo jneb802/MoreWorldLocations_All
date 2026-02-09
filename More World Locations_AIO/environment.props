@@ -86,6 +86,10 @@
             <HintPath>$(VALHEIM_MANAGED)/Unity.TextMeshPro.dll</HintPath>
             <Private>false</Private>
         </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestModule">
+            <HintPath>$(VALHEIM_MANAGED)/UnityEngine.UnityWebRequestModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
     </ItemGroup>
 
     <!-- Valheim Game Assemblies (publicized) -->

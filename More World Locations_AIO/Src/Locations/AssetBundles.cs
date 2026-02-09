@@ -250,6 +250,7 @@ public class AssetBundles
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_RootRuins1.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_RootsTower1.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_RootsTower2.prefab",
+        "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_RuinedRootTower5.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestRuin2.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestRuin3.prefab",
         "Assets/WarpProjects/More World Locations/BlackForest Pack 2/MWL_ForestSkull1.prefab",

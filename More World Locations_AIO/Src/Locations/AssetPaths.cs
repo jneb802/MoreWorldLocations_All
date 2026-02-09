@@ -59,6 +59,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RootRuins1.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RootsTower1.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_RootsTower2.prefab",
+        "Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedRootTower5.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin2.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin3.prefab",
         "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestSkull1.prefab",
@@ -147,6 +148,7 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouseWood2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleJail1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleHome1.prefab",
+        "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleHome2.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleCliffAltar1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistPond1.prefab",
         "Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleCage1.prefab",
@@ -164,6 +166,21 @@ public class AssetPaths
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port2.prefab",
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port3.prefab",
         "Assets/WarpProjects/More World Locations/Ports/MWL_Port4.prefab",
+        
+        // Traders
+        "Assets/WarpProjects/MoreWorldTraders/MWL_BlackForestBlacksmith1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_BlackForestBlacksmith2.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MistlandsBlacksmith1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MountainsBlacksmith1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsCamp1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTavern1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_OceanTavern1.prefab",
+
+        // Trainers
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MeadowsTrainer1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_SwampTrainer1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTrainer1.prefab",
+        "Assets/WarpProjects/MoreWorldTraders/MWL_MistTrainer1.prefab",
     };
     
     public static string[] assetPathsInBundle4 = new[]

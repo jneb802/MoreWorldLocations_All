@@ -54,6 +54,10 @@
         <EmbeddedResource Include="Src/Ports/src/tutorials/port.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/shipment.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/teleport.md" />
+        <None Remove="assets\moreworldvendors" />
+        <EmbeddedResource Include="assets\moreworldvendors" />
+        <None Remove="assets\vendornpc" />
+        <EmbeddedResource Include="assets\vendornpc" />
     </ItemGroup>
 
     <!-- Content files -->
