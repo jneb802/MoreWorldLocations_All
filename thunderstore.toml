@@ -1,0 +1,31 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "AuthorName"
+name = "PackageName"
+versionNumber = "0.0.1"
+description = "Example mod description"
+websiteUrl = "https://thunderstore.io"
+containsNsfwContent = false
+[package.dependencies]
+AuthorName-PackageName = "0.0.1"
+
+
+[build]
+icon = "./icon.png"
+readme = "./README.md"
+outdir = "./build"
+
+[[build.copy]]
+source = "./dist"
+target = ""
+
+
+[publish]
+repository = "https://thunderstore.io"
+communities = [ "riskofrain2", ]
+[publish.categories]
+riskofrain2 = [ "items", "skills", ]
+
+
