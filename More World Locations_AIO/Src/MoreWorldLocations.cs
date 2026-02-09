@@ -9,6 +9,7 @@ using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Traders;
+using More_World_Locations_AIO.Sealstone;
 using More_World_Locations_AIO.Waystones;
 using UnityEngine;
 
@@ -98,6 +99,7 @@ namespace More_World_Locations_AIO
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
+            SealstoneItems.CreateItems();
             PortPrefabs.AddPortPrefabs();
 
             if (BepinexConfigs.EnableTraders.Value == PortInit.Toggle.On ||
