@@ -80,7 +80,7 @@ public class TraderPrefabs
         AddItem(items, "QueensJam", 1, 20);
         AddItem(items, "CarrotSoup", 1, 20);
         AddItem(items, "DeerStew", 1, 20);
-        AddItem(items, "MincedMeatSauce", 1, 20);
+        AddItem(items, "MinceMeatSauce", 1, 20);
 
         // Tier 2 - After Bonemass
         AddItem(items, "Sausages", 1, 30, "defeated_bonemass");
@@ -104,7 +104,7 @@ public class TraderPrefabs
         AddItem(items, "HoneyGlazedChicken", 1, 60, "defeated_queen");
         AddItem(items, "MisthareSupreme", 1, 60, "defeated_queen");
         AddItem(items, "MushroomOmelette", 1, 60, "defeated_queen");
-        AddItem(items, "StuffedMushroom", 1, 60, "defeated_queen");
+        AddItem(items, "MagicallyStuffedShroom", 1, 60, "defeated_queen");
         AddItem(items, "YggdrasilPorridge", 1, 60, "defeated_queen");
         AddItem(items, "SeekerAspic", 1, 60, "defeated_queen");
 
@@ -134,7 +134,7 @@ public class TraderPrefabs
         AddItem(items, "LoxPelt", 1, 30);
         AddItem(items, "LinenThread", 1, 20);
         AddItem(items, "CookedLoxMeat", 1, 20);
-        AddItem(items, "LoxSaddle", 1, 500);
+        AddItem(items, "SaddleLox", 1, 500);
         AddItem(items, "BoltBlackmetal", 1, 20);
 
         // After Yagluth - bulk quantities

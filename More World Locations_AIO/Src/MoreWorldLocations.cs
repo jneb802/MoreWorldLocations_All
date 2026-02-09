@@ -83,6 +83,8 @@ namespace More_World_Locations_AIO
                 BepinexConfigs.Config.SaveOnConfigSet = saveOnSet;
                 BepinexConfigs.Config.Save();
             }
+
+            Analytics.Init(Config, ModGUID, ModVersion);
         }
         
         // Add this method to ensure proper initialization order
