@@ -4,8 +4,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common", "Common\Common.shp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon_The Ritual", "Dungeon_The Ritual\Dungeon_The Ritual.csproj", "{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "More World Traders", "More World Traders\More World Traders.csproj", "{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeon_Castle", "Dungeon_Castle\Dungeon_Castle.csproj", "{9C8F2F18-3C73-4F4F-A2E0-1F9C0D72B62D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "More World Locations_AIO", "More World Locations_AIO\More World Locations_AIO.csproj", "{A4F9E3C1-2D58-4C3B-8F0B-9D17F6B7D0A5}"
@@ -20,7 +18,6 @@ Global
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 					{8F57EFFB-69EA-4A3A-B0D6-D41BF719C4AE}.Release|Any CPU.Build.0 = Release|Any CPU
-					{D742F92E-9D73-4C94-8B76-EEF8970A2FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{9C8F2F18-3C73-4F4F-A2E0-1F9C0D72B62D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{A4F9E3C1-2D58-4C3B-8F0B-9D17F6B7D0A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 					{A4F9E3C1-2D58-4C3B-8F0B-9D17F6B7D0A5}.Debug|Any CPU.Build.0 = Debug|Any CPU

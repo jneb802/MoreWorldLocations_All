@@ -18,7 +18,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "4.0.0";
+        internal const string ModVersion = "4.1.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -48,7 +48,8 @@ namespace More_World_Locations_AIO
             root.SetActive(false);
             
             PortInit.Init(root);
-            
+            BepinexConfigs.BindFeatureConfigs();
+
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -98,9 +99,22 @@ namespace More_World_Locations_AIO
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
             PortPrefabs.AddPortPrefabs();
-            TraderItems.CreateCustomItems();
-            TraderPrefabs.AddTraderPrefabs();
-            TraderPrefabs.AddTrainerPrefabs();
+
+            if (BepinexConfigs.EnableTraders.Value == PortInit.Toggle.On ||
+                BepinexConfigs.EnableTrainers.Value == PortInit.Toggle.On)
+            {
+                TraderItems.CreateCustomItems();
+            }
+
+            if (BepinexConfigs.EnableTraders.Value == PortInit.Toggle.On)
+            {
+                TraderPrefabs.AddTraderPrefabs();
+            }
+
+            if (BepinexConfigs.EnableTrainers.Value == PortInit.Toggle.On)
+            {
+                TraderPrefabs.AddTrainerPrefabs();
+            }
 
             More_World_Locations_AIOLogger.LogInfo("LootDB and CreatureDB initialized successfully.");
 
