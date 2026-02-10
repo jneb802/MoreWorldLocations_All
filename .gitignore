@@ -7,3 +7,6 @@ More World Locations_AIO/.DS_Store
 .DS_Store
 .cursor/
 features
+plugins/
+assetBundleManifest_full
+build/
