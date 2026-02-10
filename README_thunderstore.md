@@ -3,32 +3,6 @@
 # More World Locations
 This mod massively enhances the world exploration component of Valheim by adding 153 new custom locations across all biomes and multiple new POI experiences.
 
-## Table of Contents
-- [Features](#features)
-- [Location Previews](#location-previews)
-- [Shipping Ports](#shipping-ports)
-- [Shrines](#shrines)
-- [Waystones](#waystones)
-- [Traders](#traders)
-  - [Trader Locations](#trader-locations)
-  - [Trainers & Skill Books](#trainers--skill-books)
-  - [Blacksmith Stones](#blacksmith-stones)
-  - [Minimap Icons](#minimap-icons)
-- [Custom Lore](#custom-lore)
-- [Valheim SoftReferenceableAssets](#valheim-softreferenceableassets)
-- [World Rings System](#world-rings-system)
-- [Feature Toggle Configs](#feature-toggle-configs)
-- [Instructions - Manually Installing Mod](#instructions---manually-installing-mod)
-- [Instructions - Adding Locations to World](#instructions---adding-locations-to-world)
-- [More World Locations](#more-world-locations-1)
-- [All-in-One Pack vs. Individual Packs](#all-in-one-pack-vs-individual-packs)
-- [FAQ](#faq)
-- [Known Incompatibilities](#known-incompatibilities)
-- [Mod Support & Feedback](#mod-support--feedback)
-- [Donations/Tips](#donationstips)
-- [Source Code](#source-code)
-- [Credit & Thanks](#credit--thanks)
-
 ## Features
 - Adds 153 new custom locations across all biomes. Each spawns up to 20 times.
 - Adds Shipping Port locations to ship items and teleport between other discovered shipping port locations.
@@ -244,7 +218,7 @@ This is useful if you want a simpler, purely POI-based experience without the in
 
 ## Instructions - Adding Locations to World
 - To add these locations to a non-existing world, no action is required. Ensure the mod is installed and create a new world.
-- To add these locations to an existing world, install the mod [Upgrade World](https://valheim.thunderstore.io/package/JereKuusela/Upgrade_World/). Then load into your existing world and use one of the commands below. Note, you must have access to the console either via enabling it via Steam or using a mod.
+- To add these locations to an existing world, install the mod the [Upgrade World](https://valheim.thunderstore.io/package/JereKuusela/Upgrade_World/). Then load into your existing world use one of the commands below. Note, you must have access to the console either via enabling it via Steam or using a mod.
 
 - Add all locations: `mwl_allbiomes`
 - Add Meadows locations: `mwl_meadows`
@@ -266,6 +240,10 @@ The goal of the More World Locations series is to solve Valheim's exploration pr
 - More World Traders has been fully integrated into the AIO mod as of 4.0.0.
 - This AIO DOES NOT currently include these other MWL mods: Underground Ruins, Forbidden Catacombs.
 
+## Mod Support & Feedback
+Please feel free to share any and all feedback or ask questions. You can find me on my own modding Discord.
+- [Warp Mods Discord](https://discord.gg/KjgZ63VZv5)
+
 ## FAQ
 Q: I'm seeing a lot of "Failed to place all X, placed Y out of Z" warning messages during world generation. Is something wrong?
 A: No, this is completely normal! When Valheim generates a world, it tries to place each location type a set number of times. For each attempt, it checks many conditions: Is this the right biome? Is the ground flat enough? Is it far enough from similar locations? Is the altitude correct? Sometimes there simply isn't enough suitable conditions to hit the target spawn quantity.
@@ -273,10 +251,6 @@ A: No, this is completely normal! When Valheim generates a world, it tries to pl
 ## Known Incompatibilities
 - Currently incompatible with the mod SeedTotem by MathiasDecrock. If SeedTotem is loaded alongside this mod, you will experience significant FPS drops.
 - Previously incompatible with the mod RuneMagic by HyenaLegend. We fixed the incompatibility in version 2.0.7 of MWL_AIO.
-
-## Mod Support & Feedback
-Please feel free to share any and all feedback or ask questions. You can find me on my own modding Discord.
-- [Warp Mods Discord](https://discord.gg/KjgZ63VZv5)
 
 ## Donations/Tips
 I make mods because I enjoy it and want to make Valheim more enjoyable for everyone. If you feel like saying thanks you can tip me here.

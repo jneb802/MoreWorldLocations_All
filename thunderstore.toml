@@ -2,30 +2,42 @@
 schemaVersion = "0.0.1"
 
 [package]
-namespace = "AuthorName"
-name = "PackageName"
-versionNumber = "0.0.1"
-description = "Example mod description"
-websiteUrl = "https://thunderstore.io"
+namespace = "warpalicious"
+name = "More_World_Locations_AIO"
+versionNumber = "4.1.1"
+description = "Adds 153 new POI locations with traders, ports, puzzles, and shrines to enhance Valheim's world exploration."
+websiteUrl = "https://discord.gg/KjgZ63VZv5"
 containsNsfwContent = false
-[package.dependencies]
-AuthorName-PackageName = "0.0.1"
 
+[package.dependencies]
+denikson-BepInExPack_Valheim = "5.4.2333"
+ValheimModding-JsonDotNET = "13.0.4"
+ValheimModding-Jotunn = "2.27.1"
 
 [build]
 icon = "./icon.png"
-readme = "./README.md"
+readme = "./README_thunderstore.md"
 outdir = "./build"
 
 [[build.copy]]
-source = "./dist"
-target = ""
+source = "./More World Locations_AIO/bin/Release/More_World_Locations_AIO.dll"
+target = "More_World_Locations_AIO.dll"
 
+[[build.copy]]
+source = "./assetBundleManifest_full"
+target = "assetBundleManifest_full"
+
+[[build.copy]]
+source = "./plugins"
+target = "plugins"
+
+[[build.copy]]
+source = "./CHANGELOG.md"
+target = "CHANGELOG.md"
 
 [publish]
 repository = "https://thunderstore.io"
-communities = [ "riskofrain2", ]
+communities = ["valheim"]
+
 [publish.categories]
-riskofrain2 = [ "items", "skills", ]
-
-
+valheim = ["mods"]
