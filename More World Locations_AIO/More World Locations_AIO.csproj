@@ -49,6 +49,7 @@
         <EmbeddedResource Include="assets/portbundle" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_CreatureLists.yml" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_LootLists.yml" />
+        <EmbeddedResource Include="Src/Ports/src/tutorials/introduction.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/delivery.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/manifest.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/port.md" />
