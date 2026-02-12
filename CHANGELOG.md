@@ -1,5 +1,6 @@
 | `Version` | `Update Notes`    |
 |-----------|-------------------|
+| 4.2.0     | - Fixed prefab issues in MWL_MarbleHome2, MWL_ForestSkull1, MWL_MountainCultShrine1, and MWL_BlackForestBlacksmith1 causing failed mocks.  |
 | 4.1.1     | - Forgot to add the DLL in 4.1.0. |
 | 4.1.0     | - Rebuilt asset bundles from new locations added in 4.0.0 to reduce size |
 |           | - Added 'Feature configs' to disable shipping ports, traders, trainers, shrines, and waystones if people desire a more simple purely POI-based mod. |
