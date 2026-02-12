@@ -1,7 +1,10 @@
-﻿Shipments are where players can see the status of their shipments
+﻿The Shipment tab shows all outgoing shipments from the <color=orange>current port</color>.
 
-Once a player sends a shipment, their details will show up in two places:
-1. Port tab, that has the information of the port along with all their deliveries and <color=orange>shipments</color>, but do not have the details of the contents of the shipment
-2. Shipment tab will have a list of shipments from the <color=orange>current port</color> and will have the details of the contents of the shipment
+<color=orange><b>Shipment Details</b></color>
+Each shipment entry displays:
+<size=5>●</size> The items packed in each manifest
+<size=5>●</size> The destination port
+<size=5>●</size> Estimated time of arrival
+<size=5>●</size> Current status (<color=yellow>In Transit</color> or <color=yellow>Delivered</color>)
 
-Players can use the shipment tab to have a detailed report of the entire shipment, including the manifest, time to arrival and state
+<color=yellow>Note:</color> The Port tab also shows a summary of shipments per destination, but only the Shipment tab shows the full contents of each manifest.
