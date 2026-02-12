@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -250,18 +251,38 @@ public static class LocationQuantityManager
         "Port1", "Port2", "Port3", "Port4",
     };
 
+    /// <summary>
+    /// Strips the numbered prefix added by Jotunn's BindConfigInOrder
+    /// (e.g. "1 - MWL_Ruins1" -> "MWL_Ruins1", "100 - FulingTemple2" -> "FulingTemple2").
+    /// </summary>
+    private static string StripSectionPrefix(string section)
+    {
+        return Regex.Replace(section, @"^\d+\s*-\s*", "");
+    }
+
     public static void LoadOrMigrateConfigs(ConfigFile config)
     {
-        // Fetch orphaned entries once via reflection
-        var orphanedEntries = AccessTools.Property(typeof(ConfigFile), "OrphanedEntries")
-            ?.GetValue(config) as Dictionary<ConfigDefinition, string>;
-
         // Always start with defaults
         _quantities = LocationDefaults.ToDictionary(kv => kv.Key, kv => kv.Value.DefaultQuantity);
 
         if (!File.Exists(YamlFilePath))
         {
-            MigrateFromBepInEx(orphanedEntries);
+            // Check for old BepInEx entries to migrate
+            var orphanedEntries = AccessTools.Property(typeof(ConfigFile), "OrphanedEntries")
+                ?.GetValue(config) as Dictionary<ConfigDefinition, string>;
+
+            bool hasOldEntries = orphanedEntries != null &&
+                orphanedEntries.Any(e => e.Key.Key == "Spawn Quantity" &&
+                    OldBepInExSections.Contains(StripSectionPrefix(e.Key.Section)));
+
+            if (hasOldEntries)
+            {
+                MigrateFromBepInEx(orphanedEntries);
+                ClearOrphanedEntries(config, orphanedEntries);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
+                    "Migrated location quantities from BepInEx config to YAML.");
+            }
+
             WriteYamlFile();
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
                 $"Location quantity config written to: {YamlFilePath}");
@@ -270,8 +291,6 @@ public static class LocationQuantityManager
         {
             LoadFromYaml();
         }
-
-        ClearOrphanedEntries(config, orphanedEntries);
     }
 
     public static int GetQuantity(string locationName)
@@ -301,7 +320,7 @@ public static class LocationQuantityManager
         {
             if (entry.Key.Key != "Spawn Quantity") continue;
 
-            string sectionName = entry.Key.Section;
+            string sectionName = StripSectionPrefix(entry.Key.Section);
             string locationName = sectionName.StartsWith("MWL_") ? sectionName : "MWL_" + sectionName;
 
             if (_quantities.ContainsKey(locationName) && int.TryParse(entry.Value, out int value))
@@ -323,7 +342,7 @@ public static class LocationQuantityManager
         if (orphanedEntries == null) return;
 
         var toRemove = orphanedEntries.Keys
-            .Where(k => OldBepInExSections.Contains(k.Section))
+            .Where(k => OldBepInExSections.Contains(StripSectionPrefix(k.Section)))
             .ToList();
 
         foreach (var key in toRemove)
