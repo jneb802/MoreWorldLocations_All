@@ -70,7 +70,7 @@ namespace More_World_Locations_AIO
             //     AssetPaths.assetPathsInBundleFull
             // );   
             
-            BepinexConfigs.GenerateConfigs(Config);
+            LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += LocationsNEW.AddAllLocations;
