@@ -26,12 +26,12 @@ public class BlacksmithStone_SE : StatusEffect
             if (CheckItem(item) && isQualityCompatible(item))
             {
                 item.m_quality += (int)m_qualityIncreaseAmount;
-                player.Message(MessageHud.MessageType.TopLeft, "Item: " + item.m_shared.m_name + " was enhanced");
+                player.Message(MessageHud.MessageType.Center, "Item: " + item.m_shared.m_name + " was enhanced");
                 return true;
             }
             else
             {
-                player.Message(MessageHud.MessageType.TopLeft, "No suitable item found in top left corner of inventory.");
+                player.Message(MessageHud.MessageType.Center, "No suitable item found in top left corner of inventory.");
                 return false;
             }
         }

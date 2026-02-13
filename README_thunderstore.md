@@ -11,6 +11,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - Adds Trader NPCs across multiple biomes that sell unique items including Blacksmith Stones and Skill Books.
 - Adds Trainer NPCs across multiple biomes that sell Skill Books for character progression.
 - Adds custom lore and unique events to 2 locations.
+- Location spawn quantities are configurable via YAML (`warpalicious.More_World_Locations_AIO.LocationConfigs.yml` in the BepInEx config folder). Customize how many of each location spawns in the world.
 - Feature toggle configs allow you to disable shipping ports, traders, trainers, shrines, and waystones individually.
 - Improved asset loading performance via Valheim SoftReferenceableAssets system to significantly improve client RAM usage. The assetBundle and assetBundleManifest files are shipped as separate files and they must be included.
 - Anonymous analytics to help improve the mod (opt-out available in config).
