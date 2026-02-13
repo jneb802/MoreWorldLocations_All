@@ -1,6 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Common;
 using Jotunn.Managers;
 using UnityEngine;
+using YamlDotNet.RepresentationModel;
 
 namespace More_World_Locations_AIO.Utils
 {
@@ -49,10 +54,73 @@ namespace More_World_Locations_AIO.Utils
                 // Ashlands Creature Lists
                 { "AshlandsCreatures1", GetAshlandsCreatures1() }
             };
-            
+
             PrefabManager.OnVanillaPrefabsAvailable -= InitializeCreatureLists;
         }
-        
+
+        public static void LoadFromYAML(string yamlContent)
+        {
+            if (string.IsNullOrEmpty(yamlContent)) return;
+
+            try
+            {
+                var yaml = new YamlStream();
+                yaml.Load(new StringReader(yamlContent));
+                var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+
+                foreach (var entry in mapping.Children)
+                {
+                    string listName = ((YamlScalarNode)entry.Key).Value;
+                    var creatureSequence = entry.Value as YamlSequenceNode;
+
+                    if (creatureSequence == null) continue;
+
+                    // Count occurrences to determine weights
+                    Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
+                    foreach (var creatureNode in creatureSequence.Children)
+                    {
+                        if (creatureNode is YamlScalarNode scalarNode)
+                        {
+                            string creatureName = scalarNode.Value;
+                            if (!creatureCounts.ContainsKey(creatureName))
+                                creatureCounts[creatureName] = 0;
+                            creatureCounts[creatureName]++;
+                        }
+                    }
+
+                    // Convert to WeightedCreature list
+                    List<WeightedCreature> weightedList = new List<WeightedCreature>();
+                    foreach (var kvp in creatureCounts)
+                    {
+                        GameObject creature = GetCreature(kvp.Key);
+                        if (creature != null)
+                        {
+                            weightedList.Add(new WeightedCreature
+                            {
+                                creature = creature,
+                                weight = kvp.Value
+                            });
+                        }
+                    }
+
+                    if (creatureLists.ContainsKey(listName))
+                    {
+                        creatureLists[listName] = weightedList;
+                        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo($"Overrode creature list {listName} from YAML");
+                    }
+                    else
+                    {
+                        creatureLists.Add(listName, weightedList);
+                        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo($"Added new creature list {listName} from YAML");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("Failed to load creature lists from YAML: " + ex.Message);
+            }
+        }
+
         #region Meadows Creature Lists
         
         private static List<WeightedCreature> GetMeadowsCreatures1()

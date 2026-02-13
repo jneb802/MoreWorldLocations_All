@@ -42,21 +42,65 @@ public class YAMLManager
         defaultlootYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LootLists.yml");
     }
     
-    public void ParseCustomYamls()
-    { 
-        var customCreatureListYamLFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_CreatureLists.yml");
-        
-        if (File.Exists(customCreatureListYamLFilePath))
+    public void ParseCustomYamls(ConfigurationManager.Toggle useCustomLocationYAML)
+    {
+        var customCreatureListYamlFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_CreatureLists.yml");
+        var customLootListYamlFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_LootLists.yml");
+
+        // Auto-extract if toggle On and files don't exist
+        if (useCustomLocationYAML == ConfigurationManager.Toggle.On)
         {
-            customCreatureYamlContent = File.ReadAllText(customCreatureListYamLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_CreatureLists.yml file from BepinEx config folder");
+            if (!File.Exists(customCreatureListYamlFilePath))
+            {
+                try
+                {
+                    File.WriteAllText(customCreatureListYamlFilePath, defaultCreatureYamlContent);
+                    WarpLogger.Logger.LogInfo("Auto-extracted warpalicious.More_World_Locations_CreatureLists.yml to BepInEx config folder");
+                }
+                catch (System.Exception ex)
+                {
+                    WarpLogger.Logger.LogError("Failed to extract creature YAML: " + ex.Message);
+                }
+            }
+
+            if (!File.Exists(customLootListYamlFilePath))
+            {
+                try
+                {
+                    File.WriteAllText(customLootListYamlFilePath, defaultlootYamlContent);
+                    WarpLogger.Logger.LogInfo("Auto-extracted warpalicious.More_World_Locations_LootLists.yml to BepInEx config folder");
+                }
+                catch (System.Exception ex)
+                {
+                    WarpLogger.Logger.LogError("Failed to extract loot YAML: " + ex.Message);
+                }
+            }
         }
-        
-        var customLootListYamLFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_LootLists.yml");
-        if (File.Exists(customLootListYamLFilePath))
+
+        if (File.Exists(customCreatureListYamlFilePath))
         {
-            customlootYamlContent = File.ReadAllText(customLootListYamLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_LootLists.yml file from BepinEx config folder");
+            try
+            {
+                customCreatureYamlContent = File.ReadAllText(customCreatureListYamlFilePath);
+                WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_CreatureLists.yml from BepInEx config folder");
+            }
+            catch (System.Exception ex)
+            {
+                WarpLogger.Logger.LogError("Failed to load custom creature YAML: " + ex.Message);
+            }
+        }
+
+        if (File.Exists(customLootListYamlFilePath))
+        {
+            try
+            {
+                customlootYamlContent = File.ReadAllText(customLootListYamlFilePath);
+                WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_LootLists.yml from BepInEx config folder");
+            }
+            catch (System.Exception ex)
+            {
+                WarpLogger.Logger.LogError("Failed to load custom loot YAML: " + ex.Message);
+            }
         }
     }
     
@@ -72,15 +116,37 @@ public class YAMLManager
         }
     }
     
-    public void ParseTraderYaml(string filename)
+    public void ParseTraderYaml(string filename, ConfigurationManager.Toggle useCustomTraderYaml)
     {
         defaultTraderYamlContent = AssetUtils.LoadTextFromResources(filename);
-        
-        string customTraderListYamLFilePath = Path.Combine(Paths.ConfigPath, filename);
-        if (File.Exists(customTraderListYamLFilePath))
+
+        string customTraderListYamlFilePath = Path.Combine(Paths.ConfigPath, filename);
+
+        // Auto-extract if toggle On and file doesn't exist
+        if (useCustomTraderYaml == ConfigurationManager.Toggle.On && !File.Exists(customTraderListYamlFilePath))
         {
-            customTraderYamlContent = File.ReadAllText(customTraderListYamLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + " file from BepinEx config folder");;
+            try
+            {
+                File.WriteAllText(customTraderListYamlFilePath, defaultTraderYamlContent);
+                WarpLogger.Logger.LogInfo("Auto-extracted " + filename + " to BepInEx config folder");
+            }
+            catch (System.Exception ex)
+            {
+                WarpLogger.Logger.LogError("Failed to extract " + filename + ": " + ex.Message);
+            }
+        }
+
+        if (File.Exists(customTraderListYamlFilePath))
+        {
+            try
+            {
+                customTraderYamlContent = File.ReadAllText(customTraderListYamlFilePath);
+                WarpLogger.Logger.LogInfo("Successfully loaded " + filename + " from BepInEx config folder");
+            }
+            catch (System.Exception ex)
+            {
+                WarpLogger.Logger.LogError("Failed to load custom trader YAML: " + ex.Message);
+            }
         }
     }
     
@@ -110,24 +176,21 @@ public class YAMLManager
 
     public string GetCreatureYamlContent(ConfigurationManager.Toggle useCustomCreatureYaml)
     {
-
-        if (useCustomCreatureYaml == ConfigurationManager.Toggle.On)
+        if (useCustomCreatureYaml == ConfigurationManager.Toggle.On && !string.IsNullOrEmpty(customCreatureYamlContent))
         {
             return customCreatureYamlContent;
         }
-        
+
         return defaultCreatureYamlContent;
     }
-    
+
     public string GetLootYamlContent(ConfigurationManager.Toggle useCustomLootYaml)
     {
-
-        if (useCustomLootYaml == ConfigurationManager.Toggle.On)
+        if (useCustomLootYaml == ConfigurationManager.Toggle.On && !string.IsNullOrEmpty(customlootYamlContent))
         {
             return customlootYamlContent;
         }
         return defaultlootYamlContent;
-        
     }
     
     public string GetPickableItemContent(ConfigurationManager.Toggle useCustomPickableItemYAML)
@@ -138,7 +201,16 @@ public class YAMLManager
             return customPickableItemContent;
         }
         return defaultPickableItemContent;
-        
+
+    }
+
+    public string GetTraderYamlContent(ConfigurationManager.Toggle useCustomTraderYaml)
+    {
+        if (useCustomTraderYaml == ConfigurationManager.Toggle.On && !string.IsNullOrEmpty(customTraderYamlContent))
+        {
+            return customTraderYamlContent;
+        }
+        return defaultTraderYamlContent;
     }
 
     public void BuildCreatureLists(ConfigurationManager.Toggle useCustomCreatureYAML, string creatureListName)
