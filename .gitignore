@@ -10,3 +10,6 @@ features
 plugins/
 assetBundleManifest_full
 build/
+# Claude Code Docker files
+Dockerfile.claude
+docker-compose.claude.yml
