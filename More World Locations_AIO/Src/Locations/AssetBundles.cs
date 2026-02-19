@@ -47,7 +47,7 @@ public class AssetBundles
     
     public static string GetManifest()
     {
-        //get the full location of the assembly with DaoTests in it
+        //get the full location of the assembly
         string fullPath = Assembly.GetExecutingAssembly().Location;
         string directoryPath = Path.GetDirectoryName(fullPath);
         //get the folder the assembly is in, and list the files in that folder
