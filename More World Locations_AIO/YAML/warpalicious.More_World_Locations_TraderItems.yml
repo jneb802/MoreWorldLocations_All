@@ -261,66 +261,314 @@ MWL_OceanTavern1_Vendor:
     price: 70
     requiredGlobalKey: "defeated_fader"
 
-# Meadows Trainer 1 - Mobility and gathering skills
+# Meadows Trainer 1 - Mobility and gathering skills (Run, Jump, Swim, Sneak, WoodCutting, Fishing, Pickaxes)
 MWL_MeadowsTrainer1_Trainer:
-  tiers:
-    - tier: 1
-      price: 100
-      requiredGlobalKey: ""
-      notRequiredGlobalKey: "defeated_bonemass"
-    - tier: 2
-      price: 300
-      requiredGlobalKey: "defeated_bonemass"
-      notRequiredGlobalKey: "defeated_goblinking"
-    - tier: 3
-      price: 500
-      requiredGlobalKey: "defeated_goblinking"
-      notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Run_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Run_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Run_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Jump_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Jump_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Jump_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Swim_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Swim_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Swim_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Sneak_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Sneak_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Sneak_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_WoodCutting_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_WoodCutting_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_WoodCutting_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Fishing_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Fishing_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Fishing_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Pickaxes_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Pickaxes_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Pickaxes_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
 
-# Swamp Trainer 1 - Melee weapon skills
+# Swamp Trainer 1 - Melee weapon skills (Swords, Knives, Clubs, Polearms, Spears, Axes)
 MWL_SwampTrainer1_Trainer:
-  tiers:
-    - tier: 1
-      price: 100
-      requiredGlobalKey: ""
-      notRequiredGlobalKey: "defeated_bonemass"
-    - tier: 2
-      price: 300
-      requiredGlobalKey: "defeated_bonemass"
-      notRequiredGlobalKey: "defeated_goblinking"
-    - tier: 3
-      price: 500
-      requiredGlobalKey: "defeated_goblinking"
-      notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Swords_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Swords_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Swords_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Knives_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Knives_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Knives_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Clubs_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Clubs_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Clubs_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Polearms_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Polearms_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Polearms_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Spears_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Spears_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Spears_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Axes_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Axes_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Axes_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
 
-# Plains Trainer 1 - Ranged and defense skills
+# Plains Trainer 1 - Ranged and defense skills (Bows, Crossbows, Blocking, Dodge, Ride)
 MWL_PlainsTrainer1_Trainer:
-  tiers:
-    - tier: 1
-      price: 100
-      requiredGlobalKey: ""
-      notRequiredGlobalKey: "defeated_bonemass"
-    - tier: 2
-      price: 300
-      requiredGlobalKey: "defeated_bonemass"
-      notRequiredGlobalKey: "defeated_goblinking"
-    - tier: 3
-      price: 500
-      requiredGlobalKey: "defeated_goblinking"
-      notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Bows_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Bows_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Bows_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Crossbows_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Crossbows_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Crossbows_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Blocking_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Blocking_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Blocking_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Dodge_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Dodge_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Dodge_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Ride_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Ride_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Ride_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
 
-# Mist Trainer 1 - Magic skills
+# Mist Trainer 1 - Magic skills (ElementalMagic, BloodMagic)
 MWL_MistTrainer1_Trainer:
-  tiers:
-    - tier: 1
-      price: 100
-      requiredGlobalKey: ""
-      notRequiredGlobalKey: "defeated_bonemass"
-    - tier: 2
-      price: 300
-      requiredGlobalKey: "defeated_bonemass"
-      notRequiredGlobalKey: "defeated_goblinking"
-    - tier: 3
-      price: 500
-      requiredGlobalKey: "defeated_goblinking"
-      notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_ElementalMagic_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_ElementalMagic_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_ElementalMagic_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_BloodMagic_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_BloodMagic_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_BloodMagic_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""

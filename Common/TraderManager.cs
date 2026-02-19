@@ -74,19 +74,7 @@ namespace Common
             public int Stack { get; set; } = 1;
             public int Price { get; set; }
             public string RequiredGlobalKey { get; set; } = "";
-        }
-
-        public class TrainerTierConfig
-        {
-            public int Tier { get; set; }
-            public int Price { get; set; }
-            public string RequiredGlobalKey { get; set; } = "";
             public string NotRequiredGlobalKey { get; set; } = "";
-        }
-
-        public class TrainerYAML
-        {
-            public List<TrainerTierConfig> Tiers { get; set; }
         }
     }
 }

@@ -12,7 +12,6 @@ namespace More_World_Locations_AIO.Traders;
 public class TraderPrefabs
 {
     private static Dictionary<string, List<Trader.TradeItem>> traderItemsCache = new Dictionary<string, List<Trader.TradeItem>>();
-    private static Dictionary<string, List<TraderManager.TrainerTierConfig>> trainerTiersCache = new Dictionary<string, List<TraderManager.TrainerTierConfig>>();
 
     public static void AddTraderPrefabs()
     {
@@ -33,16 +32,10 @@ public class TraderPrefabs
     {
         var assetBundle = Prefabs.vendorNpcBundle;
 
-        BuildAllTrainerTiersFromYAML();
-
-        AddTrainerPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer",
-            new[] { Skills.SkillType.Run, Skills.SkillType.Jump, Skills.SkillType.Swim, Skills.SkillType.Sneak, Skills.SkillType.WoodCutting, Skills.SkillType.Fishing, Skills.SkillType.Pickaxes });
-        AddTrainerPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer",
-            new[] { Skills.SkillType.Swords, Skills.SkillType.Knives, Skills.SkillType.Clubs, Skills.SkillType.Polearms, Skills.SkillType.Spears, Skills.SkillType.Axes });
-        AddTrainerPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer",
-            new[] { Skills.SkillType.Bows, Skills.SkillType.Crossbows, Skills.SkillType.Blocking, Skills.SkillType.Dodge, Skills.SkillType.Ride });
-        AddTrainerPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer",
-            new[] { Skills.SkillType.ElementalMagic, Skills.SkillType.BloodMagic });
+        AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", GetTraderItems("MWL_MeadowsTrainer1_Trainer"));
+        AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", GetTraderItems("MWL_SwampTrainer1_Trainer"));
+        AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", GetTraderItems("MWL_PlainsTrainer1_Trainer"));
+        AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", GetTraderItems("MWL_MistTrainer1_Trainer"));
     }
 
     private static void AddVendorPrefab(AssetBundle assetBundle, string prefabName, string traderName, List<Trader.TradeItem> items)
@@ -102,7 +95,6 @@ public class TraderPrefabs
             foreach (var kvp in parsedData)
             {
                 if (kvp.Key == "version") continue;
-                if (kvp.Key.EndsWith("_Trainer")) continue;
 
                 var itemsYaml = deserializer.Deserialize<List<TraderManager.TradeItemYAML>>(
                     new SerializerBuilder().Build().Serialize(kvp.Value));
@@ -112,6 +104,12 @@ public class TraderPrefabs
                 {
                     var item = CreateTradeItem(itemData.PrefabName, itemData.Stack, itemData.Price, itemData.RequiredGlobalKey);
                     if (item != null) items.Add(item);
+
+                    // Handle TraderAvailabilityPatch for items with notRequiredGlobalKey (trainers)
+                    if (!string.IsNullOrEmpty(itemData.NotRequiredGlobalKey))
+                    {
+                        TraderAvailabilityPatch.Register(itemData.PrefabName, itemData.NotRequiredGlobalKey);
+                    }
                 }
 
                 traderItemsCache[kvp.Key] = items;
@@ -146,73 +144,6 @@ public class TraderPrefabs
         }
     }
 
-    private static void BuildAllTrainerTiersFromYAML()
-    {
-        string yamlContent = More_World_Locations_AIOPlugin.YAMLManager.GetTraderYamlContent(BepinexConfigs.UseCustomTraderConfigs.Value);
-
-        try
-        {
-            var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build();
-
-            var parsedData = deserializer.Deserialize<Dictionary<string, object>>(yamlContent);
-
-            foreach (var kvp in parsedData)
-            {
-                if (kvp.Key == "version") continue;
-                if (!kvp.Key.EndsWith("_Trainer")) continue;
-
-                var trainerData = deserializer.Deserialize<TraderManager.TrainerYAML>(
-                    new SerializerBuilder().Build().Serialize(kvp.Value));
-
-                trainerTiersCache[kvp.Key] = trainerData.Tiers;
-            }
-        }
-        catch (Exception ex)
-        {
-            WarpLogger.Logger.LogError("Failed to parse trainer YAML: " + ex.Message);
-            WarpLogger.Logger.LogWarning("Falling back to hardcoded trainer tiers");
-        }
-    }
-
-    private static void AddTrainerPrefab(AssetBundle assetBundle, string prefabName, string traderName, Skills.SkillType[] skills)
-    {
-        var items = BuildTrainerItems(prefabName, skills);
-        AddVendorPrefab(assetBundle, prefabName, traderName, items);
-    }
-
-    private static List<Trader.TradeItem> BuildTrainerItems(string trainerName, Skills.SkillType[] skills)
-    {
-        var items = new List<Trader.TradeItem>();
-
-        List<TraderManager.TrainerTierConfig> tiers;
-        if (!trainerTiersCache.TryGetValue(trainerName, out tiers))
-        {
-            tiers = new List<TraderManager.TrainerTierConfig>
-            {
-                new TraderManager.TrainerTierConfig { Tier = 1, Price = 100, RequiredGlobalKey = "", NotRequiredGlobalKey = "defeated_bonemass" },
-                new TraderManager.TrainerTierConfig { Tier = 2, Price = 300, RequiredGlobalKey = "defeated_bonemass", NotRequiredGlobalKey = "defeated_goblinking" },
-                new TraderManager.TrainerTierConfig { Tier = 3, Price = 500, RequiredGlobalKey = "defeated_goblinking", NotRequiredGlobalKey = "" }
-            };
-        }
-
-        foreach (var skill in skills)
-        {
-            foreach (var tier in tiers)
-            {
-                string prefabName = $"MWL_skillBook_{skill}_bookTier{tier.Tier}";
-                AddItem(items, prefabName, 1, tier.Price, tier.RequiredGlobalKey);
-
-                if (!string.IsNullOrEmpty(tier.NotRequiredGlobalKey))
-                    TraderAvailabilityPatch.Register(prefabName, tier.NotRequiredGlobalKey);
-            }
-        }
-
-        return items;
-    }
-
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetPlainsTavern1Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -262,7 +193,6 @@ public class TraderPrefabs
         return items;
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetPlainsCamp1Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -288,7 +218,6 @@ public class TraderPrefabs
         return items;
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetBlackForestBlacksmith1Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -297,7 +226,6 @@ public class TraderPrefabs
         return items;
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetBlackForestBlacksmith2Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -306,7 +234,6 @@ public class TraderPrefabs
         return items;
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetMountainsBlacksmith1Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -315,7 +242,6 @@ public class TraderPrefabs
         return items;
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetMistlandsBlacksmith1Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -324,7 +250,6 @@ public class TraderPrefabs
         return items;
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
     private static List<Trader.TradeItem> GetOceanTavern1Items()
     {
         var items = new List<Trader.TradeItem>();
@@ -355,68 +280,4 @@ public class TraderPrefabs
             items.Add(item);
     }
 
-    [Obsolete("Used only as fallback if YAML parsing fails")]
-    private static void AddTrainerItem(List<Trader.TradeItem> items, Skills.SkillType skill, int tier, int price, string requiredKey, string notRequiredKey = "")
-    {
-        string prefabName = $"MWL_skillBook_{skill}_bookTier{tier}";
-        AddItem(items, prefabName, 1, price, requiredKey);
-        if (!string.IsNullOrEmpty(notRequiredKey))
-            TraderAvailabilityPatch.Register(prefabName, notRequiredKey);
-    }
-
-    [Obsolete("Used only as fallback if YAML parsing fails")]
-    private static List<Trader.TradeItem> GetMeadowsTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.Run, Skills.SkillType.Jump, Skills.SkillType.Swim, Skills.SkillType.Sneak, Skills.SkillType.WoodCutting, Skills.SkillType.Fishing, Skills.SkillType.Pickaxes };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
-
-    [Obsolete("Used only as fallback if YAML parsing fails")]
-    private static List<Trader.TradeItem> GetSwampTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.Swords, Skills.SkillType.Knives, Skills.SkillType.Clubs, Skills.SkillType.Polearms, Skills.SkillType.Spears, Skills.SkillType.Axes };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
-
-    [Obsolete("Used only as fallback if YAML parsing fails")]
-    private static List<Trader.TradeItem> GetPlainsTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.Bows, Skills.SkillType.Crossbows, Skills.SkillType.Blocking, Skills.SkillType.Dodge, Skills.SkillType.Ride };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
-
-    [Obsolete("Used only as fallback if YAML parsing fails")]
-    private static List<Trader.TradeItem> GetMistTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.ElementalMagic, Skills.SkillType.BloodMagic };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
 }
