@@ -51,7 +51,7 @@ namespace More_World_Locations_AIO
             BepinexConfigs.BindFeatureConfigs();
 
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
-            
+
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -64,7 +64,7 @@ namespace More_World_Locations_AIO
             // Trader setup
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
-            TraderLocalizations.AddLocalizations();
+            MWLLocalizations.Load(BepinexConfigs.UseCustomLocalization.Value);
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
@@ -97,6 +97,8 @@ namespace More_World_Locations_AIO
 
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
+
+
 
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
