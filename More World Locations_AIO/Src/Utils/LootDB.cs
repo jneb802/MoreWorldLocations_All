@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Common;
 using Jotunn.Managers;
 using UnityEngine;
 
@@ -23,7 +25,25 @@ namespace More_World_Locations_AIO.Utils
 
             PrefabManager.OnVanillaPrefabsAvailable -= InitializeLootTables;
         }
-        
+
+        public static void LoadFromYAML(string yamlContent)
+        {
+            if (string.IsNullOrEmpty(yamlContent)) return;
+
+            // NOTE: The current LootDB structure uses biome-based loot tables (Dictionary<Heightmap.Biome, DropTable>)
+            // while the YAML format uses named loot lists (e.g., "MeadowsLoot1", "MeadowsLoot2").
+            // Since there's no clear mapping between named lists and biome tables, and locations currently
+            // use the SetupLoot method with biome parameters, YAML override for loot is not currently implemented.
+            // If named loot lists are needed, the location system would need to be refactored to reference
+            // specific loot lists by name rather than by biome.
+
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("LootDB LoadFromYAML called, but biome-based loot table override from YAML is not currently implemented");
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Locations will continue to use biome-based hardcoded loot tables");
+
+            // TODO: If needed, refactor location system to support named loot lists, or implement
+            // a mapping system between YAML named lists and biome-based loot tables
+        }
+
         private static DropTable GetMeadowsLootTable()
         {
             return CreateDropTable(new List<DropTable.DropData>

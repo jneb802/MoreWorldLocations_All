@@ -1,0 +1,574 @@
+version: 1
+
+# Plains Tavern 1 - Food vendor with progressive tiers
+MWL_PlainsTavern1_Vendor:
+  - prefabName: QueensJam
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: CarrotSoup
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: DeerStew
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: MinceMeatSauce
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: Sausages
+    stack: 1
+    price: 30
+    requiredGlobalKey: "defeated_bonemass"
+  - prefabName: TurnipStew
+    stack: 1
+    price: 30
+    requiredGlobalKey: "defeated_bonemass"
+  - prefabName: BlackSoup
+    stack: 1
+    price: 30
+    requiredGlobalKey: "defeated_bonemass"
+  - prefabName: ShocklateSmoothie
+    stack: 1
+    price: 30
+    requiredGlobalKey: "defeated_bonemass"
+  - prefabName: OnionSoup
+    stack: 1
+    price: 40
+    requiredGlobalKey: "defeated_dragon"
+  - prefabName: WolfMeatSkewer
+    stack: 1
+    price: 40
+    requiredGlobalKey: "defeated_dragon"
+  - prefabName: Eyescream
+    stack: 1
+    price: 40
+    requiredGlobalKey: "defeated_dragon"
+  - prefabName: BloodPudding
+    stack: 1
+    price: 50
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: FishWraps
+    stack: 1
+    price: 50
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: LoxPie
+    stack: 1
+    price: 50
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: MeatPlatter
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: Salad
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: HoneyGlazedChicken
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: MisthareSupreme
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: MushroomOmelette
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: MagicallyStuffedShroom
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: YggdrasilPorridge
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: SeekerAspic
+    stack: 1
+    price: 60
+    requiredGlobalKey: "defeated_queen"
+  - prefabName: FierySvinstew
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: PiquantPie
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: SpicyMarmalade
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: ScorchingMedley
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: RoastedCrustPie
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: SizzlingBerryBroth
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: SparklingShroomshake
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: MarinatedGreens
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+
+# Plains Camp 1 - Materials vendor
+MWL_PlainsCamp1_Vendor:
+  - prefabName: Tar
+    stack: 1
+    price: 5
+    requiredGlobalKey: ""
+  - prefabName: BlackMetalScrap
+    stack: 1
+    price: 15
+    requiredGlobalKey: ""
+  - prefabName: Needle
+    stack: 1
+    price: 5
+    requiredGlobalKey: ""
+  - prefabName: Cloudberry
+    stack: 1
+    price: 2
+    requiredGlobalKey: ""
+  - prefabName: Feathers
+    stack: 1
+    price: 5
+    requiredGlobalKey: ""
+  - prefabName: LoxPelt
+    stack: 1
+    price: 30
+    requiredGlobalKey: ""
+  - prefabName: LinenThread
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: CookedLoxMeat
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: SaddleLox
+    stack: 1
+    price: 500
+    requiredGlobalKey: ""
+  - prefabName: BoltBlackmetal
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: Tar
+    stack: 10
+    price: 40
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: Tar
+    stack: 50
+    price: 200
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: Cloudberry
+    stack: 10
+    price: 16
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: Cloudberry
+    stack: 50
+    price: 75
+    requiredGlobalKey: "defeated_goblinking"
+
+# Black Forest Blacksmith 1
+MWL_BlackForestBlacksmith1_Vendor:
+  - prefabName: CopperOre
+    stack: 1
+    price: 10
+    requiredGlobalKey: ""
+  - prefabName: MWL_blacksmithStone_tier1
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_gdking"
+
+# Black Forest Blacksmith 2
+MWL_BlackForestBlacksmith2_Vendor:
+  - prefabName: CopperOre
+    stack: 1
+    price: 10
+    requiredGlobalKey: ""
+  - prefabName: MWL_blacksmithStone_tier1
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_gdking"
+
+# Mountains Blacksmith 1
+MWL_MountainsBlacksmith1_Vendor:
+  - prefabName: Obsidian
+    stack: 1
+    price: 15
+    requiredGlobalKey: ""
+  - prefabName: MWL_blacksmithStone_tier2
+    stack: 1
+    price: 750
+    requiredGlobalKey: "defeated_gdking"
+
+# Mistlands Blacksmith 1
+MWL_MistlandsBlacksmith1_Vendor:
+  - prefabName: BlackMarble
+    stack: 1
+    price: 20
+    requiredGlobalKey: ""
+  - prefabName: MWL_blacksmithStone_tier3
+    stack: 1
+    price: 1000
+    requiredGlobalKey: "defeated_gdking"
+
+# Ocean Tavern 1 - Fish and seafood vendor
+MWL_OceanTavern1_Vendor:
+  - prefabName: FishCooked
+    stack: 1
+    price: 30
+    requiredGlobalKey: ""
+  - prefabName: SerpentMeatCooked
+    stack: 1
+    price: 40
+    requiredGlobalKey: "defeated_serpent"
+  - prefabName: SerpentStew
+    stack: 1
+    price: 50
+    requiredGlobalKey: "defeated_serpent"
+  - prefabName: SpiceOceans
+    stack: 5
+    price: 100
+    requiredGlobalKey: "defeated_serpent"
+  - prefabName: FishWraps
+    stack: 1
+    price: 50
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: SerpentScale
+    stack: 1
+    price: 20
+    requiredGlobalKey: "defeated_goblinking"
+  - prefabName: FishAndBread
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+  - prefabName: CookedBoneMawSerpentMeat
+    stack: 1
+    price: 70
+    requiredGlobalKey: "defeated_fader"
+
+# Meadows Trainer 1 - Mobility and gathering skills (Run, Jump, Swim, Sneak, WoodCutting, Fishing, Pickaxes)
+MWL_MeadowsTrainer1_Trainer:
+  - prefabName: MWL_skillBook_Run_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Run_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Run_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Jump_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Jump_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Jump_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Swim_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Swim_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Swim_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Sneak_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Sneak_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Sneak_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_WoodCutting_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_WoodCutting_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_WoodCutting_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Fishing_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Fishing_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Fishing_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Pickaxes_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Pickaxes_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Pickaxes_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+
+# Swamp Trainer 1 - Melee weapon skills (Swords, Knives, Clubs, Polearms, Spears, Axes)
+MWL_SwampTrainer1_Trainer:
+  - prefabName: MWL_skillBook_Swords_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Swords_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Swords_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Knives_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Knives_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Knives_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Clubs_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Clubs_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Clubs_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Polearms_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Polearms_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Polearms_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Spears_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Spears_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Spears_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Axes_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Axes_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Axes_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+
+# Plains Trainer 1 - Ranged and defense skills (Bows, Crossbows, Blocking, Dodge, Ride)
+MWL_PlainsTrainer1_Trainer:
+  - prefabName: MWL_skillBook_Bows_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Bows_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Bows_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Crossbows_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Crossbows_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Crossbows_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Blocking_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Blocking_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Blocking_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Dodge_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Dodge_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Dodge_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Ride_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Ride_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Ride_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+
+# Mist Trainer 1 - Magic skills (ElementalMagic, BloodMagic)
+MWL_MistTrainer1_Trainer:
+  - prefabName: MWL_skillBook_ElementalMagic_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_ElementalMagic_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_ElementalMagic_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_BloodMagic_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_BloodMagic_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_BloodMagic_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""

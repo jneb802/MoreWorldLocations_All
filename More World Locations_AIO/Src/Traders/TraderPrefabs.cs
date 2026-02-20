@@ -1,33 +1,41 @@
+using System;
 using System.Collections.Generic;
+using Common;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace More_World_Locations_AIO.Traders;
 
 public class TraderPrefabs
 {
+    private static Dictionary<string, List<Trader.TradeItem>> traderItemsCache = new Dictionary<string, List<Trader.TradeItem>>();
+
     public static void AddTraderPrefabs()
     {
         var assetBundle = Prefabs.vendorNpcBundle;
 
-        AddVendorPrefab(assetBundle, "MWL_PlainsTavern1_Vendor", "$mwl_plainstavern1_trader", GetPlainsTavern1Items());
-        AddVendorPrefab(assetBundle, "MWL_PlainsCamp1_Vendor", "$mwl_plainscamp1_trader", GetPlainsCamp1Items());
-        AddVendorPrefab(assetBundle, "MWL_BlackForestBlacksmith1_Vendor", "$mwl_blackforestblacksmith1_trader", GetBlackForestBlacksmith1Items());
-        AddVendorPrefab(assetBundle, "MWL_BlackForestBlacksmith2_Vendor", "$mwl_blackforestblacksmith2_trader", GetBlackForestBlacksmith2Items());
-        AddVendorPrefab(assetBundle, "MWL_MountainsBlacksmith1_Vendor", "$mwl_mountainsblacksmith1_trader", GetMountainsBlacksmith1Items());
-        AddVendorPrefab(assetBundle, "MWL_MistlandsBlacksmith1_Vendor", "$mwl_mistlandsblacksmith1_trader", GetMistlandsBlacksmith1Items());
-        AddVendorPrefab(assetBundle, "MWL_OceanTavern1_Vendor", "$mwl_oceantavern1_trader", GetOceanTavern1Items());
+        BuildAllTraderItemsFromYAML();
+
+        AddVendorPrefab(assetBundle, "MWL_PlainsTavern1_Vendor", "$mwl_plainstavern1_trader", GetTraderItems("MWL_PlainsTavern1_Vendor"));
+        AddVendorPrefab(assetBundle, "MWL_PlainsCamp1_Vendor", "$mwl_plainscamp1_trader", GetTraderItems("MWL_PlainsCamp1_Vendor"));
+        AddVendorPrefab(assetBundle, "MWL_BlackForestBlacksmith1_Vendor", "$mwl_blackforestblacksmith1_trader", GetTraderItems("MWL_BlackForestBlacksmith1_Vendor"));
+        AddVendorPrefab(assetBundle, "MWL_BlackForestBlacksmith2_Vendor", "$mwl_blackforestblacksmith2_trader", GetTraderItems("MWL_BlackForestBlacksmith2_Vendor"));
+        AddVendorPrefab(assetBundle, "MWL_MountainsBlacksmith1_Vendor", "$mwl_mountainsblacksmith1_trader", GetTraderItems("MWL_MountainsBlacksmith1_Vendor"));
+        AddVendorPrefab(assetBundle, "MWL_MistlandsBlacksmith1_Vendor", "$mwl_mistlandsblacksmith1_trader", GetTraderItems("MWL_MistlandsBlacksmith1_Vendor"));
+        AddVendorPrefab(assetBundle, "MWL_OceanTavern1_Vendor", "$mwl_oceantavern1_trader", GetTraderItems("MWL_OceanTavern1_Vendor"));
     }
 
     public static void AddTrainerPrefabs()
     {
         var assetBundle = Prefabs.vendorNpcBundle;
 
-        AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", GetMeadowsTrainer1Items());
-        AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", GetSwampTrainer1Items());
-        AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", GetPlainsTrainer1Items());
-        AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", GetMistTrainer1Items());
+        AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", GetTraderItems("MWL_MeadowsTrainer1_Trainer"));
+        AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", GetTraderItems("MWL_SwampTrainer1_Trainer"));
+        AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", GetTraderItems("MWL_PlainsTrainer1_Trainer"));
+        AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", GetTraderItems("MWL_MistTrainer1_Trainer"));
     }
 
     private static void AddVendorPrefab(AssetBundle assetBundle, string prefabName, string traderName, List<Trader.TradeItem> items)
@@ -70,6 +78,70 @@ public class TraderPrefabs
             m_price = price,
             m_requiredGlobalKey = requiredGlobalKey
         };
+    }
+
+    private static void BuildAllTraderItemsFromYAML()
+    {
+        string yamlContent = More_World_Locations_AIOPlugin.YAMLManager.GetTraderYamlContent(BepinexConfigs.UseCustomTraderConfigs.Value);
+
+        try
+        {
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+
+            var parsedData = deserializer.Deserialize<Dictionary<string, object>>(yamlContent);
+
+            foreach (var kvp in parsedData)
+            {
+                if (kvp.Key == "version") continue;
+
+                var itemsYaml = deserializer.Deserialize<List<TraderManager.TradeItemYAML>>(
+                    new SerializerBuilder().Build().Serialize(kvp.Value));
+
+                List<Trader.TradeItem> items = new List<Trader.TradeItem>();
+                foreach (var itemData in itemsYaml)
+                {
+                    var item = CreateTradeItem(itemData.PrefabName, itemData.Stack, itemData.Price, itemData.RequiredGlobalKey);
+                    if (item != null) items.Add(item);
+
+                    // Handle TraderAvailabilityPatch for items with notRequiredGlobalKey (trainers)
+                    if (!string.IsNullOrEmpty(itemData.NotRequiredGlobalKey))
+                    {
+                        TraderAvailabilityPatch.Register(itemData.PrefabName, itemData.NotRequiredGlobalKey);
+                    }
+                }
+
+                traderItemsCache[kvp.Key] = items;
+            }
+        }
+        catch (Exception ex)
+        {
+            WarpLogger.Logger.LogError("Failed to parse trader YAML: " + ex.Message);
+            WarpLogger.Logger.LogWarning("Falling back to hardcoded trader items");
+        }
+    }
+
+    private static List<Trader.TradeItem> GetTraderItems(string traderName)
+    {
+        if (traderItemsCache.TryGetValue(traderName, out var items))
+        {
+            return items;
+        }
+
+        WarpLogger.Logger.LogWarning($"No YAML data for {traderName}, using hardcoded fallback");
+
+        switch (traderName)
+        {
+            case "MWL_PlainsTavern1_Vendor": return GetPlainsTavern1Items();
+            case "MWL_PlainsCamp1_Vendor": return GetPlainsCamp1Items();
+            case "MWL_BlackForestBlacksmith1_Vendor": return GetBlackForestBlacksmith1Items();
+            case "MWL_BlackForestBlacksmith2_Vendor": return GetBlackForestBlacksmith2Items();
+            case "MWL_MountainsBlacksmith1_Vendor": return GetMountainsBlacksmith1Items();
+            case "MWL_MistlandsBlacksmith1_Vendor": return GetMistlandsBlacksmith1Items();
+            case "MWL_OceanTavern1_Vendor": return GetOceanTavern1Items();
+            default: return new List<Trader.TradeItem>();
+        }
     }
 
     private static List<Trader.TradeItem> GetPlainsTavern1Items()
@@ -208,63 +280,4 @@ public class TraderPrefabs
             items.Add(item);
     }
 
-    private static void AddTrainerItem(List<Trader.TradeItem> items, Skills.SkillType skill, int tier, int price, string requiredKey, string notRequiredKey = "")
-    {
-        string prefabName = $"MWL_skillBook_{skill}_bookTier{tier}";
-        AddItem(items, prefabName, 1, price, requiredKey);
-        if (!string.IsNullOrEmpty(notRequiredKey))
-            TraderAvailabilityPatch.Register(prefabName, notRequiredKey);
-    }
-
-    private static List<Trader.TradeItem> GetMeadowsTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.Run, Skills.SkillType.Jump, Skills.SkillType.Swim, Skills.SkillType.Sneak, Skills.SkillType.WoodCutting, Skills.SkillType.Fishing, Skills.SkillType.Pickaxes };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
-
-    private static List<Trader.TradeItem> GetSwampTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.Swords, Skills.SkillType.Knives, Skills.SkillType.Clubs, Skills.SkillType.Polearms, Skills.SkillType.Spears, Skills.SkillType.Axes };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
-
-    private static List<Trader.TradeItem> GetPlainsTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.Bows, Skills.SkillType.Crossbows, Skills.SkillType.Blocking, Skills.SkillType.Dodge, Skills.SkillType.Ride };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
-
-    private static List<Trader.TradeItem> GetMistTrainer1Items()
-    {
-        var items = new List<Trader.TradeItem>();
-        Skills.SkillType[] skills = { Skills.SkillType.ElementalMagic, Skills.SkillType.BloodMagic };
-        foreach (var skill in skills)
-        {
-            AddTrainerItem(items, skill, 1, 100, "", "defeated_bonemass");
-            AddTrainerItem(items, skill, 2, 300, "defeated_bonemass", "defeated_goblinking");
-            AddTrainerItem(items, skill, 3, 500, "defeated_goblinking");
-        }
-        return items;
-    }
 }
