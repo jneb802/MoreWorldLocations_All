@@ -36,7 +36,7 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
         <PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="YamlDotNet" Version="13.2.0" />
+        <PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>
 
     <!-- Embedded Resources -->
@@ -50,6 +50,7 @@
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_CreatureLists.yml" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_LootLists.yml" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_TraderItems.yml" />
+        <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_Localization.yml" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/introduction.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/delivery.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/manifest.md" />

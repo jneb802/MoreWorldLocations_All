@@ -50,9 +50,9 @@ namespace More_World_Locations_AIO
             PortInit.Init(root);
             BepinexConfigs.BindFeatureConfigs();
 
-            YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", BepinexConfigs.UseCustomTraderConfigs.Value);
+            YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
             YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls(BepinexConfigs.UseCustomLocationYAML.Value);
+            YAMLManager.ParseCustomYamls((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
 
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
@@ -66,7 +66,7 @@ namespace More_World_Locations_AIO
             // Trader setup
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
-            TraderLocalizations.AddLocalizations();
+            MWLLocalizations.Load(BepinexConfigs.UseCustomLocalization.Value);
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
@@ -104,8 +104,8 @@ namespace More_World_Locations_AIO
             if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.On)
             {
                 More_World_Locations_AIOLogger.LogInfo("Loading custom YAML configurations for creatures and loot...");
-                string creatureYaml = YAMLManager.GetCreatureYamlContent(BepinexConfigs.UseCustomLocationYAML.Value);
-                string lootYaml = YAMLManager.GetLootYamlContent(BepinexConfigs.UseCustomLocationYAML.Value);
+                string creatureYaml = YAMLManager.GetCreatureYamlContent((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
+                string lootYaml = YAMLManager.GetLootYamlContent((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
 
                 CreatureDB.LoadFromYAML(creatureYaml);
                 LootDB.LoadFromYAML(lootYaml);
