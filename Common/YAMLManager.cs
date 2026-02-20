@@ -47,36 +47,6 @@ public class YAMLManager
         var customCreatureListYamlFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_CreatureLists.yml");
         var customLootListYamlFilePath = Path.Combine(Paths.ConfigPath, "warpalicious.More_World_Locations_LootLists.yml");
 
-        // Auto-extract if toggle On and files don't exist
-        if (useCustomLocationYAML == ConfigurationManager.Toggle.On)
-        {
-            if (!File.Exists(customCreatureListYamlFilePath))
-            {
-                try
-                {
-                    File.WriteAllText(customCreatureListYamlFilePath, defaultCreatureYamlContent);
-                    WarpLogger.Logger.LogInfo("Auto-extracted warpalicious.More_World_Locations_CreatureLists.yml to BepInEx config folder");
-                }
-                catch (System.Exception ex)
-                {
-                    WarpLogger.Logger.LogError("Failed to extract creature YAML: " + ex.Message);
-                }
-            }
-
-            if (!File.Exists(customLootListYamlFilePath))
-            {
-                try
-                {
-                    File.WriteAllText(customLootListYamlFilePath, defaultlootYamlContent);
-                    WarpLogger.Logger.LogInfo("Auto-extracted warpalicious.More_World_Locations_LootLists.yml to BepInEx config folder");
-                }
-                catch (System.Exception ex)
-                {
-                    WarpLogger.Logger.LogError("Failed to extract loot YAML: " + ex.Message);
-                }
-            }
-        }
-
         if (File.Exists(customCreatureListYamlFilePath))
         {
             try
