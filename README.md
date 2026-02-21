@@ -237,6 +237,10 @@ Several aspects of the mod can be customized via YAML files in your BepInEx conf
 
 - **Use Custom Trader Configs** — Controls what items traders and trainers sell, their prices, and boss unlock requirements. Edit `warpalicious.More_World_Locations_TraderItems.yml` to modify trader inventories.
 
+  Two fields control item availability based on boss progression:
+  - `requiredGlobalKey` — The item is only visible in the shop **after** this boss has been defeated (e.g. `defeated_bonemass`). Leave empty to always show the item.
+  - `notRequiredGlobalKey` — The item is only visible in the shop **until** this boss has been defeated. Used to phase out early-game items once the player progresses past them.
+
 ## Instructions - Manually Installing Mod
 - This mod has unique requirements if you are not using a mod manager (such as r2modman) or are manually placing files on your dedicated server so please read carefully. If you're using a mod manager you can safely ignore these unique instructions.
 - When you unzip the file, there will be a "plugins" folder. Inside the "plugins" folder there is a "Bundles" folder. You must take the "Bundles" folder out of the "plugins" folder and put it in my mods folder. See the visual guide below.

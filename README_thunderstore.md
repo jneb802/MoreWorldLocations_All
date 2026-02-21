@@ -204,14 +204,18 @@ As of version 4.1.0, you can disable individual features via the config file. Un
 - **Enable Trainers** — Disable all trainer NPC locations
 - **Enable Shipping Ports** — Disable shipping port functionality
 
-This is useful if you want a simpler, purely POI-based experience without the interactive features.
+This is useful if you want a simpler, purely POI-based experience without the additional features.
 
 ## YAML Configs
-Several aspects of the mod can be customized via YAML files in your BepInEx config folder. Each is controlled by a toggle in the `0 - Features` config section and will auto-extract a default file to the config folder when enabled.
+Several aspects of the mod can be customized via YAML files in your BepInEx config folder. Each is controlled by a toggle in the `0 - Features` config section and will auto-create a default file to the config folder when enabled.
 
 - **Use Custom Location YAML** — Controls how many of each location spawns per world. Edit `warpalicious.More_World_Locations_AIO.LocationConfigs.yml` to set spawn quantities per location. Set any value to `0` to disable that location entirely.
 
 - **Use Custom Trader Configs** — Controls what items traders and trainers sell, their prices, and boss unlock requirements. Edit `warpalicious.More_World_Locations_TraderItems.yml` to modify trader inventories.
+
+  Two fields control item availability based on boss progression:
+  - `requiredGlobalKey` — The item is only visible in the shop **after** this boss has been defeated (e.g. `defeated_bonemass`). Leave empty to always show the item.
+  - `notRequiredGlobalKey` — The item is only visible in the shop **until** this boss has been defeated. Used to phase out early-game items once the player progresses past them.
 
 ## Instructions - Manually Installing Mod
 - This mod has unique requirements if you are not using a mod manager (such as r2modman) or are manually placing files on your dedicated server so please read carefully. If you're using a mod manager you can safely ignore these unique instructions.
