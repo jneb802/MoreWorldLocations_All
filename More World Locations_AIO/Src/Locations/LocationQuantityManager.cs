@@ -93,21 +93,27 @@ public static class LocationQuantityManager
         _defaultsLoaded = false;
         EnsureDefaultsLoaded();
 
+        // Check for old BepInEx orphaned entries
+        var orphanedEntries = AccessTools.Property(typeof(ConfigFile), "OrphanedEntries")
+            ?.GetValue(config) as Dictionary<ConfigDefinition, string>;
+
+        bool hasOldEntries = orphanedEntries != null &&
+            orphanedEntries.Any(e => e.Key.Key == "Spawn Quantity" &&
+                OldBepInExSections.Contains(StripSectionPrefix(e.Key.Section)));
+
         if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.Off)
+        {
+            // Still clean up old entries even when custom YAML is disabled
+            if (hasOldEntries)
+                ClearOrphanedEntries(config, orphanedEntries);
             return;
+        }
 
         if (!File.Exists(YamlFilePath))
         {
-            // Check for old BepInEx entries to migrate
-            var orphanedEntries = AccessTools.Property(typeof(ConfigFile), "OrphanedEntries")
-                ?.GetValue(config) as Dictionary<ConfigDefinition, string>;
-
-            bool hasOldEntries = orphanedEntries != null &&
-                orphanedEntries.Any(e => e.Key.Key == "Spawn Quantity" &&
-                    OldBepInExSections.Contains(StripSectionPrefix(e.Key.Section)));
-
             if (hasOldEntries)
             {
+                // Migrate values before clearing the orphaned entries
                 MigrateFromBepInEx(orphanedEntries);
                 ClearOrphanedEntries(config, orphanedEntries);
                 WriteYamlFile();
@@ -121,6 +127,11 @@ public static class LocationQuantityManager
                 More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
                     $"Auto-extracted default location config to: {YamlFilePath}");
             }
+        }
+        else if (hasOldEntries)
+        {
+            // YAML already exists but old entries still linger — clean them up
+            ClearOrphanedEntries(config, orphanedEntries);
         }
 
         LoadFromYaml();
