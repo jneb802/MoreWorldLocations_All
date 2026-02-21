@@ -51,9 +51,7 @@ namespace More_World_Locations_AIO
             BepinexConfigs.BindFeatureConfigs();
 
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls((ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
-
+            
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
