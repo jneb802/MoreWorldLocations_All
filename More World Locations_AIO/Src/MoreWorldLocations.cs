@@ -98,6 +98,17 @@ namespace More_World_Locations_AIO
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
 
+            // Load YAML overrides if enabled
+            if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.On)
+            {
+                More_World_Locations_AIOLogger.LogInfo("Loading custom YAML configurations for creatures and loot...");
+                string creatureYaml = YAMLManager.GetCreatureYamlContent((ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
+                string lootYaml = YAMLManager.GetLootYamlContent((ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
+
+                CreatureDB.LoadFromYAML(creatureYaml);
+                LootDB.LoadFromYAML(lootYaml);
+            }
+
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
