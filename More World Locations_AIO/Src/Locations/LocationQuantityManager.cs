@@ -22,6 +22,7 @@ public static class LocationQuantityManager
 
     private static Dictionary<string, int> _quantities = new();
     private static Dictionary<string, string> _biomeByLocation = new();
+    private static bool _defaultsLoaded;
 
     private static readonly string[] BiomeOrder =
     {
@@ -87,10 +88,10 @@ public static class LocationQuantityManager
     public static void LoadOrMigrateConfigs(ConfigFile config)
     {
         // Always initialize from embedded YAML — single source of truth for defaults
-        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
         _quantities = new Dictionary<string, int>();
         _biomeByLocation = new Dictionary<string, string>();
-        ParseQuantitiesFromContent(defaultYamlContent);
+        _defaultsLoaded = false;
+        EnsureDefaultsLoaded();
 
         if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.Off)
             return;
@@ -115,6 +116,7 @@ public static class LocationQuantityManager
             }
             else
             {
+                string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
                 File.WriteAllText(YamlFilePath, defaultYamlContent);
                 More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
                     $"Auto-extracted default location config to: {YamlFilePath}");
@@ -151,8 +153,20 @@ public static class LocationQuantityManager
         }
     }
 
-    public static int GetQuantity(string locationName) =>
-        _quantities.TryGetValue(locationName, out int qty) ? qty : 0;
+    private static void EnsureDefaultsLoaded()
+    {
+        if (_defaultsLoaded) return;
+        _defaultsLoaded = true;
+        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
+        ParseQuantitiesFromContent(defaultYamlContent);
+    }
+
+    public static int GetQuantity(string locationName)
+    {
+        if (!_defaultsLoaded)
+            EnsureDefaultsLoaded();
+        return _quantities.TryGetValue(locationName, out int qty) ? qty : 0;
+    }
 
     private static void MigrateFromBepInEx(Dictionary<ConfigDefinition, string> orphanedEntries)
     {
