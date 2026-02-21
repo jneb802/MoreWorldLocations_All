@@ -151,15 +151,8 @@ public static class LocationQuantityManager
         }
     }
 
-    public static int GetQuantity(string locationName)
-    {
-        if (_quantities.TryGetValue(locationName, out int qty))
-            return qty;
-
-        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(
-            $"No quantity config found for location: {locationName}");
-        return 0;
-    }
+    public static int GetQuantity(string locationName) =>
+        _quantities.TryGetValue(locationName, out int qty) ? qty : 0;
 
     private static void MigrateFromBepInEx(Dictionary<ConfigDefinition, string> orphanedEntries)
     {
