@@ -263,13 +263,13 @@ public static class LocationQuantityManager
 
     public static void LoadOrMigrateConfigs(ConfigFile config)
     {
-        // Always start with defaults
-        _quantities = LocationDefaults.ToDictionary(kv => kv.Key, kv => kv.Value.DefaultQuantity);
+        // Always initialize from embedded YAML — single source of truth for defaults
+        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
+        _quantities = new Dictionary<string, int>();
+        ParseQuantitiesFromContent(defaultYamlContent);
 
         if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.Off)
             return;
-
-        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
 
         if (!File.Exists(YamlFilePath))
         {
@@ -300,6 +300,29 @@ public static class LocationQuantityManager
         LoadFromYaml();
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
             $"Location quantity config loaded from: {YamlFilePath}");
+    }
+
+    private static void ParseQuantitiesFromContent(string yamlContent)
+    {
+        if (string.IsNullOrEmpty(yamlContent)) return;
+
+        var deserializer = new DeserializerBuilder().Build();
+        var yamlData = deserializer.Deserialize<Dictionary<string, object>>(yamlContent);
+
+        if (yamlData == null) return;
+
+        foreach (var kvp in yamlData)
+        {
+            if (kvp.Key == "version") continue;
+            if (kvp.Value is Dictionary<object, object> biomeLocations)
+            {
+                foreach (var loc in biomeLocations)
+                {
+                    if (int.TryParse(loc.Value?.ToString(), out int qty))
+                        _quantities[loc.Key.ToString()] = qty;
+                }
+            }
+        }
     }
 
     public static int GetQuantity(string locationName)
