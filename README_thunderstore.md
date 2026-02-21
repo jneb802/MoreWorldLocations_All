@@ -11,7 +11,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - Adds Trader NPCs across multiple biomes that sell unique items including Blacksmith Stones and Skill Books.
 - Adds Trainer NPCs across multiple biomes that sell Skill Books for character progression.
 - Adds custom lore and unique events to 2 locations.
-- Location spawn quantities are configurable via YAML (`warpalicious.More_World_Locations_AIO.LocationConfigs.yml` in the BepInEx config folder). Customize how many of each location spawns in the world.
+- Location spawn quantities are configurable via YAML (`warpalicious.More_World_Locations_LocationConfigs.yml` in the BepInEx config folder). Customize how many of each location spawns in the world.
 - Feature toggle configs allow you to disable shipping ports, traders, trainers, shrines, and waystones individually.
 - Improved asset loading performance via Valheim SoftReferenceableAssets system to significantly improve client RAM usage. The assetBundle and assetBundleManifest files are shipped as separate files and they must be included.
 - Anonymous analytics to help improve the mod (opt-out available in config).
@@ -209,7 +209,7 @@ This is useful if you want a simpler, purely POI-based experience without the ad
 ## YAML Configs
 Several aspects of the mod can be customized via YAML files in your BepInEx config folder. Each is controlled by a toggle in the `0 - Features` config section and will auto-create a default file to the config folder when enabled.
 
-- **Use Custom Location YAML** — Controls how many of each location spawns per world. Edit `warpalicious.More_World_Locations_AIO.LocationConfigs.yml` to set spawn quantities per location. Set any value to `0` to disable that location entirely.
+- **Use Custom Location YAML** — Controls how many of each location spawns per world. Edit `warpalicious.More_World_Locations_LocationConfigs.yml` to set spawn quantities per location. Set any value to `0` to disable that location entirely.
 
 - **Use Custom Trader Configs** — Controls what items traders and trainers sell, their prices, and boss unlock requirements. Edit `warpalicious.More_World_Locations_TraderItems.yml` to modify trader inventories.
 

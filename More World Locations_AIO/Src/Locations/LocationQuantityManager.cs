@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using Jotunn.Utils;
 using YamlDotNet.Serialization;
 
 namespace More_World_Locations_AIO;
@@ -16,8 +17,8 @@ public static class LocationQuantityManager
     private const int CurrentVersion = 1;
 
     private static readonly string YamlFilePath = Path.Combine(
-        Paths.ConfigPath,
-        "warpalicious.More_World_Locations_AIO.LocationConfigs.yml");
+        BepInEx.Paths.ConfigPath,
+        "warpalicious.More_World_Locations_LocationConfigs.yml");
 
     private static Dictionary<string, int> _quantities = new();
 
@@ -268,6 +269,8 @@ public static class LocationQuantityManager
         if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.Off)
             return;
 
+        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
+
         if (!File.Exists(YamlFilePath))
         {
             // Check for old BepInEx entries to migrate
@@ -282,18 +285,21 @@ public static class LocationQuantityManager
             {
                 MigrateFromBepInEx(orphanedEntries);
                 ClearOrphanedEntries(config, orphanedEntries);
+                WriteYamlFile();
                 More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
                     "Migrated location quantities from BepInEx config to YAML.");
             }
+            else
+            {
+                File.WriteAllText(YamlFilePath, defaultYamlContent);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
+                    $"Auto-extracted default location config to: {YamlFilePath}");
+            }
+        }
 
-            WriteYamlFile();
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
-                $"Location quantity config written to: {YamlFilePath}");
-        }
-        else
-        {
-            LoadFromYaml();
-        }
+        LoadFromYaml();
+        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
+            $"Location quantity config loaded from: {YamlFilePath}");
     }
 
     public static int GetQuantity(string locationName)
