@@ -1,8 +1,9 @@
 | `Version` | `Update Notes`    |
 |-----------|-------------------|
-| 4.2.0     | - Migrated location quantity configs from BepInEx .cfg to YAML. Old .cfg values are automatically migrated. Config file: `warpalicious.More_World_Locations_AIO.LocationConfigs.yml` |
+| 4.2.0     | - Migrated location quantity configs from BepInEx .cfg to YAML. The old .cfg values are automatically migrated. See README for more details. |
+|           | - Added yaml configs for all MWL trader and trainer items. Supports adding new vanilla or modded items as well! See README for more details  |
+|           | - Fixed the blacksmith stone not working on items with a maxQuality lower than 4.  |
 |           | - Improved port help panel with new Introduction guide and streamlined tab tutorials. |
-|           | - Fixed .cfg to YAML migration not recognizing Jotunn numbered section prefixes. |
 |           | - Fixed prefab issues in MWL_MarbleHome2, MWL_ForestSkull1, MWL_MountainCultShrine1, and MWL_BlackForestBlacksmith1 causing failed mocks.  |
 | 4.1.1     | - Forgot to add the DLL in 4.1.0. |
 | 4.1.0     | - Rebuilt asset bundles from new locations added in 4.0.0 to reduce size |
