@@ -64,7 +64,7 @@ namespace More_World_Locations_AIO
             // Trader setup
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
-            TraderLocalizations.AddLocalizations();
+            MWLLocalizations.Load(BepinexConfigs.UseCustomLocalization.Value);
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
