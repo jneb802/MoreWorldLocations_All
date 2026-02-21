@@ -37,7 +37,8 @@ public class YAMLManager
     
     public void ParseDefaultYamls()
     { 
-defaultCreatureYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_CreatureLists.yml");
+        Debug.Log("Calling parse yamls");
+        defaultCreatureYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_CreatureLists.yml");
         defaultlootYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LootLists.yml");
     }
     

@@ -80,8 +80,8 @@ public class TraderItems
         ItemDrop itemDrop = customItem.ItemDrop;
         itemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
         itemDrop.m_itemData.m_shared.m_maxStackSize = 10;
-        itemDrop.m_itemData.m_shared.m_name = "$skill_" + skill.ToString().ToLower() + " $mwl_skillbook_tier" + tier;
-        itemDrop.m_itemData.m_shared.m_description = "$mwl_skillbook_desc_tier" + tier;
+        itemDrop.m_itemData.m_shared.m_name = "$item_mwl_skillBook_" + skill.ToString() + "_bookTier" + tier;
+        itemDrop.m_itemData.m_shared.m_description = "$item_mwl_skillBook_description_" + skill.ToString() + "_bookTier" + tier;
         SkillBook_SE skillBook_SE = ScriptableObject.CreateInstance<SkillBook_SE>();
         skillBook_SE.name = "MWL_SkillBook_SE_" + skill + "_tier" + tier;
         skillBook_SE.m_name = "$se_skillBook";

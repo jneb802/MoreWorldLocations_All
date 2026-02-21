@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -29,43 +29,43 @@ public class PortTrader : MonoBehaviour
     {
         InitializeLocalizationKeys();
     }
-
+    
     private void InitializeLocalizationKeys()
     {
         m_randomTalk = new List<string>
         {
-            "$msg_randomPortTalk_1",
-            "$msg_randomPortTalk_2",
-            "$msg_randomPortTalk_3",
-            "$msg_randomPortTalk_4",
-            "$msg_randomPortTalk_5",
-            "$msg_randomPortTalk_6",
-            "$msg_randomPortTalk_7",
-            "$msg_randomPortTalk_8",
+            new LocalKeys.Key("$msg_randomPortTalk_1", "Ahh, another tall one wantin’ me ships? Don’t trip on the pier, human.").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_2", "Coin first, cargo later. That’s the way of the sea—and the way o’ me beard!").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_3", "Got goods to move? My boats are faster than a troll smell downwind.").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_4", "Humans always want somethin’ shipped yesterday. Lucky for you, I run tomorrow’s boats today!").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_5", "You pay, I haul. Simple as swingin’ a hammer, less noisy too.").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_6", "Keep yer fingers off the rum barrels—those be for the crew, not the cargo!").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_7", "By me beard, I’ve hauled heavier than you! Don’t fret, yer shipment’ll make it.").GetKey(),
+            new LocalKeys.Key("$msg_randomPortTalk_8", "Ports, manifests, and coin. That’s my life. What’s yours, eh human?").GetKey(),
         };
 
         m_randomGreets = new List<string>
         {
-            "$msg_randomGreet_1",
-            "$msg_randomGreet_2",
-            "$msg_randomGreet_3",
-            "$msg_randomGreet_4",
-            "$msg_randomGreet_5",
-            "$msg_randomGreet_6",
-            "$msg_randomGreet_7",
-            "$msg_randomGreet_8",
+            new LocalKeys.Key("$msg_randomGreet_1", "Well met, longshanks! Come to send yer shiny things across the seas?").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_2", "Har! Another customer! Mind the ropes, they trip taller folk like you.").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_3", "A fair wind blows, and so do fair deals—if ye got the coin.").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_4", "By me beard, you look travel-worn. Lucky for ye, I deal in travel.").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_5", "Step lively, human! Me dock’s no place for daydreamers.").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_6", "Good day to ye! Got cargo? I got ships.").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_7", "Ah, the smell of coin on the breeze. You’ve got business, eh?").GetKey(),
+            new LocalKeys.Key("$msg_randomGreet_8", "Welcome to me port! Don’t touch nothin’ shiny, ‘less ye bought it.").GetKey(),
         };
 
         m_randomGoodbye = new List<string>
         {
-            "$msg_randomGoodbye_1",
-            "$msg_randomGoodbye_2",
-            "$msg_randomGoodbye_3",
-            "$msg_randomGoodbye_4",
-            "$msg_randomGoodbye_5",
-            "$msg_randomGoodbye_6",
-            "$msg_randomGoodbye_7",
-            "$msg_randomGoodbye_8",
+            new LocalKeys.Key("$msg_randomGoodbye_1", "Fair winds, and don’t sink me profits!").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_2", "Off with ye then—me ships won’t load themselves.").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_3", "Safe travels, longshanks. Spend more coin next time!").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_4", "Mind the seas—they’re rougher than me uncle after three ales.").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_5", "Cargo waits for no one. Move along!").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_6", "Till next tide, may yer boots stay dry.").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_7", "Don’t be a stranger—or worse, a debtor.").GetKey(),
+            new LocalKeys.Key("$msg_randomGoodbye_8", "Goodbye, and may yer beard grow as strong as yer purse.").GetKey(),
         };
     }
 
@@ -115,7 +115,7 @@ public class PortTrader : MonoBehaviour
         Say(m_randomTalk, "Talk");
         m_randomTalkFX.Create(transform.position, Quaternion.identity);
     }
-
+    
     public void Say(List<string> texts, string trigger)
     {
         Say(texts[Random.Range(0, texts.Count)], trigger);

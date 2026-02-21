@@ -47,8 +47,23 @@ public class LocationCustomPrefabs
             rs.m_locationName = "";
         }
         
+        // Add localizations.
+        AddMarbleJail1Localizations();
     }
-
+    
+    private static void AddMarbleJail1Localizations()
+    {
+        var localization = LocalizationManager.Instance.GetLocalization();
+        
+        localization.AddTranslation("English", new Dictionary<string, string>
+        {
+            { "$mwl_marblejail1_key", "Marble Jail Key" },
+            { "$mwl_marblejail1_key_desc", "A rusted iron key, worn with age. It unlocks the cell block." },
+            { "$mwl_marblejail1_runestone", "Bleak finality" },
+            { "$mwl_marblejail1_runestone_text", "They forgot me here. Years turned to decades. The creatures below grew familiar — their howls, my only company. I go to them now. They waited for me. No one else did." }
+        });
+    }
+    
     public static void AddMarbleCliffAltar1Prefabs()
     {
         // Clone the altar crystal that drops a key fragment when destroyed.
@@ -91,5 +106,18 @@ public class LocationCustomPrefabs
             rs.m_locationName = "";
         }
         
+        // Add localizations.
+        AddMarbleCliffAltar1Localizations();
+    }
+    
+    private static void AddMarbleCliffAltar1Localizations()
+    {
+        var localization = LocalizationManager.Instance.GetLocalization();
+        
+        localization.AddTranslation("English", new Dictionary<string, string>
+        {
+            { "$mwl_marblecliffaltar1_runestone", "Dangerous Acquisition" },
+            { "$mwl_marblecliffaltar1_runestone_text", "What rests upon the altar is not yours. It belongs to those who circle above, who wait in silence. Take it, and a deadly horn will break the silence of the mist." }
+        });
     }
 }
