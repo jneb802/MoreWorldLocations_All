@@ -150,6 +150,8 @@ MWL adds 7 unique trader NPCs spread across multiple biomes. Each trader is foun
 
 Traders function like Valheim's vanilla Haldor — interact with them to open a buy/sell interface. Their inventories are configured via YAML and support progressive unlocking based on boss defeats, so new items become available as you advance through the game.
 
+> **Configurable:** Trader inventories can be customized via YAML. See [YAML Configs](#yaml-configs).
+
 ### Trainers & Skill Books
 MWL adds 4 trainer NPCs across different biomes. Trainers sell Skill Books — consumable items that raise a specific skill level when used. They are generated for every skill type in the game and come in 3 tiers.
 
@@ -170,6 +172,8 @@ Skill book tiers are gated by boss progression:
 
 Tier gating ensures trainers stay relevant to your current progression. Lower tier books disappear from the shop once you've progressed past them, keeping the inventory clean.
 
+> **Configurable:** Trainer inventories can be customized via YAML. See [YAML Configs](#yaml-configs).
+
 ### Blacksmith Stones
 Blacksmith Stones are a new consumable item sold by blacksmith traders. They allow you to upgrade weapons and armor **past their normal maximum quality level**.
 
@@ -180,11 +184,11 @@ Blacksmith Stones are a new consumable item sold by blacksmith traders. They all
 
 **Tiers:**
 
-| Stone | Effect | Required Item Quality |
-|-------|--------|----------------------|
-| Blacksmith Stone (1) | Upgrades to quality 5 | Quality 4 (weapons/armor) or 3 (shields) |
-| Blacksmith Stone (2) | Upgrades to quality 6 | Quality 5 (weapons/armor) or 4 (shields) |
-| Blacksmith Stone (3) | Upgrades to quality 7 | Quality 6 (weapons/armor) or 5 (shields) |
+| Stone | Effect |
+|-------|--------|
+| Blacksmith Stone (1) | Upgrades to quality 5 |
+| Blacksmith Stone (2) | Upgrades to quality 6 |
+| Blacksmith Stone (3) | Upgrades to quality 7 |
 
 Blacksmith Stones work on: one-handed weapons, two-handed weapons, bows, shields, helmets, chest armor, leg armor, shoulder capes, torches, and tools.
 
@@ -225,6 +229,17 @@ As of version 4.1.0, you can disable individual features via the config file. Un
 - **Enable Shipping Ports** — Disable shipping port functionality
 
 This is useful if you want a simpler, purely POI-based experience without the interactive features.
+
+## YAML Configs
+Several aspects of the mod can be customized via YAML files in your BepInEx config folder. Each is controlled by a toggle in the `0 - Features` config section and will auto-extract a default file to the config folder when enabled.
+
+- **Use Custom Location YAML** — Controls how many of each location spawns per world. Edit `warpalicious.More_World_Locations_AIO.LocationConfigs.yml` to set spawn quantities per location. Set any value to `0` to disable that location entirely.
+
+- **Use Custom Trader Configs** — Controls what items traders and trainers sell, their prices, and boss unlock requirements. Edit `warpalicious.More_World_Locations_TraderItems.yml` to modify trader inventories.
+
+  Two fields control item availability based on boss progression:
+  - `requiredGlobalKey` — The item is only visible in the shop **after** this boss has been defeated (e.g. `defeated_bonemass`). Leave empty to always show the item.
+  - `notRequiredGlobalKey` — The item is only visible in the shop **until** this boss has been defeated. Used to phase out early-game items once the player progresses past them.
 
 ## Instructions - Manually Installing Mod
 - This mod has unique requirements if you are not using a mod manager (such as r2modman) or are manually placing files on your dedicated server so please read carefully. If you're using a mod manager you can safely ignore these unique instructions.
