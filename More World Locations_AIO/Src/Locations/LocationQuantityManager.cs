@@ -266,11 +266,7 @@ public static class LocationQuantityManager
         _quantities = LocationDefaults.ToDictionary(kv => kv.Key, kv => kv.Value.DefaultQuantity);
 
         if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.Off)
-        {
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
-                "Use Custom Location YAML is Off. Using default location quantities.");
             return;
-        }
 
         if (!File.Exists(YamlFilePath))
         {
