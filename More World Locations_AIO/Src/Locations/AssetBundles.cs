@@ -22,7 +22,8 @@ public class AssetBundles
     public static string bundle4 = "moreworldlocations_assetbundle_4";
     
     public static string bundleFull = "moreworldlocations_assetbundle_full";
-    
+    internal static string AssetBundleFilepath = Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", bundleFull);
+
     [HarmonyPatch(typeof(EntryPointSceneLoader), "Start")]
     public static class EntryPatch
     {
@@ -46,24 +47,21 @@ public class AssetBundles
     
     public static string GetManifest()
     {
-        string path = Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO");
+        //get the full location of the assembly
+        string fullPath = Assembly.GetExecutingAssembly().Location;
+        string directoryPath = Path.GetDirectoryName(fullPath);
+        //get the folder the assembly is in, and list the files in that folder
+        string[] presentFiles = Directory.GetFiles(directoryPath);
 
-        string manifestFull = Path.Combine(path, "assetBundleManifest_Full");
-        string manifestLower = Path.Combine(path, "assetBundleManifest_full");
+        // If we found the manifest file in the folder, set it as the target, otherwise use the default path
+        foreach (string file in presentFiles) {
+            if (file.EndsWith(bundleFull, StringComparison.OrdinalIgnoreCase)) {
+                Debug.Log($"Found manifest file: {file}");
+                AssetBundleFilepath = file;
+            }
+        }
 
-        if (File.Exists(manifestFull))
-        {
-            return manifestFull;
-        }
-        else if (File.Exists(manifestLower))
-        {
-            return manifestLower;
-        }
-        else
-        {
-            Debug.LogError($"[More_World_Locations_AIO] Manifest missing at: {path}");
-            return null;
-        }
+        return AssetBundleFilepath;
     }
     
     public static void BuildCombinedManifest(string bundleFolder, string suffix, string[] assetPathsInBundleFull)
