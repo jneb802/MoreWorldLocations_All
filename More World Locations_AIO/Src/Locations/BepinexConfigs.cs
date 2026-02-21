@@ -31,5 +31,6 @@ public class BepinexConfigs
             "If On, locations will use creature/loot lists from YAML files in BepInEx config folder. Auto-extracts defaults if missing.", synced: true);
         UseCustomLocalization = PortInit.plugin.Config.BindConfig("0 - Features", "Use Custom Localization", PortInit.Toggle.Off,
             "If On, loads localization YAML files from BepInEx config folder. Place warpalicious.More_World_Locations_Localization.{Language}.yml in config folder. Auto-extracts English template if missing.", synced: false);
+            "If On, location spawn quantities will be loaded from warpalicious.More_World_Locations_AIO.LocationConfigs.yml in BepInEx config folder. Auto-extracts defaults if missing.", synced: true);
     }
 }

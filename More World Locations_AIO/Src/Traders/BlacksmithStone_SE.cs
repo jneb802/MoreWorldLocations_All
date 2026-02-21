@@ -22,8 +22,8 @@ public class BlacksmithStone_SE : StatusEffect
         {
             Inventory inventory = player.GetInventory();
             ItemDrop.ItemData item = inventory.GetItemAt(0, 0);
-            
-            if (CheckItem(item) && isQualityCompatible(item))
+
+            if (CheckItem(item) && isQualityCompatible(item, stoneTier))
             {
                 item.m_quality += (int)m_qualityIncreaseAmount;
                 player.Message(MessageHud.MessageType.Center, "Item: " + item.m_shared.m_name + " was enhanced");
@@ -65,24 +65,9 @@ public class BlacksmithStone_SE : StatusEffect
         }
     }
 
-    public bool isQualityCompatible(ItemDrop.ItemData item)
+    public bool isQualityCompatible(ItemDrop.ItemData item, int stoneTier)
     {
-        // Shield max level is 3
-        if (item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Shield)
-        {
-            if (item.m_quality == stoneTier + 2)
-            {
-                return true;
-            } 
-        }
-        else
-        {
-            if (item.m_quality == stoneTier + 3)
-            {
-                return true;
-            }  
-        }
-        return false;
+        return item.m_quality == item.m_shared.m_maxQuality + (stoneTier - 1);
     }
     
     public override void UpdateStatusEffect(float dt)
