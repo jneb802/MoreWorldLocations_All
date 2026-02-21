@@ -18,7 +18,7 @@ public static class LocationQuantityManager
 
     private static readonly string YamlFilePath = Path.Combine(
         BepInEx.Paths.ConfigPath,
-        "warpalicious.More_World_Locations_AIO.LocationConfigs.yml");
+        "warpalicious.More_World_Locations_LocationConfigs.yml");
 
     private static Dictionary<string, int> _quantities = new();
 
@@ -269,7 +269,7 @@ public static class LocationQuantityManager
         if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.Off)
             return;
 
-        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_AIO.LocationConfigs.yml");
+        string defaultYamlContent = AssetUtils.LoadTextFromResources("warpalicious.More_World_Locations_LocationConfigs.yml");
 
         if (!File.Exists(YamlFilePath))
         {
