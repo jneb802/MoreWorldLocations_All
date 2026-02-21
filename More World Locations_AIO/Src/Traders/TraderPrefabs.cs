@@ -82,7 +82,7 @@ public class TraderPrefabs
 
     private static void BuildAllTraderItemsFromYAML()
     {
-        string yamlContent = More_World_Locations_AIOPlugin.YAMLManager.GetTraderYamlContent((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
+        string yamlContent = More_World_Locations_AIOPlugin.YAMLManager.GetTraderYamlContent((ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
 
         try
         {

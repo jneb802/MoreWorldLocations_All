@@ -24,6 +24,7 @@ public static class PrefabManager
         harmony.Patch(AccessTools.DeclaredMethod(typeof(Minimap), nameof(Minimap.Awake)), postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(LocationManager), nameof(LocationManager.Patch_Minimap_Awake))));
         harmony.Patch(AccessTools.DeclaredMethod(typeof(ZoneSystem), nameof(ZoneSystem.SetupLocations)), prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(LocationManager), nameof(LocationManager.Patch_SetupLocations))));
         harmony.Patch(AccessTools.DeclaredMethod(typeof(Location), nameof(Location.Awake)), prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(LocationManager), nameof(LocationManager.Patch_Location_Awake))));
+        harmony.Patch(AccessTools.DeclaredMethod(typeof(Localization), nameof(Localization.LoadCSV)), postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(LocalizeKey), nameof(LocalizeKey.AddLocalizedKeys))));
     }
 
     public static void RegisterPrefab(GameObject? prefab)

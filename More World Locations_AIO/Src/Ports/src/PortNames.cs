@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using More_World_Locations_AIO.Managers;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -36,6 +37,11 @@ public static class PortNames
     
     public static void Setup()
     {
+        foreach (KeyValuePair<string, string> kvp in Tokens)
+        {
+            LocalizeKey key = new LocalizeKey(kvp.Key);
+            key.English(kvp.Value);
+        }
     }
     public static string GetRandomName()
     {
