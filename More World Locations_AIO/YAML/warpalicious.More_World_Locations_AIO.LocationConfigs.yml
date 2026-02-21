@@ -1,0 +1,180 @@
+# More World Locations AIO - Location Quantity Configuration
+# Quantity = number of this location the game will attempt to place during world generation
+# Set to 0 to disable a location
+
+version: 1
+
+Meadows:
+  MWL_DeerShrine1: 10
+  MWL_DeerShrine2: 10
+  MWL_MaypoleHut1: 10
+  MWL_MeadowsBarn1: 5
+  MWL_MeadowsFarm1: 10
+  MWL_MeadowsHouse2: 20
+  MWL_MeadowsLighthouse1: 10
+  MWL_MeadowsRuin1: 5
+  MWL_MeadowsSawmill1: 10
+  MWL_MeadowsTavern1: 10
+  MWL_MeadowsTomb4: 10
+  MWL_MeadowsTower1: 15
+  MWL_MeadowsWall1: 10
+  MWL_OakHut1: 15
+  MWL_Ruins1: 5
+  MWL_Ruins2: 10
+  MWL_Ruins3: 25
+  MWL_Ruins6: 5
+  MWL_Ruins7: 2
+  MWL_Ruins8: 5
+  MWL_RuinsArena1: 25
+  MWL_RuinsArena3: 25
+  MWL_RuinsChurch1: 25
+  MWL_RuinsWell1: 5
+  MWL_SmallHouse1: 20
+
+BlackForest:
+  MWL_CoastTower1: 15
+  MWL_ForestCamp1: 20
+  MWL_ForestForge1: 20
+  MWL_ForestForge2: 20
+  MWL_ForestGreatHouse2: 20
+  MWL_ForestGrove1: 15
+  MWL_ForestHouse2: 20
+  MWL_ForestPillar1: 15
+  MWL_ForestRuin1: 20
+  MWL_ForestRuin2: 15
+  MWL_ForestRuin3: 15
+  MWL_ForestSkull1: 15
+  MWL_ForestTower2: 20
+  MWL_ForestTower3: 20
+  MWL_ForestTower4: 15
+  MWL_ForestTower5: 15
+  MWL_GuardTower1: 5
+  MWL_MassGrave1: 15
+  MWL_RockShrine1: 15
+  MWL_RootRuins1: 15
+  MWL_RootsTower1: 20
+  MWL_RootsTower2: 10
+  MWL_RuinedRootTower5: 10
+  MWL_RuinedTower1: 15
+  MWL_RuinsArena2: 5
+  MWL_RuinsCastle1: 15
+  MWL_RuinsCastle3: 5
+  MWL_RuinsTower3: 15
+  MWL_RuinsTower6: 15
+  MWL_RuinsTower8: 10
+  MWL_StoneFormation1: 15
+  MWL_StoneOutlook1: 10
+  MWL_Tavern1: 15
+  MWL_WoodTower1: 10
+  MWL_WoodTower2: 10
+  MWL_WoodTower3: 10
+
+Swamp:
+  MWL_AbandonedHouse1: 15
+  MWL_Belmont1: 5
+  MWL_CastleCorner1: 15
+  MWL_FortBakkarhalt1: 5
+  MWL_GuckPit1: 15
+  MWL_Shipyard1: 20
+  MWL_StoneCircle1: 10
+  MWL_SwampAltar1: 15
+  MWL_SwampAltar2: 10
+  MWL_SwampAltar3: 10
+  MWL_SwampAltar4: 10
+  MWL_SwampBrokenTower1: 15
+  MWL_SwampBrokenTower3: 10
+  MWL_SwampCastle2: 10
+  MWL_SwampCourtyard1: 5
+  MWL_SwampGrave1: 25
+  MWL_SwampHouse1: 20
+  MWL_SwampRuin1: 25
+  MWL_SwampTemple1: 10
+  MWL_SwampTower1: 20
+  MWL_SwampTower2: 25
+  MWL_SwampTower3: 25
+  MWL_SwampWell1: 20
+  MWL_Treehouse1: 20
+  MWL_TreeTowers1: 20
+
+Mountains:
+  MWL_MountainCultShrine1: 15
+  MWL_MountainDvergrShrine1: 15
+  MWL_MountainDvergrShrine2: 15
+  MWL_MountainOverlook1: 15
+  MWL_MountainShrine1: 20
+  MWL_RuinsChurch2: 15
+  MWL_StoneAltar1: 15
+  MWL_StoneCastle1: 5
+  MWL_StoneFort1: 10
+  MWL_StoneHall1: 10
+  MWL_StoneTavern1: 10
+  MWL_StoneTower1: 10
+  MWL_StoneTower2: 10
+  MWL_TempleShrine1: 5
+  MWL_WoodBarn1: 10
+  MWL_WoodFarm1: 10
+  MWL_WoodHouse1: 5
+
+Plains:
+  MWL_FulingRock1: 15
+  MWL_FulingTemple1: 15
+  MWL_FulingTemple2: 10
+  MWL_FulingTemple3: 20
+  MWL_FulingTemple4: 10
+  MWL_FulingTempleBroken1: 10
+  MWL_FulingTower1: 20
+  MWL_FulingVillage1: 15
+  MWL_FulingVillage2: 15
+  MWL_FulingWall1: 20
+  MWL_GoblinFort1: 10
+  MWL_PlainsPillar1: 15
+  MWL_RockGarden1: 15
+
+Mistlands:
+  MWL_AncientShrine1: 15
+  MWL_DvergrEitrSingularity1: 25
+  MWL_DvergrHouse1: 20
+  MWL_DvergrHouseWood1: 10
+  MWL_DvergrHouseWood2: 10
+  MWL_DvergrKnowledgeExtractor1: 15
+  MWL_MarbleCage1: 10
+  MWL_MarbleCliffAltar1: 10
+  MWL_MarbleHome1: 10
+  MWL_MarbleHome2: 10
+  MWL_MarbleJail1: 10
+  MWL_MistFort2: 20
+  MWL_MistHut1: 25
+  MWL_Misthut2: 15
+  MWL_MistPond1: 10
+  MWL_MistShrine1: 15
+  MWL_MistTower1: 20
+  MWL_MistTower2: 25
+  MWL_MistWall1: 15
+  MWL_MistWorkshop1: 25
+  MWL_SecretRoom1: 15
+
+Ashlands:
+  MWL_AshlandsFort1: 5
+  MWL_AshlandsFort2: 5
+  MWL_AshlandsFort3: 5
+
+Ports:
+  MWL_Port1: 5
+  MWL_Port2: 5
+  MWL_Port3: 5
+  MWL_Port4: 5
+
+Traders:
+  MWL_BlackForestBlacksmith1: 5
+  MWL_BlackForestBlacksmith2: 5
+  MWL_MistlandsBlacksmith1: 5
+  MWL_MountainsBlacksmith1: 5
+  MWL_OceanTavern1: 5
+  MWL_PlainsCamp1: 5
+  MWL_PlainsTavern1: 5
+
+Trainers:
+  MWL_MeadowsTrainer1: 5
+  MWL_MistTrainer1: 5
+  MWL_PlainsTrainer1: 5
+  MWL_SwampTrainer1: 5
