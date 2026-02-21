@@ -52,11 +52,11 @@ public class YAMLManager
             try
             {
                 customCreatureYamlContent = File.ReadAllText(customCreatureListYamlFilePath);
-                WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_CreatureLists.yml from BepInEx config folder");
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Successfully loaded warpalicious.More_World_Locations_CreatureLists.yml from BepInEx config folder");
             }
             catch (System.Exception ex)
             {
-                WarpLogger.Logger.LogError("Failed to load custom creature YAML: " + ex.Message);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("Failed to load custom creature YAML: " + ex.Message);
             }
         }
 
@@ -65,11 +65,11 @@ public class YAMLManager
             try
             {
                 customlootYamlContent = File.ReadAllText(customLootListYamlFilePath);
-                WarpLogger.Logger.LogInfo("Successfully loaded warpalicious.More_World_Locations_LootLists.yml from BepInEx config folder");
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Successfully loaded warpalicious.More_World_Locations_LootLists.yml from BepInEx config folder");
             }
             catch (System.Exception ex)
             {
-                WarpLogger.Logger.LogError("Failed to load custom loot YAML: " + ex.Message);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("Failed to load custom loot YAML: " + ex.Message);
             }
         }
     }
@@ -82,7 +82,7 @@ public class YAMLManager
         if (File.Exists(customCreatureListYamLFilePath))
         {
             customCreatureYamlContent = File.ReadAllText(customCreatureListYamLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_CreatureLists.yml file from BepinEx config folder");;
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Successfully loaded + " + filename + "_CreatureLists.yml file from BepinEx config folder");;
         }
     }
     
@@ -98,11 +98,11 @@ public class YAMLManager
             try
             {
                 File.WriteAllText(customTraderListYamlFilePath, defaultTraderYamlContent);
-                WarpLogger.Logger.LogInfo("Auto-extracted " + filename + " to BepInEx config folder");
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Auto-extracted " + filename + " to BepInEx config folder");
             }
             catch (System.Exception ex)
             {
-                WarpLogger.Logger.LogError("Failed to extract " + filename + ": " + ex.Message);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("Failed to extract " + filename + ": " + ex.Message);
             }
         }
 
@@ -111,11 +111,11 @@ public class YAMLManager
             try
             {
                 customTraderYamlContent = File.ReadAllText(customTraderListYamlFilePath);
-                WarpLogger.Logger.LogInfo("Successfully loaded " + filename + " from BepInEx config folder");
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Successfully loaded " + filename + " from BepInEx config folder");
             }
             catch (System.Exception ex)
             {
-                WarpLogger.Logger.LogError("Failed to load custom trader YAML: " + ex.Message);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("Failed to load custom trader YAML: " + ex.Message);
             }
         }
     }
@@ -128,7 +128,7 @@ public class YAMLManager
         if (File.Exists(customCreatureListYamLFilePath))
         {
             customlootYamlContent = File.ReadAllText(customCreatureListYamLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_ContainerLists.yml file from BepinEx config folder");;
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Successfully loaded + " + filename + "_ContainerLists.yml file from BepinEx config folder");;
         }
     }
     
@@ -140,7 +140,7 @@ public class YAMLManager
         if (File.Exists(customCreatureListYamLFilePath))
         {
             customPickableItemContent = File.ReadAllText(customCreatureListYamLFilePath);
-            WarpLogger.Logger.LogInfo("Successfully loaded + " + filename + "_PickableItemLists.yml file from BepinEx config folder");;
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo("Successfully loaded + " + filename + "_PickableItemLists.yml file from BepinEx config folder");;
         }
     }
 
