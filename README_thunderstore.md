@@ -156,11 +156,11 @@ Blacksmith Stones are a new consumable item sold by blacksmith traders. They all
 
 Blacksmith stone tiers are gated by boss progression and sold by blacksmiths in progressively harder biomes:
 
-| Stone | Effect | Required Item Quality | Unlocked After | Sold By | Price |
-|-------|--------|----------------------|----------------|---------|-------|
-| Blacksmith Stone (1) | Upgrades to quality 5 | Quality 4 (weapons/armor) or 3 (shields) | The Elder | Volund & Sindri (Black Forest) | 500 |
-| Blacksmith Stone (2) | Upgrades to quality 6 | Quality 5 (weapons/armor) or 4 (shields) | The Elder | Thorgrim (Mountains) | 750 |
-| Blacksmith Stone (3) | Upgrades to quality 7 | Quality 6 (weapons/armor) or 5 (shields) | The Elder | Dvalin (Mistlands) | 1000 |
+| Stone | Effect | Unlocked After | Sold By | Price |
+|-------|--------|----------------|---------|-------|
+| Blacksmith Stone (1) | Upgrades to quality 5 | The Elder | Volund & Sindri (Black Forest) | 500 |
+| Blacksmith Stone (2) | Upgrades to quality 6 | The Elder | Thorgrim (Mountains) | 750 |
+| Blacksmith Stone (3) | Upgrades to quality 7 | The Elder | Dvalin (Mistlands) | 1000 |
 
 Blacksmith Stones work on: one-handed weapons, two-handed weapons, bows, shields, helmets, chest armor, leg armor, shoulder capes, torches, and tools.
 
