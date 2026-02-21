@@ -2,6 +2,7 @@
 # Quantity = number of this location the game will attempt to place during world generation
 # Set to 0 to disable a location
 
+# For internal mod use only
 version: 1
 
 Meadows:
