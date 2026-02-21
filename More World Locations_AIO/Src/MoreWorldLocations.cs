@@ -50,10 +50,8 @@ namespace More_World_Locations_AIO
             PortInit.Init(root);
             BepinexConfigs.BindFeatureConfigs();
 
-            YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
-            YAMLManager.ParseDefaultYamls();
-            YAMLManager.ParseCustomYamls((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
-
+            YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
+            
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -99,17 +97,6 @@ namespace More_World_Locations_AIO
 
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
-
-            // Load YAML overrides if enabled
-            if (BepinexConfigs.UseCustomLocationYAML.Value == PortInit.Toggle.On)
-            {
-                More_World_Locations_AIOLogger.LogInfo("Loading custom YAML configurations for creatures and loot...");
-                string creatureYaml = YAMLManager.GetCreatureYamlContent((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
-                string lootYaml = YAMLManager.GetLootYamlContent((Common.ConfigurationManager.Toggle)BepinexConfigs.UseCustomLocationYAML.Value);
-
-                CreatureDB.LoadFromYAML(creatureYaml);
-                LootDB.LoadFromYAML(lootYaml);
-            }
 
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
