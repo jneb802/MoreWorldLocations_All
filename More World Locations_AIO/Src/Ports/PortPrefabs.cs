@@ -58,7 +58,7 @@ public class PortPrefabs
         {
             Quantity = 20, Biome = Heightmap.Biome.Meadows, Group = "Port", Priotized = true, RandomRotation = false,
             ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f,
-            MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationConfigs.LocationRings.Ring2.MinDistance,
+            MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationDefinitions.LocationRings.Ring2.MinDistance,
             InForest = false, BiomeArea = Heightmap.BiomeArea.Median
         };
         
@@ -66,7 +66,7 @@ public class PortPrefabs
         {
             Quantity = 20, Biome = Heightmap.Biome.Meadows, Group = "Port", Priotized = true, RandomRotation = false,
             ExteriorRadius = 16, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, SlopeRotation = true,
-            MaxTerrainDelta = 10f, MinAltitude = 0f, MaxAltitude = 1f, MinDistance = LocationConfigs.LocationRings.Ring2.MinDistance,
+            MaxTerrainDelta = 10f, MinAltitude = 0f, MaxAltitude = 1f, MinDistance = LocationDefinitions.LocationRings.Ring2.MinDistance,
             InForest = false, BiomeArea = Heightmap.BiomeArea.Everything
         };
         
@@ -74,7 +74,7 @@ public class PortPrefabs
         {
             Quantity = 20, Biome = Heightmap.Biome.BlackForest, Group = "Port", Priotized = true, RandomRotation = false,
             ExteriorRadius = 16, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, SlopeRotation = true,
-            MaxTerrainDelta = 10f, MinAltitude = 0f, MaxAltitude = 1f, MinDistance = LocationConfigs.LocationRings.Ring2.MinDistance,
+            MaxTerrainDelta = 10f, MinAltitude = 0f, MaxAltitude = 1f, MinDistance = LocationDefinitions.LocationRings.Ring2.MinDistance,
             InForest = false, BiomeArea = Heightmap.BiomeArea.Everything
         };
         
