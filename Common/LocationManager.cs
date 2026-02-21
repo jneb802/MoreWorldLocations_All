@@ -228,13 +228,13 @@ public class LocationManager
             softReferencePrefab.m_assetID,
             null,
             null);
-        
-        CustomLocation customLocation = new 
+
+        CustomLocation customLocation = new
             CustomLocation(
                 softReferencePrefab,
                 true,
                 locationConfig);
-        
+
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
 
