@@ -16,6 +16,7 @@ using UnityEngine;
 namespace More_World_Locations_AIO
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
+    [BepInDependency(Jotunn.Main.ModGuid)]
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
@@ -33,8 +34,6 @@ namespace More_World_Locations_AIO
         public static YAMLManager YAMLManager = new YAMLManager();
         
         public static GameObject root = null!;
-        
-        //public static readonly ConfigSync ConfigSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
         
         private static readonly System.Version MinJotunnVersion = new System.Version(2, 28, 0);
 

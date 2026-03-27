@@ -98,25 +98,6 @@ public static class PortInit
         PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.5f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.5 = 1 coin per 2 meters", synced: true);
     }
 
-    private static void SetupLocations()
-    {
-        BlueprintLocation large = new BlueprintLocation("portbundle", "MWL_Port_Location_Large");
-        large.OnCreated += blueprint =>
-        {
-            if (blueprint.Location == null) return;
-            blueprint.Location.Setup();
-            blueprint.Location.Biome = Heightmap.Biome.All;
-            blueprint.Location.Placement.Altitude.Min = -10f;
-            blueprint.Location.Placement.Altitude.Max = 10f;
-            blueprint.Location.Placement.SlopeRotation = true;
-            blueprint.Location.Placement.ClearArea = true;
-            blueprint.Location.Placement.Quantity = 100;
-            blueprint.Location.Placement.Prioritized = true;
-            blueprint.Location.Group.Name = "MWL_Ports";
-            blueprint.Location.Placement.DistanceFromSimilar.Min = 300f;
-        };
-    }
-
     private static void SetupPort()
     {
         Blueprint portTrader = new Blueprint("portbundle", "MWL_PortTrader");
