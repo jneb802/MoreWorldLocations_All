@@ -152,6 +152,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
         if (PortUI.instance == null) return false;
+        ShipmentManager.RequestShipments();
         PortUI.instance.Show(this);
         if (user is Player player) player.AddKnownPort(m_portID);
         m_currentHumanoid = user;

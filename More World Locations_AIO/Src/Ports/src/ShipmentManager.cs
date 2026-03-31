@@ -282,6 +282,7 @@ public class ShipmentManager : MonoBehaviour
         {
             ZRoutedRpc.instance.Register<string, string>(nameof(RPC_ServerReceiveShipment), RPC_ServerReceiveShipment);
             ZRoutedRpc.instance.Register<string, string>(nameof(RPC_ServerShipmentCollected), RPC_ServerShipmentCollected);
+            ZRoutedRpc.instance.Register(nameof(RPC_RequestShipments), new Action<long>(RPC_RequestShipments));
         }
     }
     public static void RPC_ServerReceiveShipment(long sender, string senderName, string serializedShipment)
@@ -291,6 +292,20 @@ public class ShipmentManager : MonoBehaviour
             ? $"Shipment from {senderName} registered!"
             : $"Shipment from {senderName} is invalid");
         if (newShipment.IsValid) UpdateShipments();
+    }
+
+    public static void RequestShipments()
+    {
+        if (!ZNet.instance || ZNet.instance.IsServer()) return;
+        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug("[Shipment Manager] Client requesting shipments from server");
+        ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), nameof(RPC_RequestShipments));
+    }
+
+    public static void RPC_RequestShipments(long sender)
+    {
+        if (!ZNet.instance || !ZNet.instance.IsServer()) return;
+        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"[Shipment Manager] Server received shipment request, pushing {Shipments.Count} shipments");
+        UpdateShipments();
     }
 
     public static void RPC_ServerShipmentCollected(long sender, string senderName, string shipmentID)
