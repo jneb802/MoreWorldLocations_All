@@ -91,7 +91,7 @@ public static class PortInit
         ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
         ShipmentManager.OverrideTransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance", synced: true);
         ShipmentManager.TransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min", synced: true);
-        ShipmentManager.ExpirationEnabled = plugin.Config.BindConfig("0 - Shipment Ports", "Expires", Toggle.On, "If on, shipments can expire", synced: true);
+        ShipmentManager.ExpirationEnabled = plugin.Config.BindConfig("0 - Shipment Ports", "Expires", Toggle.Off, "If on, shipments can expire", synced: true);
         ShipmentManager.ExpirationTime = plugin.Config.BindConfig("0 - Shipment Ports", "Expiration Time", 7200f, "Set time until expiration, 3600 = 1 hour", synced: true);
         PortUI.UseTeleportTab = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
