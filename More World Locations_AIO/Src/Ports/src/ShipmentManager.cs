@@ -166,16 +166,16 @@ public class ShipmentManager : MonoBehaviour
 
     public void OnClientUpdateShipments()
     {
-        // if (ZNet.instance && ZNet.instance.IsServer()) return;
-        // // when the client first connects to the server, and the server has no data
-        // // make sure that the value passed is not null
-        // if (string.IsNullOrEmpty(ServerSyncedShipments.Value)) return;
-        // Dictionary<string, Shipment>? data = JsonConvert.DeserializeObject<Dictionary<string, Shipment>>(ServerSyncedShipments.Value);
-        // if (data == null) return;
-        // Shipments.Clear();
-        // Shipments.AddRange(data);
-        // OnShipmentsUpdated?.Invoke();
-        // More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"Received {Shipments.Count} shipments from server");
+        if (ZNet.instance && ZNet.instance.IsServer()) return;
+        // when the client first connects to the server, and the server has no data
+        // make sure that the value passed is not null
+        if (string.IsNullOrEmpty(ServerSyncedShipments?.Value)) return;
+        Dictionary<string, Shipment>? data = JsonConvert.DeserializeObject<Dictionary<string, Shipment>>(ServerSyncedShipments.Value);
+        if (data == null) return;
+        Shipments.Clear();
+        Shipments.AddRange(data);
+        OnShipmentsUpdated?.Invoke();
+        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"Received {Shipments.Count} shipments from server");
     }
 
     public static HashSet<ZDO> GetPorts()
