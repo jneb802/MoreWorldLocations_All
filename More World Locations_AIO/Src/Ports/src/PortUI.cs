@@ -278,6 +278,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         gameObject.SetActive(false);
         OnUpdate = null;
         OnSentShipment = null;
+        ShipmentManager.OnShipmentsUpdated -= OnShipmentsRefreshed;
     }
 
     public static void OnBackgroundOptionChange(object sender, EventArgs args)
@@ -359,6 +360,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         OnUpdate = null;
         Help.SetGlow(false);
         Help.SetIcon(Minimap.instance.GetSprite(Minimap.PinType.Hildir1));
+        ShipmentManager.OnShipmentsUpdated += OnShipmentsRefreshed;
     }
 
     public void OnHelp()
@@ -440,6 +442,12 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         Icon.sprite = m_defaultIcon;
         OnUpdate = null;
         Help.SetGlow(false);
+    }
+
+    private void OnShipmentsRefreshed()
+    {
+        if (m_currentTab == TabOption.Shipments) LoadShipments();
+        else if (m_currentTab == TabOption.Delivery) LoadDeliveries();
     }
 
     public void OnTeleportTab()
