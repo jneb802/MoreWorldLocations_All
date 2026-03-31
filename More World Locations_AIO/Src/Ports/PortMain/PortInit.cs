@@ -95,7 +95,7 @@ public static class PortInit
         ShipmentManager.ExpirationTime = plugin.Config.BindConfig("0 - Shipment Ports", "Expiration Time", 7200f, "Set time until expiration, 3600 = 1 hour", synced: true);
         PortUI.UseTeleportTab = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
-        PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.5f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.5 = 1 coin per 2 meters", synced: true);
+        PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.01f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.01 = 1 coin per 100 meters", synced: true);
     }
 
     private static void SetupPort()
