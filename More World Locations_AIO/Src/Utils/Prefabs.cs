@@ -107,7 +107,7 @@ public class Prefabs
         string locationName = index > 0 ? prefab.name.Substring(0, index) : prefab.name;
         
         // Get the LocationConfig to determine biome
-        LocationConfig locationConfig = LocationConfigs.GetLocationConfig(locationName);
+        LocationConfig locationConfig = LocationDB.GetLocationConfig(locationName);
         if (locationConfig == null)
         {
             Debug.LogWarning($"Prefabs: Could not find LocationConfig for {locationName}");

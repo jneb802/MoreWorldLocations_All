@@ -53,7 +53,7 @@ namespace More_World_Locations_AIO
             
             PortInit.Init(root);
             BepinexConfigs.BindFeatureConfigs();
-
+            
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
 
             UpgradeWorldCommands.AddUpgradeWorldCommands();
@@ -78,7 +78,7 @@ namespace More_World_Locations_AIO
             LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
-            ZoneManager.OnVanillaLocationsAvailable += LocationsNEW.AddAllLocations;
+            ZoneManager.OnVanillaLocationsAvailable += LocationDB.RegisterAll;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
