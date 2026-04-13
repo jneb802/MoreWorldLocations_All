@@ -44,31 +44,12 @@ public class SkillBook_SE : StatusEffect
             return;
         }
 
-        // Calculate total XP needed to gain the desired number of levels from current level
-        float totalXP = 0f;
+        // Raise the level directly. Vanilla Raise() zeroes the accumulator on levelup,
+        // so banking multi-level XP into m_accumulator doesn't work — we'd lose all carry-over
+        // and only gain one level. Preserve the player's existing accumulator progress.
         for (int i = 0; i < levelsToGrant; i++)
         {
-            float levelForCalc = currentLevel + i;
-            totalXP += Mathf.Pow(Mathf.Floor(levelForCalc + 1f), 1.5f) * 0.5f + 0.5f;
-        }
-
-        // Subtract any existing accumulator progress (player already earned partial XP toward next level)
-        totalXP -= skill.m_accumulator;
-        if (totalXP < 0f) totalXP = 0f;
-
-        // Add the XP to the accumulator
-        skill.m_accumulator += totalXP;
-
-        // Level up loop - matches vanilla Raise() pattern
-        while (skill.m_level < 100f)
-        {
-            float required = Mathf.Pow(Mathf.Floor(skill.m_level + 1f), 1.5f) * 0.5f + 0.5f;
-            if (skill.m_accumulator < required)
-                break;
-
-            skill.m_level += 1f;
-            skill.m_level = Mathf.Clamp(skill.m_level, 0f, 100f);
-            skill.m_accumulator = 0f;
+            skill.m_level = Mathf.Clamp(skill.m_level + 1f, 0f, 100f);
             player.OnSkillLevelup(skillType, skill.m_level);
         }
 
