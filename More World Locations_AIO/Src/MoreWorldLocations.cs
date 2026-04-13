@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using BepInEx;
@@ -15,10 +16,11 @@ using UnityEngine;
 namespace More_World_Locations_AIO
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
+    [BepInDependency(Jotunn.Main.ModGuid)]
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "4.2.0";
+        internal const string ModVersion = "4.4.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -33,10 +35,12 @@ namespace More_World_Locations_AIO
         
         public static GameObject root = null!;
         
-        //public static readonly ConfigSync ConfigSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
-        
+        private static readonly System.Version MinJotunnVersion = new System.Version(2, 28, 0);
+
         public void Awake()
         {
+            Analytics.Init(Config, ModGUID, ModVersion);
+
             BepinexConfigs.Config = Config;
             bool saveOnSet = BepinexConfigs.Config.SaveOnConfigSet;
             BepinexConfigs.Config.SaveOnConfigSet =
@@ -51,7 +55,7 @@ namespace More_World_Locations_AIO
             BepinexConfigs.BindFeatureConfigs();
             
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
-            
+
             UpgradeWorldCommands.AddUpgradeWorldCommands();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -64,7 +68,6 @@ namespace More_World_Locations_AIO
             // Trader setup
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
-            TraderLocalizations.AddLocalizations();
             
             // AssetBundles.BuildCombinedManifest(
             //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"), 
@@ -81,13 +84,31 @@ namespace More_World_Locations_AIO
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
             ItemManager.OnItemsRegistered += WaystoneDB.BuildWaystoneConfigs;
 
+            try
+            {
+                Assembly jotunnAssembly = typeof(Jotunn.Main).Assembly;
+                System.Version jotunnVersion = jotunnAssembly.GetName().Version;
+                if (jotunnVersion.CompareTo(MinJotunnVersion) < 0)
+                {
+                    More_World_Locations_AIOLogger.LogError(
+                        $"More World Locations requires Jotunn {MinJotunnVersion} or newer, but found {jotunnVersion}. " +
+                        "Please update Jotunn or the text in the mod will be broken!");
+                }
+
+                MWLLocalizations.Load(BepinexConfigs.UseCustomLocalization.Value);
+            }
+            catch (Exception ex)
+            {
+                More_World_Locations_AIOLogger.LogError(
+                    $"Failed to load YAML localizations: {ex.Message}. " +
+                    "Localized text will show as raw tokens. Please update Jotunn to 2.28.0 or newer.");
+            }
+            
             if (saveOnSet)
             {
                 BepinexConfigs.Config.SaveOnConfigSet = saveOnSet;
                 BepinexConfigs.Config.Save();
             }
-
-            Analytics.Init(Config, ModGUID, ModVersion);
         }
         
         // Add this method to ensure proper initialization order
@@ -97,7 +118,7 @@ namespace More_World_Locations_AIO
 
             LootDB.InitializeLootTables();
             CreatureDB.InitializeCreatureLists();
-
+            
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();

@@ -137,7 +137,7 @@
         </PropertyGroup>
 
         <!-- macOS/Linux: run via mono with lib paths -->
-        <Exec Command="mono &quot;$(ILRepackExe)&quot; /internalize /lib:&quot;$(NuGetPackages)/newtonsoft.json/13.0.3/lib/net45&quot; /lib:&quot;$(NuGetPackages)/yamldotnet/13.2.0/lib/net47&quot; /lib:&quot;$(VALHEIM_MANAGED)&quot; /lib:&quot;$(BEPINEX_CORE)&quot; /out:&quot;$(MergedDLL)&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Libs/ServerSync.dll&quot;"
+        <Exec Command="mono &quot;$(ILRepackExe)&quot; /internalize /lib:&quot;$(NuGetPackages)/newtonsoft.json/13.0.3/lib/net45&quot; /lib:&quot;$(NuGetPackages)/yamldotnet/16.3.0/lib/net47&quot; /lib:&quot;$(VALHEIM_MANAGED)&quot; /lib:&quot;$(BEPINEX_CORE)&quot; /out:&quot;$(MergedDLL)&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Libs/ServerSync.dll&quot;"
               Condition="$(OS) == 'Unix' OR $(OS) == 'OSX'" />
 
         <!-- Windows: run directly with lib paths -->

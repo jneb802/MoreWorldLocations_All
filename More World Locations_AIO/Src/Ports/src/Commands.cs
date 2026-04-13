@@ -11,11 +11,16 @@ public static class Commands
     {
         ConsoleCommand shipments = new("mwl_shipments", "list of all shipments", args =>
         {
+            if (ShipmentManager.Shipments.Count == 0)
+            {
+                args.Context.AddString("No shipments found");
+                return;
+            }
             foreach (Shipment shipment in ShipmentManager.Shipments.Values)
             {
                 foreach (string? log in shipment.LogPrint())
                 {
-                    Debug.Log(log);
+                    args.Context.AddString(log);
                 }
             }
         });

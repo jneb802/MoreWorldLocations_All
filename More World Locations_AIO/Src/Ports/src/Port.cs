@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public Shipment? m_selectedDelivery;
     public Humanoid? m_currentHumanoid;
     private readonly TempItems m_tempItems = new();
+    private bool m_initialized;
     public void Awake()
     {
         m_view = GetComponent<ZNetView>();
@@ -36,29 +38,37 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public void Start()
     {
         if (!m_view.IsValid()) return;
-        var locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
-        if (locationProxy == null)
-        {
-            Debug.LogWarning($"Port '{m_name}' could not find a LocationProxy within range. Container positions unavailable.");
-            return;
-        }
-        
-        Transform locationRoot = locationProxy.transform;
-        if (m_containers.Placements.Count <= 0)
-        {
-            foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
-            {
-                TempContainer temp = new TempContainer(child);
-                m_containers.Placements.Add(temp);
-            }
+        StartCoroutine(InitCoroutine());
+    }
 
-            if (m_containers.Placements.Count == 0)
-            {
-                Debug.LogWarning("No containers found");
-            }
+    private IEnumerator InitCoroutine()
+    {
+        yield return null;
+        for (int i = 0; i < 20 && !m_initialized; i++)
+        {
+            EnsureInitialized();
+            if (!m_initialized) yield return new WaitForSeconds(0.5f);
         }
-        
+    }
+
+    private void EnsureInitialized()
+    {
+        if (m_initialized) return;
+
+        var locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
+        if (locationProxy == null) return;
+
+        Transform locationRoot = locationProxy.transform;
+        foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
+        {
+            TempContainer temp = new TempContainer(child);
+            m_containers.Placements.Add(temp);
+        }
+
+        if (m_containers.Placements.Count == 0) return;
+
         LoadSavedItems();
+        m_initialized = true;
     }
 
     public void OnDestroy()
@@ -109,6 +119,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     
     public Container? SpawnContainer(Manifest manifest)
     {
+        EnsureInitialized();
         foreach (TempContainer? temp in m_containers.Placements)
         {
             if (temp.IsSpawned) continue;
@@ -141,6 +152,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
         if (PortUI.instance == null) return false;
+        ShipmentManager.RequestShipments();
         PortUI.instance.Show(this);
         if (user is Player player) player.AddKnownPort(m_portID);
         m_currentHumanoid = user;
@@ -190,6 +202,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public bool LoadDelivery(Shipment delivery)
     {
+        EnsureInitialized();
         if (m_containers.HasItems())
         {
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.FailedToLoadDelivery);
