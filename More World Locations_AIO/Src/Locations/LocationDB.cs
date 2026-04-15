@@ -41,10 +41,10 @@ public static class LocationDB
         if (PortInit.EnablePortLocations.Value != PortInit.Toggle.Off)
             Register(LocationDefinitions.Ports);
 
-        if (BepinexConfigs.EnableTraders.Value == PortInit.Toggle.On)
+        if (BepinexConfigs.EnableTraders.Value != PortInit.Toggle.Off)
             Register(LocationDefinitions.Traders);
 
-        if (BepinexConfigs.EnableTrainers.Value == PortInit.Toggle.On)
+        if (BepinexConfigs.EnableTrainers.Value != PortInit.Toggle.Off)
             Register(LocationDefinitions.Trainers);
 
         ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;

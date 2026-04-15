@@ -148,9 +148,7 @@
         <Delete Files="$(TargetPath)" />
         <Move SourceFiles="$(MergedDLL)" DestinationFiles="$(TargetPath)" />
 
-        <!-- Deploy to BepInEx -->
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BEPINEX_PLUGINS)" SkipUnchangedFiles="false" />
-        <Message Importance="high" Text="Merged ServerSync → $(TargetFileName) deployed to $(BEPINEX_PLUGINS)" />
+        <Message Importance="high" Text="Merged ServerSync → $(TargetFileName)" />
     </Target>
 
 </Project>
