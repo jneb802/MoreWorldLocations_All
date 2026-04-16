@@ -26,8 +26,6 @@ public static class Helpers
         GameObject? result = _ZNetScene.m_prefabs.Find(prefab => prefab.name == prefabName);
         // if we find it, return it
         if (result != null) return result;
-        // check created blueprints that have yet to be registered to znetscene
-        if (Blueprint.registeredPrefabs.TryGetValue(prefabName, out GameObject blueprint)) return blueprint;
         // check clones that have yet to be registered to znetscene
         return Clone.registeredPrefabs.TryGetValue(prefabName, out GameObject clone) ? clone : result;
     }
@@ -81,12 +79,4 @@ public static class Helpers
         return result;
     }
     
-    internal static string GetInternalName(this LocationManager.IconSettings.LocationIcon table)
-    {
-        Type type = typeof(LocationManager.IconSettings.LocationIcon);
-        MemberInfo[] memInfo = type.GetMember(table.ToString());
-        if (memInfo.Length <= 0) return table.ToString();
-        LocationManager.IconSettings.InternalName? attr = (LocationManager.IconSettings.InternalName)Attribute.GetCustomAttribute(memInfo[0], typeof(LocationManager.IconSettings.InternalName));
-        return attr != null ? attr.internalName : table.ToString();
-    }
 }

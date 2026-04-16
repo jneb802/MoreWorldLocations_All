@@ -98,34 +98,6 @@ public static class PortInit
         PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.01f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.01 = 1 coin per 100 meters", synced: true);
     }
 
-    private static void SetupPort()
-    {
-        Blueprint portTrader = new Blueprint("portbundle", "MWL_PortTrader");
-        portTrader.Prefab.AddComponent<Port>();
-        portTrader.OnCreated += blueprint =>
-        {
-            foreach (Transform child in blueprint.Prefab.transform)
-            {
-                if (child.TryGetComponent(out Trader component))
-                {
-                    child.gameObject.name = "PortTrader";
-                    PortTrader? trader = child.gameObject.AddComponent<PortTrader>();
-                    trader.m_standRange = component.m_standRange;
-                    trader.m_greetRange = component.m_greetRange;
-                    trader.m_byeRange = component.m_byeRange;
-                    trader.m_hideDialogDelay = component.m_hideDialogDelay;
-                    trader.m_randomTalkInterval = component.m_randomTalkInterval;
-                    trader.m_dialogHeight = component.m_dialogHeight;
-                    trader.m_randomTalkFX = component.m_randomTalkFX;
-                    trader.m_randomGreetFX =  component.m_randomGreetFX;
-                    trader.m_randomGoodbyeFX =  component.m_randomGoodbyeFX;
-                }
-                child.gameObject.RemoveAllComponents<MonoBehaviour>(false, typeof(PortTrader));
-            }
-            PrefabManager.RegisterPrefab(blueprint.Prefab);
-        };
-    }
-
     private static void SetupManifests()
     {
         // simple class to clone in-game assets
@@ -238,7 +210,6 @@ public static class PortInit
         SetupConfigs();
         ShipmentManager.PrefabsToSearch.Add("MWL_PortTrader");
         // SetupLocations();
-        SetupPort();
         SetupManifests();
         PortTutorial.Setup();
     }
