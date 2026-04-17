@@ -229,6 +229,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_RuinedTower1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedTower1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "RuinedTower1", MinDistanceFromSimilar = 512, MaxTerrainDelta = 4f, MinAltitude = 2, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance } },
+
+        new() { Name = "bfd_exterior", AssetPath = "Assets/WarpProjects/Dungeons/UndergroundRuins/bfd_exterior.prefab", DungeonTheme = "Underground Ruins",
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, BiomeArea = Heightmap.BiomeArea.Median, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Dungeon_UndergroundRuins", MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 10, MinDistance = LocationRings.Ring3.MinDistance, MaxDistance = LocationRings.Ring6.MaxDistance } },
     };
 
     // ── Swamp ─────────────────────────────────────────────────────────
