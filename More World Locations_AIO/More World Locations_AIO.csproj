@@ -47,6 +47,7 @@
         <EmbeddedResource Include="assets/ports" />
         <EmbeddedResource Include="assets/portlocation" />
         <EmbeddedResource Include="assets/portbundle" />
+        <EmbeddedResource Include="assets\dungeonblackforest" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_CreatureLists.yml" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_LootLists.yml" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_TraderItems.yml" />

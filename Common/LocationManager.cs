@@ -238,6 +238,62 @@ public class LocationManager
         ZoneManager.Instance.AddCustomLocation(customLocation);
     }
 
+    // Soft Reference method for dungeon exterior locations.
+    // Registers a Jotunn DungeonGeneratorTheme and wires up Location.m_interiorPrefab
+    // when the exterior resolves, so the DungeonGenerator can match custom rooms by
+    // theme name and Location.Awake can instantiate the interior env zone.
+    public static void AddLocation(string locationName, LocationConfig locationConfig, string dungeonTheme, string interiorPrefabName)
+    {
+        SoftReference<GameObject> softReferencePrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>(locationName);
+
+        Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
+            softReferencePrefab.m_assetID,
+            null,
+            resolvedObj =>
+            {
+                GameObject prefab = resolvedObj as GameObject;
+                if (prefab == null)
+                {
+                    WarpLogger.Logger.LogError($"Dungeon exterior {locationName} resolved to null GameObject");
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(dungeonTheme))
+                {
+                    DungeonManager.Instance.RegisterDungeonTheme(prefab, dungeonTheme);
+                }
+
+                if (!string.IsNullOrEmpty(interiorPrefabName))
+                {
+                    Location locationComponent = prefab.GetComponent<Location>();
+                    if (locationComponent == null)
+                    {
+                        WarpLogger.Logger.LogError($"Dungeon exterior {locationName} has no Location component; cannot set interior prefab");
+                    }
+                    else
+                    {
+                        GameObject interiorPrefab = Jotunn.Managers.PrefabManager.Cache.GetPrefab<GameObject>(interiorPrefabName);
+                        if (interiorPrefab == null)
+                        {
+                            WarpLogger.Logger.LogError($"Could not find interior prefab '{interiorPrefabName}' for {locationName}");
+                        }
+                        else
+                        {
+                            locationComponent.m_interiorPrefab = interiorPrefab;
+                        }
+                    }
+                }
+            });
+
+        CustomLocation customLocation = new
+            CustomLocation(
+                softReferencePrefab,
+                true,
+                locationConfig);
+
+        ZoneManager.Instance.AddCustomLocation(customLocation);
+    }
+
     
     
 }
