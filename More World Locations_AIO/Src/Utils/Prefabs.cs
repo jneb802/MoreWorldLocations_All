@@ -22,6 +22,7 @@ public class Prefabs
     public static AssetBundle prefabBundle_3;
     public static AssetBundle vendorsPrefabBundle;
     public static AssetBundle vendorNpcBundle;
+    public static AssetBundle dungeonBlackforest;
     
     public static void LoadPrefabBundles()
     {
@@ -42,6 +43,10 @@ public class Prefabs
             Assembly.GetExecutingAssembly());
         
         vendorNpcBundle = AssetUtils.LoadAssetBundleFromResources(
+            "vendornpc",
+            Assembly.GetExecutingAssembly());
+        
+        dungeonBlackforest = AssetUtils.LoadAssetBundleFromResources(
             "vendornpc",
             Assembly.GetExecutingAssembly());
     }
