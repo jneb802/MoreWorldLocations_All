@@ -60,7 +60,9 @@ public class AssetBundles
     {
         Debug.Log($"Building combined manifest from folder: {bundleFolder}");
 
-        string softRefManifestPath = Path.Combine(BepInEx.Paths.PluginPath, "assetBundleManifest_" + suffix);
+        string softRefManifestPath = Path.Combine(
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            "assetBundleManifest_" + suffix);
 
         string bundleRelativeDir = "./Bundles";
         var manifest = new SoftReferenceableAssets.AssetBundleManifest(bundleRelativeDir);
@@ -82,7 +84,7 @@ public class AssetBundles
                     continue;
 
                 string prefabName = Path.GetFileNameWithoutExtension(assetPath).ToLower();
-                if (bundleName.StartsWith(prefabName, StringComparison.OrdinalIgnoreCase))
+                if (bundleName.Equals(prefabName, StringComparison.OrdinalIgnoreCase))
                 {
                     AssetID assetId = Jotunn.Managers.AssetManager.Instance.GenerateAssetID(assetPath);
                     var location = new AssetLocation(bundleName, assetPath);

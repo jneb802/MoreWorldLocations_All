@@ -47,7 +47,7 @@ public class Prefabs
             Assembly.GetExecutingAssembly());
         
         dungeonBlackforest = AssetUtils.LoadAssetBundleFromResources(
-            "vendornpc",
+            "dungeonblackforest",
             Assembly.GetExecutingAssembly());
     }
 
@@ -64,14 +64,130 @@ public class Prefabs
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
 
+    // Kit pieces are built by cloning the vanilla piece of the same basename (AddBFDKitPrefabs),
+    // so we skip any bundle prefab whose name matches one of these to avoid overwriting the clone.
+    private static readonly string[] BfdKitVanillaBaseNames =
+    {
+        "dirtfloor",
+        "Stoneblock",
+        "StoneblockSmall",
+        "StonePillar",
+    };
+
+    public static void AddBlackForestDungeonPrefabs(GameObject[] gameObjects)
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            // Rooms register via CustomRoom (MWLRoom.Register); the exterior registers via
+            // CustomLocation (LocationDefinitions). Skip them here to avoid double-handling.
+            if (gameObject.GetComponent<Room>() != null) continue;
+            if (gameObject.GetComponent<Location>() != null) continue;
+
+            // Kit prefabs (BFD_Kit_*) are handled by AddBFDKitPrefabs, which clones from
+            // vanilla so the registered piece carries a real ZNetView and survives reload.
+            if (IsBfdKitPrefab(gameObject.name)) continue;
+
+            if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
+            {
+                PrefabManager.Instance.RemovePrefab(gameObject.name);
+            }
+
+            // Clone the bundle prefab before registering. Jotunn's FixReferences cannot
+            // reliably swap JVLmocks on persistent (asset-bundle-loaded) prefabs — child
+            // mocks log the "Cannot replace mock child ... in persistent prefab" warning,
+            // and field mocks (MeshFilter.sharedMesh, MeshRenderer.sharedMaterials, etc.)
+            // don't propagate to runtime clones either. Cloning via CreateClonedPrefab
+            // produces a non-persistent copy that FixReferences can safely modify.
+            GameObject cloned = PrefabManager.Instance.CreateClonedPrefab(gameObject.name, gameObject);
+            if (cloned == null) continue;
+
+            if (cloned.GetComponent<Container>() != null)
+            {
+                AddBFDContainerPrefab(cloned);
+            }
+            else
+            {
+                CustomPrefab customPrefab = new CustomPrefab(cloned, true);
+                PrefabManager.Instance.AddPrefab(customPrefab);
+            }
+        }
+    }
+
+    // Build BFD_Kit_* pieces by cloning the matching vanilla prefab ("BFD_Kit_Stoneblock"
+    // from "Stoneblock", etc.). The cloned piece keeps the vanilla ZNetView/Piece/WearNTear,
+    // so pieces placed by the dungeon generator get ZDOs and survive zone reloads
+    // (plain bundle prefabs without ZNetView vanish when the zone unloads/reloads).
+    public static void AddBFDKitPrefabs()
+    {
+        foreach (string vanillaName in BfdKitVanillaBaseNames)
+        {
+            string kitName = "BFD_Kit_" + vanillaName;
+
+            if (PrefabManager.Instance.GetPrefab(kitName) != null)
+            {
+                PrefabManager.Instance.RemovePrefab(kitName);
+            }
+
+            GameObject cloned = PrefabManager.Instance.CreateClonedPrefab(kitName, vanillaName);
+            if (cloned == null)
+            {
+                Debug.LogWarning($"Prefabs: Could not clone vanilla '{vanillaName}' for {kitName}");
+                continue;
+            }
+
+            ZNetView znv = cloned.GetComponent<ZNetView>();
+            if (znv == null) znv = cloned.AddComponent<ZNetView>();
+            znv.m_persistent = true;
+
+            CustomPrefab customPrefab = new CustomPrefab(cloned, fixReference: false);
+            PrefabManager.Instance.AddPrefab(customPrefab);
+        }
+    }
+
+    private static bool IsBfdKitPrefab(string name)
+    {
+        foreach (string vanillaName in BfdKitVanillaBaseNames)
+        {
+            if (name == "BFD_Kit_" + vanillaName) return true;
+        }
+        return false;
+    }
+
+    public static void AddBFDContainerPrefab(GameObject prefab)
+    {
+        GameObject sourceChest = PrefabManager.Cache.GetPrefab<GameObject>("TreasureChest_fCrypt");
+        if (sourceChest == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not find TreasureChest_fCrypt source for {prefab.name}");
+            return;
+        }
+
+        Container sourceContainer = sourceChest.GetComponent<Container>();
+        if (sourceContainer == null || sourceContainer.m_defaultItems == null)
+        {
+            Debug.LogWarning($"Prefabs: TreasureChest_fCrypt has no Container.m_defaultItems");
+            return;
+        }
+
+        CustomPrefab customPrefab = new CustomPrefab(prefab, true);
+        Container container = customPrefab.Prefab.GetComponent<Container>();
+        container.m_defaultItems.m_drops = sourceContainer.m_defaultItems.m_drops;
+
+        PrefabManager.Instance.AddPrefab(customPrefab);
+    }
+
     public static void AddPrefabsFromBundle(GameObject[] gameObjects)
     {
         foreach (GameObject gameObject in gameObjects)
         {
+            // Kit prefabs (BFD_Kit_*) are handled by AddBFDKitPrefabs, which clones from
+            // vanilla so the registered piece carries a real ZNetView and survives reload.
+            if (IsBfdKitPrefab(gameObject.name)) continue;
+
             if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
             {
                 // Debug.Log("Prefab with name "+ gameObject.name + " is already in ObjectDB");
-            
+
                 PrefabManager.Instance.RemovePrefab(gameObject.name);
             }
             

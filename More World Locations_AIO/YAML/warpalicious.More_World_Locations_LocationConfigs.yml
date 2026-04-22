@@ -69,6 +69,7 @@ BlackForest:
   MWL_WoodTower1: 10
   MWL_WoodTower2: 10
   MWL_WoodTower3: 10
+  bfd_exterior: 30
 
 Swamp:
   MWL_AbandonedHouse1: 15

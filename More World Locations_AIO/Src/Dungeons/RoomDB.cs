@@ -36,17 +36,17 @@ public static class RoomDB
         return _byName.TryGetValue(name, out MWLRoom room) ? room.Config : null;
     }
 
-    public static string[] GetAllAssetPaths()
-    {
-        return All.Select(r => r.AssetPath).ToArray();
-    }
-
     public static string[] GetRoomNames(string themeName)
     {
         return All
             .Where(r => r.Config.ThemeName == themeName)
             .Select(r => r.Name)
             .ToArray();
+    }
+    
+    public static string[] GetAllAssetPaths()
+    {
+        return All.Select(l => l.AssetPath).ToArray();
     }
 
     private static void Register(MWLRoom[] rooms)
