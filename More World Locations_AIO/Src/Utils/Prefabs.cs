@@ -7,6 +7,7 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
+using More_World_Locations_AIO.Dungeons;
 using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
@@ -29,6 +30,12 @@ public class Prefabs
     private const string BfdTentaSpawnerPrefabName = "BFD_Kit_Spawner_TentaRoot";
     private const string BfdTentaSpawnerChestPrefabName = "BFD_chest_spawner1";
     private const string BfdTentaCreatureName = "TentaRoot";
+    private const string BfdPuzzleLeverPrefabName = "BFD_PuzzleLever";
+    private const string BfdPuzzleStandTemplatePrefabName = "BFD_Kit_PuzzleStand";
+    private const string BfdPuzzlePickableVanillaPrefabName = "Pickable_SurtlingCoreStand";
+    private const string BfdMineRockCopperPrefabname = "BFD_Kit_MineRock_Copper";
+    private const int BfdPuzzleStandCount = 8;
+    private const int BfdPuzzlePickableCount = 8;
     
     public static void LoadPrefabBundles()
     {
@@ -69,6 +76,7 @@ public class Prefabs
         AddPrefabsFromBundle(gameObjects3);
         
         // Underground Ruins
+        AddBFDPuzzleComponents(dungeonBlackforestGameObjects);
         AddBlackForestDungeonPrefabs(dungeonBlackforestGameObjects);
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
@@ -79,8 +87,7 @@ public class Prefabs
         "dirtfloor",
         "Stoneblock",
         "StoneblockSmall",
-        "StonePillar",
-        "MineRock_Copper"
+        "StonePillar"
     };
 
     public static void AddBlackForestDungeonPrefabs(GameObject[] gameObjects)
@@ -91,8 +98,7 @@ public class Prefabs
             if (gameObject.GetComponent<Room>() != null) continue;
             if (gameObject.GetComponent<Location>() != null) continue;
 
-            // These prefabs are intentionally created by cloning vanilla prefabs below.
-            if (IsClonedBfdPrefab(gameObject.name)) continue;
+            if (ShouldSkipBfdBundlePrefab(gameObject.name)) continue;
 
             if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
             {
@@ -101,6 +107,22 @@ public class Prefabs
 
             CustomPrefab customPrefab = new CustomPrefab(gameObject, true);
             PrefabManager.Instance.AddPrefab(customPrefab);
+        }
+    }
+
+    public static void AddBFDPuzzleComponents(GameObject[] gameObjects)
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (gameObject.name != BfdPuzzleLeverPrefabName)
+            {
+                continue;
+            }
+
+            if (gameObject.GetComponent<AttachPuzzle>() == null)
+            {
+                gameObject.AddComponent<AttachPuzzle>();
+            }
         }
     }
     
@@ -118,6 +140,17 @@ public class Prefabs
 
             CustomPrefab customPrefab = new CustomPrefab(cloned, fixReference: false);
             PrefabManager.Instance.AddPrefab(customPrefab);
+        }
+        GameObject mineRockCopperCloned = CreateOrReplaceClonedPrefab(BfdMineRockCopperPrefabname, "MineRock_Copper");
+        if (mineRockCopperCloned != null)
+        {
+            foreach (StaticPhysics staticPhysics in mineRockCopperCloned.GetComponentsInChildren<StaticPhysics>(true))
+            {
+                Object.DestroyImmediate(staticPhysics);
+            }
+
+            CustomPrefab mineRockCopperClonedCustomPrefab = new CustomPrefab(mineRockCopperCloned, fixReference: false);
+            PrefabManager.Instance.AddPrefab(mineRockCopperClonedCustomPrefab);
         }
 
         GameObject chestCloned = CreateOrReplaceClonedPrefab(BfdChestPrefabName, "TreasureChest_fCrypt");
@@ -168,6 +201,57 @@ public class Prefabs
                 PrefabManager.Instance.AddPrefab(tentaClonedCustomPrefab);
             }
         }
+        AddBFDPuzzlePickablePrefabs();
+        AddBFDPuzzleStandPrefabs();
+    }
+
+    public static void AddBFDPuzzlePickablePrefabs()
+    {
+        for (int i = 0; i < BfdPuzzlePickableCount; i++)
+        {
+            string prefabName = $"{i}_PuzzlePickable";
+            GameObject cloned = CreateOrReplaceClonedPrefab(prefabName, BfdPuzzlePickableVanillaPrefabName);
+            if (cloned == null)
+            {
+                continue;
+            }
+
+            CustomPrefab customPrefab = new CustomPrefab(cloned, fixReference: false);
+            PrefabManager.Instance.AddPrefab(customPrefab);
+        }
+    }
+
+    public static void AddBFDPuzzleStandPrefabs()
+    {
+        GameObject standTemplate = dungeonBlackforest.LoadAsset<GameObject>(BfdPuzzleStandTemplatePrefabName);
+        if (standTemplate == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not load bundled puzzle stand template '{BfdPuzzleStandTemplatePrefabName}'");
+            return;
+        }
+
+        if (PrefabManager.Instance.GetPrefab(BfdPuzzleStandTemplatePrefabName) != null)
+        {
+            PrefabManager.Instance.RemovePrefab(BfdPuzzleStandTemplatePrefabName);
+        }
+
+        standTemplate.FixReferences(true);
+        CustomPrefab standTemplateCustomPrefab = new CustomPrefab(standTemplate, fixReference: false);
+        PrefabManager.Instance.AddPrefab(standTemplateCustomPrefab);
+
+        for (int i = 0; i < BfdPuzzleStandCount; i++)
+        {
+            string prefabName = $"{i}_PuzzleStand";
+
+            GameObject standPrefab = CreateOrReplaceClonedPrefab(prefabName, BfdPuzzleStandTemplatePrefabName);
+            if (standPrefab == null)
+            {
+                continue;
+            }
+
+            CustomPrefab customPrefab = new CustomPrefab(standPrefab, fixReference: false);
+            PrefabManager.Instance.AddPrefab(customPrefab);
+        }
     }
 
     private static GameObject CreateOrReplaceClonedPrefab(string prefabName, string vanillaPrefabName)
@@ -201,7 +285,27 @@ public class Prefabs
         return name == BfdChestPrefabName
                || name == BfdTentaSpawnerPrefabName
                || name == BfdTentaSpawnerChestPrefabName
+               || IsBfdPuzzlePickablePrefab(name)
                || IsBfdKitPrefab(name);
+    }
+
+    private static bool ShouldSkipBfdBundlePrefab(string name)
+    {
+        return name == BfdPuzzleStandTemplatePrefabName
+               || IsClonedBfdPrefab(name);
+    }
+
+    private static bool IsBfdPuzzlePickablePrefab(string name)
+    {
+        for (int i = 0; i < BfdPuzzlePickableCount; i++)
+        {
+            if (name == $"{i}_PuzzlePickable")
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static void AddBFDContainerPrefab(GameObject prefab)
