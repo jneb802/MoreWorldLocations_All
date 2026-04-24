@@ -42,33 +42,10 @@ public class MWLRoom
                 extras.PlacementLimit = placementLimit;
             }
 
-            SwapEggHatchCreature(prefab, "TentaRoot");
         });
 
         CustomRoom customRoom = new CustomRoom(softRef, fixReference: true, Config);
         DungeonManager.Instance.AddCustomRoom(customRoom);
-    }
-
-    // EggHatch.m_spawnPrefab points to a prefab that carries a CreatureSpawner; swap that
-    // spawner's creature so hatched eggs in this room spawn the chosen creature.
-    private static void SwapEggHatchCreature(GameObject roomPrefab, string creatureName)
-    {
-        EggHatch[] eggHatches = roomPrefab.GetComponentsInChildren<EggHatch>();
-        if (eggHatches.Length == 0) return;
-
-        GameObject creaturePrefab = PrefabManager.Cache.GetPrefab<GameObject>(creatureName);
-        if (creaturePrefab == null)
-        {
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError(
-                $"Could not find creature prefab '{creatureName}' for EggHatch swap");
-            return;
-        }
-
-        foreach (EggHatch eggHatch in eggHatches)
-        {
-            CreatureSpawner spawner = eggHatch.m_spawnPrefab?.GetComponent<CreatureSpawner>();
-            if (spawner != null) spawner.m_creaturePrefab = creaturePrefab;
-        }
     }
 
     private static FieldInfo _themeListField;

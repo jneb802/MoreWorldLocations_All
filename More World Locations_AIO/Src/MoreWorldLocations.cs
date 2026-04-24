@@ -124,7 +124,6 @@ namespace More_World_Locations_AIO
             
             Prefabs.AddAllPrefabs();
             Prefabs.AddBFDKitPrefabs();
-            Prefabs.AddBlackForestDungeonPrefabs(Prefabs.dungeonBlackforest.LoadAllAssets<GameObject>());
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
             PortPrefabs.AddPortPrefabs();

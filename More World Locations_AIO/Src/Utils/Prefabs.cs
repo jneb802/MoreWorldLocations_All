@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Common;
 using Jotunn;
@@ -23,6 +24,11 @@ public class Prefabs
     public static AssetBundle vendorsPrefabBundle;
     public static AssetBundle vendorNpcBundle;
     public static AssetBundle dungeonBlackforest;
+
+    private const string BfdChestPrefabName = "BFD_chest_loot";
+    private const string BfdTentaSpawnerPrefabName = "BFD_Kit_Spawner_TentaRoot";
+    private const string BfdTentaSpawnerChestPrefabName = "BFD_chest_spawner1";
+    private const string BfdTentaCreatureName = "TentaRoot";
     
     public static void LoadPrefabBundles()
     {
@@ -56,92 +62,128 @@ public class Prefabs
         GameObject[] gameObjects1 = prefabBundle_1.LoadAllAssets<GameObject>();
         GameObject[] gameObjects2 = prefabBundle_2.LoadAllAssets<GameObject>();
         GameObject[] gameObjects3 = prefabBundle_3.LoadAllAssets<GameObject>();
-        
+        GameObject[] dungeonBlackforestGameObjects = dungeonBlackforest.LoadAllAssets<GameObject>();
+            
         AddPrefabsFromBundle(gameObjects1);
         AddPrefabsFromBundle(gameObjects2);
         AddPrefabsFromBundle(gameObjects3);
         
+        // Underground Ruins
+        AddBlackForestDungeonPrefabs(dungeonBlackforestGameObjects);
+        
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
-
-    // Kit pieces are built by cloning the vanilla piece of the same basename (AddBFDKitPrefabs),
-    // so we skip any bundle prefab whose name matches one of these to avoid overwriting the clone.
+    
     private static readonly string[] BfdKitVanillaBaseNames =
     {
         "dirtfloor",
         "Stoneblock",
         "StoneblockSmall",
         "StonePillar",
+        "MineRock_Copper"
     };
 
     public static void AddBlackForestDungeonPrefabs(GameObject[] gameObjects)
     {
         foreach (GameObject gameObject in gameObjects)
         {
-            // Rooms register via CustomRoom (MWLRoom.Register); the exterior registers via
-            // CustomLocation (LocationDefinitions). Skip them here to avoid double-handling.
+            // Rooms and the dungeon exterior register through the soft-reference path.
             if (gameObject.GetComponent<Room>() != null) continue;
             if (gameObject.GetComponent<Location>() != null) continue;
 
-            // Kit prefabs (BFD_Kit_*) are handled by AddBFDKitPrefabs, which clones from
-            // vanilla so the registered piece carries a real ZNetView and survives reload.
-            if (IsBfdKitPrefab(gameObject.name)) continue;
+            // These prefabs are intentionally created by cloning vanilla prefabs below.
+            if (IsClonedBfdPrefab(gameObject.name)) continue;
 
             if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
             {
                 PrefabManager.Instance.RemovePrefab(gameObject.name);
             }
 
-            // Clone the bundle prefab before registering. Jotunn's FixReferences cannot
-            // reliably swap JVLmocks on persistent (asset-bundle-loaded) prefabs — child
-            // mocks log the "Cannot replace mock child ... in persistent prefab" warning,
-            // and field mocks (MeshFilter.sharedMesh, MeshRenderer.sharedMaterials, etc.)
-            // don't propagate to runtime clones either. Cloning via CreateClonedPrefab
-            // produces a non-persistent copy that FixReferences can safely modify.
-            GameObject cloned = PrefabManager.Instance.CreateClonedPrefab(gameObject.name, gameObject);
-            if (cloned == null) continue;
-
-            if (cloned.GetComponent<Container>() != null)
-            {
-                AddBFDContainerPrefab(cloned);
-            }
-            else
-            {
-                CustomPrefab customPrefab = new CustomPrefab(cloned, true);
-                PrefabManager.Instance.AddPrefab(customPrefab);
-            }
+            CustomPrefab customPrefab = new CustomPrefab(gameObject, true);
+            PrefabManager.Instance.AddPrefab(customPrefab);
         }
     }
-
-    // Build BFD_Kit_* pieces by cloning the matching vanilla prefab ("BFD_Kit_Stoneblock"
-    // from "Stoneblock", etc.). The cloned piece keeps the vanilla ZNetView/Piece/WearNTear,
-    // so pieces placed by the dungeon generator get ZDOs and survive zone reloads
-    // (plain bundle prefabs without ZNetView vanish when the zone unloads/reloads).
+    
     public static void AddBFDKitPrefabs()
     {
         foreach (string vanillaName in BfdKitVanillaBaseNames)
         {
             string kitName = "BFD_Kit_" + vanillaName;
 
-            if (PrefabManager.Instance.GetPrefab(kitName) != null)
-            {
-                PrefabManager.Instance.RemovePrefab(kitName);
-            }
-
-            GameObject cloned = PrefabManager.Instance.CreateClonedPrefab(kitName, vanillaName);
+            GameObject cloned = CreateOrReplaceClonedPrefab(kitName, vanillaName);
             if (cloned == null)
             {
-                Debug.LogWarning($"Prefabs: Could not clone vanilla '{vanillaName}' for {kitName}");
                 continue;
             }
-
-            ZNetView znv = cloned.GetComponent<ZNetView>();
-            if (znv == null) znv = cloned.AddComponent<ZNetView>();
-            znv.m_persistent = true;
 
             CustomPrefab customPrefab = new CustomPrefab(cloned, fixReference: false);
             PrefabManager.Instance.AddPrefab(customPrefab);
         }
+
+        GameObject chestCloned = CreateOrReplaceClonedPrefab(BfdChestPrefabName, "TreasureChest_fCrypt");
+        if (chestCloned != null)
+        {
+            CustomPrefab chestClonedCustomPrefab = new CustomPrefab(chestCloned, fixReference: false);
+            PrefabManager.Instance.AddPrefab(chestClonedCustomPrefab);
+        }
+
+        GameObject tentaSpawnerCloned = CreateOrReplaceClonedPrefab(BfdTentaSpawnerPrefabName, "Spawner_Skeleton");
+        if (tentaSpawnerCloned != null)
+        {
+            CreatureSpawner creatureSpawner = tentaSpawnerCloned.GetComponent<CreatureSpawner>();
+            GameObject tentaRootPrefab = PrefabManager.Cache.GetPrefab<GameObject>(BfdTentaCreatureName);
+
+            if (creatureSpawner == null)
+            {
+                Debug.LogWarning($"Prefabs: {BfdTentaSpawnerPrefabName} clone is missing CreatureSpawner");
+            }
+            else if (tentaRootPrefab == null)
+            {
+                Debug.LogWarning($"Prefabs: Could not find creature prefab {BfdTentaCreatureName}");
+            }
+            else
+            {
+                creatureSpawner.m_creaturePrefab = tentaRootPrefab;
+                CustomPrefab tentaSpawnerClonedCustomPrefab = new CustomPrefab(tentaSpawnerCloned, fixReference: false);
+                PrefabManager.Instance.AddPrefab(tentaSpawnerClonedCustomPrefab);
+            }
+        }
+
+        GameObject tentaCloned = CreateOrReplaceClonedPrefab(BfdTentaSpawnerChestPrefabName, "crypt_skeleton_chest");
+        if (tentaCloned != null)
+        {
+            EggHatch eggHatch = tentaCloned.GetComponent<EggHatch>();
+            if (eggHatch == null)
+            {
+                Debug.LogWarning($"Prefabs: {BfdTentaSpawnerChestPrefabName} clone is missing EggHatch");
+            }
+            else if (tentaSpawnerCloned == null)
+            {
+                Debug.LogWarning($"Prefabs: Could not assign {BfdTentaSpawnerPrefabName} to {BfdTentaSpawnerChestPrefabName}");
+            }
+            else
+            {
+                eggHatch.m_spawnPrefab = tentaSpawnerCloned;
+                CustomPrefab tentaClonedCustomPrefab = new CustomPrefab(tentaCloned, fixReference: false);
+                PrefabManager.Instance.AddPrefab(tentaClonedCustomPrefab);
+            }
+        }
+    }
+
+    private static GameObject CreateOrReplaceClonedPrefab(string prefabName, string vanillaPrefabName)
+    {
+        if (PrefabManager.Instance.GetPrefab(prefabName) != null)
+        {
+            PrefabManager.Instance.RemovePrefab(prefabName);
+        }
+
+        GameObject cloned = PrefabManager.Instance.CreateClonedPrefab(prefabName, vanillaPrefabName);
+        if (cloned == null)
+        {
+            Debug.LogWarning($"Prefabs: Could not clone vanilla '{vanillaPrefabName}' for {prefabName}");
+        }
+
+        return cloned;
     }
 
     private static bool IsBfdKitPrefab(string name)
@@ -150,7 +192,16 @@ public class Prefabs
         {
             if (name == "BFD_Kit_" + vanillaName) return true;
         }
+
         return false;
+    }
+
+    private static bool IsClonedBfdPrefab(string name)
+    {
+        return name == BfdChestPrefabName
+               || name == BfdTentaSpawnerPrefabName
+               || name == BfdTentaSpawnerChestPrefabName
+               || IsBfdKitPrefab(name);
     }
 
     public static void AddBFDContainerPrefab(GameObject prefab)
@@ -175,15 +226,29 @@ public class Prefabs
 
         PrefabManager.Instance.AddPrefab(customPrefab);
     }
+    
+    // EggHatch.m_spawnPrefab points to a prefab that carries a CreatureSpawner; swap that
+    // spawner's creature so hatched eggs in this room spawn the chosen creature.
+    private static void SwapEggHatchCreature(GameObject prefab, string creatureName)
+    {
+        EggHatch eggHatch = prefab.GetComponent<EggHatch>();
+        
+        GameObject creaturePrefab = PrefabManager.Cache.GetPrefab<GameObject>(creatureName);
+        if (creaturePrefab == null)
+        {
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError(
+                $"Could not find creature prefab '{creatureName}' for EggHatch swap");
+            return;
+        }
+        
+        eggHatch.m_spawnPrefab = creaturePrefab;
+    }
 
     public static void AddPrefabsFromBundle(GameObject[] gameObjects)
     {
         foreach (GameObject gameObject in gameObjects)
         {
-            // Kit prefabs (BFD_Kit_*) are handled by AddBFDKitPrefabs, which clones from
-            // vanilla so the registered piece carries a real ZNetView and survives reload.
-            if (IsBfdKitPrefab(gameObject.name)) continue;
-
+            
             if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
             {
                 // Debug.Log("Prefab with name "+ gameObject.name + " is already in ObjectDB");
