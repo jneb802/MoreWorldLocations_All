@@ -76,6 +76,7 @@ public class Prefabs
         AddPrefabsFromBundle(gameObjects3);
         
         // Underground Ruins
+        AddBFDKitPrefabs();
         AddBFDPuzzleComponents(dungeonBlackforestGameObjects);
         AddBlackForestDungeonPrefabs(dungeonBlackforestGameObjects);
         

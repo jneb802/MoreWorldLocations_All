@@ -123,7 +123,6 @@ namespace More_World_Locations_AIO
             CreatureDB.InitializeCreatureLists();
             
             Prefabs.AddAllPrefabs();
-            Prefabs.AddBFDKitPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
             PortPrefabs.AddPortPrefabs();
