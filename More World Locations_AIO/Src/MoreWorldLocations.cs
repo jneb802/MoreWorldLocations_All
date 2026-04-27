@@ -11,6 +11,7 @@ using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Dungeons;
+using More_World_Locations_AIO.Dungeons.Packs;
 using More_World_Locations_AIO.Traders;
 using More_World_Locations_AIO.Waystones;
 using UnityEngine;
@@ -123,6 +124,7 @@ namespace More_World_Locations_AIO
             CreatureDB.InitializeCreatureLists();
             
             Prefabs.AddAllPrefabs();
+            DungeonPackDB.RegisterAll();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
             PortPrefabs.AddPortPrefabs();

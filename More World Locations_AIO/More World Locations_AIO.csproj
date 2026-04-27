@@ -64,6 +64,8 @@
         <EmbeddedResource Include="assets\vendornpc" />
         <None Remove="assets\dungeonblackforest" />
         <EmbeddedResource Include="assets\dungeonblackforest" />
+        <None Remove="assets\dungeoncastle" />
+        <EmbeddedResource Include="assets\dungeoncastle" />
     </ItemGroup>
 
     <!-- Content files -->

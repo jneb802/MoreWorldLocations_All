@@ -25,6 +25,7 @@ public class Prefabs
     public static AssetBundle vendorsPrefabBundle;
     public static AssetBundle vendorNpcBundle;
     public static AssetBundle dungeonBlackforest;
+    public static AssetBundle dungeonCastle;
 
     private const string BfdChestPrefabName = "BFD_chest_loot";
     private const string BfdTentaSpawnerPrefabName = "BFD_Kit_Spawner_TentaRoot";
@@ -62,6 +63,10 @@ public class Prefabs
         dungeonBlackforest = AssetUtils.LoadAssetBundleFromResources(
             "dungeonblackforest",
             Assembly.GetExecutingAssembly());
+        
+        dungeonCastle = AssetUtils.LoadAssetBundleFromResources(
+            "dungeoncastle",
+            Assembly.GetExecutingAssembly());
     }
 
     public static void AddAllPrefabs()
@@ -79,7 +84,8 @@ public class Prefabs
         AddBFDKitPrefabs();
         AddBFDPuzzleComponents(dungeonBlackforestGameObjects);
         AddBlackForestDungeonPrefabs(dungeonBlackforestGameObjects);
-        
+
+        // Forbidden Catacombs prefabs are registered through DungeonPackDB.
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
     
