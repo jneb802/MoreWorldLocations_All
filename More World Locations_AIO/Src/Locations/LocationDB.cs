@@ -23,6 +23,7 @@ public static class LocationDB
             .Concat(LocationDefinitions.Ports)
             .Concat(LocationDefinitions.Traders)
             .Concat(LocationDefinitions.Trainers)
+            .Concat(LocationDefinitions.Dungeons)
             .ToArray();
 
         _byName = All.ToDictionary(l => l.Name);
