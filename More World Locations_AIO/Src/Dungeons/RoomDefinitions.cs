@@ -6,6 +6,8 @@ public static class RoomDefinitions
 {
     private const string UndergroundRuinsTheme = "Underground Ruins";
     private const string UndergroundRuinsRoomPath = "Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/";
+    private const string ForbiddenCatacombsTheme = "CD_Catacomb";
+    private const string ForbiddenCatacombsRoomPath = "Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/";
 
     public static readonly MWLRoom[] UndergroundRuins =
     {
@@ -84,5 +86,122 @@ public static class RoomDefinitions
         new() { Name = "BFD_Modular12_Solution", AssetPath = UndergroundRuinsRoomPath + "BFD_Modular12_Solution.prefab",
             PlacementLimit = 1,
             Config = new RoomConfig { ThemeName = UndergroundRuinsTheme, Weight = 0f } },
+    };
+
+    public static readonly MWLRoom[] ForbiddenCatacombs =
+    {
+        new() { Name = "CD_Entrance2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Entrance2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Entrance = true, Weight = 1.0f } },
+
+        new() { Name = "CD_Room1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Room1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Room2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Room2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Room3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Room3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Room4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Room4.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_RoomBig1", AssetPath = ForbiddenCatacombsRoomPath + "CD_RoomBig1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_RoomBig2", AssetPath = ForbiddenCatacombsRoomPath + "CD_RoomBig2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_RoomBig3", AssetPath = ForbiddenCatacombsRoomPath + "CD_RoomBig3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Hallway1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Hallway1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Hallway2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Hallway2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Hallway3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Hallway3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap4.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap5", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap5.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap6", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap6.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap7", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap7.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap8", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap8.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap9", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap9.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap10", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap10.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap11", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap11.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap12", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap12.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap13", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap13.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Endcap14", AssetPath = ForbiddenCatacombsRoomPath + "CD_Endcap14.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Hallway1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Hallway1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.5f } },
+
+        new() { Name = "CD_Lower_Hallway2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Hallway2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.5f } },
+
+        new() { Name = "CD_Lower_Hallway3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Hallway3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.5f } },
+
+        new() { Name = "CD_Lower_Hallway4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Hallway4.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.5f } },
+
+        new() { Name = "CD_Lower_Room1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Room1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Room2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Room2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Room3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Room3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Cell1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Cell1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Cell2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Cell2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Cell3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Cell3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Endcap1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap1.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Endcap2", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap2.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Endcap3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap3.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Endcap4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap4.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
     };
 }
