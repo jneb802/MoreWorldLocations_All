@@ -22,6 +22,11 @@ public static class DungeonPackRegistrar
         {
             RegisterCustomPrefab(bundle, custom, pack.Name);
         }
+
+        if (pack.DungeonGeneratorPrefab != null)
+        {
+            RegisterCustomPrefab(bundle, pack.DungeonGeneratorPrefab, pack.Name);
+        }
     }
 
     private static void RegisterKitClone(KitClone clone)

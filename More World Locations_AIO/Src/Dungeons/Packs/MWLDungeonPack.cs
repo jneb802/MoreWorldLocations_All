@@ -58,7 +58,8 @@ public class MWLDungeonPack
     public string ExteriorLocationName { get; set; }
     public Func<AssetBundle> Bundle { get; set; }
     public KitClone[] KitClones { get; set; } = Array.Empty<KitClone>();
-    public KitSpawner[] KitSpawners { get; set; } = Array.Empty<KitSpawner>();
-    public KitContainer[] KitContainers { get; set; } = Array.Empty<KitContainer>();
+
     public CustomPrefabSpec[] CustomPrefabs { get; set; } = Array.Empty<CustomPrefabSpec>();
+
+    public CustomPrefabSpec DungeonGeneratorPrefab { get; set; }
 }
