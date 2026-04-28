@@ -174,6 +174,9 @@ public static class RoomDefinitions
         new() { Name = "CD_Lower_Hallway4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Hallway4.prefab",
             Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.5f } },
 
+        new() { Name = "CD_Lower_Hallway5", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Hallway5.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.5f } },
+
         new() { Name = "CD_Lower_Room1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Room1.prefab",
             Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
 
@@ -192,6 +195,12 @@ public static class RoomDefinitions
         new() { Name = "CD_Lower_Cell3", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Cell3.prefab",
             Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
 
+        new() { Name = "CD_Lower_Cell4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Cell4.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Cell5", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Cell5.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Weight = 1.0f } },
+
         new() { Name = "CD_Lower_Endcap1", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap1.prefab",
             Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
 
@@ -202,6 +211,9 @@ public static class RoomDefinitions
             Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
 
         new() { Name = "CD_Lower_Endcap4", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap4.prefab",
+            Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
+
+        new() { Name = "CD_Lower_Endcap5", AssetPath = ForbiddenCatacombsRoomPath + "CD_Lower_Endcap5.prefab",
             Config = new RoomConfig { ThemeName = ForbiddenCatacombsTheme, Endcap = true, EndcapPrio = 0, Weight = 1.0f } },
     };
 }
