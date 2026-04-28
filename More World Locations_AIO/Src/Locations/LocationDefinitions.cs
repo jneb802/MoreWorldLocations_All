@@ -561,11 +561,11 @@ public static class LocationDefinitions
     
     public static readonly MWLLocation[] Dungeons =
     {
-        new() { Name = "bfd_exterior", AssetPath = "Assets/WarpProjects/Dungeons/UndergroundRuins/bfd_exterior.prefab", DungeonTheme = "Underground Ruins", InteriorPrefabName = "InteriorEnvironmentZoneForce",
+        new() { Name = "BFD_Exterior", AssetPath = "Assets/WarpProjects/Dungeons/UndergroundRuins/BFD_Exterior.prefab", DungeonTheme = "Underground Ruins", InteriorPrefabName = "InteriorEnvironmentZoneForce",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, BiomeArea = Heightmap.BiomeArea.Median, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Dungeon_UndergroundRuins", MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 10, MinDistance = LocationRings.Ring3.MinDistance, MaxDistance = LocationRings.Ring6.MaxDistance } },
         
-        new() { Name = "cd_exterior", AssetPath = "Assets/WarpProjects/Dungeons/Catacomb/cd_exterior.prefab", DungeonTheme = "CD_Catacomb",
-            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, BiomeArea = Heightmap.BiomeArea.Everything, Priotized = true, ExteriorRadius = 12, ClearArea = true, SlopeRotation = true, RandomRotation = false, Group = "Dungeon_Catacomb", MinDistanceFromSimilar = 512, MinTerrainDelta = 0.3f, MinAltitude = 2f, MinDistance = LocationRings.Ring2.MinDistance } },
+        new() { Name = "CD_Exterior1", AssetPath = "Assets/WarpProjects/Dungeons/ForbiddenCatacombs/CD_Exterior1.prefab", DungeonTheme = "CD_Catacomb", InteriorPrefabName = "InteriorEnvironmentZoneForce",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, BiomeArea = Heightmap.BiomeArea.Median, Priotized = true, ExteriorRadius = 12, ClearArea = true, RandomRotation = false, Group = "Dungeon_Catacomb", MinDistanceFromSimilar = 512, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance } },
     };
     
 }

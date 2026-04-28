@@ -69,7 +69,6 @@ BlackForest:
   MWL_WoodTower1: 10
   MWL_WoodTower2: 10
   MWL_WoodTower3: 10
-  bfd_exterior: 30
 
 Swamp:
   MWL_AbandonedHouse1: 15
@@ -181,3 +180,7 @@ Trainers:
   MWL_MistTrainer1: 5
   MWL_PlainsTrainer1: 5
   MWL_SwampTrainer1: 5
+  
+Dungeons:
+  BFD_Exterior: 30
+  CD_Exterior1: 30
