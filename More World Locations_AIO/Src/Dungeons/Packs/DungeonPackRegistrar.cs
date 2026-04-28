@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Jotunn.Entities;
 using Jotunn.Managers;
-using More_World_Locations_AIO.Utils;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.Dungeons.Packs;
@@ -11,7 +12,9 @@ public static class DungeonPackRegistrar
     {
         if (pack == null) return;
 
-        AssetBundle bundle = pack.Bundle?.Invoke();
+        ValidatePackDefinition(pack);
+
+        AssetBundle? bundle = pack.Bundle?.Invoke();
 
         foreach (KitClone clone in pack.KitClones)
         {
@@ -27,6 +30,8 @@ public static class DungeonPackRegistrar
         {
             RegisterCustomPrefab(bundle, pack.DungeonGeneratorPrefab, pack.Name);
         }
+
+        VerifyRegisteredPrefabs(pack);
     }
 
     private static void RegisterKitClone(KitClone clone)
@@ -57,7 +62,7 @@ public static class DungeonPackRegistrar
         PrefabManager.Instance.AddPrefab(customPrefab);
     }
 
-    private static void RegisterCustomPrefab(AssetBundle bundle, CustomPrefabSpec spec, string packName)
+    private static void RegisterCustomPrefab(AssetBundle? bundle, CustomPrefabSpec spec, string packName)
     {
         if (string.IsNullOrEmpty(spec.Name))
         {
@@ -70,7 +75,7 @@ public static class DungeonPackRegistrar
             PrefabManager.Instance.RemovePrefab(spec.Name);
         }
 
-        GameObject prefab = null;
+        GameObject? prefab = null;
 
         switch (spec.Source)
         {
@@ -108,6 +113,13 @@ public static class DungeonPackRegistrar
                 break;
         }
 
+        if (prefab == null)
+        {
+            Debug.LogWarning(
+                $"DungeonPackRegistrar: prefab '{spec.Name}' resolved to null in pack '{packName}'");
+            return;
+        }
+
         KitStripper.Strip(prefab, spec.Strip);
         spec.Configure?.Invoke(prefab);
 
@@ -117,5 +129,116 @@ public static class DungeonPackRegistrar
 
         CustomPrefab customPrefab = new CustomPrefab(prefab, fixReference);
         PrefabManager.Instance.AddPrefab(customPrefab);
+    }
+
+    private static void ValidatePackDefinition(MWLDungeonPack pack)
+    {
+        string packName = string.IsNullOrEmpty(pack.Name) ? "<unnamed>" : pack.Name;
+        string[] definedNames = GetDefinedPrefabNames(pack);
+
+        string[] duplicateNames = definedNames
+            .Where(name => !string.IsNullOrEmpty(name))
+            .GroupBy(name => name, System.StringComparer.Ordinal)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .OrderBy(name => name)
+            .ToArray();
+
+        if (duplicateNames.Length > 0)
+        {
+            Debug.LogWarning(
+                $"DungeonPackRegistrar: pack '{packName}' defines duplicate prefab names: {string.Join(", ", duplicateNames)}");
+        }
+
+        string[] expectedNames = NormalizeNames(pack.ExpectedPrefabNames);
+        if (expectedNames.Length == 0)
+        {
+            return;
+        }
+
+        HashSet<string> definedSet = new(definedNames, System.StringComparer.Ordinal);
+        HashSet<string> expectedSet = new(expectedNames, System.StringComparer.Ordinal);
+
+        string[] missingFromDefinition = expectedSet
+            .Where(name => !definedSet.Contains(name))
+            .OrderBy(name => name)
+            .ToArray();
+
+        string[] extraInDefinition = definedSet
+            .Where(name => !expectedSet.Contains(name))
+            .OrderBy(name => name)
+            .ToArray();
+
+        if (missingFromDefinition.Length > 0)
+        {
+            Debug.LogWarning(
+                $"DungeonPackRegistrar: pack '{packName}' is missing expected prefab definitions: {string.Join(", ", missingFromDefinition)}");
+        }
+
+        if (extraInDefinition.Length > 0)
+        {
+            Debug.LogWarning(
+                $"DungeonPackRegistrar: pack '{packName}' defines unexpected prefabs: {string.Join(", ", extraInDefinition)}");
+        }
+    }
+
+    private static void VerifyRegisteredPrefabs(MWLDungeonPack pack)
+    {
+        string[] expectedNames = NormalizeNames(pack.ExpectedPrefabNames);
+        if (expectedNames.Length == 0)
+        {
+            return;
+        }
+
+        string packName = string.IsNullOrEmpty(pack.Name) ? "<unnamed>" : pack.Name;
+        string[] missingPrefabs = expectedNames
+            .Where(name => PrefabManager.Instance.GetPrefab(name) == null)
+            .OrderBy(name => name)
+            .ToArray();
+
+        if (missingPrefabs.Length > 0)
+        {
+            Debug.LogWarning(
+                $"DungeonPackRegistrar: pack '{packName}' failed to register expected prefabs: {string.Join(", ", missingPrefabs)}");
+            return;
+        }
+
+        Debug.Log(
+            $"DungeonPackRegistrar: verified {expectedNames.Length} prefabs for pack '{packName}'");
+    }
+
+    private static string[] GetDefinedPrefabNames(MWLDungeonPack pack)
+    {
+        List<string> names = new();
+
+        if (pack.KitClones != null)
+        {
+            foreach (KitClone clone in pack.KitClones)
+            {
+                names.Add(clone.Name);
+            }
+        }
+
+        if (pack.CustomPrefabs != null)
+        {
+            foreach (CustomPrefabSpec spec in pack.CustomPrefabs)
+            {
+                names.Add(spec.Name);
+            }
+        }
+
+        if (pack.DungeonGeneratorPrefab != null)
+        {
+            names.Add(pack.DungeonGeneratorPrefab.Name);
+        }
+
+        return NormalizeNames(names);
+    }
+
+    private static string[] NormalizeNames(IEnumerable<string> names)
+    {
+        return names?
+            .Where(name => !string.IsNullOrEmpty(name))
+            .ToArray() ?? System.Array.Empty<string>();
     }
 }

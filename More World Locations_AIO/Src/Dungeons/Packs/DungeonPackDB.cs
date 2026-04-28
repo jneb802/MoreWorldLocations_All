@@ -4,6 +4,7 @@ public static class DungeonPackDB
 {
     public static readonly MWLDungeonPack[] All =
     {
+        UndergroundRuinsPack.Pack,
         ForbiddenCatacombsPack.Pack,
     };
 

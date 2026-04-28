@@ -62,4 +62,5 @@ public class MWLDungeonPack
     public CustomPrefabSpec[] CustomPrefabs { get; set; } = Array.Empty<CustomPrefabSpec>();
 
     public CustomPrefabSpec DungeonGeneratorPrefab { get; set; }
+    public string[] ExpectedPrefabNames { get; set; } = Array.Empty<string>();
 }
