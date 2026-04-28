@@ -33,13 +33,13 @@ public static class ForbiddenCatacombsPack
             new KitClone { Name = KitPrefix + "iron_floor_1x1",   VanillaSource = "iron_floor_1x1",   Strip = InertGeometry },
             new KitClone { Name = KitPrefix + "iron_floor_2x2",   VanillaSource = "iron_floor_2x2",   Strip = InertGeometry },
             new KitClone { Name = KitPrefix + "blackmarble_stair", VanillaSource = "blackmarble_stair", Strip = InertGeometry },
-            new KitClone { Name = KitPrefix + "goblin_banner",    VanillaSource = "goblin_banner",    Strip = InertGeometry },
-
-            // Stateful clones keep ZNetView so doors/containers/spawners persist.
-            new KitClone { Name = KitPrefix + "crypt_skeleton_chest", VanillaSource = "crypt_skeleton_chest" },
-            new KitClone { Name = KitPrefix + "dungeon_sunkencrypt_irongate_rusty", VanillaSource = "dungeon_sunkencrypt_irongate_rusty" },
-            new KitClone { Name = KitPrefix + "sunken_crypt_gate", VanillaSource = "sunken_crypt_gate" },
-            new KitClone { Name = KitPrefix + "Spawner_DraugrPile", VanillaSource = "Spawner_DraugrPile" },
+            // new KitClone { Name = KitPrefix + "goblin_banner",    VanillaSource = "goblin_banner",    Strip = InertGeometry },
+            //
+            // // Stateful clones keep ZNetView so doors/containers/spawners persist.
+            // new KitClone { Name = KitPrefix + "crypt_skeleton_chest", VanillaSource = "crypt_skeleton_chest" },
+            // new KitClone { Name = KitPrefix + "dungeon_sunkencrypt_irongate_rusty", VanillaSource = "dungeon_sunkencrypt_irongate_rusty" },
+            // new KitClone { Name = KitPrefix + "sunken_crypt_gate", VanillaSource = "sunken_crypt_gate" },
+            // new KitClone { Name = KitPrefix + "Spawner_DraugrPile", VanillaSource = "Spawner_DraugrPile" },
 
             new KitClone
             {
@@ -53,11 +53,17 @@ public static class ForbiddenCatacombsPack
         {
             // AltarDoor's MonoBehaviour lives under namespace Forbidden_Catacombs
             // (Src/Dungeons/AltarDoor.cs) so the bundle's serialized binding resolves.
-            new CustomPrefabSpec { Name = KitPrefix + "AltarDoor",   Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = KitPrefix + "altarHolder", Source = CustomPrefabSource.Bundled },
+            new CustomPrefabSpec { Name = KitPrefix + "AltarDoor",   Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = KitPrefix + "secretdoor",  Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = KitPrefix + "CryptKey",    Source = CustomPrefabSource.Bundled },
-            new CustomPrefabSpec { Name = KitPrefix + "water",       Source = CustomPrefabSource.Bundled },
+            // new CustomPrefabSpec { Name = KitPrefix + "water",       Source = CustomPrefabSource.Bundled },
+        },
+
+        DungeonGeneratorPrefab = new CustomPrefabSpec
+        {
+            Name = "DG_CatacombDungeon",
+            Source = CustomPrefabSource.Bundled,
         },
     };
 
