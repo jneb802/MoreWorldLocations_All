@@ -57,9 +57,6 @@ public static class UndergroundRuinsPack
             new CustomPrefabSpec { Name = "BFD_CryptKey", Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = "BFD_Modular6_Light", Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = "BFD_Modular8_Puzzle_Light", Source = CustomPrefabSource.Bundled },
-            // Keep this explicit because the current AIO bundle still contains it and the
-            // old Prefabs.cs path registered it through the bundle sweep.
-            new CustomPrefabSpec { Name = "8_PuzzleStand", Source = CustomPrefabSource.Bundled },
         };
 
         for (int i = 0; i < PuzzleCount; i++)
