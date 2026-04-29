@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Jotunn;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
@@ -123,8 +124,18 @@ public static class DungeonPackRegistrar
         KitStripper.Strip(prefab, spec.Strip);
         spec.Configure?.Invoke(prefab);
 
+        bool clonedFromCustomPrefab = spec.Source == CustomPrefabSource.VanillaClone
+                                      && !string.IsNullOrEmpty(spec.VanillaSource)
+                                      && CustomPrefab.IsCustomPrefab(spec.VanillaSource);
+        if (clonedFromCustomPrefab)
+        {
+            // Clones created from bundled custom prefabs inherit unresolved JVLmock_
+            // references unless we fix the clone before it is registered.
+            prefab.FixReferences(recursive: true);
+        }
+
         // Bundled assets need fixReference=true so JVLmock_ children resolve.
-        // Vanilla clones have already-resolved references.
+        // Clones sourced from bundled custom prefabs are fixed above.
         bool fixReference = spec.Source == CustomPrefabSource.Bundled;
 
         CustomPrefab customPrefab = new CustomPrefab(prefab, fixReference);
