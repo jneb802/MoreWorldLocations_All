@@ -66,6 +66,8 @@
         <EmbeddedResource Include="assets\dungeonblackforest" />
         <None Remove="assets\dungeoncastle" />
         <EmbeddedResource Include="assets\dungeoncastle" />
+        <None Remove="assets\mockplaceholders" />
+        <EmbeddedResource Include="assets\mockplaceholders" />
     </ItemGroup>
 
     <!-- Content files -->

@@ -21,9 +21,16 @@ public class Prefabs
     public static AssetBundle vendorNpcBundle;
     public static AssetBundle dungeonBlackforest;
     public static AssetBundle dungeonCastle;
+    public static AssetBundle mockPlaceHoldersBundle;
+    
+    public static GameObject[] mockPlaceHoldersGameObjects;
     
     public static void LoadPrefabBundles()
     {
+        mockPlaceHoldersBundle = AssetUtils.LoadAssetBundleFromResources(
+            "mockplaceholders",
+            Assembly.GetExecutingAssembly());
+        
         prefabBundle_1 = AssetUtils.LoadAssetBundleFromResources(
             "moreworldlocations_prefabs_1",
             Assembly.GetExecutingAssembly());
@@ -55,6 +62,8 @@ public class Prefabs
 
     public static void AddAllPrefabs()
     {
+        mockPlaceHoldersGameObjects = mockPlaceHoldersBundle.LoadAllAssets<GameObject>();
+        
         GameObject[] gameObjects1 = prefabBundle_1.LoadAllAssets<GameObject>();
         GameObject[] gameObjects2 = prefabBundle_2.LoadAllAssets<GameObject>();
         GameObject[] gameObjects3 = prefabBundle_3.LoadAllAssets<GameObject>();
