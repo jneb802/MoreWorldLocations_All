@@ -21,7 +21,9 @@ public static class UpgradeWorldCommands
                 LocationDefinitions.Plains,
                 LocationDefinitions.Mistlands,
                 LocationDefinitions.Ashlands,
-                LocationDefinitions.Traders, LocationDefinitions.Trainers
+                LocationDefinitions.Traders, 
+                LocationDefinitions.Trainers,
+                LocationDefinitions.Dungeons
             ) + " start");
 
         // Meadows biome command
@@ -69,5 +71,9 @@ public static class UpgradeWorldCommands
         // Traders command
         UpgradeWorld.Upgrade.Register("mwl_traders", "Adds MWL trader locations to corresponding biomes.",
             "locations_add " + Names(LocationDefinitions.Traders, LocationDefinitions.Trainers) + " start");
+
+        // Dungeons command
+        UpgradeWorld.Upgrade.Register("mwl_dungeons", "Adds MWL dungeon locations to corresponding biomes.",
+            "locations_add " + Names(LocationDefinitions.Dungeons) + " start");
     }
 }
