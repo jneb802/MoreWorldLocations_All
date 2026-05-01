@@ -62,6 +62,8 @@
         <EmbeddedResource Include="assets\moreworldvendors" />
         <None Remove="assets\vendornpc" />
         <EmbeddedResource Include="assets\vendornpc" />
+        <None Remove="assets\porticon" />
+        <EmbeddedResource Include="assets\porticon" />
     </ItemGroup>
 
     <!-- Content files -->

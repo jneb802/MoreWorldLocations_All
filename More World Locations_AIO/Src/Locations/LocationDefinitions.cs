@@ -498,19 +498,19 @@ public static class LocationDefinitions
     public static readonly MWLLocation[] Ports =
     {
         new() { Name = "MWL_Port1", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port1.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports" } },
+            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", IconPlaced = true} },
 
         new() { Name = "MWL_Port2", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port2.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", BiomeArea = Heightmap.BiomeArea.Edge } },
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", BiomeArea = Heightmap.BiomeArea.Edge, IconPlaced = true } },
 
         new() { Name = "MWL_Port3", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port3.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 10f, MinAltitude = -1f, MaxAltitude = 2, SlopeRotation = true, Group = "MWL_Ports" } },
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 10f, MinAltitude = -1f, MaxAltitude = 2, SlopeRotation = true, Group = "MWL_Ports", IconPlaced = true } },
 
         new() { Name = "MWL_Port4", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port4.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = -1f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports" } },
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = -1f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", IconPlaced = true } },
 
         new() { Name = "MWL_Port5", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port5.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 6f, MinAltitude = -0.5f, MaxAltitude = 2, SlopeRotation = true, Group = "MWL_Ports" , MaxDistance = 9100}  },
+            Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 6f, MinAltitude = -0.5f, MaxAltitude = 2, SlopeRotation = true, Group = "MWL_Ports" , MaxDistance = 9100, IconPlaced = true}  },
     };
 
     // ── Traders ──────────────────────────────────────────────────────────
