@@ -37,6 +37,13 @@ public class TraderPrefabs
         AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", GetTraderItems("MWL_PlainsTrainer1_Trainer"));
         AddVendorPrefab(assetBundle, "MWL_MistTrainer1_Trainer", "$mwl_misttrainer1_trainer", GetTraderItems("MWL_MistTrainer1_Trainer"));
     }
+    
+    public static void AddCartographerPrefabs()
+    {
+        var assetBundle = Prefabs.vendorNpcBundle;
+
+        AddVendorPrefab(assetBundle, "MWL_Cartographer_NPC", "$mwl_cartogapher_npc", GetTraderItems("MWL_MeadowsTrainer1_Trainer"));
+    }
 
     private static void AddVendorPrefab(AssetBundle assetBundle, string prefabName, string traderName, List<Trader.TradeItem> items)
     {
