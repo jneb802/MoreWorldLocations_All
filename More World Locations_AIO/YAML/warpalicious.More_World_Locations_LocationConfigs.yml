@@ -6,6 +6,8 @@
 version: 1
 
 Meadows:
+  MWL_StoneShrine2: 15
+  MWL_StoreHouseStone1: 15
   MWL_DeerShrine1: 10
   MWL_DeerShrine2: 10
   MWL_MaypoleHut1: 10
@@ -31,8 +33,10 @@ Meadows:
   MWL_RuinsChurch1: 25
   MWL_RuinsWell1: 5
   MWL_SmallHouse1: 20
+  MWL_VikingSacrifice1: 10
 
 BlackForest:
+  MWL_StoneTower3: 15
   MWL_CoastTower1: 15
   MWL_ForestCamp1: 20
   MWL_ForestForge1: 20
@@ -66,11 +70,13 @@ BlackForest:
   MWL_StoneFormation1: 15
   MWL_StoneOutlook1: 10
   MWL_Tavern1: 15
+  MWL_SupplyBarn1: 10
   MWL_WoodTower1: 10
   MWL_WoodTower2: 10
   MWL_WoodTower3: 10
 
 Swamp:
+  MWL_StoneBeacon1: 15
   MWL_AbandonedHouse1: 15
   MWL_Belmont1: 5
   MWL_CastleCorner1: 15
@@ -89,6 +95,7 @@ Swamp:
   MWL_SwampGrave1: 25
   MWL_SwampHouse1: 20
   MWL_SwampRuin1: 25
+  MWL_SwampStakeFort1: 10
   MWL_SwampTemple1: 10
   MWL_SwampTower1: 20
   MWL_SwampTower2: 25
@@ -98,10 +105,14 @@ Swamp:
   MWL_TreeTowers1: 20
 
 Mountains:
+  MWL_MountainsAedicule1: 15
   MWL_MountainCultShrine1: 15
   MWL_MountainDvergrShrine1: 15
   MWL_MountainDvergrShrine2: 15
   MWL_MountainOverlook1: 15
+  MWL_MountainsHogan1: 10
+  MWL_MountainsPagota1: 10
+  MWL_MountainsTower1: 10
   MWL_MountainShrine1: 20
   MWL_RuinsChurch2: 15
   MWL_StoneAltar1: 15
@@ -117,6 +128,17 @@ Mountains:
   MWL_WoodHouse1: 5
 
 Plains:
+  MWL_FulingStoneHouse1: 15
+  MWL_FulingStoneHouse2: 15
+  MWL_FulingStoneHouse3: 15
+  MWL_FulingStoneHouse4: 15
+  MWL_FulingStoneHouse5: 15
+  MWL_FulingStoneOpen1: 15
+  MWL_FulingStoneOpen2: 15
+  MWL_FulingTemple5: 15
+  MWL_MinddripHallow1: 15
+  MWL_StoneTopHouse1: 15
+  MWL_FulingTarPit1: 15
   MWL_FulingRock1: 15
   MWL_FulingTemple1: 15
   MWL_FulingTemple2: 10
@@ -128,6 +150,8 @@ Plains:
   MWL_FulingVillage2: 15
   MWL_FulingWall1: 20
   MWL_GoblinFort1: 10
+  MWL_PlainsArena2: 10
+  MWL_PlainsOracle1: 10
   MWL_PlainsPillar1: 15
   MWL_RockGarden1: 15
 
@@ -155,6 +179,9 @@ Mistlands:
   MWL_SecretRoom1: 15
 
 Ashlands:
+  MWL_AshWallPost1: 5
+  MWL_AshlandsFort4: 5
+  MWL_AshTower1: 5
   MWL_AshlandsFort1: 5
   MWL_AshlandsFort2: 5
   MWL_AshlandsFort3: 5

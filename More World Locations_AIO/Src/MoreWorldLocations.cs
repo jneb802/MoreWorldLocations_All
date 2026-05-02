@@ -69,11 +69,11 @@ namespace More_World_Locations_AIO
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
 
-            // AssetBundles.BuildCombinedManifest(
-            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
-            //     "full",
-            //     LocationDB.GetAllAssetPaths()
-            // );
+            AssetBundles.BuildCombinedManifest(
+                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
+                "full",
+                LocationDB.GetAllAssetPaths()
+            );
 
             LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
