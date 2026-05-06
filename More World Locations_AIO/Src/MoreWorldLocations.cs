@@ -40,16 +40,19 @@ namespace More_World_Locations_AIO
 
         private const string MoreWorldTradersGUID = "warpalicious.More_World_Traders";
 
-        public void Awake()
+        public void Start()
         {
             if (Chainloader.PluginInfos.ContainsKey(MoreWorldTradersGUID))
             {
                 More_World_Locations_AIOLogger.LogError(
                     "More World Traders (warpalicious.More_World_Traders) is loaded alongside More World Locations AIO. " +
                     "Traders are fully integrated into More World Locations AIO as of version 4.0.0. " +
-                    "Please remove the More World Traders mod from your mod list to avoid conflicts and duplicate content.");
+                    "Please remove the More World Traders mod.");
             }
+        }
 
+        public void Awake()
+        {
             Analytics.Init(Config, ModGUID, ModVersion);
 
             BepinexConfigs.Config = Config;
@@ -80,11 +83,11 @@ namespace More_World_Locations_AIO
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
 
-            AssetBundles.BuildCombinedManifest(
-                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
-                "full",
-                LocationDB.GetAllAssetPaths()
-            );
+            // AssetBundles.BuildCombinedManifest(
+            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
+            //     "full",
+            //     LocationDB.GetAllAssetPaths()
+            // );
 
             LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
