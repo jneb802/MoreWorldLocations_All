@@ -55,6 +55,8 @@ public class Prefabs
         AddPrefabsFromBundle(gameObjects1);
         AddPrefabsFromBundle(gameObjects2);
         AddPrefabsFromBundle(gameObjects3);
+
+        MakeMDKitPrefabs();
         
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
@@ -99,6 +101,17 @@ public class Prefabs
             //     PrefabManager.Instance.AddPrefab(customPrefab); 
             // }
         }
+    }
+
+    public static void MakeMDKitPrefabs()
+    {
+        string widestoneName = "widestone";
+        string widestoneKitName = "MD_Kit_widestone";
+        
+        GameObject wideStoneCloned = PrefabManager.Instance.CreateClonedPrefab(widestoneKitName, widestoneName);
+        Object.DestroyImmediate(wideStoneCloned.GetComponent<Destructible>());
+        CustomPrefab customPrefab = new CustomPrefab(wideStoneCloned, fixReference: false);
+        PrefabManager.Instance.AddPrefab(customPrefab);
     }
 
     public static void AddContainerPrefab(GameObject prefab)

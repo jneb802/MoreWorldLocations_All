@@ -331,6 +331,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_DeerShrine1         | Ashenius             |
 | MWL_DeerShrine2         | Ashenius             |
 | MWL_MeadowsBarn1        | Aldhari              |
+| MWL_VikingSacrifice1    | |
 | MWL_MeadowsHouse2       | Aldhari              |
 | MWL_MeadowsRuin1        | Aldhari              |
 | MWL_MeadowsTomb4        | Aldhari              |
@@ -343,6 +344,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_RuinsTower3 | H1lli                |
 | MWL_RuinsTower8 | H1lli                |
 | MWL_Tavern1 | H1lli                |
+| MWL_SupplyBarn1 | |
 | MWL_WoodTower1 | H1lli           |
 | MWL_WoodTower2 | H1lli           |
 | MWL_WoodTower3 | H1lli           |
@@ -372,6 +374,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_SwampAltar4 | SmittySurvival                |
 | MWL_SwampCastle2 | Aldhari                |
 | MWL_SwampGrave1 | Aldhari           |
+| MWL_SwampStakeFort1 | |
 | MWL_SwampHouse1 | Aldhari           |
 | MWL_SwampRuin1 | SmittySurvival           |
 | MWL_SwampTower1 | SmittySurvival           |
@@ -389,10 +392,14 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_StoneTavern1 | H1lli                |
 | MWL_StoneTower1 | H1lli                |
 | MWL_StoneTower2 | H1lli                |
+| MWL_MountainsPagota1 | |
+| MWL_MountainsHogan1 | |
+| MWL_MountainsTower1 | |
 | MWL_WoodBarn1 | H1lli           |
 | MWL_WoodFarm1 | H1lli           |
 | MWL_WoodHouse1 | H1lli           |
 | MWL_FulingRock1 | BatgirlXXRobin               |
+| MWL_FulingTarPit1 | |
 | MWL_FulingTemple1 | Hilli               |
 | MWL_FulingTemple2 | Hilli               |
 | MWL_FulingTemple3 | Hilli                |
@@ -401,6 +408,8 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_FulingVillage2 | Hilli           |
 | MWL_FulingWall1 | Hilli                |
 | MWL_GoblinFort1 | PUP           |
+| MWL_PlainsArena2 | |
+| MWL_PlainsOracle1 | |
 | MWL_PlainsPillar1 | Warpalicious           |
 | MWL_GoblinCave1 | Warpalicious           |
 | MWL_MistFort2 | HiccupTheHermit               |

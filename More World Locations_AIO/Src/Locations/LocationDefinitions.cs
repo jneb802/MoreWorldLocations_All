@@ -76,6 +76,9 @@ public static class LocationDefinitions
             Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Median, Group = "Wood_small", Priotized = true, RandomRotation = false,
                 MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring2.MaxDistance, InForest = false } },
 
+        new() { Name = "MWL_VikingSacrifice1", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_VikingSacrifice1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Ruins_shrine", MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
+
         new() { Name = "MWL_MeadowsHouse2", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsHouse2.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Wood_small", Priotized = true, RandomRotation = false,
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring5.MinDistance, InForest = true } },
@@ -119,6 +122,14 @@ public static class LocationDefinitions
         new() { Name = "MWL_MeadowsTavern1", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsTavern1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false,
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = true } },
+
+        new() { Name = "MWL_StoneShrine2", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_StoneShrine2.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Shrine", Priotized = true, RandomRotation = false,
+                MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring4.MinDistance, InForest = false } },
+
+        new() { Name = "MWL_StoreHouseStone1", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_StoreHouseStone1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Structure_large", Priotized = true, RandomRotation = false,
+                MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, InForest = false } },
     };
 
     // ── Black Forest ──────────────────────────────────────────────────
@@ -145,6 +156,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_Tavern1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_Tavern1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 12, ClearArea = true, RandomRotation = false, Group = "Wood_small", MinDistanceFromSimilar = 256, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring3.MinDistance, MaxDistance = LocationRings.Ring3.MaxDistance, InForest = false } },
+
+        new() { Name = "MWL_SupplyBarn1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_SupplyBarn1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Wood_small", MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring4.MinDistance, InForest = false } },
 
         new() { Name = "MWL_WoodTower1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_WoodTower1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Wood_small", MinDistanceFromSimilar = 256, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring2.MaxDistance, InForest = false } },
@@ -229,6 +243,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_RuinedTower1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedTower1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "RuinedTower1", MinDistanceFromSimilar = 512, MaxTerrainDelta = 4f, MinAltitude = 2, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance } },
+
+        new() { Name = "MWL_StoneTower3", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_StoneTower3.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Tower_large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 2, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring6.MaxDistance } },
     };
 
     // ── Swamp ─────────────────────────────────────────────────────────
@@ -252,6 +269,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_SwampCastle2", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampCastle2.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 15, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_SwampStakeFort1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampStakeFort1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
 
         new() { Name = "MWL_SwampGrave1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampGrave1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 15, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
@@ -309,6 +329,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_TreeTowers1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_TreeTowers1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "TreeTowers1", MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance } },
+
+        new() { Name = "MWL_StoneBeacon1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_StoneBeacon1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Swamp_Ruins", MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance, InForest = false } },
     };
 
     // ── Mountains ─────────────────────────────────────────────────────
@@ -332,6 +355,15 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_StoneTower2", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_StoneTower2.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Small", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, MinDistanceFromSimilar = 256, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 70, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
+
+        new() { Name = "MWL_MountainsTower1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainsTower1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Medium", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 70, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
+
+        new() { Name = "MWL_MountainsPagota1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainsPagota1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Medium", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 70, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
+
+        new() { Name = "MWL_MountainsHogan1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainsHogan1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Medium", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 70, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
 
         new() { Name = "MWL_WoodBarn1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_WoodBarn1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "Mountain_Wood_1", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 3f, MinAltitude = 80, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
@@ -365,6 +397,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_MountainShrine1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainShrine1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Shrine", MinDistanceFromSimilar = 512, MaxTerrainDelta = 4f, MinAltitude = 2, MinDistance = LocationRings.Ring4.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance } },
+
+        new() { Name = "MWL_MountainsAedicule1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_MountainsAedicule1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Priotized = true, ExteriorRadius = 10, ClearArea = true, RandomRotation = false, Group = "Shrine", MinDistanceFromSimilar = 512, MaxTerrainDelta = 4f, MinAltitude = 2, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance } },
     };
 
     // ── Plains ────────────────────────────────────────────────────────
@@ -374,8 +409,14 @@ public static class LocationDefinitions
         new() { Name = "MWL_GoblinFort1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_GoblinFort1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsFort", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
 
+        new() { Name = "MWL_PlainsArena2", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_PlainsArena2.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsFort", Priotized = true, RandomRotation = false, ExteriorRadius = 22, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 2f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
         new() { Name = "MWL_FulingRock1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingRock1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsRock", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingTarPit1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTarPit1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsCamp", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 2f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
 
         new() { Name = "MWL_FulingVillage1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingVillage1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsVillage", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
@@ -401,6 +442,9 @@ public static class LocationDefinitions
         new() { Name = "MWL_FulingTemple4", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple4.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsTemple", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
 
+        new() { Name = "MWL_PlainsOracle1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_PlainsOracle1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsTemple", Priotized = true, RandomRotation = false, ExteriorRadius = 26, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
         new() { Name = "MWL_FulingWall1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingWall1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsCamp", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
 
@@ -409,6 +453,36 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_RockGarden1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_RockGarden1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsRock", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 6f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_MinddripHallow1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_MinddripHallow1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsInterior", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 8f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_StoneTopHouse1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_StoneTopHouse1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingTemple5", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple5.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsTemple", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneHouse1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneHouse1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneHouse2", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneHouse2.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneHouse3", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneHouse3.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneHouse4", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneHouse4.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneHouse5", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneHouse5.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneOpen1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneOpen1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
+        new() { Name = "MWL_FulingStoneOpen2", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingStoneOpen2.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
     };
 
     // ── Mistlands ─────────────────────────────────────────────────────
@@ -490,6 +564,15 @@ public static class LocationDefinitions
             Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ClearArea = true, RandomRotation = false, Group = "Ashlands_Fort", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = 1, InForest = false } },
 
         new() { Name = "MWL_AshlandsFort3", AssetPath = "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort3.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ClearArea = true, RandomRotation = false, Group = "Ashlands_Fort", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = 1, InForest = false } },
+
+        new() { Name = "MWL_AshTower1", AssetPath = "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshTower1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ClearArea = true, RandomRotation = false, Group = "Ashlands_Tower", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = 1, InForest = false } },
+
+        new() { Name = "MWL_AshlandsFort4", AssetPath = "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort4.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ClearArea = true, RandomRotation = false, Group = "Ashlands_Fort", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = 1, InForest = false } },
+
+        new() { Name = "MWL_AshWallPost1", AssetPath = "Assets/WarpProjects/More World Locations/Ashlands/MWL_AshWallPost1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ClearArea = true, RandomRotation = false, Group = "Ashlands_Fort", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = 1, InForest = false } },
     };
 
