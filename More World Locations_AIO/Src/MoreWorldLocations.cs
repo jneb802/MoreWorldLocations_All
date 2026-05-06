@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using Common;
 using HarmonyLib;
@@ -20,7 +21,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "4.6.0";
+        internal const string ModVersion = "4.7.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -36,6 +37,19 @@ namespace More_World_Locations_AIO
         public static GameObject root = null!;
         
         private static readonly System.Version MinJotunnVersion = new System.Version(2, 28, 0);
+
+        private const string MoreWorldTradersGUID = "warpalicious.More_World_Traders";
+
+        public void Start()
+        {
+            if (Chainloader.PluginInfos.ContainsKey(MoreWorldTradersGUID))
+            {
+                More_World_Locations_AIOLogger.LogError(
+                    "More World Traders (warpalicious.More_World_Traders) is loaded alongside More World Locations AIO. " +
+                    "Traders are fully integrated into More World Locations AIO as of version 4.0.0. " +
+                    "Please remove the More World Traders mod.");
+            }
+        }
 
         public void Awake()
         {
@@ -69,11 +83,11 @@ namespace More_World_Locations_AIO
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
 
-            AssetBundles.BuildCombinedManifest(
-                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
-                "full",
-                LocationDB.GetAllAssetPaths()
-            );
+            // AssetBundles.BuildCombinedManifest(
+            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
+            //     "full",
+            //     LocationDB.GetAllAssetPaths()
+            // );
 
             LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
