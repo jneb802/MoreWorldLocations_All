@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using Common;
 using HarmonyLib;
@@ -36,6 +37,19 @@ namespace More_World_Locations_AIO
         public static GameObject root = null!;
         
         private static readonly System.Version MinJotunnVersion = new System.Version(2, 28, 0);
+
+        private const string MoreWorldTradersGUID = "warpalicious.More_World_Traders";
+
+        public void Start()
+        {
+            if (Chainloader.PluginInfos.ContainsKey(MoreWorldTradersGUID))
+            {
+                More_World_Locations_AIOLogger.LogError(
+                    "More World Traders (warpalicious.More_World_Traders) is loaded alongside More World Locations AIO. " +
+                    "Traders are fully integrated into More World Locations AIO as of version 4.0.0. " +
+                    "Please remove the More World Traders mod.");
+            }
+        }
 
         public void Awake()
         {

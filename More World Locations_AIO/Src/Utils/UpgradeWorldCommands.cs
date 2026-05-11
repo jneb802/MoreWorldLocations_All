@@ -21,6 +21,7 @@ public static class UpgradeWorldCommands
                 LocationDefinitions.Plains,
                 LocationDefinitions.Mistlands,
                 LocationDefinitions.Ashlands,
+                LocationDefinitions.Ports,
                 LocationDefinitions.Traders, LocationDefinitions.Trainers
             ) + " start");
 
