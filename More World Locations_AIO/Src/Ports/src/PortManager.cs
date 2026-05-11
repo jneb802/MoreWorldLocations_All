@@ -47,7 +47,7 @@ public class PortManager : MonoBehaviour
     public void UpdatePortLocations()
     {
         if (!ZNet.instance || !ZNet.instance.IsServer() || !ZoneSystem.instance) return;
-        Dictionary<Vector2i, ZoneSystem.LocationInstance>.ValueCollection? allLocations = ZoneSystem.instance.GetLocationList();
+        var allLocations = ZoneSystem.instance.GetLocationList();
         List<ZoneSystem.LocationInstance> ports = allLocations.Where(location => location.m_location.m_group == "MWL_Ports").ToList();
         if (ports.Count == 0) return;
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"Registered {ports.Count} ports");
