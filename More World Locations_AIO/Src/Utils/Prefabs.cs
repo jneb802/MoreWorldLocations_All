@@ -22,6 +22,7 @@ public class Prefabs
     public static AssetBundle prefabBundle_3;
     public static AssetBundle vendorsPrefabBundle;
     public static AssetBundle vendorNpcBundle;
+    public static AssetBundle portIconBundle;
     
     public static void LoadPrefabBundles()
     {
@@ -43,6 +44,10 @@ public class Prefabs
         
         vendorNpcBundle = AssetUtils.LoadAssetBundleFromResources(
             "vendornpc",
+            Assembly.GetExecutingAssembly());
+        
+        portIconBundle = AssetUtils.LoadAssetBundleFromResources(
+            "porticon",
             Assembly.GetExecutingAssembly());
     }
 
