@@ -187,10 +187,10 @@ Ashlands:
   MWL_AshlandsFort3: 5
 
 Ports:
-  MWL_Port1: 5
-  MWL_Port2: 5
-  MWL_Port3: 5
-  MWL_Port4: 5
+  MWL_Port1: 10
+  MWL_Port2: 10
+  MWL_Port3: 10
+  MWL_Port4: 10
   MWL_Port5: 3
 
 Traders:
