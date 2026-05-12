@@ -140,7 +140,7 @@ public static class PortInit
             prefab.GetComponent<ZNetView>().m_persistent = false;
 
             // current size 10
-            Manifest manifest = new Manifest("Wooden Shipment", prefab.GetComponent<Container>());
+            Manifest manifest = new Manifest(LocalKeys.ManifestWoodenShipment, prefab.GetComponent<Container>());
             manifest.CostToShip = 50;
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("Resin", 5);
@@ -158,7 +158,7 @@ public static class PortInit
             prefab.GetComponent<ZNetView>().m_persistent = false;
 
             // current size 12
-            Manifest manifest = new Manifest("Barrel Shipment", prefab.GetComponent<Container>());
+            Manifest manifest = new Manifest(LocalKeys.ManifestBarrelShipment, prefab.GetComponent<Container>());
             manifest.CostToShip = 55;
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("BarrelRings", 1);
@@ -176,7 +176,7 @@ public static class PortInit
             prefab.GetComponent<ZNetView>().m_persistent = false;
 
             // current size 24
-            Manifest manifest = new Manifest("Fine Shipment", prefab.GetComponent<Container>());
+            Manifest manifest = new Manifest(LocalKeys.ManifestFineShipment, prefab.GetComponent<Container>());
             manifest.CostToShip = 100;
             manifest.Recipe.Add("FineWood", 10);
             manifest.Recipe.Add("Iron", 2);
@@ -195,7 +195,7 @@ public static class PortInit
             prefab.GetComponent<ZNetView>().m_persistent = false;
 
             // current size 32
-            Manifest manifest = new Manifest("Fuling Shipment", prefab.GetComponent<Container>());
+            Manifest manifest = new Manifest(LocalKeys.ManifestFulingShipment, prefab.GetComponent<Container>());
             manifest.CostToShip = 280;
             manifest.Recipe.Add("FineWood", 10);
             manifest.Recipe.Add("Tar", 2);
@@ -222,7 +222,7 @@ public static class PortInit
             // new size 40
             // this container has default items, remove
             container.m_defaultItems.m_drops.Clear();
-            Manifest manifest = new Manifest("Dvergr Shipment", prefab.GetComponent<Container>());
+            Manifest manifest = new Manifest(LocalKeys.ManifestDvergrShipment, prefab.GetComponent<Container>());
             manifest.CostToShip = 410;
             manifest.Recipe.Add("YggdrasilWood", 10);
             manifest.Recipe.Add("Copper", 2);

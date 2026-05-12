@@ -461,7 +461,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
                 string time = Shipment.FormatTime(remainingTime);
                 sb.AppendFormat("\n{3}: <color=orange>{0}</color> (<color=yellow>{1}</color>{2})", delivery.OriginPortName, delivery.State.ToKey(), string.IsNullOrEmpty(time) ? "" : $", {time}", LocalKeys.Origin);
             }
-            sb.Append($"\n\nShipments (<color=yellow>{shipments.Count}</color>): ");
+            sb.Append($"\n\n{LocalKeys.Shipments} (<color=yellow>{shipments.Count}</color>): ");
             foreach (Shipment? shipment in shipments)
             {
                 double remainingTime = shipment.State == ShipmentState.InTransit 

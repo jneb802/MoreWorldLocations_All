@@ -41,6 +41,21 @@ public static class LocalKeys
     public static readonly string Capacity = "$label_capacity";
     public static readonly string CostToShip = "$label_cost_to_ship";
     public static readonly string DeliveryCollected = "$msg_delivery_collected";
+    public static readonly string PortsTooltipTopic = "$label_ports_tooltip";
+    public static readonly string ShipmentSingular = "$label_shipment_single";
+    public static readonly string DeliverySingular = "$label_delivery_single";
+    public static readonly string TutorialIntroduction = "$label_tutorial_introduction";
+    public static readonly string TutorialTextIntroduction = "$tutorial_introduction";
+    public static readonly string TutorialTextPort = "$tutorial_port";
+    public static readonly string TutorialTextManifest = "$tutorial_manifest";
+    public static readonly string TutorialTextShipment = "$tutorial_shipment";
+    public static readonly string TutorialTextDelivery = "$tutorial_delivery";
+    public static readonly string TutorialTextTeleport = "$tutorial_teleport";
+    public static readonly string ManifestWoodenShipment = "$manifest_wooden_shipment";
+    public static readonly string ManifestBarrelShipment = "$manifest_barrel_shipment";
+    public static readonly string ManifestFineShipment = "$manifest_fine_shipment";
+    public static readonly string ManifestFulingShipment = "$manifest_fuling_shipment";
+    public static readonly string ManifestDvergrShipment = "$manifest_dvergr_shipment";
 
     public static string ToKey(this ShipmentState state) => state switch
     {
