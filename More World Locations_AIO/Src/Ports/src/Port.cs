@@ -38,7 +38,21 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public void Start()
     {
         if (!m_view.IsValid()) return;
+        if (BepinexConfigs.UseIndividualPortIcons) StartCoroutine(DiscoverIconCoroutine());
         StartCoroutine(InitCoroutine());
+    }
+
+    private IEnumerator DiscoverIconCoroutine()
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            if (Player.m_localPlayer != null)
+            {
+                Player.m_localPlayer.AddDiscoveredPortIcon(m_portID, GetMapPinPosition());
+                yield break;
+            }
+            yield return i == 0 ? null : new WaitForSeconds(0.5f);
+        }
     }
 
     private IEnumerator InitCoroutine()
@@ -157,6 +171,12 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (user is Player player) player.AddKnownPort(m_portID);
         m_currentHumanoid = user;
         return false;
+    }
+
+    private Vector3 GetMapPinPosition()
+    {
+        LocationProxy locationProxy = WorldUtils.GetLocationInRange(transform.position, 10);
+        return locationProxy != null ? locationProxy.transform.position : transform.position;
     }
 
     public bool UseItem(Humanoid user, ItemDrop.ItemData item) => false;

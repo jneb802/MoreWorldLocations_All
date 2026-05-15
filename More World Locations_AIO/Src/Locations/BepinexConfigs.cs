@@ -11,9 +11,12 @@ public class BepinexConfigs
     public static ConfigEntry<PortInit.Toggle> EnableWaystones = null!;
     public static ConfigEntry<PortInit.Toggle> EnableTraders = null!;
     public static ConfigEntry<PortInit.Toggle> EnableTrainers = null!;
+    public static ConfigEntry<PortInit.Toggle> PortIconsIndividual = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomTraderConfigs = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomLocationYAML = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomLocalization = null!;
+
+    public static bool UseIndividualPortIcons => PortIconsIndividual?.Value == PortInit.Toggle.On;
 
     public static void BindFeatureConfigs()
     {
@@ -25,6 +28,8 @@ public class BepinexConfigs
             "If Off, trader locations (taverns, blacksmiths, material vendors) will not spawn", synced: true);
         EnableTrainers = PortInit.plugin.Config.BindConfig("0 - Features", "Enable Trainers", PortInit.Toggle.On,
             "If Off, trainer locations (skill book vendors) will not spawn", synced: true);
+        PortIconsIndividual = PortInit.plugin.Config.BindConfig("0 - Features", "Port Icons Individual", PortInit.Toggle.Off,
+            "If On, port map icons are discovered per player when the player gets close to a port. If Off, ports use the existing vanilla shared location icon behavior.", synced: true);
         UseCustomTraderConfigs = PortInit.plugin.Config.BindConfig("0 - Features", "Use Custom Trader Configs", PortInit.Toggle.Off,
             "If On, uses warpalicious.More_World_Locations_TraderItems.yml from config folder. Auto-extracts default if missing.", synced: true);
         UseCustomLocationYAML = PortInit.plugin.Config.BindConfig("0 - Features", "Use Custom Location YAML", PortInit.Toggle.Off,
