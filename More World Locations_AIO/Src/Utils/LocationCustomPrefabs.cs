@@ -92,4 +92,26 @@ public class LocationCustomPrefabs
         }
         
     }
+
+    public static void AddPortRunestonePrefabs()
+    {
+        AddRunestone("MWL_Port1_Runestone1", "$mwl_port1_runestone", "$mwl_port1_runestone_text");
+        AddRunestone("MWL_Port2_Runestone1", "$mwl_port2_runestone", "$mwl_port2_runestone_text");
+        AddRunestone("MWL_Port3_Runestone1", "$mwl_port3_runestone", "$mwl_port3_runestone_text");
+        AddRunestone("MWL_Port4_Runestone1", "$mwl_port4_runestone", "$mwl_port4_runestone_text");
+        AddRunestone("MWL_Port5_Runestone1", "$mwl_port5_runestone", "$mwl_port5_runestone_text");
+    }
+
+    private static void AddRunestone(string prefabName, string nameKey, string textKey)
+    {
+        GameObject runestone = Prefabs.AddRuneStonePrefab(prefabName, "RuneStone_Mistlands_bosshint");
+        if (runestone == null) return;
+
+        RuneStone rs = runestone.GetComponent<RuneStone>();
+        rs.m_name = nameKey;
+        rs.m_text = textKey;
+        rs.m_pinName = "";
+        rs.m_pinType = Minimap.PinType.None;
+        rs.m_locationName = "";
+    }
 }

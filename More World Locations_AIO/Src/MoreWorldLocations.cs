@@ -136,6 +136,7 @@ namespace More_World_Locations_AIO
             Prefabs.AddAllPrefabs();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
+            LocationCustomPrefabs.AddPortRunestonePrefabs();
             PortPrefabs.AddPortPrefabs();
 
             if (BepinexConfigs.EnableTraders.Value == PortInit.Toggle.On ||
