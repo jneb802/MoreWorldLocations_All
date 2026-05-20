@@ -37,6 +37,22 @@ mwl_marblejail1_runestone_text: "They forgot me here. Years turned to decades. T
 mwl_marblecliffaltar1_runestone: Dangerous Acquisition
 mwl_marblecliffaltar1_runestone_text: "What rests upon the altar is not yours. It belongs to those who circle above, who wait in silence. Take it, and a deadly horn will break the silence of the mist."
 
+# Port Runestones
+mwl_port1_runestone: Drelthor's Theft
+mwl_port1_runestone_text: "Cursed be to Drelthor the Covetous, King of the Dvergr in the Golden Age. For it was he who so desired knowledge that stole Odin’s Eye from Mimir's Well. The desecrated waters poisoned Yggdrasil, causing shoots to fall to Valheim in sickness and incurring the wrath of Odin himself."
+
+mwl_port2_runestone: We Are Dvergr
+mwl_port2_runestone_text: "Cursed be to Drelthor the Covetous! Our great civilizations took a thousand years to build and moments to destroy. Our cities, trade hubs, fortresses and farms all laid waste by the forsaken. Why, then do we persist? To what end to we maintain our tiny fortresses and encampments in these hopeless times? Because we are Dvergr! And even the wrath of Odin will not end us. We will survive. We will rebuild. We will regain Odin’s favor. We will bring about a new golden age."
+
+mwl_port3_runestone: Seeds of a New Era
+mwl_port3_runestone_text: "Why maintain these ports – relics of a once great era long past? They serve no purpose save the occasional income from passing nomads. Because we shall need them when we rebuild! When the great Dvergr nations arise again, we will need trade and commerce! These are the seeds of a new era and they will flourish!\n\nOh, and cursed be to Drelthor the Covetous."
+
+mwl_port4_runestone: Kingdoms in Ruin
+mwl_port4_runestone_text: "Cursed be to Drelthor the Covetous, who plunged our prosperous Dvergr nations into ruin by angering Odin. The All-Father cast his most villainous forsaken and lost souls into our realm as punishment both for them and us. Our kingdoms crumbled. Our once-vibrant lands filled with mist and fire. Our people scattered and leaderless."
+
+mwl_port5_runestone: Drelthor's Lament
+mwl_port5_runestone_text: "I am Drelthor, one-time king of the Dvergr. In my arrogance I stole the eye of Odin and brought about our ruin. It is ironic that the Eye gave me wisdom to know I should never have stolen it. Would only that I could undo my transgression! But it is done. There is nothing left for me but to wander endlessly. For the Eye has also doomed me with immortality. So that I may watch the endless suffering of my people and the destruction of all I once ruled.\n\nCursed be to me."
+
 # Ports UI
 label_shipment: Shipments
 label_port: Port
