@@ -916,7 +916,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             Tooltip.m_anchor = transform.Find("TooltipAnchor").GetComponent<RectTransform>();
             Tooltip.m_fixedPosition = new Vector2(0f, 10f);
             Tooltip.m_tooltipPrefab = _tooltipPrefab;
-            Tooltip.m_topic = "MWL_Ports_Tooltip";
+            Tooltip.m_topic = Localization.instance.Localize(LocalKeys.PortsTooltipTopic);
         }
 
         public void Enable(bool enable) => Prefab.SetActive(enable);

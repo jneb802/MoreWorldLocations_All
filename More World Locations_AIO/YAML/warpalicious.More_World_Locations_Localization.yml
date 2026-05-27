@@ -93,6 +93,95 @@ label_required_to_defeat: Required to defeat
 label_capacity: Capacity
 label_cost_to_ship: Cost to Ship
 msg_delivery_collected: Delivery marked as collected
+label_ports_tooltip: Ports
+label_shipment_single: Shipment
+label_delivery_single: Delivery
+label_tutorial_introduction: Introduction
+manifest_wooden_shipment: Wooden Shipment
+manifest_barrel_shipment: Barrel Shipment
+manifest_fine_shipment: Fine Shipment
+manifest_fuling_shipment: Fuling Shipment
+manifest_dvergr_shipment: Dvergr Shipment
+
+# Port tutorials
+tutorial_introduction: |
+  Ports are locations scattered across the world that let you <color=orange>ship items</color> and <color=orange>teleport</color> between them. If this is the first port you've found, congratulations - you've begun your shipping journey! Ports become much more useful as you discover more of them in the world.
+
+  <color=orange><b>How it works</b></color>
+  <size=5>●</size> Find a port and talk to its <color=orange>Port Manager</color> to discover it - it will then appear as a destination at all other ports
+  <size=5>●</size> Buy a <color=orange>manifest</color> from the Port Manager. Manifests are the shipping chests you use to transport items between ports. You can purchase up to three manifests per shipment, and higher tiers unlock as you discover more advanced materials. Fill your manifest chests with the items you want to ship
+  <size=5>●</size> Once the chests are loaded, talk to the Port Manager again and use the <color=yellow>Port</color> tab to select a destination. There will be a shipment fee that scales with distance - pay the fee by clicking <color=yellow>[Send Shipment]</color> and your shipment will be on its way
+  <size=5>●</size> You can see the status of all your active shipments in the <color=yellow>Shipment</color> tab
+  <size=5>●</size> Travel to the destination port, open the <color=yellow>Delivery</color> tab, and once the shipment has arrived click collect - the chests will appear!
+
+  <color=yellow>Note:</color> Travel time is based on in-game time, not real-life time.
+
+  <color=orange><b>Tabs</b></color>
+  <size=5>●</size> <color=yellow>Port</color> - Browse discovered ports and send shipments
+  <size=5>●</size> <color=yellow>Manifest</color> - Purchase and manage shipping chests
+  <size=5>●</size> <color=yellow>Shipment</color> - Track outgoing shipments from this port
+  <size=5>●</size> <color=yellow>Delivery</color> - View and collect incoming deliveries
+  <size=5>●</size> <color=yellow>Teleport</color> - Fast travel between ports for a fee (if enabled in config)
+tutorial_port: |
+  The Port tab lists every port you've discovered. Use it to choose where to send your shipments.
+
+  <color=orange><b>Discovering Ports</b></color>
+  <size=5>●</size> Talk to the <color=orange>Port Manager</color> at any port to discover it
+  <size=5>●</size> Discovered ports appear as destinations at every other port you visit
+
+  <color=orange><b>Selecting a Destination</b></color>
+  <size=5>●</size> Click a port in the list to select it as your destination
+  <size=5>●</size> Hover over a port to see its tooltip:
+     <size=5>♦</size> Shipment cost (scales with distance)
+     <size=5>♦</size> Estimated time of arrival
+     <size=5>♦</size> Items currently loaded in your manifests
+     <size=5>♦</size> Active shipments and deliveries at that port
+
+  <color=orange><b>Sending a Shipment</b></color>
+  <size=5>●</size> Once you've loaded your manifests and selected a destination, click <color=yellow>[Send Shipment]</color>
+  <size=5>●</size> The shipping fee will be deducted from your inventory
+  <size=5>●</size> <color=yellow>Empty manifests cannot be sent</color>
+tutorial_manifest: |
+  Manifests are the shipping chests you use to transport items. Purchase them from the Manifest tab before sending a shipment.
+
+  <color=orange><b>Purchasing</b></color>
+  <size=5>●</size> Each manifest has a purchase cost shown at the bottom of its tooltip
+  <size=5>●</size> You can purchase up to <color=orange>three manifests</color> per shipment
+  <size=5>●</size> Higher-tier manifests unlock as you discover more advanced materials
+
+  <color=orange><b>Loading Items</b></color>
+  <size=5>●</size> Purchased manifests appear as containers near the Port Manager
+  <size=5>●</size> Open a manifest and fill it with the items you want to ship
+  <size=5>●</size> The tooltip shows each manifest's capacity and current contents
+
+  <color=yellow>Tip:</color> You don't need to fill every slot - send as many or as few items as you like, but manifests cannot be sent empty.
+tutorial_shipment: |
+  The Shipment tab shows all outgoing shipments from the <color=orange>current port</color>.
+
+  <color=orange><b>Shipment Details</b></color>
+  Each shipment entry displays:
+  <size=5>●</size> The items packed in each manifest
+  <size=5>●</size> The destination port
+  <size=5>●</size> Estimated time of arrival
+  <size=5>●</size> Current status (<color=yellow>In Transit</color> or <color=yellow>Delivered</color>)
+
+  <color=yellow>Note:</color> The Port tab also shows a summary of shipments per destination, but only the Shipment tab shows the full contents of each manifest.
+tutorial_delivery: |
+  The Delivery tab shows incoming shipments at the <color=orange>current port</color>.
+
+  <color=orange><b>Collecting a Delivery</b></color>
+  <size=5>●</size> When a shipment's status changes to <color=yellow>Delivered</color>, click it to collect
+  <size=5>●</size> The manifest chests will appear near the Port Manager with all your items inside
+  <size=5>●</size> Once you've emptied every chest, the containers disappear and the delivery is marked complete
+tutorial_teleport: |
+  The Teleport tab lets you fast travel directly to any discovered port.
+
+  <color=orange><b>How it Works</b></color>
+  <size=5>●</size> Select a destination and click <color=yellow>[Teleport]</color>
+  <size=5>●</size> The teleport fee scales with distance, similar to shipping costs
+  <size=5>●</size> You will arrive at the destination port instantly
+
+  <color=yellow>Note:</color> Teleporting is a config option and may be disabled by the server.
 
 # Port trader names
 trader_port_name_1: Halmar
