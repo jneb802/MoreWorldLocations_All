@@ -148,7 +148,7 @@ public class Shipment
         {
             State = ShipmentState.InTransit;
         }
-        else if (currentTime <= ExpirationTime)
+        else if (ShipmentManager.ExpirationEnabled.Value is PortInit.Toggle.Off || currentTime <= ExpirationTime)
         {
             State = ShipmentState.Delivered;
         }
