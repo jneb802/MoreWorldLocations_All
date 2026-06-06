@@ -18,6 +18,9 @@ public class Shipment
     public ShipmentState State = ShipmentState.Pending;
     public double ArrivalTime;
     public double ExpirationTime;
+    public long SenderPeerID;
+    public long SenderPlayerID;
+    public string SenderName = string.Empty;
     public List<ShipmentItem> Items = new List<ShipmentItem>();
 
     [NonSerialized] public bool IsValid = true;
@@ -30,6 +33,11 @@ public class Shipment
         DestinationPortID = destinationPort.GUID;
         DestinationPortName = destinationPort.Name;
         ShipmentID = Guid.NewGuid().ToString();
+        if (Player.m_localPlayer != null)
+        {
+            SenderPlayerID = Player.m_localPlayer.GetPlayerID();
+            SenderName = Player.m_localPlayer.GetPlayerName();
+        }
         ArrivalTime = ZNet.instance.GetTimeSeconds() + CalculateDistanceTime(distance);
         ExpirationTime = ArrivalTime + ShipmentManager.ExpirationTime.Value;
     }
@@ -62,10 +70,34 @@ public class Shipment
         State = data.State;
         ArrivalTime = data.ArrivalTime;
         ExpirationTime = data.ExpirationTime;
+        SenderPeerID = data.SenderPeerID;
+        SenderPlayerID = data.SenderPlayerID;
+        SenderName = data.SenderName;
         Items = data.Items;
-        ShipmentManager.Shipments[ShipmentID] = this;
-        ShipmentManager.UpdateShipments();
     }
+
+    public void SetServerSender(long senderPeerID, string senderName)
+    {
+        SenderPeerID = senderPeerID;
+        SenderName = senderName;
+    }
+
+    public bool CanAccess(Player? player)
+    {
+        if (IsLegacyShipment()) return true;
+        if (player == null) return false;
+        if (SenderPlayerID != 0L) return player.GetPlayerID() == SenderPlayerID;
+        return !string.IsNullOrEmpty(SenderName) && player.GetPlayerName() == SenderName;
+    }
+
+    public bool CanServerAccess(long senderPeerID, string senderName)
+    {
+        if (IsLegacyShipment()) return true;
+        if (SenderPeerID != 0L) return SenderPeerID == senderPeerID;
+        return !string.IsNullOrEmpty(SenderName) && SenderName == senderName;
+    }
+
+    private bool IsLegacyShipment() => SenderPeerID == 0L && SenderPlayerID == 0L && string.IsNullOrEmpty(SenderName);
     
     public void SendToServer()
     {
@@ -73,6 +105,9 @@ public class Shipment
         if (ZNet.instance && ZNet.instance.IsServer())
         {
             // if local client is server, then simply register to shipments, and update
+            SetServerSender(
+                ZRoutedRpc.instance != null ? ZRoutedRpc.instance.GetServerPeerID() : 0L,
+                Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerName() : SenderName);
             ShipmentManager.Shipments[ShipmentID]  = this;
             ShipmentManager.UpdateShipments();
         }

@@ -288,10 +288,14 @@ public class ShipmentManager : MonoBehaviour
     public static void RPC_ServerReceiveShipment(long sender, string senderName, string serializedShipment)
     {
         Shipment newShipment = new Shipment(serializedShipment);
+        newShipment.SetServerSender(sender, senderName);
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug(newShipment.IsValid // make sure that the shipment is deserialized correctly
             ? $"Shipment from {senderName} registered!"
             : $"Shipment from {senderName} is invalid");
-        if (newShipment.IsValid) UpdateShipments();
+        if (!newShipment.IsValid) return;
+
+        Shipments[newShipment.ShipmentID] = newShipment;
+        UpdateShipments();
     }
 
     public static void RequestShipments()
@@ -310,14 +314,20 @@ public class ShipmentManager : MonoBehaviour
 
     public static void RPC_ServerShipmentCollected(long sender, string senderName, string shipmentID)
     {
-        if (!Shipments.Remove(shipmentID))
+        if (!Shipments.TryGetValue(shipmentID, out Shipment shipment))
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} said that they collected shipment {shipmentID}, but not found in dictionary");
+            return;
         }
-        else
+
+        if (!shipment.CanServerAccess(sender, senderName))
         {
-            UpdateShipments();
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} tried to collect shipment {shipmentID}, but does not own it");
+            return;
         }
+
+        Shipments.Remove(shipmentID);
+        UpdateShipments();
     }
 
     public struct PortID
