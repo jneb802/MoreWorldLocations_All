@@ -151,17 +151,22 @@ public class ShipmentManager : MonoBehaviour
         if (!ZNet.instance) return;
         m_checkTransitTimer += dt;
         if (m_checkTransitTimer < m_checkTransitInterval) return;
-        List<Shipment> expiredShipments = new();
+        m_checkTransitTimer = 0f;
+        bool isServer = ZNet.instance.IsServer();
+        List<Shipment> expiredShipments = new List<Shipment>();
         foreach (Shipment shipment in Shipments.Values)
         {
             shipment.CheckTransit();
-            if (shipment.State is ShipmentState.Expired && ExpirationEnabled.Value is PortInit.Toggle.On) expiredShipments.Add(shipment);
+            if (isServer && shipment.State is ShipmentState.Expired && ExpirationEnabled.Value is PortInit.Toggle.On) expiredShipments.Add(shipment);
         }
-        // since everyone is running the timer, no need to get server to manage expiration
+
+        bool removedExpiredShipment = false;
         foreach (Shipment? shipment in expiredShipments)
         {
-            Shipments.Remove(shipment.ShipmentID);
+            removedExpiredShipment |= Shipments.Remove(shipment.ShipmentID);
         }
+
+        if (removedExpiredShipment) UpdateShipments();
     }
 
     public void OnClientUpdateShipments()
@@ -317,17 +322,29 @@ public class ShipmentManager : MonoBehaviour
         if (!Shipments.TryGetValue(shipmentID, out Shipment shipment))
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} said that they collected shipment {shipmentID}, but not found in dictionary");
+            UpdateShipments();
             return;
         }
 
-        if (!shipment.CanServerAccess(sender, senderName))
+        long senderPlayerID = GetSenderPlayerID(sender);
+        if (!shipment.CanServerAccess(sender, senderPlayerID, senderName))
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} tried to collect shipment {shipmentID}, but does not own it");
+            UpdateShipments();
             return;
         }
 
         Shipments.Remove(shipmentID);
         UpdateShipments();
+    }
+
+    private static long GetSenderPlayerID(long sender)
+    {
+        if (!ZNet.instance || !ZNet.instance.IsServer() || ZDOMan.instance == null) return 0L;
+        ZNetPeer peer = ZNet.instance.GetPeer(sender);
+        if (peer == null || peer.m_characterID.IsNone()) return 0L;
+        ZDO character = ZDOMan.instance.GetZDO(peer.m_characterID);
+        return character != null ? character.GetLong(ZDOVars.s_playerID) : 0L;
     }
 
     public struct PortID
