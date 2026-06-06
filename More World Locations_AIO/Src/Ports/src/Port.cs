@@ -16,9 +16,9 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public string m_name = "Port";
     public string m_traderName = "Haldor";
     public readonly ContainerPlacement m_containers = new();
-    public Shipment? m_selectedDelivery;
     public Humanoid? m_currentHumanoid;
     private readonly TempItems m_tempItems = new();
+    private bool m_hasOpenDelivery;
     private bool m_initialized;
     public void Awake()
     {
@@ -107,6 +107,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         string? data = m_view.GetZDO().GetString(PortVars.Items);
         if (string.IsNullOrWhiteSpace(data)) return false;
+        m_hasOpenDelivery = m_view.GetZDO().GetBool(PortVars.HasOpenDelivery, false);
         ZPackage pkg = new ZPackage(data);
         int itemCount = pkg.ReadInt();
         for (int i = 0; i < itemCount; i++)
@@ -143,11 +144,16 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         if (ShipmentManager.instance == null) return;
         SaveItems();
-        if (m_containers.HasItems() || m_selectedDelivery == null) return;
-        m_selectedDelivery.OnCollected();
-        m_selectedDelivery = null;
-        if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.DeliveryCollected);
+        if (m_containers.HasItems() || !m_hasOpenDelivery) return;
+
+        SetHasOpenDelivery(false);
         DestroyContainers();
+    }
+
+    private void SetHasOpenDelivery(bool value)
+    {
+        m_hasOpenDelivery = value;
+        if (m_view.IsValid()) m_view.GetZDO().Set(PortVars.HasOpenDelivery, value);
     }
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
@@ -209,9 +215,14 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             return false;
         }
         LoadItems(delivery.Items);
-        m_selectedDelivery = delivery;
-        OnContainersChanged(); // checks if containers are loaded and saves to ZDO
-        return m_containers.HasItems(); // if true, can use this statement to make containers visible ??
+        if (!m_containers.HasItems()) return false;
+
+        // Once a delivery is opened, its contents live in the destination port chests.
+        // Remove the server shipment now so the original delivery cannot be opened again.
+        SetHasOpenDelivery(true);
+        delivery.OnCollected();
+        if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.DeliveryCollected);
+        return true;
     }
 
     public bool SendShipment(PortInfo selectedPort)
@@ -232,6 +243,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         DestroyContainers();
         m_tempItems.Clear();
         m_view.GetZDO().Set(PortVars.Items, ""); // make sure to tell ZDO that there are no items
+        SetHasOpenDelivery(false);
         if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.SuccessfullySent);
         return true;
     }
@@ -480,6 +492,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         public static readonly int GUID = "PortGUID".GetStableHashCode();
         public static readonly int Items = "PortItems".GetStableHashCode();
         public static readonly int TraderName = "PortTraderName".GetStableHashCode();
+        public static readonly int HasOpenDelivery = "PortHasOpenDelivery".GetStableHashCode();
         
     }
 }
