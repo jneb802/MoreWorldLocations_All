@@ -90,11 +90,12 @@ public class Shipment
         return !string.IsNullOrEmpty(SenderName) && player.GetPlayerName() == SenderName;
     }
 
-    public bool CanServerAccess(long senderPeerID, string senderName)
+    public bool CanServerAccess(long senderPeerID, long senderPlayerID, string senderName)
     {
         if (IsLegacyShipment()) return true;
-        if (SenderPeerID != 0L) return SenderPeerID == senderPeerID;
-        return !string.IsNullOrEmpty(SenderName) && SenderName == senderName;
+        if (SenderPlayerID != 0L) return senderPlayerID != 0L && SenderPlayerID == senderPlayerID;
+        if (!string.IsNullOrEmpty(SenderName) && SenderName == senderName) return true;
+        return SenderPeerID != 0L && SenderPeerID == senderPeerID;
     }
 
     private bool IsLegacyShipment() => SenderPeerID == 0L && SenderPlayerID == 0L && string.IsNullOrEmpty(SenderName);
@@ -136,7 +137,8 @@ public class Shipment
         else
         {
             // else send shipment ID to server to manage
-            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), nameof(ShipmentManager.RPC_ServerShipmentCollected), Player.m_localPlayer.GetPlayerName(), ShipmentID);
+            string playerName = Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerName() : string.Empty;
+            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), nameof(ShipmentManager.RPC_ServerShipmentCollected), playerName, ShipmentID);
         }
     }
 
@@ -148,7 +150,7 @@ public class Shipment
         {
             State = ShipmentState.InTransit;
         }
-        else if (currentTime <= ExpirationTime)
+        else if (ShipmentManager.ExpirationEnabled.Value is PortInit.Toggle.Off || currentTime <= ExpirationTime)
         {
             State = ShipmentState.Delivered;
         }
