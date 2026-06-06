@@ -488,6 +488,15 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 if (m_selectedDestination == null) Hide();
                 else
                 {
+                    int shipmentCost = m_currentPort.m_containers.GetCost();
+                    string currencyItem = ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins";
+                    if (!Player.m_localPlayer.NoCostCheat() &&
+                        Player.m_localPlayer.GetInventory().CountItems(currencyItem) < shipmentCost)
+                    {
+                        Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
+                        return;
+                    }
+
                     if (m_currentPort.SendShipment(m_selectedDestination))
                     {
                         if (ZNet.instance && ZNet.instance.IsServer())
@@ -495,9 +504,10 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                             m_selectedDestination.Reload();
                         }
                         else ShipmentManager.OnShipmentsUpdated += m_selectedDestination.Reload;
-                        Player.m_localPlayer.GetInventory().RemoveItem(
-                            ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins",
-                            m_currentPort.m_containers.GetCost());
+                        if (!Player.m_localPlayer.NoCostCheat() && shipmentCost > 0)
+                        {
+                            Player.m_localPlayer.GetInventory().RemoveItem(currencyItem, shipmentCost);
+                        }
                         m_selectedDestination = null;
                         OnSentShipment?.Invoke();
                     }
