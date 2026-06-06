@@ -41,6 +41,7 @@ public static class LocalKeys
     public static readonly string Capacity = "$label_capacity";
     public static readonly string CostToShip = "$label_cost_to_ship";
     public static readonly string DeliveryCollected = "$msg_delivery_collected";
+    public static readonly string ShipmentNotOwned = "This shipment belongs to another player";
 
     public static string ToKey(this ShipmentState state) => state switch
     {

@@ -620,6 +620,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         ClearLeftPanel();
         if (m_currentPort == null) return;
         List<Shipment> shipments = ShipmentManager.GetShipments(m_currentPort.m_portID.GUID)
+            .Where(shipment => shipment.CanAccess(Player.m_localPlayer))
             .OrderBy(shipment => shipment.ArrivalTime)
             .ToList();
         foreach (Shipment shipment in shipments) AddShipment(shipment);
@@ -630,7 +631,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         ClearLeftPanel();
         if (m_currentPort == null) return;
-        List<Shipment> deliveries = ShipmentManager.GetDeliveries(m_currentPort.m_portID.GUID);
+        List<Shipment> deliveries = ShipmentManager.GetDeliveries(m_currentPort.m_portID.GUID)
+            .Where(delivery => delivery.CanAccess(Player.m_localPlayer))
+            .ToList();
         foreach(Shipment? delivery in deliveries) AddDelivery(delivery);
         ResizeLeftList();
     }
@@ -674,7 +677,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             m_selectedDelivery = shipment;
             Description.SetName(shipment.OriginPortName);
             Description.SetBodyText(shipment.GetTooltip());
-            MainButton.interactable = shipment.State == ShipmentState.Delivered;
+            MainButton.interactable = shipment.State == ShipmentState.Delivered && shipment.CanAccess(Player.m_localPlayer);
             float timer = 0f;
             OnUpdate = dt =>
             {

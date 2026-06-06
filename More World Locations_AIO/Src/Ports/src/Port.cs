@@ -209,6 +209,12 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public bool LoadDelivery(Shipment delivery)
     {
         EnsureInitialized();
+        if (!delivery.CanAccess(Player.m_localPlayer))
+        {
+            if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.ShipmentNotOwned);
+            return false;
+        }
+
         if (m_containers.HasItems())
         {
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.FailedToLoadDelivery);
@@ -445,15 +451,19 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             // and details about port
             portID = new ShipmentManager.PortID(zdo.GetString(PortVars.GUID), zdo.GetString(PortVars.Name));
             position = zdo.GetPosition();
-            deliveries = ShipmentManager.GetDeliveries(portID.GUID);
-            shipments = ShipmentManager.GetShipments(portID.GUID);
+            deliveries = ShipmentManager.GetDeliveries(portID.GUID)
+                .Where(delivery => delivery.CanAccess(Player.m_localPlayer))
+                .ToList();
+            shipments = ShipmentManager.GetShipments(portID.GUID)
+                .Where(shipment => shipment.CanAccess(Player.m_localPlayer))
+                .ToList();
         }
         public void Reload()
         {
             deliveries.Clear();
             shipments.Clear();
-            deliveries.AddRange(ShipmentManager.GetDeliveries(portID.GUID));
-            shipments.AddRange(ShipmentManager.GetShipments(portID.GUID));
+            deliveries.AddRange(ShipmentManager.GetDeliveries(portID.GUID).Where(delivery => delivery.CanAccess(Player.m_localPlayer)));
+            shipments.AddRange(ShipmentManager.GetShipments(portID.GUID).Where(shipment => shipment.CanAccess(Player.m_localPlayer)));
             ShipmentManager.OnShipmentsUpdated -= Reload;
         }
         
