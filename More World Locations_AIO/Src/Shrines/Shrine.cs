@@ -23,13 +23,13 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
     
     public void Awake()
     {
+        znetView = GetComponent<ZNetView>();
+
         if (BepinexConfigs.EnableShrines.Value == PortInit.Toggle.Off)
         {
-            Destroy(gameObject);
             return;
         }
 
-        znetView = GetComponent<ZNetView>();
         ZDO zdo = znetView.GetZDO();
         if (znetView.IsOwner())
         {
@@ -103,6 +103,27 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
         hasBeenUsedOnce = zdo.GetBool("MWL_Shrine_FreeTag");
         
         Debug.Log("Shrine Awake: Loaded shrine config '" + shrineConfig.internalName + "'");
+    }
+
+    private void Start()
+    {
+        if (BepinexConfigs.EnableShrines.Value != PortInit.Toggle.Off)
+        {
+            return;
+        }
+
+        if (znetView == null)
+        {
+            znetView = GetComponent<ZNetView>();
+        }
+
+        if (znetView != null && ZNetScene.instance != null)
+        {
+            znetView.Destroy();
+            return;
+        }
+
+        Destroy(gameObject);
     }
 
     public bool Interact(Humanoid user, bool hold, bool alt)
