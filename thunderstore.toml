@@ -4,15 +4,16 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "warpalicious"
 name = "More_World_Locations_AIO"
-versionNumber = "4.5.0"
-description = "Adds 153 new POI locations with traders, ports, puzzles, and shrines to enhance Valheim's world exploration."
-websiteUrl = "https://discord.gg/KjgZ63VZv5"
+versionNumber = "5.0.0"
+description = "Adds 156 new POI locations including dungeons, traders, ports and much more to enhance Valheim's world exploration."
+websiteUrl = "https://discord.gg/3aaru2VyHJ"
 containsNsfwContent = false
 
 [package.dependencies]
 denikson-BepInExPack_Valheim = "5.4.2333"
 ValheimModding-JsonDotNET = "13.0.4"
-ValheimModding-Jotunn = "2.27.1"
+ValheimModding-YamlDotNet = "16.3.1"
+ValheimModding-Jotunn = "2.29.1"
 
 [build]
 icon = "./icon.png"

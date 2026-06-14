@@ -39,7 +39,7 @@ namespace More_World_Locations_AIO
         
         public static GameObject root = null!;
         
-        private static readonly System.Version MinJotunnVersion = new System.Version(2, 28, 0);
+        private static readonly System.Version MinJotunnVersion = new System.Version(2, 29, 1);
 
         private const string MoreWorldTradersGUID = "warpalicious.More_World_Traders";
 
@@ -120,7 +120,7 @@ namespace More_World_Locations_AIO
             {
                 More_World_Locations_AIOLogger.LogError(
                     $"Failed to load YAML localizations: {ex.Message}. " +
-                    "Localized text will show as raw tokens. Please update Jotunn to 2.28.0 or newer.");
+                    $"Localized text will show as raw tokens. Please update Jotunn to {MinJotunnVersion} or newer.");
             }
             
             if (saveOnSet)
