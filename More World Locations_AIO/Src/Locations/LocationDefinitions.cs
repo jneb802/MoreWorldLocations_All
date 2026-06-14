@@ -638,4 +638,16 @@ public static class LocationDefinitions
         new() { Name = "MWL_MistTrainer1", AssetPath = "Assets/WarpProjects/MoreWorldTraders/MWL_MistTrainer1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 12f, MinAltitude = -3f, MaxAltitude = 0f, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything, Unique = true, IconPlaced = true } },
     };
+    
+    // ── Dungeons ─────────────────────────────────────────────────────────
+    
+    public static readonly MWLLocation[] Dungeons =
+    {
+        new() { Name = "BFD_Exterior", AssetPath = "Assets/WarpProjects/Dungeons/UndergroundRuins/BFD_Exterior.prefab", DungeonTheme = "Underground Ruins", InteriorPrefabName = "InteriorEnvironmentZoneForce",
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, BiomeArea = Heightmap.BiomeArea.Median, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Dungeon_UndergroundRuins", MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 10, MinDistance = LocationRings.Ring3.MinDistance, MaxDistance = LocationRings.Ring6.MaxDistance } },
+        
+        new() { Name = "CD_Exterior1", AssetPath = "Assets/WarpProjects/Dungeons/ForbiddenCatacombs/CD_Exterior1.prefab", DungeonTheme = "CD_Catacomb", InteriorPrefabName = "InteriorEnvironmentZoneForce",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, BiomeArea = Heightmap.BiomeArea.Median, Priotized = true, ExteriorRadius = 12, ClearArea = true, RandomRotation = false, Group = "Dungeon_Catacomb", MinDistanceFromSimilar = 512, MinAltitude = 1f, MinDistance = LocationRings.Ring2.MinDistance } },
+    };
+    
 }

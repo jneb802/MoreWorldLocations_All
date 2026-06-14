@@ -207,3 +207,7 @@ Trainers:
   MWL_MistTrainer1: 5
   MWL_PlainsTrainer1: 5
   MWL_SwampTrainer1: 5
+  
+Dungeons:
+  BFD_Exterior: 30
+  CD_Exterior1: 30

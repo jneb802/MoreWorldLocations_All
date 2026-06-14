@@ -53,6 +53,9 @@ mwl_port4_runestone_text: "Cursed be to Drelthor the Covetous, who plunged our p
 mwl_port5_runestone: Drelthor's Lament
 mwl_port5_runestone_text: "I am Drelthor, one-time king of the Dvergr. In my arrogance I stole the eye of Odin and brought about our ruin. It is ironic that the Eye gave me wisdom to know I should never have stolen it. Would only that I could undo my transgression! But it is done. There is nothing left for me but to wander endlessly. For the Eye has also doomed me with immortality. So that I may watch the endless suffering of my people and the destruction of all I once ruled.\n\nCursed be to me."
 
+# Forbidden Catacombs
+mwl_forbiddencatacombs_runestone_text: "When the jarls passed, they were laid to rest above--cloaked in gold, untouched by time. Below, the lowborn--the laborers, the shieldless--were left to rot in shadow, their graves marked by stench and sorrow. In time, the filth festered, and a great mage intervened, sealing the depths to halt the spread of decay. Only the hollow crown of a jarl may unbind the seal and grant passage once more."
+
 # Ports UI
 label_shipment: Shipments
 label_port: Port

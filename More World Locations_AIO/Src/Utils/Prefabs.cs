@@ -1,17 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Common;
-using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
-using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
 using More_World_Locations_AIO.Waystones;
 using UnityEngine;
-using YamlDotNet.Serialization;
 
 namespace More_World_Locations_AIO;
 
@@ -23,9 +20,18 @@ public class Prefabs
     public static AssetBundle vendorsPrefabBundle;
     public static AssetBundle vendorNpcBundle;
     public static AssetBundle portIconBundle;
+    public static AssetBundle dungeonBlackforest;
+    public static AssetBundle dungeonCastle;
+    public static AssetBundle mockPlaceHoldersBundle;
+    
+    public static GameObject[] mockPlaceHoldersGameObjects;
     
     public static void LoadPrefabBundles()
     {
+        mockPlaceHoldersBundle = AssetUtils.LoadAssetBundleFromResources(
+            "mockplaceholders",
+            Assembly.GetExecutingAssembly());
+        
         prefabBundle_1 = AssetUtils.LoadAssetBundleFromResources(
             "moreworldlocations_prefabs_1",
             Assembly.GetExecutingAssembly());
@@ -49,20 +55,31 @@ public class Prefabs
         portIconBundle = AssetUtils.LoadAssetBundleFromResources(
             "porticon",
             Assembly.GetExecutingAssembly());
+        
+        dungeonBlackforest = AssetUtils.LoadAssetBundleFromResources(
+            "dungeonblackforest",
+            Assembly.GetExecutingAssembly());
+        
+        dungeonCastle = AssetUtils.LoadAssetBundleFromResources(
+            "dungeoncastle",
+            Assembly.GetExecutingAssembly());
     }
 
     public static void AddAllPrefabs()
     {
+        mockPlaceHoldersGameObjects = mockPlaceHoldersBundle.LoadAllAssets<GameObject>();
+        
         GameObject[] gameObjects1 = prefabBundle_1.LoadAllAssets<GameObject>();
         GameObject[] gameObjects2 = prefabBundle_2.LoadAllAssets<GameObject>();
         GameObject[] gameObjects3 = prefabBundle_3.LoadAllAssets<GameObject>();
-        
+            
         AddPrefabsFromBundle(gameObjects1);
         AddPrefabsFromBundle(gameObjects2);
         AddPrefabsFromBundle(gameObjects3);
 
         MakeMDKitPrefabs();
         
+        // Dungeon-specific prefabs register through DungeonPackDB.
         ZoneManager.OnVanillaLocationsAvailable -= AddAllPrefabs;
     }
 
@@ -70,10 +87,11 @@ public class Prefabs
     {
         foreach (GameObject gameObject in gameObjects)
         {
+            
             if (PrefabManager.Instance.GetPrefab(gameObject.name) != null)
             {
                 // Debug.Log("Prefab with name "+ gameObject.name + " is already in ObjectDB");
-            
+
                 PrefabManager.Instance.RemovePrefab(gameObject.name);
             }
             

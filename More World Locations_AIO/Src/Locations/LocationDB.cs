@@ -23,6 +23,7 @@ public static class LocationDB
             .Concat(LocationDefinitions.Ports)
             .Concat(LocationDefinitions.Traders)
             .Concat(LocationDefinitions.Trainers)
+            .Concat(LocationDefinitions.Dungeons)
             .ToArray();
 
         _byName = All.ToDictionary(l => l.Name);
@@ -37,6 +38,7 @@ public static class LocationDB
         Register(LocationDefinitions.Plains);
         Register(LocationDefinitions.Mistlands);
         Register(LocationDefinitions.Ashlands);
+        Register(LocationDefinitions.Dungeons);
 
         if (PortInit.EnablePortLocations.Value != PortInit.Toggle.Off)
             Register(LocationDefinitions.Ports);
