@@ -45,31 +45,31 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 ## Location Previews
 <details>
-  <summary>Adds 27 locations to the Meadows.</summary>
+  <summary>Adds 30 locations to the Meadows.</summary>
 
   ![Meadows Pack 1](https://i.imgur.com/pPFkrDi.png)
 
 </details>
 <details>
-  <summary>Adds 37 locations to the Blackforest.</summary>
+  <summary>Adds 39 locations to the Blackforest.</summary>
 
   ![Blackforest Pack 1](https://i.imgur.com/5lKv9F0.png)
 
 </details>
 <details>
-  <summary>Adds 29 locations to the Swamp.</summary>
+  <summary>Adds 30 locations to the Swamp.</summary>
 
   ![Swamp Pack 1](https://i.imgur.com/l62Do90.png)
 
 </details>
 <details>
-  <summary>Adds 18 locations to the Mountain.</summary>
+  <summary>Adds 22 locations to the Mountain.</summary>
 
   ![Mountains Pack 1](https://i.imgur.com/BvdATdc.png)
 
 </details>
 <details>
-  <summary>Adds 17 locations to the Plains.</summary>
+  <summary>Adds 23 locations to the Plains.</summary>
 
   ![Plains Pack 1](https://i.imgur.com/APTsEfG.png)
 
@@ -81,7 +81,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 </details>
 <details>
-  <summary>Adds 3 locations to the Ashlands.</summary>
+  <summary>Adds 7 locations to the Ashlands.</summary>
 
   ![Ashlands Pack 1](https://i.imgur.com/hnmWJXh.png)
 
