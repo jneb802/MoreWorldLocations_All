@@ -29,7 +29,8 @@ public static class DungeonPackRegistrar
 
         if (pack.DungeonGeneratorPrefab != null)
         {
-            RegisterCustomPrefab(bundle, pack.DungeonGeneratorPrefab, pack.Name);
+            GameObject? dungeonGeneratorPrefab = RegisterCustomPrefab(bundle, pack.DungeonGeneratorPrefab, pack.Name);
+            RegisterDungeonTheme(pack, dungeonGeneratorPrefab);
         }
 
         VerifyRegisteredPrefabs(pack);
@@ -63,12 +64,12 @@ public static class DungeonPackRegistrar
         PrefabManager.Instance.AddPrefab(customPrefab);
     }
 
-    private static void RegisterCustomPrefab(AssetBundle? bundle, CustomPrefabSpec spec, string packName)
+    private static GameObject? RegisterCustomPrefab(AssetBundle? bundle, CustomPrefabSpec spec, string packName)
     {
         if (string.IsNullOrEmpty(spec.Name))
         {
             Debug.LogWarning($"DungeonPackRegistrar: CustomPrefabSpec with empty Name in pack '{packName}'");
-            return;
+            return null;
         }
 
         if (PrefabManager.Instance.GetPrefab(spec.Name) != null)
@@ -85,14 +86,14 @@ public static class DungeonPackRegistrar
                 {
                     Debug.LogWarning(
                         $"DungeonPackRegistrar: VanillaClone '{spec.Name}' missing VanillaSource");
-                    return;
+                    return null;
                 }
                 prefab = PrefabManager.Instance.CreateClonedPrefab(spec.Name, spec.VanillaSource);
                 if (prefab == null)
                 {
                     Debug.LogWarning(
                         $"DungeonPackRegistrar: failed to clone '{spec.VanillaSource}' for '{spec.Name}'");
-                    return;
+                    return null;
                 }
                 break;
 
@@ -101,7 +102,7 @@ public static class DungeonPackRegistrar
                 {
                     Debug.LogWarning(
                         $"DungeonPackRegistrar: pack '{packName}' has no bundle; cannot load '{spec.Name}'");
-                    return;
+                    return null;
                 }
                 string assetName = string.IsNullOrEmpty(spec.BundleAsset) ? spec.Name : spec.BundleAsset;
                 prefab = bundle.LoadAsset<GameObject>(assetName);
@@ -109,7 +110,7 @@ public static class DungeonPackRegistrar
                 {
                     Debug.LogWarning(
                         $"DungeonPackRegistrar: bundle has no asset '{assetName}' for '{spec.Name}'");
-                    return;
+                    return null;
                 }
                 break;
         }
@@ -118,7 +119,7 @@ public static class DungeonPackRegistrar
         {
             Debug.LogWarning(
                 $"DungeonPackRegistrar: prefab '{spec.Name}' resolved to null in pack '{packName}'");
-            return;
+            return null;
         }
 
         KitStripper.Strip(prefab, spec.Strip);
@@ -140,6 +141,24 @@ public static class DungeonPackRegistrar
 
         CustomPrefab customPrefab = new CustomPrefab(prefab, fixReference);
         PrefabManager.Instance.AddPrefab(customPrefab);
+        return prefab;
+    }
+
+    private static void RegisterDungeonTheme(MWLDungeonPack pack, GameObject? dungeonGeneratorPrefab)
+    {
+        if (dungeonGeneratorPrefab == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(pack.ThemeName))
+        {
+            Debug.LogWarning(
+                $"DungeonPackRegistrar: pack '{pack.Name}' has no ThemeName; cannot register dungeon theme for '{dungeonGeneratorPrefab.name}'");
+            return;
+        }
+
+        DungeonManager.Instance.RegisterDungeonTheme(dungeonGeneratorPrefab, pack.ThemeName);
     }
 
     private static void ValidatePackDefinition(MWLDungeonPack pack)
