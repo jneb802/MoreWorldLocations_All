@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Bootstrap;
@@ -10,6 +11,8 @@ using Jotunn.Managers;
 using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
+using More_World_Locations_AIO.Dungeons;
+using More_World_Locations_AIO.Dungeons.Packs;
 using More_World_Locations_AIO.Traders;
 using More_World_Locations_AIO.Waystones;
 using UnityEngine;
@@ -21,7 +24,7 @@ namespace More_World_Locations_AIO
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
-        internal const string ModVersion = "4.9.0";
+        internal const string ModVersion = "5.0.0";
         internal const string Author = "warpalicious";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -83,16 +86,17 @@ namespace More_World_Locations_AIO
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
 
-            // AssetBundles.BuildCombinedManifest(
-            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
-            //     "full",
-            //     LocationDB.GetAllAssetPaths()
-            // );
+            AssetBundles.BuildCombinedManifest(
+                Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
+                "full",
+                LocationDB.GetAllAssetPaths().Concat(RoomDB.GetAllAssetPaths()).ToArray()
+            );
 
             LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += LocationDB.RegisterAll;
+            DungeonManager.OnVanillaRoomsAvailable += RoomDB.RegisterAll;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;
             ItemManager.OnItemsRegistered += ShrineDB.BuildShrineConfigs;
@@ -134,6 +138,7 @@ namespace More_World_Locations_AIO
             CreatureDB.InitializeCreatureLists();
             
             Prefabs.AddAllPrefabs();
+            DungeonPackDB.RegisterAll();
             LocationCustomPrefabs.AddMarbleJail1Prefabs();
             LocationCustomPrefabs.AddMarbleCliffAltar1Prefabs();
             LocationCustomPrefabs.AddPortRunestonePrefabs();

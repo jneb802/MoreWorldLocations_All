@@ -64,6 +64,12 @@
         <EmbeddedResource Include="assets\vendornpc" />
         <None Remove="assets\porticon" />
         <EmbeddedResource Include="assets\porticon" />
+        <None Remove="assets\dungeonblackforest" />
+        <EmbeddedResource Include="assets\dungeonblackforest" />
+        <None Remove="assets\dungeoncastle" />
+        <EmbeddedResource Include="assets\dungeoncastle" />
+        <None Remove="assets\mockplaceholders" />
+        <EmbeddedResource Include="assets\mockplaceholders" />
     </ItemGroup>
 
     <!-- Content files -->
