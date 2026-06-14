@@ -45,7 +45,7 @@ public static class RoomDB
             .Select(r => r.Name)
             .ToArray();
     }
-    
+
     public static string[] GetAllAssetPaths()
     {
         return All.Select(l => l.AssetPath).ToArray();

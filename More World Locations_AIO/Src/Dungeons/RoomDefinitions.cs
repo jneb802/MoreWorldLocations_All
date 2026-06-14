@@ -16,13 +16,13 @@ public static class RoomDefinitions
 
         new() { Name = "BFD_Modular1", AssetPath = UndergroundRuinsRoomPath + "BFD_Modular1.prefab",
             Config = new RoomConfig { ThemeName = UndergroundRuinsTheme, Weight = 1.0f } },
-        
+
         new() { Name = "BFD_Modular2", AssetPath = UndergroundRuinsRoomPath + "BFD_Modular2.prefab",
             Config = new RoomConfig { ThemeName = UndergroundRuinsTheme, Weight = 1.0f } },
-        
+
         new() { Name = "BFD_Modular3", AssetPath = UndergroundRuinsRoomPath + "BFD_Modular3.prefab",
             Config = new RoomConfig { ThemeName = UndergroundRuinsTheme, Weight = 1.0f } },
-        
+
         new() { Name = "BFD_Modular4", AssetPath = UndergroundRuinsRoomPath + "BFD_Modular4.prefab",
             Config = new RoomConfig { ThemeName = UndergroundRuinsTheme, Weight = 1.0f } },
 
