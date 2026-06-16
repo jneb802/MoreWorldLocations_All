@@ -91,10 +91,27 @@ jobs:
           Start with either `No blocking issues found.` or `Blocking issues found.`
           PROMPT
 
+          set +e
           "${CLAUDE_BIN}" -p "$(cat .claude-review/prompt.md)" \
             --max-turns 6 \
             --allowedTools "Read" \
-            > .claude-review/comment.md
+            > .claude-review/comment.md \
+            2> .claude-review/claude.err
+          claude_status=$?
+          set -e
+
+          if [ "${claude_status}" -ne 0 ]; then
+            echo "Claude CLI failed with exit code ${claude_status}."
+            if [ -s .claude-review/claude.err ]; then
+              sed -E \
+                -e 's/(sk-ant-[A-Za-z0-9_-]+)/[REDACTED]/g' \
+                -e 's/(oauth[_A-Za-z0-9.-]{16,})/[REDACTED]/g' \
+                .claude-review/claude.err
+            else
+              echo "Claude CLI did not write stderr."
+            fi
+            exit "${claude_status}"
+          fi
 
           if [ ! -s .claude-review/comment.md ]; then
             echo "Claude produced an empty review comment."
