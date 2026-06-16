@@ -32,8 +32,6 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          track_progress: true
-          use_sticky_comment: true
           include_fix_links: false
           prompt: |
             REPO: ${{ github.repository }}
@@ -41,6 +39,9 @@ jobs:
 
             Review this pull request for behavior bugs introduced by the diff.
             Follow CLAUDE.md and REVIEW.md.
+
+            Before posting, inspect the PR diff with `gh pr diff` and read any
+            changed files needed to understand the diff.
 
             Focus on:
             - Valheim/BepInEx/Jotunn integration risks
@@ -50,7 +51,9 @@ jobs:
 
             Do not modify files, create commits, or push branches.
             Do not attempt a full dotnet build on GitHub-hosted runners.
-            Always post one top-level PR comment, even if no blocking issues are found.
+            Post exactly one top-level PR comment using `gh pr comment`.
+            Start the comment with either `No blocking issues found.` or
+            `Blocking issues found.`
           claude_args: |
             --max-turns 8
             --allowedTools "Read,Glob,Grep,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git diff:*)"
