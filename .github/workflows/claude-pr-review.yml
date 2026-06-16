@@ -95,14 +95,26 @@ jobs:
           "${CLAUDE_BIN}" -p "$(cat .claude-review/prompt.md)" \
             --max-turns 6 \
             --allowedTools "Read" \
-            > .claude-review/comment.md \
+            --output-format json \
+            --no-session-persistence \
+            > .claude-review/claude.json \
             2> .claude-review/claude.err
           claude_status=$?
           set -e
 
           if [ "${claude_status}" -ne 0 ]; then
             echo "Claude CLI failed with exit code ${claude_status}."
+            if [ -s .claude-review/claude.json ]; then
+              echo "Claude CLI stdout:"
+              sed -E \
+                -e 's/(sk-ant-[A-Za-z0-9_-]+)/[REDACTED]/g' \
+                -e 's/(oauth[_A-Za-z0-9.-]{16,})/[REDACTED]/g' \
+                .claude-review/claude.json
+            else
+              echo "Claude CLI did not write stdout."
+            fi
             if [ -s .claude-review/claude.err ]; then
+              echo "Claude CLI stderr:"
               sed -E \
                 -e 's/(sk-ant-[A-Za-z0-9_-]+)/[REDACTED]/g' \
                 -e 's/(oauth[_A-Za-z0-9.-]{16,})/[REDACTED]/g' \
@@ -113,8 +125,14 @@ jobs:
             exit "${claude_status}"
           fi
 
+          jq -r '.result // empty' .claude-review/claude.json > .claude-review/comment.md
+
           if [ ! -s .claude-review/comment.md ]; then
             echo "Claude produced an empty review comment."
+            sed -E \
+              -e 's/(sk-ant-[A-Za-z0-9_-]+)/[REDACTED]/g' \
+              -e 's/(oauth[_A-Za-z0-9.-]{16,})/[REDACTED]/g' \
+              .claude-review/claude.json
             exit 1
           fi
 
