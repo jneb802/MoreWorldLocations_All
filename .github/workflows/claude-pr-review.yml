@@ -45,7 +45,7 @@ jobs:
 
       - name: Direct Claude review
         env:
-          GH_TOKEN: ${{ steps.claude_app.outputs.github_token }}
+          GH_TOKEN: ${{ github.token }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
@@ -54,7 +54,7 @@ jobs:
           set -euo pipefail
 
           if [ -z "${GH_TOKEN:-}" ]; then
-            echo "Claude GitHub App token was not available."
+            echo "GitHub workflow token was not available."
             exit 1
           fi
 
