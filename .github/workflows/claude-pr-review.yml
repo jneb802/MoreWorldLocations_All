@@ -30,6 +30,7 @@ jobs:
 
       - name: Prepare Claude app token
         id: claude_app
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -41,7 +42,7 @@ jobs:
             Authentication bootstrap only. Do not inspect files, modify files,
             create commits, push branches, or post PR comments.
           claude_args: |
-            --max-turns 1
+            --max-turns 3
 
       - name: Direct Claude review
         env:
@@ -59,6 +60,9 @@ jobs:
           fi
 
           CLAUDE_BIN="${HOME}/.local/bin/claude"
+          if [ ! -x "${CLAUDE_BIN}" ]; then
+            CLAUDE_BIN="$(command -v claude || true)"
+          fi
           if [ ! -x "${CLAUDE_BIN}" ]; then
             echo "Claude CLI was not installed by the previous step."
             exit 1
