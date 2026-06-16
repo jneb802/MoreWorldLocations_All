@@ -66,12 +66,6 @@ jobs:
           - .claude-review/pr.json
           - .claude-review/diff.patch
 
-          Focus on:
-          - Valheim/BepInEx/Jotunn integration risks
-          - server/client sync, ownership, RPCs, and cleanup
-          - embedded resources, YAML configs, asset bundle references, and localization
-          - Thunderstore/version/changelog consistency
-
           Do not modify files, create commits, or push branches.
           Do not attempt a full dotnet build on GitHub-hosted runners.
           Write exactly one PR review comment body.
