@@ -15,6 +15,14 @@ namespace More_World_Locations_AIO;
 
 public static class PortInit
 {
+    public const int ManifestCoinCostMax = 100000;
+    private const string PortConfigSection = "0 - Shipment Ports";
+    private const int WoodenManifestCoinCostDefault = 50;
+    private const int BarrelManifestCoinCostDefault = 55;
+    private const int FineManifestCoinCostDefault = 100;
+    private const int FulingManifestCoinCostDefault = 280;
+    private const int DvergrManifestCoinCostDefault = 410;
+
     private static BaseUnityPlugin? _plugin;
     public static BaseUnityPlugin plugin
     {
@@ -62,6 +70,11 @@ public static class PortInit
     
     public static GameObject root = null!;
     public static ConfigEntry<Toggle> EnablePortLocations = null!;
+    public static ConfigEntry<int> WoodenManifestCoinCost = null!;
+    public static ConfigEntry<int> BarrelManifestCoinCost = null!;
+    public static ConfigEntry<int> FineManifestCoinCost = null!;
+    public static ConfigEntry<int> FulingManifestCoinCost = null!;
+    public static ConfigEntry<int> DvergrManifestCoinCost = null!;
 
     public enum Toggle { On = 1, Off = 0 }
 
@@ -74,28 +87,39 @@ public static class PortInit
     private static void SetupConfigs()
     {
         // Master toggle for port locations
-        EnablePortLocations = plugin.Config.BindConfig("0 - Shipment Ports", "Enable Port Locations", Toggle.On, "If Off, port locations will not spawn in the world", synced: true);
+        EnablePortLocations = plugin.Config.BindConfig(PortConfigSection, "Enable Port Locations", Toggle.On, "If Off, port locations will not spawn in the world", synced: true);
         
         // Client-only configs (not synced - personal UI preferences)
         // Legacy config - kept for compatibility but no longer used
-        PortUI.PanelPositionConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Position", new Vector3(1760f, 850f, 0f), "[Legacy] No longer used", synced: false);
+        PortUI.PanelPositionConfig = plugin.Config.BindConfig(PortConfigSection, "Panel Position", new Vector3(1760f, 850f, 0f), "[Legacy] No longer used", synced: false);
         
         // New anchor-relative offset config (offset from top-right corner)
-        PortUI.PanelOffsetConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Panel Offset", new Vector2(-160f, -230f), "Offset from top-right corner (drag with Left Alt to reposition)", synced: false);
-        PortUI.BkgOption = plugin.Config.BindConfig("0 - Shipment Ports", "Background", PortUI.BackgroundOption.Opaque, "Set background type", synced: false);
+        PortUI.PanelOffsetConfig = plugin.Config.BindConfig(PortConfigSection, "Panel Offset", new Vector2(-160f, -230f), "Offset from top-right corner (drag with Left Alt to reposition)", synced: false);
+        PortUI.BkgOption = plugin.Config.BindConfig(PortConfigSection, "Background", PortUI.BackgroundOption.Opaque, "Set background type", synced: false);
         PortUI.BkgOption.SettingChanged += PortUI.OnBackgroundOptionChange;
         
         // Server-synced configs (enforced by server for all clients)
-        ShipmentManager.TransitByDistance = plugin.Config.BindConfig("0 - Shipment Ports", "Time Per Meter", 0.5f, "Set seconds per meter for shipment transit", synced: true);
-        ShipmentManager.CurrencyConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items", synced: true);
+        ShipmentManager.TransitByDistance = plugin.Config.BindConfig(PortConfigSection, "Time Per Meter", 0.5f, "Set seconds per meter for shipment transit", synced: true);
+        ShipmentManager.CurrencyConfig = plugin.Config.BindConfig(PortConfigSection, "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items", synced: true);
         ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
-        ShipmentManager.OverrideTransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance", synced: true);
-        ShipmentManager.TransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min", synced: true);
-        ShipmentManager.ExpirationEnabled = plugin.Config.BindConfig("0 - Shipment Ports", "Expires", Toggle.Off, "If on, shipments can expire", synced: true);
-        ShipmentManager.ExpirationTime = plugin.Config.BindConfig("0 - Shipment Ports", "Expiration Time", 7200f, "Set time until expiration, 3600 = 1 hour", synced: true);
-        PortUI.UseTeleportTab = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
+        ShipmentManager.OverrideTransitTime = plugin.Config.BindConfig(PortConfigSection, "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance", synced: true);
+        ShipmentManager.TransitTime = plugin.Config.BindConfig(PortConfigSection, "Transit Duration", 1800f, "Set override transit duration in seconds, 1800 = 30min", synced: true);
+        ShipmentManager.ExpirationEnabled = plugin.Config.BindConfig(PortConfigSection, "Expires", Toggle.Off, "If on, shipments can expire", synced: true);
+        ShipmentManager.ExpirationTime = plugin.Config.BindConfig(PortConfigSection, "Expiration Time", 7200f, "Set time until expiration, 3600 = 1 hour", synced: true);
+        PortUI.UseTeleportTab = plugin.Config.BindConfig(PortConfigSection, "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
-        PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.01f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.01 = 1 coin per 100 meters", synced: true);
+        PortUI.TeleportCostPerMeter = plugin.Config.BindConfig(PortConfigSection, "Teleport Cost Per Meter", 0.01f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.01 = 1 coin per 100 meters", synced: true);
+        WoodenManifestCoinCost = BindManifestCoinCost("Wooden Manifest Coin Cost", WoodenManifestCoinCostDefault, "Coins charged when shipping a wooden manifest.");
+        BarrelManifestCoinCost = BindManifestCoinCost("Barrel Manifest Coin Cost", BarrelManifestCoinCostDefault, "Coins charged when shipping a barrel manifest.");
+        FineManifestCoinCost = BindManifestCoinCost("Fine Manifest Coin Cost", FineManifestCoinCostDefault, "Coins charged when shipping a fine wood manifest.");
+        FulingManifestCoinCost = BindManifestCoinCost("Fuling Manifest Coin Cost", FulingManifestCoinCostDefault, "Coins charged when shipping a black metal manifest.");
+        DvergrManifestCoinCost = BindManifestCoinCost("Dvergr Manifest Coin Cost", DvergrManifestCoinCostDefault, "Coins charged when shipping a dvergr manifest.");
+    }
+
+    private static ConfigEntry<int> BindManifestCoinCost(string settingName, int defaultValue, string description)
+    {
+        string configDescription = $"{description} Valid range: 0-{ManifestCoinCostMax}. Values outside this range are clamped.";
+        return plugin.Config.BindConfig(PortConfigSection, settingName, defaultValue, configDescription, synced: true);
     }
 
     private static void SetupPort()
@@ -142,6 +166,7 @@ public static class PortInit
             // current size 10
             Manifest manifest = new Manifest("Wooden Shipment", prefab.GetComponent<Container>());
             manifest.CostToShip = 50;
+            manifest.CostToShipConfig = WoodenManifestCoinCost;
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("Resin", 5);
             manifest.Icon = icon;
@@ -160,6 +185,7 @@ public static class PortInit
             // current size 12
             Manifest manifest = new Manifest("Barrel Shipment", prefab.GetComponent<Container>());
             manifest.CostToShip = 55;
+            manifest.CostToShipConfig = BarrelManifestCoinCost;
             manifest.Recipe.Add("Wood", 10);
             manifest.Recipe.Add("BarrelRings", 1);
             manifest.Icon = icon;
@@ -178,6 +204,7 @@ public static class PortInit
             // current size 24
             Manifest manifest = new Manifest("Fine Shipment", prefab.GetComponent<Container>());
             manifest.CostToShip = 100;
+            manifest.CostToShipConfig = FineManifestCoinCost;
             manifest.Recipe.Add("FineWood", 10);
             manifest.Recipe.Add("Iron", 2);
             manifest.Recipe.Add("BlackMetal", 6);
@@ -197,6 +224,7 @@ public static class PortInit
             // current size 32
             Manifest manifest = new Manifest("Fuling Shipment", prefab.GetComponent<Container>());
             manifest.CostToShip = 280;
+            manifest.CostToShipConfig = FulingManifestCoinCost;
             manifest.Recipe.Add("FineWood", 10);
             manifest.Recipe.Add("Tar", 2);
             manifest.Recipe.Add("BlackMetal", 6);
@@ -224,6 +252,7 @@ public static class PortInit
             container.m_defaultItems.m_drops.Clear();
             Manifest manifest = new Manifest("Dvergr Shipment", prefab.GetComponent<Container>());
             manifest.CostToShip = 410;
+            manifest.CostToShipConfig = DvergrManifestCoinCost;
             manifest.Recipe.Add("YggdrasilWood", 10);
             manifest.Recipe.Add("Copper", 2);
             manifest.PlaceEffect = placeEffect;
