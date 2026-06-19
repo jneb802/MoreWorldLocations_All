@@ -18,7 +18,10 @@ namespace More_World_Locations_AIO;
 [PublicAPI]
 public class ShipmentManager : MonoBehaviour
 {
+    public const float DefaultShippingCostPerMeter = 0f;
+
     public static ConfigEntry<float> TransitByDistance = null!; 
+    public static ConfigEntry<float> ShippingCostPerMeter = null!;
     public static ConfigEntry<string> CurrencyConfig = null!;
     public static ConfigEntry<float> TransitTime = null!;
     public static ConfigEntry<PortInit.Toggle> OverrideTransitTime = null!;
@@ -228,6 +231,25 @@ public class ShipmentManager : MonoBehaviour
             shipments.Add(shipment);
         }
         return shipments;
+    }
+
+    public static float GetShippingCostPerMeter()
+    {
+        if (ShippingCostPerMeter == null) return DefaultShippingCostPerMeter;
+
+        float value = ShippingCostPerMeter.Value;
+        if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f) return DefaultShippingCostPerMeter;
+        return value;
+    }
+
+    public static int CalculateShippingDistanceCost(float distance)
+    {
+        if (float.IsNaN(distance) || float.IsInfinity(distance) || distance <= 0f) return 0;
+
+        float cost = distance * GetShippingCostPerMeter();
+        if (float.IsNaN(cost) || float.IsInfinity(cost) || cost <= 0f) return 0;
+        if (cost >= int.MaxValue) return int.MaxValue;
+        return Mathf.FloorToInt(cost);
     }
     
     public static void ReadLocalFile()

@@ -70,7 +70,7 @@ Shipping Ports are special coastal locations that introduce an item logistics sy
 - Purchase a shipping manifest (functions as a chest) from the port NPC.
 - Fill the manifest with the items you want to ship.
 - Select a destination from your list of discovered ports.
-- Pay the shipping cost in the configured currency (coins by default).
+- Pay the shipping cost in the configured currency (coins by default). The total is the manifest cost plus a distance surcharge.
 
 **Transit & Expiration:**
 - Shipments take time to arrive based on distance. The default rate is 2 seconds per meter (configurable). Transit time uses in-game time, not real-world time.
@@ -78,7 +78,9 @@ Shipping Ports are special coastal locations that introduce an item logistics sy
 
 **Teleportation:** Ports also support teleporting players between discovered ports. Teleport costs scale with distance. This feature is disabled by default and must be enabled in the config.
 
-**Configuration:** All port settings (transit time, currency, expiration, teleport costs) are server-synced and configurable. The ports feature can be disabled entirely in the config if you just want the base locations. Port data is stored in a folder titled `MWL_Ports` in the `BepInEx/Configs` folder.
+**Configuration:** All port settings (transit time, currency, shipment distance cost, expiration, teleport costs) are server-synced and configurable. The ports feature can be disabled entirely in the config if you just want the base locations. Port data is stored in a folder titled `MWL_Ports` in the `BepInEx/Configs` folder.
+
+**Shipping Cost Per Meter:** `Shipping Cost Per Meter` controls the distance surcharge in coins per meter. The default is `0`, preserving the existing manifest-only shipment cost. Valid values are `0` or higher; `0` removes the distance surcharge. Negative, NaN, or infinite values fall back to the default.
 
 ## Shrines
 Shrines are interactive objects that can appear inside MWL locations. They use the vanilla Ward prefab as their model (temporarily until a custom model is available).

@@ -256,12 +256,14 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public string GetHoverName() => Localization.instance.Localize(m_traderName);
 
-    public string GetTooltip()
+    public string GetTooltip() => GetTooltip(0f);
+
+    public string GetTooltip(float distance)
     {
         if (!m_containers.HasItems()) return "";
         StringBuilder sb = new StringBuilder();
         sb.Append($"{LocalKeys.CurrentShipments}:");
-        sb.Append($"\n{LocalKeys.Cost}: <color=orange>{ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins"}</color> <color=yellow>x{m_containers.GetCost()}</color>");
+        sb.Append($"\n{LocalKeys.Cost}: <color=orange>{ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins"}</color> <color=yellow>x{m_containers.GetCost(distance)}</color>");
         sb.Append($"\n{m_tempItems.GetTooltip()}");
         return sb.ToString();
     }
@@ -346,6 +348,14 @@ public class Port : MonoBehaviour, Interactable, Hoverable
                 manifests.Add(temp.manifest);
             }
             return manifests.Sum(i => i.CostToShip);
+        }
+
+        public int GetCost(float distance)
+        {
+            int manifestCost = GetCost();
+            int distanceCost = ShipmentManager.CalculateShippingDistanceCost(distance);
+            if (int.MaxValue - manifestCost < distanceCost) return int.MaxValue;
+            return manifestCost + distanceCost;
         }
 
         public List<Manifest> GetManifests()
@@ -468,6 +478,8 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         }
         
         public float GetDistance(Player player) => Vector3.Distance(player.transform.position, position);
+
+        public float GetDistance(Port port) => global::Utils.DistanceXZ(port.transform.position, position);
 
         public string GetTooltip()
         {
