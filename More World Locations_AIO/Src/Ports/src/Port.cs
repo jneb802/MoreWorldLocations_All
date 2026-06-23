@@ -423,8 +423,16 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         // and keep relevant functions within their own scope
         public readonly ShipmentManager.PortID portID;
         public readonly Vector3 position;
+        public readonly Quaternion rotation;
+        public readonly string locationPrefabName;
         public readonly List<Shipment> deliveries;
         public readonly List<Shipment> shipments;
+
+        private const float PortLocationMatchRadius = 40f;
+        private static readonly Dictionary<string, Vector3> TeleportArrivalOffsets = new()
+        {
+            { "MWL_Port5", new Vector3(0f, 0f, 2.5f) },
+        };
         
         private double _estimatedDuration;
         private double EstimatedDuration
@@ -451,6 +459,8 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             // and details about port
             portID = new ShipmentManager.PortID(zdo.GetString(PortVars.GUID), zdo.GetString(PortVars.Name));
             position = zdo.GetPosition();
+            rotation = zdo.GetRotation();
+            locationPrefabName = GetLocationPrefabName(position);
             deliveries = ShipmentManager.GetDeliveries(portID.GUID)
                 .Where(delivery => delivery.CanAccess(Player.m_localPlayer))
                 .ToList();
@@ -465,6 +475,39 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             deliveries.AddRange(ShipmentManager.GetDeliveries(portID.GUID).Where(delivery => delivery.CanAccess(Player.m_localPlayer)));
             shipments.AddRange(ShipmentManager.GetShipments(portID.GUID).Where(shipment => shipment.CanAccess(Player.m_localPlayer)));
             ShipmentManager.OnShipmentsUpdated -= Reload;
+        }
+
+        public Vector3 GetTeleportArrivalPosition()
+        {
+            if (!TeleportArrivalOffsets.TryGetValue(locationPrefabName, out Vector3 localOffset)) return position;
+            return position + rotation * localOffset;
+        }
+
+        public Quaternion GetTeleportArrivalRotation()
+        {
+            if (!TeleportArrivalOffsets.TryGetValue(locationPrefabName, out Vector3 localOffset)) return rotation;
+
+            Vector3 lookDirection = rotation * -localOffset;
+            lookDirection.y = 0f;
+            if (lookDirection.sqrMagnitude <= 0.001f) return rotation;
+            return Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+        }
+
+        private static string GetLocationPrefabName(Vector3 portPosition)
+        {
+            float closestDistance = PortLocationMatchRadius;
+            string prefabName = string.Empty;
+            foreach (PortManager.PortLocation portLocation in PortManager.GetPortLocations())
+            {
+                Vector3 locationPosition = portLocation.Position.ToVector3();
+                float distance = global::Utils.DistanceXZ(portPosition, locationPosition);
+                if (distance >= closestDistance) continue;
+
+                closestDistance = distance;
+                prefabName = portLocation.PrefabName;
+            }
+
+            return prefabName;
         }
         
         public float GetDistance(Player player) => Vector3.Distance(player.transform.position, position);

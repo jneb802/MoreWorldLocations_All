@@ -563,7 +563,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 // Check and consume teleport requirements before teleporting.
                 if (!Player.m_localPlayer.NoCostCheat())
                 {
-                    var teleportCost = GetTeleportRequirements(m_selectedDestination);
+                    List<Manifest.Requirement> teleportCost = GetTeleportRequirements(m_selectedDestination);
                     if (!HasTeleportRequirements(Player.m_localPlayer, teleportCost))
                     {
                         Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
@@ -571,7 +571,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                     }
                     ConsumeTeleportRequirements(Player.m_localPlayer, teleportCost);
                 }
-                Player.m_localPlayer.TeleportTo(m_selectedDestination.position, Quaternion.identity, true);
+                Player.m_localPlayer.TeleportTo(m_selectedDestination.GetTeleportArrivalPosition(), m_selectedDestination.GetTeleportArrivalRotation(), true);
                 Hide();
                 break;
         }
