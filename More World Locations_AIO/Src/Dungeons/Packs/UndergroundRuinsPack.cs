@@ -57,7 +57,12 @@ public static class UndergroundRuinsPack
             new CustomPrefabSpec { Name = "BFD_CryptKey", Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = "BFD_Modular6_Light", Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = "BFD_Modular8_Puzzle_Light", Source = CustomPrefabSource.Bundled },
-            new CustomPrefabSpec { Name = "BFD_Modular12_Solution_Light", Source = CustomPrefabSource.Bundled },
+            new CustomPrefabSpec
+            {
+                Name = "BFD_Modular12_Solution_Light",
+                Source = CustomPrefabSource.VanillaClone,
+                VanillaSource = "BFD_Modular8_Puzzle_Light",
+            },
         };
 
         for (int i = 0; i < PuzzleCount; i++)
