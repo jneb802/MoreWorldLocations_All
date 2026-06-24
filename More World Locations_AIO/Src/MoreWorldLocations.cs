@@ -77,6 +77,12 @@ namespace More_World_Locations_AIO
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
+            _harmony.Patch(
+                AccessTools.DeclaredMethod(typeof(ZNetScene), "CreateObject"),
+                prefix: new HarmonyMethod(
+                    AccessTools.DeclaredMethod(
+                        typeof(DraugrPileSpawnerZdoPatch),
+                        nameof(DraugrPileSpawnerZdoPatch.SkipPersistedDraugrPileSpawnerZDO))));
             SetupWatcher();
 
             Prefabs.LoadPrefabBundles();
