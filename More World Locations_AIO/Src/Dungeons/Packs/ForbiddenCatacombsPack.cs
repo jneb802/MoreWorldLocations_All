@@ -49,6 +49,12 @@ public static class ForbiddenCatacombsPack
             new CustomPrefabSpec { Name = KitPrefix + "altarHolder", Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = KitPrefix + "AltarDoor",   Source = CustomPrefabSource.Bundled },
             new CustomPrefabSpec { Name = KitPrefix + "secretdoor",  Source = CustomPrefabSource.Bundled },
+            new CustomPrefabSpec
+            {
+                Name = KitPrefix + "Spawner_DraugrPile",
+                Source = CustomPrefabSource.VanillaClone,
+                VanillaSource = "Spawner_DraugrPile",
+            },
             new CustomPrefabSpec { Name = KitPrefix + "CryptKey",    Source = CustomPrefabSource.Bundled },
         },
 
