@@ -1,3 +1,4 @@
+using HarmonyLib;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.Traders;
@@ -5,8 +6,7 @@ namespace More_World_Locations_AIO.Traders;
 public class BlacksmithStone_SE : StatusEffect
 {
     private bool shouldRemove = false;
-    private int m_qualityIncreaseAmount = 1;
-    private Player player;
+    private Player? player;
     public int stoneTier = 1;
     
     public override void Setup(Character character)
@@ -23,9 +23,9 @@ public class BlacksmithStone_SE : StatusEffect
             Inventory inventory = player.GetInventory();
             ItemDrop.ItemData item = inventory.GetItemAt(0, 0);
 
-            if (CheckItem(item) && isQualityCompatible(item, stoneTier))
+            if (CanEnhanceItem(item, stoneTier))
             {
-                item.m_quality += (int)m_qualityIncreaseAmount;
+                item.m_quality += 1;
                 player.Message(MessageHud.MessageType.Center, "Item: " + item.m_shared.m_name + " was enhanced");
                 return true;
             }
@@ -39,7 +39,7 @@ public class BlacksmithStone_SE : StatusEffect
         return false;
     }
     
-    public bool CheckItem(ItemDrop.ItemData item)
+    public static bool CheckItem(ItemDrop.ItemData item)
     {
         if (item == null || item.m_shared == null || item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.None)
         {
@@ -65,9 +65,38 @@ public class BlacksmithStone_SE : StatusEffect
         }
     }
 
-    public bool isQualityCompatible(ItemDrop.ItemData item, int stoneTier)
+    public static bool isQualityCompatible(ItemDrop.ItemData item, int stoneTier)
     {
         return item.m_quality == item.m_shared.m_maxQuality + (stoneTier - 1);
+    }
+
+    public static bool CanEnhanceTopLeftItem(Player player, int stoneTier)
+    {
+        if (player == null)
+        {
+            return false;
+        }
+
+        Inventory inventory = player.GetInventory();
+        return CanEnhanceItem(inventory.GetItemAt(0, 0), stoneTier);
+    }
+
+    public static bool CanEnhanceItem(ItemDrop.ItemData item, int stoneTier)
+    {
+        return CheckItem(item) && isQualityCompatible(item, stoneTier);
+    }
+
+    public static bool TryGetBlacksmithStone(ItemDrop.ItemData item, out BlacksmithStone_SE blacksmithStone)
+    {
+        BlacksmithStone_SE? matchedStone = item?.m_shared?.m_consumeStatusEffect as BlacksmithStone_SE;
+        if (matchedStone == null)
+        {
+            blacksmithStone = null!;
+            return false;
+        }
+
+        blacksmithStone = matchedStone;
+        return true;
     }
     
     public override void UpdateStatusEffect(float dt)
@@ -80,8 +109,14 @@ public class BlacksmithStone_SE : StatusEffect
         }
         else
         {
+            if (player == null)
+            {
+                shouldRemove = true;
+                return;
+            }
+
             Inventory inventory = player.GetInventory();
-            inventory.AddItem(GetBlacksmithStoneItemData(), inventory.FindEmptySlot(true));
+            inventory.AddItem(GetBlacksmithStoneItemData().Clone());
             shouldRemove = true;
         }
     }
@@ -104,5 +139,26 @@ public class BlacksmithStone_SE : StatusEffect
     public override bool IsDone()
     {
         return shouldRemove || base.IsDone();
+    }
+}
+
+[HarmonyPatch(typeof(Player), nameof(Player.CanConsumeItem))]
+public static class BlacksmithStoneCanConsumeItemPatch
+{
+    private static bool Prefix(Player __instance, ItemDrop.ItemData item, ref bool __result)
+    {
+        if (!BlacksmithStone_SE.TryGetBlacksmithStone(item, out BlacksmithStone_SE blacksmithStone))
+        {
+            return true;
+        }
+
+        if (BlacksmithStone_SE.CanEnhanceTopLeftItem(__instance, blacksmithStone.stoneTier))
+        {
+            return true;
+        }
+
+        __instance.Message(MessageHud.MessageType.Center, "No suitable item found in top left corner of inventory.");
+        __result = false;
+        return false;
     }
 }
