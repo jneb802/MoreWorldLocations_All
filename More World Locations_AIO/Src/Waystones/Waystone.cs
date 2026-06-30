@@ -18,13 +18,13 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
 
     public void Awake()
     {
+        znetView = GetComponent<ZNetView>();
+
         if (BepinexConfigs.EnableWaystones.Value == PortInit.Toggle.Off)
         {
-            Destroy(gameObject);
             return;
         }
 
-        znetView = GetComponent<ZNetView>();
         ZDO zdo = znetView.GetZDO();
         if (znetView.IsOwner())
         {
@@ -86,6 +86,27 @@ public class Waystone : MonoBehaviour, Interactable, Hoverable
         }
         
         Debug.Log("Waystone Awake: Loaded waystone config '" + waystoneConfig.internalName + "'");
+    }
+
+    private void Start()
+    {
+        if (BepinexConfigs.EnableWaystones.Value != PortInit.Toggle.Off)
+        {
+            return;
+        }
+
+        if (znetView == null)
+        {
+            znetView = GetComponent<ZNetView>();
+        }
+
+        if (znetView != null && ZNetScene.instance != null)
+        {
+            znetView.Destroy();
+            return;
+        }
+
+        Destroy(gameObject);
     }
 
     public bool Interact(Humanoid user, bool hold, bool alt)
