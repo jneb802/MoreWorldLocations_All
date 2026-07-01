@@ -180,7 +180,6 @@ public static class PortInit
             manifest.CostToShip = 100;
             manifest.Recipe.Add("FineWood", 10);
             manifest.Recipe.Add("Iron", 2);
-            manifest.Recipe.Add("BlackMetal", 6);
             manifest.Icon = icon;
             manifest.PlaceEffect = placeEffect;
         };
