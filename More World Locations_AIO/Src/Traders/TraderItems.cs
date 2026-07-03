@@ -11,47 +11,41 @@ public class TraderItems
     public static ItemDrop.ItemData blacksmithStoneItemData_tier1;
     public static ItemDrop.ItemData blacksmithStoneItemData_tier2;
     public static ItemDrop.ItemData blacksmithStoneItemData_tier3;
+    public static ItemDrop.ItemData blacksmithStoneItemData_tier4;
 
     public static void CreateCustomItems()
     {
-        var assetBundle = Prefabs.vendorsPrefabBundle;
+        AssetBundle assetBundle = Prefabs.vendorsPrefabBundle;
         
-        // Tier 1
-        ItemConfig blacksmithStoneItemConfig_tier1 = new ItemConfig();
-        CustomItem blacksmithStoneCustomItem_tier1 = new CustomItem(assetBundle, "MWL_blacksmithStone_tier1", fixReference: false, blacksmithStoneItemConfig_tier1);
-        ItemDrop blacksmithStoneItemDrop_tier1 = blacksmithStoneCustomItem_tier1.ItemDrop;
-        blacksmithStoneItemDrop_tier1.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
-        BlacksmithStone_SE blacksmithStoneEffect_tier1 = ScriptableObject.CreateInstance<BlacksmithStone_SE>();
-        blacksmithStoneEffect_tier1.stoneTier = 1;
-        blacksmithStoneItemDrop_tier1.m_itemData.m_shared.m_consumeStatusEffect = blacksmithStoneEffect_tier1;
-        blacksmithStoneItemData_tier1 = blacksmithStoneCustomItem_tier1.ItemDrop.m_itemData;
-        
-        // Tier 2
-        ItemConfig blacksmithStoneItemConfig_tier2 = new ItemConfig();
-        CustomItem blacksmithStoneCustomItem_tier2 = new CustomItem(assetBundle, "MWL_blacksmithStone_tier2", fixReference: false, blacksmithStoneItemConfig_tier2);
-        ItemDrop blacksmithStoneItemDrop_tier2 = blacksmithStoneCustomItem_tier2.ItemDrop;
-        blacksmithStoneItemDrop_tier2.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
-        BlacksmithStone_SE blacksmithStoneEffect_tier2 = ScriptableObject.CreateInstance<BlacksmithStone_SE>();
-        blacksmithStoneEffect_tier2.stoneTier = 2;
-        blacksmithStoneItemDrop_tier2.m_itemData.m_shared.m_consumeStatusEffect = blacksmithStoneEffect_tier2;
-        blacksmithStoneItemData_tier2 = blacksmithStoneCustomItem_tier2.ItemDrop.m_itemData;
-        
-        // Tier 3
-        ItemConfig blacksmithStoneItemConfig_tier3 = new ItemConfig();
-        CustomItem blacksmithStoneCustomItem_tier3 = new CustomItem(assetBundle, "MWL_blacksmithStone_tier3", fixReference: false, blacksmithStoneItemConfig_tier3);
-        ItemDrop blacksmithStoneItemDrop_tier3 = blacksmithStoneCustomItem_tier3.ItemDrop;
-        blacksmithStoneItemDrop_tier3.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
-        BlacksmithStone_SE blacksmithStoneEffect_tier3 = ScriptableObject.CreateInstance<BlacksmithStone_SE>();
-        blacksmithStoneEffect_tier3.stoneTier = 3;
-        blacksmithStoneItemDrop_tier3.m_itemData.m_shared.m_consumeStatusEffect = blacksmithStoneEffect_tier3;
-        blacksmithStoneItemData_tier3 = blacksmithStoneCustomItem_tier3.ItemDrop.m_itemData;
+        CustomItem blacksmithStoneCustomItem_tier1 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier1", 1, out blacksmithStoneItemData_tier1);
+        CustomItem blacksmithStoneCustomItem_tier2 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier2", 2, out blacksmithStoneItemData_tier2);
+        CustomItem blacksmithStoneCustomItem_tier3 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier3", 3, out blacksmithStoneItemData_tier3);
+        CustomItem blacksmithStoneCustomItem_tier4 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier4", 4, out blacksmithStoneItemData_tier4);
         
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier1);
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier2);
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier3);
+        ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier4);
         
         // Skill Books
         BuildSkillBooks();
+    }
+
+    private static CustomItem CreateBundledBlacksmithStone(AssetBundle assetBundle, string prefabName, int stoneTier, out ItemDrop.ItemData itemData)
+    {
+        ItemConfig itemConfig = new ItemConfig();
+        CustomItem customItem = new CustomItem(assetBundle, prefabName, fixReference: false, itemConfig);
+        ConfigureBlacksmithStone(customItem.ItemDrop, stoneTier);
+        itemData = customItem.ItemDrop.m_itemData;
+        return customItem;
+    }
+
+    private static void ConfigureBlacksmithStone(ItemDrop itemDrop, int stoneTier)
+    {
+        itemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
+        BlacksmithStone_SE blacksmithStoneEffect = ScriptableObject.CreateInstance<BlacksmithStone_SE>();
+        blacksmithStoneEffect.stoneTier = stoneTier;
+        itemDrop.m_itemData.m_shared.m_consumeStatusEffect = blacksmithStoneEffect;
     }
     
     public static void BuildSkillBooks()

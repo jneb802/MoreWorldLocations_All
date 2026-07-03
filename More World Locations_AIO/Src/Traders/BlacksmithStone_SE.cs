@@ -5,6 +5,7 @@ namespace More_World_Locations_AIO.Traders;
 
 public class BlacksmithStone_SE : StatusEffect
 {
+    private const int DirectUpgradeStoneTier = 4;
     private bool shouldRemove = false;
     private Player? player;
     public int stoneTier = 1;
@@ -25,7 +26,7 @@ public class BlacksmithStone_SE : StatusEffect
 
             if (CanEnhanceItem(item, stoneTier))
             {
-                item.m_quality += 1;
+                item.m_quality = GetEnhancedQuality(item, stoneTier);
                 player.Message(MessageHud.MessageType.Center, "Item: " + item.m_shared.m_name + " was enhanced");
                 return true;
             }
@@ -67,7 +68,13 @@ public class BlacksmithStone_SE : StatusEffect
 
     public static bool isQualityCompatible(ItemDrop.ItemData item, int stoneTier)
     {
-        return item.m_quality == item.m_shared.m_maxQuality + (stoneTier - 1);
+        int targetQuality = GetTargetQuality(item, stoneTier);
+        if (IsDirectUpgradeTier(stoneTier))
+        {
+            return item.m_quality < targetQuality;
+        }
+
+        return item.m_quality == targetQuality - 1;
     }
 
     public static bool CanEnhanceTopLeftItem(Player player, int stoneTier)
@@ -84,6 +91,26 @@ public class BlacksmithStone_SE : StatusEffect
     public static bool CanEnhanceItem(ItemDrop.ItemData item, int stoneTier)
     {
         return CheckItem(item) && isQualityCompatible(item, stoneTier);
+    }
+
+    private static bool IsDirectUpgradeTier(int stoneTier)
+    {
+        return stoneTier == DirectUpgradeStoneTier;
+    }
+
+    private static int GetTargetQuality(ItemDrop.ItemData item, int stoneTier)
+    {
+        return item.m_shared.m_maxQuality + stoneTier;
+    }
+
+    private static int GetEnhancedQuality(ItemDrop.ItemData item, int stoneTier)
+    {
+        if (IsDirectUpgradeTier(stoneTier))
+        {
+            return GetTargetQuality(item, stoneTier);
+        }
+
+        return item.m_quality + 1;
     }
 
     public static bool TryGetBlacksmithStone(ItemDrop.ItemData item, out BlacksmithStone_SE blacksmithStone)
@@ -131,6 +158,8 @@ public class BlacksmithStone_SE : StatusEffect
                 return TraderItems.blacksmithStoneItemData_tier2;
             case 3:
                 return TraderItems.blacksmithStoneItemData_tier3;
+            case 4:
+                return TraderItems.blacksmithStoneItemData_tier4;
             default:
                 return TraderItems.blacksmithStoneItemData_tier1;
         }

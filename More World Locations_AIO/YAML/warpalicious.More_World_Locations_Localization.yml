@@ -17,6 +17,7 @@ se_skillBook: Skill Book
 item_mwl_blacksmithstone_tier1: Blacksmith Stone (1)
 item_mwl_blacksmithstone_tier2: Blacksmith Stone (2)
 item_mwl_blacksmithstone_tier3: Blacksmith Stone (3)
+item_mwl_blacksmithstone_tier4: Blacksmith Stone (4)
 item_mwl_blacksmithstone_description: "Upgrades an armor or weapon past max quality. Place an armor or weapon in top left cell in inventory and consume this item."
 
 # Skill Books (suffix tokens — skill name resolved from game's own $skill_* token)
