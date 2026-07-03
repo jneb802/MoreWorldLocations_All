@@ -20,12 +20,11 @@ public class TraderItems
         CustomItem blacksmithStoneCustomItem_tier1 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier1", 1, out blacksmithStoneItemData_tier1);
         CustomItem blacksmithStoneCustomItem_tier2 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier2", 2, out blacksmithStoneItemData_tier2);
         CustomItem blacksmithStoneCustomItem_tier3 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier3", 3, out blacksmithStoneItemData_tier3);
+        CustomItem blacksmithStoneCustomItem_tier4 = CreateBundledBlacksmithStone(assetBundle, "MWL_blacksmithStone_tier4", 4, out blacksmithStoneItemData_tier4);
         
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier1);
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier2);
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier3);
-
-        CustomItem blacksmithStoneCustomItem_tier4 = CreateClonedBlacksmithStone("MWL_blacksmithStone_tier4", "MWL_blacksmithStone_tier3", 4, "$item_mwl_blacksmithstone_tier4", out blacksmithStoneItemData_tier4);
         ItemManager.Instance.AddItem(blacksmithStoneCustomItem_tier4);
         
         // Skill Books
@@ -38,18 +37,6 @@ public class TraderItems
         CustomItem customItem = new CustomItem(assetBundle, prefabName, fixReference: false, itemConfig);
         ConfigureBlacksmithStone(customItem.ItemDrop, stoneTier);
         itemData = customItem.ItemDrop.m_itemData;
-        return customItem;
-    }
-
-    private static CustomItem CreateClonedBlacksmithStone(string prefabName, string basePrefabName, int stoneTier, string localizationKey, out ItemDrop.ItemData itemData)
-    {
-        ItemConfig itemConfig = new ItemConfig();
-        CustomItem customItem = new CustomItem(prefabName, basePrefabName, itemConfig);
-        ItemDrop itemDrop = customItem.ItemDrop;
-        itemDrop.m_itemData.m_shared.m_name = localizationKey;
-        itemDrop.m_itemData.m_shared.m_description = "$item_mwl_blacksmithstone_description";
-        ConfigureBlacksmithStone(itemDrop, stoneTier);
-        itemData = itemDrop.m_itemData;
         return customItem;
     }
 
