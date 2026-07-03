@@ -37,9 +37,9 @@ public class MinimapTraderIcons
         var assetBundle = Prefabs.vendorsPrefabBundle;
         var portIconAssetBundle = Prefabs.portIconBundle;
         
-        anvilSprite = assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationsIcons/Anvil.png");
-        tankardSprite = assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationsIcons/Tankard.png");
-        coinSprite = assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/More World Locations/More World Vendors/LocationsIcons/Coin.png");
+        anvilSprite = assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/MoreWorldTraders/LocationsIcons/Anvil.png");
+        tankardSprite = assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/MoreWorldTraders/LocationsIcons/Tankard.png");
+        coinSprite = assetBundle.LoadAsset<Sprite>("Assets/WarpProjects/MoreWorldTraders/LocationsIcons/Coin.png");
         achorSprite = portIconAssetBundle.LoadAsset<Sprite>("Assets/WarpProjects/MoreWorldTraders/LocationsIcons/Anchor.png");
     }
 
