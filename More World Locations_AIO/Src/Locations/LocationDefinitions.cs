@@ -581,7 +581,7 @@ public static class LocationDefinitions
     public static readonly MWLLocation[] Ports =
     {
         new() { Name = "MWL_Port1", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port1.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", IconPlaced = true} },
+            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", IconPlaced = true, MinDistance = 1000} },
 
         new() { Name = "MWL_Port2", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port2.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = -2f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", BiomeArea = Heightmap.BiomeArea.Edge, IconPlaced = true } },
