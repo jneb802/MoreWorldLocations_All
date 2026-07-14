@@ -192,6 +192,7 @@ Ports:
   MWL_Port3: 10
   MWL_Port4: 10
   MWL_Port5: 3
+  MWL_Port6: 10
 
 Traders:
   MWL_BlackForestBlacksmith1: 5

@@ -594,6 +594,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_Port5", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port5.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 6f, MinAltitude = -0.5f, MaxAltitude = 2, SlopeRotation = true, Group = "MWL_Ports" , MaxDistance = 9100, IconPlaced = true}  },
+
+        new() { Name = "MWL_Port6", AssetPath = "Assets/WarpProjects/More World Locations/Ports/MWL_Port6.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 6f, MinAltitude = -1f, MaxAltitude = 1, SlopeRotation = true, Group = "MWL_Ports", IconPlaced = true } },
     };
 
     // ── Traders ──────────────────────────────────────────────────────────
