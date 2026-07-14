@@ -1,7 +1,7 @@
 ![More World Locations AIO](https://i.imgur.com/Xd52Zfj.png)
 
 # More World Locations
-This mod massively enhances the world exploration component of Valheim by adding 180 new POI locations across all biomes, including 178 custom locations and 2 procedurally generated dungeons.
+This mod massively enhances the world exploration component of Valheim by adding 181 new POI locations across all biomes, including 179 custom locations and 2 procedurally generated dungeons.
 
 ## Table of Contents
 - [Features](#features)
@@ -30,7 +30,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - [Credit & Thanks](#credit--thanks)
 
 ## Features
-- Adds 178 custom locations across all biomes. Each spawns up to 20 times.
+- Adds 179 custom locations across all biomes. Each spawns up to 20 times.
 - Adds 2 procedurally generated dungeons, one in Black Forest and one in Swamp.
 - Adds Shipping Port locations to ship items and teleport between other discovered shipping port locations.
 - Adds Shrines that provide temporary buffs with randomized effects and durations.
@@ -57,7 +57,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 </details>
 <details>
-  <summary>Adds 30 locations to the Swamp.</summary>
+  <summary>Adds 31 locations to the Swamp.</summary>
 
   ![Swamp Pack 1](https://i.imgur.com/l62Do90.png)
 
@@ -88,7 +88,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 </details>
 
 ## Shipping Ports
-Shipping Ports are special coastal locations that introduce an item logistics system to Valheim. Four port locations spawn along coastlines in the Meadows, Blackforest, Plains, and Mistlands biomes, with each port spawning up to 5 times in a world.
+Shipping Ports are special coastal locations that introduce an item logistics system to Valheim. Six port locations spawn along coastlines in the Meadows, Blackforest, Swamp, Plains, Mistlands, and Ashlands biomes.
 
 **Discovering Ports:** Each port is staffed by an NPC dockmaster. You must interact with the NPC to discover the port and add it to your network. Only discovered ports can be used as shipping destinations.
 
@@ -438,7 +438,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_Port3 | Hilli |
 | MWL_Port4 | iNavite |
 | MWL_Port5 | |
-| MWL_Port6 | |
+| MWL_Port6 | GizmoBuilder |
 | MWL_DvergrHouseWood1 | Hilli |
 | MWL_DvergrHouseWood2 | Hilli |
 | MWL_MarbleJail1 | Bryn |
