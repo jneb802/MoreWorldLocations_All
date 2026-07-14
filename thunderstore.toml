@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "warpalicious"
 name = "More_World_Locations_AIO"
-versionNumber = "5.0.5"
+versionNumber = "5.0.6"
 description = "Adds 180 new POI locations including dungeons, traders, ports and much more to enhance Valheim's world exploration."
 websiteUrl = "https://discord.gg/3aaru2VyHJ"
 containsNsfwContent = false
