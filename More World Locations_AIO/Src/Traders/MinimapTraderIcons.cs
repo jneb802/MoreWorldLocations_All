@@ -31,6 +31,7 @@ public class MinimapTraderIcons
     public static Minimap.LocationSpriteData port3Icon;
     public static Minimap.LocationSpriteData port4Icon;
     public static Minimap.LocationSpriteData port5Icon;
+    public static Minimap.LocationSpriteData port6Icon;
     
     public static void LoadIcons()
     {
@@ -146,6 +147,12 @@ public class MinimapTraderIcons
             m_name = "MWL_Port5",
             m_icon = achorSprite
         };
+
+        port6Icon = new Minimap.LocationSpriteData
+        {
+            m_name = "MWL_Port6",
+            m_icon = achorSprite
+        };
     }
     
     [HarmonyPatch(typeof(Minimap), nameof(Minimap.Awake))]
@@ -216,6 +223,10 @@ public class MinimapTraderIcons
             if (__instance.GetLocationIcon(port5Icon.m_name) == null)
             {
                 __instance.m_locationIcons.Add(port5Icon);
+            }
+            if (__instance.GetLocationIcon(port6Icon.m_name) == null)
+            {
+                __instance.m_locationIcons.Add(port6Icon);
             }
         }
     }
