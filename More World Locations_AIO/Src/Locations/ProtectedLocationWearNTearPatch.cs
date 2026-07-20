@@ -1,19 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using JetBrains.Annotations;
 using More_World_Locations_AIO.Managers;
-using More_World_Locations_AIO.Traders;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
 
-[HarmonyPatch(typeof(Location), nameof(Location.Awake))]
 public static class ProtectedLocationWearNTearPatch
 {
     private const float ProtectedPieceHealth = 9999f;
     private const float MinimumProtectedRadius = 96f;
+    private static int protectedLocationSpawnDepth;
+    private static int protectedLocationBoundsFrame = -1;
 
     private static readonly HashSet<string> ProtectedLocations = LocationDefinitions.Ports
         .Concat(LocationDefinitions.Traders)
@@ -21,29 +20,33 @@ public static class ProtectedLocationWearNTearPatch
         .Select(location => Helpers.GetNormalizedName(location.Name))
         .ToHashSet();
 
-    private static readonly string[] ProtectedAnchorPrefabs = TraderPrefabs.TraderPrefabNames
-        .Concat(TraderPrefabs.TrainerPrefabNames)
-        .ToArray();
-
-    private static readonly List<ZDO> AnchorZdos = new();
-    private static readonly List<Vector3> ProtectedAnchorPositions = new();
-    private static int protectedAnchorPositionsFrame = -1;
-
-    [UsedImplicitly]
-    private static void Postfix(Location __instance)
+    private static readonly HashSet<string> ProtectedLocationGroups = new()
     {
-        if (__instance == null) return;
+        "MWL_Ports",
+        "MWL_Trader"
+    };
 
-        string locationName = Helpers.GetNormalizedName(__instance.name);
-        if (!ProtectedLocations.Contains(locationName)) return;
+    private static readonly List<ProtectedLocationBounds> ProtectedLocationBoundsCache = new();
 
-        foreach (WearNTear wearNTear in __instance.GetComponentsInChildren<WearNTear>(true))
+    internal static bool IsSpawningProtectedLocation => protectedLocationSpawnDepth > 0;
+
+    internal static bool EnterProtectedLocationSpawn(ZoneSystem.ZoneLocation location)
+    {
+        if (!IsProtectedLocationName(location))
         {
-            SetProtectedPieceHealthOnce(wearNTear);
+            return false;
         }
+
+        protectedLocationSpawnDepth++;
+        return true;
     }
 
-    internal static void SetProtectedPieceHealthOnce(WearNTear wearNTear)
+    internal static void ExitProtectedLocationSpawn()
+    {
+        protectedLocationSpawnDepth = Mathf.Max(0, protectedLocationSpawnDepth - 1);
+    }
+
+    internal static void SetProtectedPieceHealth(WearNTear wearNTear)
     {
         if (wearNTear == null) return;
 
@@ -78,65 +81,86 @@ public static class ProtectedLocationWearNTearPatch
         ZoneSystem zoneSystem = ZoneSystem.instance;
         if (zoneSystem == null) return false;
 
+        RefreshProtectedLocationBounds(zoneSystem);
+
         Vector3 position = wearNTear.transform.position;
+        foreach (ProtectedLocationBounds locationBounds in ProtectedLocationBoundsCache)
+        {
+            if (global::Utils.DistanceXZ(position, locationBounds.Position) <= locationBounds.Radius) return true;
+        }
+
+        return false;
+    }
+
+    private static void RefreshProtectedLocationBounds(ZoneSystem zoneSystem)
+    {
+        if (protectedLocationBoundsFrame == Time.frameCount)
+        {
+            return;
+        }
+
+        protectedLocationBoundsFrame = Time.frameCount;
+        ProtectedLocationBoundsCache.Clear();
+
         foreach (ZoneSystem.LocationInstance locationInstance in zoneSystem.GetLocationList())
         {
             if (!IsProtectedLocationName(locationInstance.m_location)) continue;
 
-            float radius = Mathf.Max(locationInstance.m_location.m_exteriorRadius, locationInstance.m_location.m_interiorRadius);
-            radius = Mathf.Max(radius, MinimumProtectedRadius);
-            if (global::Utils.DistanceXZ(position, locationInstance.m_position) <= radius) return true;
+            ProtectedLocationBoundsCache.Add(new ProtectedLocationBounds
+            {
+                Position = locationInstance.m_position,
+                Radius = GetProtectedLocationRadius(locationInstance.m_location)
+            });
         }
+    }
 
-        return false;
+    private static float GetProtectedLocationRadius(ZoneSystem.ZoneLocation location)
+    {
+        float radius = Mathf.Max(location.m_exteriorRadius, location.m_interiorRadius);
+        return Mathf.Max(radius, MinimumProtectedRadius);
     }
 
     private static bool IsProtectedLocationName(ZoneSystem.ZoneLocation location)
     {
-        if (ProtectedLocations.Contains(Helpers.GetNormalizedName(location.m_name))) return true;
-        if (ProtectedLocations.Contains(Helpers.GetNormalizedName(location.m_prefabName))) return true;
+        if (location == null) return false;
+        if (IsProtectedLocationName(location.m_name)) return true;
+        if (IsProtectedLocationName(location.m_prefabName)) return true;
+        if (ProtectedLocationGroups.Contains(location.m_group)) return true;
 
-        string prefabName = location.m_prefab.Name;
-        return !string.IsNullOrEmpty(prefabName) && ProtectedLocations.Contains(Helpers.GetNormalizedName(prefabName));
+        return location.m_prefab != null && IsProtectedLocationName(location.m_prefab.Name);
     }
 
-    internal static bool IsNearProtectedAnchor(Vector3 position)
+    private static bool IsProtectedLocationName(string locationName)
     {
-        if (ZDOMan.instance == null) return false;
-
-        RefreshProtectedAnchorPositions();
-        foreach (Vector3 anchorPosition in ProtectedAnchorPositions)
-        {
-            if (global::Utils.DistanceXZ(position, anchorPosition) <= MinimumProtectedRadius) return true;
-        }
-
-        return false;
+        return !string.IsNullOrEmpty(locationName) &&
+               ProtectedLocations.Contains(Helpers.GetNormalizedName(locationName));
     }
 
-    private static void RefreshProtectedAnchorPositions()
+    private struct ProtectedLocationBounds
     {
-        if (protectedAnchorPositionsFrame == Time.frameCount) return;
+        public Vector3 Position;
+        public float Radius;
+    }
+}
 
-        protectedAnchorPositionsFrame = Time.frameCount;
-        ProtectedAnchorPositions.Clear();
-        foreach (ZDO port in ShipmentManager.GetPorts())
+[HarmonyPatch(typeof(ZoneSystem), "SpawnLocation")]
+public static class ProtectedLocationSpawnPatch
+{
+    [UsedImplicitly]
+    private static void Prefix(ZoneSystem.ZoneLocation location, out bool __state)
+    {
+        __state = ProtectedLocationWearNTearPatch.EnterProtectedLocationSpawn(location);
+    }
+
+    [UsedImplicitly]
+    private static void Finalizer(bool __state)
+    {
+        if (!__state)
         {
-            ProtectedAnchorPositions.Add(port.GetPosition());
+            return;
         }
 
-        foreach (string anchorPrefab in ProtectedAnchorPrefabs)
-        {
-            AnchorZdos.Clear();
-            int index = 0;
-            while (!ZDOMan.instance.GetAllZDOsWithPrefabIterative(anchorPrefab, AnchorZdos, ref index))
-            {
-            }
-
-            foreach (ZDO anchor in AnchorZdos)
-            {
-                ProtectedAnchorPositions.Add(anchor.GetPosition());
-            }
-        }
+        ProtectedLocationWearNTearPatch.ExitProtectedLocationSpawn();
     }
 }
 
@@ -146,25 +170,12 @@ public static class ProtectedLocationWearNTearAwakePatch
     [UsedImplicitly]
     private static void Postfix(WearNTear __instance)
     {
-        __instance.StartCoroutine(SetProtectedHealthWhenAnchorsAreReady(__instance));
-    }
-
-    private static IEnumerator SetProtectedHealthWhenAnchorsAreReady(WearNTear wearNTear)
-    {
-        float[] delays = { 0f, 2f, 8f };
-        foreach (float delay in delays)
+        if (!ProtectedLocationWearNTearPatch.IsSpawningProtectedLocation &&
+            !ProtectedLocationWearNTearPatch.IsProtectedLocationPiece(__instance))
         {
-            if (delay > 0f) yield return new WaitForSeconds(delay);
-
-            if (wearNTear == null) yield break;
-            if (!ProtectedLocationWearNTearPatch.IsProtectedLocationPiece(wearNTear) &&
-                !ProtectedLocationWearNTearPatch.IsNearProtectedAnchor(wearNTear.transform.position))
-            {
-                continue;
-            }
-
-            ProtectedLocationWearNTearPatch.SetProtectedPieceHealthOnce(wearNTear);
-            yield break;
+            return;
         }
+
+        ProtectedLocationWearNTearPatch.SetProtectedPieceHealth(__instance);
     }
 }
