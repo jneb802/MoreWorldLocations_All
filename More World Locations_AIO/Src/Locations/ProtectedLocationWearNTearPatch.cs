@@ -4,6 +4,7 @@ using System.Linq;
 using HarmonyLib;
 using JetBrains.Annotations;
 using More_World_Locations_AIO.Managers;
+using More_World_Locations_AIO.Traders;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -20,9 +21,8 @@ public static class ProtectedLocationWearNTearPatch
         .Select(location => Helpers.GetNormalizedName(location.Name))
         .ToHashSet();
 
-    private static readonly string[] ProtectedAnchorPrefabs = LocationDefinitions.Traders
-        .Select(location => location.Name + "_Vendor")
-        .Concat(LocationDefinitions.Trainers.Select(location => location.Name + "_Trainer"))
+    private static readonly string[] ProtectedAnchorPrefabs = TraderPrefabs.TraderPrefabNames
+        .Concat(TraderPrefabs.TrainerPrefabNames)
         .ToArray();
 
     private static readonly List<ZDO> AnchorZdos = new();

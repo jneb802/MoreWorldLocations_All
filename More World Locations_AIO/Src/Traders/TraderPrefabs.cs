@@ -11,6 +11,25 @@ namespace More_World_Locations_AIO.Traders;
 
 public class TraderPrefabs
 {
+    public static readonly string[] TraderPrefabNames =
+    {
+        "MWL_PlainsTavern1_Vendor",
+        "MWL_PlainsCamp1_Vendor",
+        "MWL_BlackForestBlacksmith1_Vendor",
+        "MWL_BlackForestBlacksmith2_Vendor",
+        "MWL_MountainsBlacksmith1_Vendor",
+        "MWL_MistlandsBlacksmith1_Vendor",
+        "MWL_OceanTavern1_Vendor"
+    };
+
+    public static readonly string[] TrainerPrefabNames =
+    {
+        "MWL_MeadowsTrainer1_Trainer",
+        "MWL_SwampTrainer1_Trainer",
+        "MWL_PlainsTrainer1_Trainer",
+        "MWL_MistTrainer1_Trainer"
+    };
+
     private static Dictionary<string, List<Trader.TradeItem>> traderItemsCache = new Dictionary<string, List<Trader.TradeItem>>();
 
     public static void AddTraderPrefabs()
