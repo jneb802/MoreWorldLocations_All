@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Jotunn.Configs;
-using Jotunn.Entities;
 using Jotunn.Managers;
 using More_World_Locations_AIO.Managers;
 using More_World_Locations_AIO.Shrines;
@@ -16,6 +16,9 @@ public static class ProtectedLocationPeacefulArea
 {
     internal const string StatusEffectName = "MWL_SE_Peaceful";
     private const string AreaObjectName = "MWL_PeacefulArea";
+    private const float AreaHeight = 200f;
+
+    private static readonly FieldInfo StatusEffectHashField = AccessTools.Field(typeof(EffectArea), "m_statusEffectHash");
 
     private static readonly HashSet<string> ProtectedLocations = LocationDefinitions.Ports
         .Concat(LocationDefinitions.Traders)
@@ -76,13 +79,16 @@ public static class ProtectedLocationPeacefulArea
 
     private static void ConfigurePeacefulArea(GameObject areaObject, float radius)
     {
-        SphereCollider collider = areaObject.GetComponent<SphereCollider>();
+        CapsuleCollider collider = areaObject.GetComponent<CapsuleCollider>();
         if (collider == null)
         {
-            collider = areaObject.AddComponent<SphereCollider>();
+            collider = areaObject.AddComponent<CapsuleCollider>();
         }
 
         collider.radius = radius;
+        collider.height = Mathf.Max(AreaHeight, radius * 2f);
+        collider.direction = 1;
+        collider.center = Vector3.zero;
         collider.isTrigger = true;
 
         EffectArea effectArea = areaObject.GetComponent<EffectArea>();
@@ -94,14 +100,7 @@ public static class ProtectedLocationPeacefulArea
         effectArea.m_type = EffectArea.Type.None;
         effectArea.m_statusEffect = StatusEffectName;
         effectArea.m_playerOnly = true;
-
-        ProtectedLocationPeacefulAreaApplier areaApplier = areaObject.GetComponent<ProtectedLocationPeacefulAreaApplier>();
-        if (areaApplier == null)
-        {
-            areaApplier = areaObject.AddComponent<ProtectedLocationPeacefulAreaApplier>();
-        }
-
-        areaApplier.Initialize(radius);
+        SetStatusEffectHash(effectArea);
     }
 
     internal static bool HasPeacefulArea(GameObject locationRoot)
@@ -125,103 +124,10 @@ public static class ProtectedLocationPeacefulArea
         Location location = locationRoot.GetComponent<Location>();
         return location != null ? Mathf.Max(location.m_exteriorRadius, 0f) : 0f;
     }
-}
 
-public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
-{
-    private const float ApplyInterval = 0.5f;
-
-    private float _radiusSqrXZ;
-    private float _nextApplyTime;
-    private int _statusEffectHash;
-    private bool _loggedStatusActive;
-    private bool _loggedMissingStatusEffect;
-
-    public void Initialize(float radius)
+    private static void SetStatusEffectHash(EffectArea effectArea)
     {
-        _radiusSqrXZ = radius * radius;
-        _statusEffectHash = ProtectedLocationPeacefulArea.StatusEffectName.GetStableHashCode();
-    }
-
-    private void FixedUpdate()
-    {
-        EnsureInitialized();
-
-        if (_statusEffectHash == 0 || _radiusSqrXZ <= 0f || Time.time < _nextApplyTime)
-        {
-            return;
-        }
-
-        _nextApplyTime = Time.time + ApplyInterval;
-
-        Player player = Player.m_localPlayer;
-        if (player == null)
-        {
-            return;
-        }
-
-        Vector3 playerPosition = player.transform.position;
-        Vector3 areaPosition = transform.position;
-        float deltaX = playerPosition.x - areaPosition.x;
-        float deltaZ = playerPosition.z - areaPosition.z;
-        float distanceSqrXZ = deltaX * deltaX + deltaZ * deltaZ;
-        if (distanceSqrXZ > _radiusSqrXZ)
-        {
-            return;
-        }
-
-        StatusEffect? peacefulStatusEffect = GetPeacefulStatusEffect();
-        if (peacefulStatusEffect == null)
-        {
-            if (!_loggedMissingStatusEffect)
-            {
-                _loggedMissingStatusEffect = true;
-                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(
-                    $"Peaceful status effect {ProtectedLocationPeacefulArea.StatusEffectName} is unavailable.");
-            }
-
-            return;
-        }
-
-        SEMan seMan = player.GetSEMan();
-        StatusEffect? statusEffect = seMan.AddStatusEffect(peacefulStatusEffect, true);
-        if (!_loggedStatusActive && (statusEffect != null || seMan.HaveStatusEffect(_statusEffectHash)))
-        {
-            _loggedStatusActive = true;
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug(
-                $"Peaceful status active for {player.name} inside {name}.");
-        }
-    }
-
-    private static StatusEffect? GetPeacefulStatusEffect()
-    {
-        if (StatusEffectDB.StatusEffects.TryGetValue(
-                ProtectedLocationPeacefulArea.StatusEffectName,
-                out CustomStatusEffect customStatusEffect))
-        {
-            return customStatusEffect.StatusEffect;
-        }
-
-        return ObjectDB.instance != null ? ObjectDB.instance.GetStatusEffect(ProtectedLocationPeacefulArea.StatusEffectName.GetStableHashCode()) : null;
-    }
-
-    private void EnsureInitialized()
-    {
-        if (_statusEffectHash == 0)
-        {
-            _statusEffectHash = ProtectedLocationPeacefulArea.StatusEffectName.GetStableHashCode();
-        }
-
-        if (_radiusSqrXZ > 0f)
-        {
-            return;
-        }
-
-        SphereCollider sphereCollider = GetComponent<SphereCollider>();
-        if (sphereCollider != null)
-        {
-            Initialize(sphereCollider.radius);
-        }
+        StatusEffectHashField?.SetValue(effectArea, StatusEffectName.GetStableHashCode());
     }
 }
 
