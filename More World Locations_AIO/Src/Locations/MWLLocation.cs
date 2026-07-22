@@ -13,6 +13,7 @@ public class MWLLocation
     public void Register()
     {
         Config.Quantity = LocationQuantityManager.GetQuantity(Name);
+        ProtectedLocationPeacefulArea.RegisterPrefabPatch(Name, Config);
 
         if (!string.IsNullOrEmpty(DungeonTheme) || !string.IsNullOrEmpty(InteriorPrefabName))
         {
