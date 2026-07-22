@@ -16,8 +16,6 @@ public static class ProtectedLocationPeacefulArea
 {
     internal const string StatusEffectName = "MWL_SE_Peaceful";
     private const string AreaObjectName = "MWL_PeacefulArea";
-    private const float MinimumPeacefulRadius = 96f;
-    private const float PeacefulRadiusPadding = 5f;
 
     private static readonly HashSet<string> ProtectedLocations = LocationDefinitions.Ports
         .Concat(LocationDefinitions.Traders)
@@ -119,22 +117,13 @@ public static class ProtectedLocationPeacefulArea
 
     private static float GetPeacefulRadius(GameObject locationRoot, LocationConfig? locationConfig)
     {
-        float radius = 0f;
+        if (locationConfig != null && locationConfig.ExteriorRadius > 0f)
+        {
+            return locationConfig.ExteriorRadius;
+        }
 
         Location location = locationRoot.GetComponent<Location>();
-        if (location != null)
-        {
-            radius = Mathf.Max(radius, location.GetMaxRadius());
-            radius = Mathf.Max(radius, location.m_noBuildRadiusOverride);
-        }
-
-        if (locationConfig != null)
-        {
-            radius = Mathf.Max(radius, locationConfig.ExteriorRadius);
-            radius = Mathf.Max(radius, locationConfig.InteriorRadius);
-        }
-
-        return Mathf.Max(radius + PeacefulRadiusPadding, MinimumPeacefulRadius);
+        return location != null ? Mathf.Max(location.m_exteriorRadius, 0f) : 0f;
     }
 }
 
@@ -142,7 +131,7 @@ public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
 {
     private const float ApplyInterval = 0.5f;
 
-    private float _radiusSqr;
+    private float _radiusSqrXZ;
     private float _nextApplyTime;
     private int _statusEffectHash;
     private bool _loggedStatusActive;
@@ -150,7 +139,7 @@ public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
 
     public void Initialize(float radius)
     {
-        _radiusSqr = radius * radius;
+        _radiusSqrXZ = radius * radius;
         _statusEffectHash = ProtectedLocationPeacefulArea.StatusEffectName.GetStableHashCode();
     }
 
@@ -158,7 +147,7 @@ public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
     {
         EnsureInitialized();
 
-        if (_statusEffectHash == 0 || _radiusSqr <= 0f || Time.time < _nextApplyTime)
+        if (_statusEffectHash == 0 || _radiusSqrXZ <= 0f || Time.time < _nextApplyTime)
         {
             return;
         }
@@ -171,13 +160,17 @@ public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
             return;
         }
 
-        float distanceSqr = (player.transform.position - transform.position).sqrMagnitude;
-        if (distanceSqr > _radiusSqr)
+        Vector3 playerPosition = player.transform.position;
+        Vector3 areaPosition = transform.position;
+        float deltaX = playerPosition.x - areaPosition.x;
+        float deltaZ = playerPosition.z - areaPosition.z;
+        float distanceSqrXZ = deltaX * deltaX + deltaZ * deltaZ;
+        if (distanceSqrXZ > _radiusSqrXZ)
         {
             return;
         }
 
-        StatusEffect peacefulStatusEffect = GetPeacefulStatusEffect();
+        StatusEffect? peacefulStatusEffect = GetPeacefulStatusEffect();
         if (peacefulStatusEffect == null)
         {
             if (!_loggedMissingStatusEffect)
@@ -191,7 +184,7 @@ public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
         }
 
         SEMan seMan = player.GetSEMan();
-        StatusEffect statusEffect = seMan.AddStatusEffect(peacefulStatusEffect, true);
+        StatusEffect? statusEffect = seMan.AddStatusEffect(peacefulStatusEffect, true);
         if (!_loggedStatusActive && (statusEffect != null || seMan.HaveStatusEffect(_statusEffectHash)))
         {
             _loggedStatusActive = true;
@@ -219,7 +212,7 @@ public sealed class ProtectedLocationPeacefulAreaApplier : MonoBehaviour
             _statusEffectHash = ProtectedLocationPeacefulArea.StatusEffectName.GetStableHashCode();
         }
 
-        if (_radiusSqr > 0f)
+        if (_radiusSqrXZ > 0f)
         {
             return;
         }
