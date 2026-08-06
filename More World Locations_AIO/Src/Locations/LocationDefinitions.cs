@@ -607,7 +607,7 @@ public static class LocationDefinitions
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 32, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
 
         new() { Name = "MWL_OceanTavern1", AssetPath = "Assets/WarpProjects/MoreWorldTraders/MWL_OceanTavern1.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.Ocean, Priotized = true, ExteriorRadius = 50, ClearArea = false, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
+            Config = new LocationConfig { Biome = Heightmap.Biome.Ocean, Priotized = true, ExteriorRadius = 50, ClearArea = false, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinAltitude = 8f, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
 
         new() { Name = "MWL_PlainsCamp1", AssetPath = "Assets/WarpProjects/MoreWorldTraders/MWL_PlainsCamp1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "MWL_Trader", MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, BiomeArea = Heightmap.BiomeArea.Median, Unique = true, IconPlaced = true } },
