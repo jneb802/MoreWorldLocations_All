@@ -87,6 +87,7 @@ public static class PortInit
         
         // Server-synced configs (enforced by server for all clients)
         ShipmentManager.TransitByDistance = plugin.Config.BindConfig("0 - Shipment Ports", "Time Per Meter", 0.5f, "Set seconds per meter for shipment transit", synced: true);
+        ShipmentManager.ShippingCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Shipping Cost Per Meter", ShipmentManager.DefaultShippingCostPerMeter, "Coins charged per meter when shipping items. Set to 0 for no distance surcharge. Default 0 preserves the existing manifest-only shipment cost. Negative, NaN, or infinite values fall back to the default.", synced: true);
         ShipmentManager.CurrencyConfig = plugin.Config.BindConfig("0 - Shipment Ports", "Shipment Currency", "Coins", "Set item prefab to use as currency to ship items", synced: true);
         ShipmentManager.CurrencyConfig.SettingChanged += (_, _) => ShipmentManager._currencyItem = null;
         ShipmentManager.OverrideTransitTime = plugin.Config.BindConfig("0 - Shipment Ports", "Override Transit Duration", Toggle.Off, "If on, transit time will be based off override instead of calculated based off distance", synced: true);

@@ -469,9 +469,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     private bool CanShip()
     {
-        if (m_currentPort == null || !Player.m_localPlayer) return false;
+        if (m_currentPort == null || m_selectedDestination == null || !Player.m_localPlayer) return false;
         if (Player.m_localPlayer.NoCostCheat()) return true;
-        int cost = m_currentPort.m_containers.GetCost();
+        int cost = m_currentPort.m_containers.GetCost(m_selectedDestination.GetDistance(m_currentPort));
         string costItem = ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins";
         int count = Player.m_localPlayer.GetInventory().CountItems(costItem);
         return count >= cost;
@@ -488,7 +488,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 if (m_selectedDestination == null) Hide();
                 else
                 {
-                    int shipmentCost = m_currentPort.m_containers.GetCost();
+                    int shipmentCost = m_currentPort.m_containers.GetCost(m_selectedDestination.GetDistance(m_currentPort));
                     string currencyItem = ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins";
                     if (!Player.m_localPlayer.NoCostCheat() &&
                         Player.m_localPlayer.GetInventory().CountItems(currencyItem) < shipmentCost)
@@ -746,8 +746,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             item.SetSelected(true);
             m_selectedDestination = info;
-            Description.SetName($"<color=orange>{info.portID.Name}</color> ({(int)info.GetDistance(Player.m_localPlayer)}m)");
-            string containerTooltip = m_currentPort.GetTooltip(); // store it here, to keep this part static
+            float distance = info.GetDistance(m_currentPort);
+            Description.SetName($"<color=orange>{info.portID.Name}</color> ({(int)distance}m)");
+            string containerTooltip = m_currentPort.GetTooltip(distance); // store it here, to keep this part static
             OnSentShipment = () =>
             {
                 // for visual feedback that current shipment is sent
@@ -764,7 +765,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             if (hasItems)
             {
                 Requirements.SetActive(true);
-                Requirements.LoadCost(m_currentPort.m_containers);
+                Requirements.LoadCost(m_currentPort.m_containers, distance);
                 Requirements.SetLevel(1.ToString());
             }
             
@@ -1071,11 +1072,11 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             }
         }
 
-        public void LoadCost(Port.ContainerPlacement tempContainers)
+        public void LoadCost(Port.ContainerPlacement tempContainers, float distance)
         {
-            var total = tempContainers.GetCost();
-            var currency = ShipmentManager.CurrencyItem ?? ObjectDB.instance.GetItemPrefab("Coins").GetComponent<ItemDrop>().m_itemData;
-            var maxStack = currency.m_shared.m_maxStackSize;
+            int total = tempContainers.GetCost(distance);
+            ItemDrop.ItemData currency = ShipmentManager.CurrencyItem ?? ObjectDB.instance.GetItemPrefab("Coins").GetComponent<ItemDrop>().m_itemData;
+            int maxStack = currency.m_shared.m_maxStackSize;
 
             foreach (RequirementItem item in items)
             {
