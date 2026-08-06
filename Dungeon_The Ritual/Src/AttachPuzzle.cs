@@ -77,9 +77,9 @@ public class AttachPuzzle : MonoBehaviour
     {
         int prefabHash = prefabName.GetStableHashCode();
         
-        Vector2i sector = ZoneSystem.GetZone(position);
+        Vector2s sector = ZoneSystem.GetZone(position);
     
-        int sectorIndex = ZDOMan.instance.SectorToIndex(sector);
+        int sectorIndex = (int)ZoneSystem.SectorToIndex(sector).Sector;
     
         if (sectorIndex >= 0 && sectorIndex < ZDOMan.instance.m_objectsBySector.Length)
         {
@@ -265,4 +265,3 @@ public class AttachPuzzle : MonoBehaviour
         public int puzzlePosition = new int();
     }
 }
-
