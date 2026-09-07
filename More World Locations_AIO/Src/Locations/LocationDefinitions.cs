@@ -83,6 +83,10 @@ public static class LocationDefinitions
             Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Wood_small", Priotized = true, RandomRotation = false,
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring5.MinDistance, InForest = true } },
 
+        new() { Name = "MWL_SmallMeadowHouse1", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_SmallMeadowHouse1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Wood_small", Priotized = true, RandomRotation = false,
+                ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
+
         new() { Name = "MWL_MeadowsRuin1", AssetPath = "Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsRuin1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Meadows, BiomeArea = Heightmap.BiomeArea.Everything, Group = "Ruins_small", Priotized = true, RandomRotation = false,
                 MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring1.MinDistance, MaxDistance = LocationRings.Ring4.MaxDistance, InForest = false } },
@@ -181,6 +185,9 @@ public static class LocationDefinitions
         new() { Name = "MWL_ForestHouse2", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestHouse2.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "House_small", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 10, MinDistance = LocationRings.Ring4.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance } },
 
+        new() { Name = "MWL_CrookedHut1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_CrookedHut1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "House_small", Priotized = true, RandomRotation = false, ExteriorRadius = 16, ClearArea = true, MinDistanceFromSimilar = 512, MaxTerrainDelta = 2f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance } },
+
         new() { Name = "MWL_ForestRuin1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Ruins_large", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 2f, MinAltitude = 8, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring5.MaxDistance } },
 
@@ -246,6 +253,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_StoneTower3", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_StoneTower3.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Tower_large", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 2, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring6.MaxDistance } },
+
+        new() { Name = "MWL_StoneTowerRuins1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_StoneTowerRuins1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Ruins_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 14, ClearArea = true, MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 2, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring6.MaxDistance } },
     };
 
     // ── Swamp ─────────────────────────────────────────────────────────
@@ -299,6 +309,9 @@ public static class LocationDefinitions
 
         new() { Name = "MWL_Treehouse1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_Treehouse1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Treehouse", Priotized = true, RandomRotation = false, ExteriorRadius = 15, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
+
+        new() { Name = "MWL_SwampTreeHut1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTreeHut1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Treehouse", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
 
         new() { Name = "MWL_Shipyard1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_Shipyard1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_ship", Priotized = true, RandomRotation = false, ExteriorRadius = 15, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 2f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
