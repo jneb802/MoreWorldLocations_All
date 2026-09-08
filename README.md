@@ -88,7 +88,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 </details>
 
 ## Shipping Ports
-Shipping Ports are special coastal locations that introduce an item logistics system to Valheim. Six port locations spawn along coastlines in the Meadows, Blackforest, Swamp, Mountain, Plains, and Mistlands biomes, with each port spawning up to 5 times in a world.
+Shipping Ports are special coastal locations that introduce an item logistics system to Valheim. Six port locations spawn along coastlines in the Meadows, Black Forest, Swamp, Plains, Mistlands, and Ashlands biomes.
 
 **Discovering Ports:** Each port is staffed by an NPC dockmaster. You must interact with the NPC to discover the port and add it to your network. Only discovered ports can be used as shipping destinations.
 
