@@ -281,7 +281,7 @@ The goal of the More World Locations series is to solve Valheim's exploration pr
 - This AIO pack includes many locations not present in any other pack.
 - This AIO pack includes all biome packs including: Meadows Pack 1, Meadows Pack 2, BlackForest Pack 1, BlackForest Pack 2, Swamp Pack 1, Mountains Pack 1, Plains Pack 1, Mistlands Pack 1, Ashlands Pack 1, Adventure Map Pack 1.
 - More World Traders has been fully integrated into the AIO mod as of 4.0.0.
-- This AIO DOES NOT currently include these other MWL mods: Underground Ruins, Forbidden Catacombs.
+- This AIO pack includes the Underground Ruins and Forbidden Catacombs dungeon mods.
 
 ## FAQ
 Q: I'm seeing a lot of "Failed to place all X, placed Y out of Z" warning messages during world generation. Is something wrong?
