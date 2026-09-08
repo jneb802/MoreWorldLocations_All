@@ -1,7 +1,7 @@
 ![More World Locations AIO](https://i.imgur.com/Xd52Zfj.png)
 
 # More World Locations
-This mod massively enhances the world exploration component of Valheim by adding 181 new POI locations across all biomes, including 179 custom locations and 2 procedurally generated dungeons.
+This mod massively enhances the world exploration component of Valheim by adding 185 new POI locations across all biomes, including 183 custom locations and 2 procedurally generated dungeons.
 
 ## Table of Contents
 - [Features](#features)
@@ -30,7 +30,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - [Credit & Thanks](#credit--thanks)
 
 ## Features
-- Adds 179 custom locations across all biomes. Each spawns up to 20 times.
+- Adds 183 custom locations across all biomes. Each spawns up to 20 times.
 - Adds 2 procedurally generated dungeons, one in Black Forest and one in Swamp.
 - Adds Shipping Port locations to ship items and teleport between other discovered shipping port locations.
 - Adds Shrines that provide temporary buffs with randomized effects and durations.
@@ -45,19 +45,19 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 ## Location Previews
 <details>
-  <summary>Adds 30 locations to the Meadows.</summary>
+  <summary>Adds 31 locations to the Meadows.</summary>
 
   ![Meadows Pack 1](https://i.imgur.com/pPFkrDi.png)
 
 </details>
 <details>
-  <summary>Adds 39 locations to the Blackforest.</summary>
+  <summary>Adds 41 locations to the Blackforest.</summary>
 
   ![Blackforest Pack 1](https://i.imgur.com/5lKv9F0.png)
 
 </details>
 <details>
-  <summary>Adds 31 locations to the Swamp.</summary>
+  <summary>Adds 32 locations to the Swamp.</summary>
 
   ![Swamp Pack 1](https://i.imgur.com/l62Do90.png)
 
@@ -281,7 +281,7 @@ The goal of the More World Locations series is to solve Valheim's exploration pr
 - This AIO pack includes many locations not present in any other pack.
 - This AIO pack includes all biome packs including: Meadows Pack 1, Meadows Pack 2, BlackForest Pack 1, BlackForest Pack 2, Swamp Pack 1, Mountains Pack 1, Plains Pack 1, Mistlands Pack 1, Ashlands Pack 1, Adventure Map Pack 1.
 - More World Traders has been fully integrated into the AIO mod as of 4.0.0.
-- This AIO DOES NOT currently include these other MWL mods: Underground Ruins, Forbidden Catacombs.
+- This AIO pack includes the Underground Ruins and Forbidden Catacombs dungeon mods.
 
 ## FAQ
 Q: I'm seeing a lot of "Failed to place all X, placed Y out of Z" warning messages during world generation. Is something wrong?
