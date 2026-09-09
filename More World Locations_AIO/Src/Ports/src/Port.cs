@@ -256,6 +256,8 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public string GetHoverName() => Localization.instance.Localize(m_traderName);
 
+    public float GetHoverOffset() => 0f;
+
     public string GetTooltip()
     {
         if (!m_containers.HasItems()) return "";

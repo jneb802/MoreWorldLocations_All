@@ -303,6 +303,8 @@ public class Shrine : MonoBehaviour, Interactable, Hoverable
         return Localization.instance.Localize(this.name);
     }
 
+    public float GetHoverOffset() => 0f;
+
     public bool CheckUserInventory(Humanoid user)
     {
         if (!hasBeenUsedOnce)

@@ -286,7 +286,8 @@ public class ShipmentItem
     /// <returns></returns>
     public bool AddItem(Container container)
     {
-        ItemDrop.ItemData? item = container.GetInventory().AddItem(ItemName, Stack, Quality, Variant, CrafterID, CrafterName);
+        ItemDrop.ItemData? item = container.GetInventory().AddItem(
+            ItemName, Stack, Quality, Variant, CrafterID, CrafterName, cheated: false);
         if (item == null) return false;
         item.m_durability = Durability;
         item.m_customData = CustomData;
