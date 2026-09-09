@@ -79,7 +79,7 @@ namespace Forbidden_Catacombs
         {
             foreach (ItemStand itemStand in itemStands)
             {
-                if (itemStand.m_visualName != offeringItem!.name)
+                if (itemStand.GetAttachedItem() != offeringItem!.name.GetStableHashCode())
                 {
                     return false;
                 }
@@ -103,19 +103,21 @@ namespace Forbidden_Catacombs
 
         public string GetHoverName() => Localization.instance.Localize(m_name);
 
+        public float GetHoverOffset() => 0f;
+
         public GameObject? FindGameObjectInSector(string prefabName, Vector3 position)
         {
             int prefabHash = prefabName.GetStableHashCode();
 
-            Vector2i sector = ZoneSystem.GetZone(position);
-            int sectorIndex = ZDOMan.instance.SectorToIndex(sector);
+            Vector2s sector = ZoneSystem.GetZone(position);
+            ZoneSystem.SectorIndex sectorIndex = ZoneSystem.SectorToIndex(sector);
 
-            if (sectorIndex < 0 || sectorIndex >= ZDOMan.instance.m_objectsBySector.Length)
+            if (sectorIndex.Sector >= ZDOMan.instance.m_objectsBySector.Length)
             {
                 return null;
             }
 
-            List<ZDO> sectorList = ZDOMan.instance.m_objectsBySector[sectorIndex];
+            List<ZDO> sectorList = ZDOMan.instance.m_objectsBySector[(int)sectorIndex.Sector];
             if (sectorList == null)
             {
                 return null;

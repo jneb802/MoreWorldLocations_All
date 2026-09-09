@@ -555,7 +555,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 break;
             case TabOption.Teleport:
                 if (m_selectedDestination == null || !Player.m_localPlayer) return;
-                if (!Player.m_localPlayer.IsTeleportable())
+                if (!Player.m_localPlayer.IsTeleportable(allowAllItems: false))
                 {
                     Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_noteleport");
                     return;
