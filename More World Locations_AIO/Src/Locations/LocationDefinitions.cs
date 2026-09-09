@@ -239,9 +239,6 @@ public static class LocationDefinitions
         new() { Name = "MWL_CoastTower1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_CoastTower1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Coastal", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 512, MinAltitude = -1, MaxAltitude = 0 } },
 
-        new() { Name = "MWL_StoneOutlook1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_StoneOutlook1.prefab",
-            Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Coastal", Priotized = true, RandomRotation = false, ClearArea = true, MinDistanceFromSimilar = 1024, MinAltitude = -2, MaxAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, SlopeRotation = true } },
-
         new() { Name = "MWL_ForestGrove1", AssetPath = "Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestGrove1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.BlackForest, Group = "Grove", Priotized = true, RandomRotation = false, ExteriorRadius = 10, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 3f, MinAltitude = 1.5f, BiomeArea = Heightmap.BiomeArea.Median } },
 
