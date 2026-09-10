@@ -1,7 +1,7 @@
 ![More World Locations AIO](https://i.imgur.com/Xd52Zfj.png)
 
 # More World Locations
-This mod massively enhances the world exploration component of Valheim by adding 185 new POI locations across all biomes, including 183 custom locations and 2 procedurally generated dungeons.
+This mod massively enhances the world exploration component of Valheim by adding 190 new POI locations across all biomes, including 188 custom locations and 2 procedurally generated dungeons.
 
 ## Table of Contents
 - [Features](#features)
@@ -30,7 +30,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - [Credit & Thanks](#credit--thanks)
 
 ## Features
-- Adds 183 custom locations across all biomes. Each spawns up to 20 times.
+- Adds 188 custom locations across all biomes. Each spawns up to 20 times.
 - Adds 2 procedurally generated dungeons, one in Black Forest and one in Swamp.
 - Adds Shipping Port locations to ship items and teleport between other discovered shipping port locations.
 - Adds Shrines that provide temporary buffs with randomized effects and durations.
@@ -57,7 +57,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 </details>
 <details>
-  <summary>Adds 32 locations to the Swamp.</summary>
+  <summary>Adds 37 locations to the Swamp.</summary>
 
   ![Swamp Pack 1](https://i.imgur.com/l62Do90.png)
 

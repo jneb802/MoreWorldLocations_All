@@ -99,6 +99,11 @@ Swamp:
   MWL_SwampRuin1: 25
   MWL_SwampStakeFort1: 10
   MWL_SwampTemple1: 10
+  MWL_SwampTempleSmall1: 10
+  MWL_SwampTemple2: 5
+  MWL_SwampShrine1: 10
+  MWL_SwampSanctuary1: 5
+  MWL_SwampComplex1: 5
   MWL_SwampTreeHut1: 20
   MWL_SwampTower1: 20
   MWL_SwampTower2: 25

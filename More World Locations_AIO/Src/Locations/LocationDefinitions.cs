@@ -337,6 +337,21 @@ public static class LocationDefinitions
         new() { Name = "MWL_SwampTemple1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTemple1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_small", Priotized = true, RandomRotation = false, ExteriorRadius = 15, ClearArea = true, MinDistanceFromSimilar = 512, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
 
+        new() { Name = "MWL_SwampTempleSmall1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTempleSmall1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_medium", Priotized = true, RandomRotation = false, ExteriorRadius = 30, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_SwampTemple2", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTemple2.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_large", Priotized = true, RandomRotation = false, ExteriorRadius = 30, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_SwampShrine1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampShrine1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_altar", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = -1f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_SwampSanctuary1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampSanctuary1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_large", Priotized = true, RandomRotation = false, ExteriorRadius = 32, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring3.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
+        new() { Name = "MWL_SwampComplex1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_SwampComplex1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Group = "Swamp_Huge", Priotized = true, RandomRotation = false, ExteriorRadius = 32, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 0f, MinDistance = LocationRings.Ring3.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
         new() { Name = "MWL_CastleCorner1", AssetPath = "Assets/WarpProjects/More World Locations/Swamp/MWL_CastleCorner1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Swamp, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Swamp_Ruins", MinDistanceFromSimilar = 512, MaxTerrainDelta = 3f, MinAltitude = 1, MinDistance = LocationRings.Ring2.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance, InForest = false } },
 
