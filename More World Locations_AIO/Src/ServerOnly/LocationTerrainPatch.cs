@@ -82,41 +82,54 @@ public static class LocationTerrainPatch
         {
             if (zdo.GetPrefab() != LocationProxyPrefab)
                 continue;
+            LocationTerrainPlan.PlacedSite? site = SiteOf(zdo);
+            if (site.HasValue)
+                sites.Add(site.Value);
+        }
+        return sites;
+    }
+
+    /// <summary>
+    /// One location proxy as a site of ours with its terrain read off the
+    /// resolved template, or null when it is not ours or has no terrain.
+    /// </summary>
+    private static LocationTerrainPlan.PlacedSite? SiteOf(ZDO zdo)
+    {
+        {
             int locationHash = zdo.GetInt(ZDOVars.s_location, 0);
             if (locationHash == 0)
-                continue;
+                return null;
             if (!ZoneSystem.instance.m_locationsByHash.TryGetValue(locationHash, out ZoneSystem.ZoneLocation location))
-                continue;
+                return null;
 
             string name = location.m_prefabName;
             // Only ours. A vanilla location's modifiers are in a template the
             // stock client HAS, so it shapes that ground itself; converting them
             // as well would apply the deltas on top and sink the site twice.
             if (!ServerOnlySelection.IsOurs(name))
-                continue;
+                return null;
 
             List<TerrainModifier> modifiers = ModifiersOf(location, name);
             if (modifiers == null || modifiers.Count == 0)
-                continue;
+                return null;
 
             Vector3 placement = zdo.GetPosition();
             Quaternion rotation = zdo.GetRotation();
             GameObject asset = location.m_prefab.Asset;
             if (asset == null)
-                continue;
+                return null;
 
             List<LocationTerrainOperation> operations = LocationTerrainReader.Operations(
                 modifiers,
                 modifier => placement + rotation * asset.transform.InverseTransformPoint(modifier.transform.position));
             if (operations.Count == 0)
-                continue;
+                return null;
 
             if (ReachesTooFar(zdo, operations, name, placement))
-                continue;
+                return null;
 
-            sites.Add(new LocationTerrainPlan.PlacedSite(name, placement, operations));
+            return new LocationTerrainPlan.PlacedSite(name, placement, operations);
         }
-        return sites;
     }
 
     /// <summary>
@@ -172,8 +185,64 @@ public static class LocationTerrainPatch
         return modifiers;
     }
 
-    private static readonly int LocationProxyPrefab = "LocationProxy".GetStableHashCode();
+    /// <summary>
+    /// Every placed site of ours in the world, read from saved location proxies.
+    ///
+    /// One pass over the LocationProxy ZDOs; it reads and generates nothing. It
+    /// is what a restart needs in order to know which conversions were left
+    /// unfinished, because the zones concerned are already generated and will
+    /// not run their own hook again.
+    /// </summary>
+    internal static List<LocationTerrainPlan.PlacedSite> OurPlacedSites()
+    {
+        var sites = new List<LocationTerrainPlan.PlacedSite>();
+        if (ZDOMan.instance == null || ZoneSystem.instance == null)
+            return sites;
 
+        var proxies = new List<ZDO>();
+        int index = 0;
+        ZDOMan.instance.GetAllZDOsWithPrefabIterative("LocationProxy", proxies, ref index);
+        foreach (ZDO zdo in proxies)
+        {
+            LocationTerrainPlan.PlacedSite? site = SiteOf(zdo);
+            if (site.HasValue)
+                sites.Add(site.Value);
+        }
+        Log.LogInfo($"{sites.Count} placed site(s) of ours carry terrain, out of {proxies.Count} location proxies.");
+        return sites;
+    }
+
+    private static readonly int LocationProxyPrefab = "LocationProxy".GetStableHashCode();
+}
+
+/// <summary>
+/// The clock the outstanding work runs on, and the one pass that takes it up
+/// again after a restart.
+///
+/// Zone generation is driven by where players are, so a site whose last zone is
+/// waiting can stay waiting for as long as nobody moves. ZoneSystem.Update is
+/// the game's own per-frame hook; the work inside it is bounded and on a timer.
+/// </summary>
+[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Update))]
+public static class LocationTerrainTick
+{
+    private static bool s_reseeded;
+
+    internal static void Forget() => s_reseeded = false;
+
+    private static void Postfix()
+    {
+        if (!ServerOnlyMode.Enabled || ZoneSystem.instance == null)
+            return;
+
+        if (!s_reseeded && ZoneSystem.instance.LocationsGenerated)
+        {
+            s_reseeded = true;
+            LocationTerrainWriter.Reseed(LocationTerrainPatch.OurPlacedSites());
+        }
+
+        LocationTerrainWriter.Tick(Time.time);
+    }
 }
 
 /// <summary>A new world: forget the templates read for the last one.</summary>
@@ -184,5 +253,6 @@ public static class LocationTerrainWriterReset
     {
         LocationTerrainWriter.Reset();
         LocationTerrainPatch.Forget();
+        LocationTerrainTick.Forget();
     }
 }

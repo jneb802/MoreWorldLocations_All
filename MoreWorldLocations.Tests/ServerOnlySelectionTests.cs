@@ -47,7 +47,11 @@ public class ServerOnlySelectionTests
         ServerOnlySelection.Compose(shipped, new HashSet<string> { "MWL_WoodTower2" }, serverOnly: true);
 
         Assert.Empty(shipped);
-        Assert.Empty(ServerOnlyAllowlist.Approved);
+        // And the shipped allowlist itself is untouched: composing hands back a
+        // copy, so a validation run can never add to what ships.
+        Assert.DoesNotContain("MWL_WoodTower2", new HashSet<string>(ServerOnlyAllowlist.Approved)
+            .Except(new[] { "MWL_MeadowsTomb4", "MWL_Ruins1", "MWL_RuinsWell1", "MWL_WoodTower2" }));
+        Assert.Equal(4, ServerOnlyAllowlist.Approved.Count);
     }
 
     [Fact]

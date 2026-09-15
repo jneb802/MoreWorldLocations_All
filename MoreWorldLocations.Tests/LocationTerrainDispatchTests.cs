@@ -363,6 +363,152 @@ public class LocationTerrainDispatchTests : IDisposable
         Assert.Equal(1, inB);
     }
 
+    // ---- recovery without another zone being generated ---------------------
+
+    [Fact]
+    public void TheLastZoneIsFinishedWithoutAnyFurtherZoneBeingGenerated()
+    {
+        // The gap this closes: retries used to run only from a zone's generation
+        // hook. If the LAST zone a site owes is waiting -- its compiler belongs
+        // to someone else, its heights are not built -- and nobody moves far
+        // enough to generate another zone, nothing ever calls back. The injected
+        // failure on 15 Sep recovered only because a neighbour happened to
+        // generate next; that is luck, not recovery.
+        ServerOnlyMode.Set(true);
+        try
+        {
+            Heightmap hmA = Load(A);
+            hmA.m_terrainComp!.m_nview.GetZDO().SetOwner(ZDOMan.instance.m_sessionID + 1);
+            LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
+            Assert.Contains(LocationTerrainLedger.Waiting(), e => e.Zone == A);
+
+            // Nothing else generates. The blocker clears and the clock alone
+            // has to finish the work.
+            hmA.m_terrainComp.m_nview.GetZDO().SetOwner(0L);
+            Assert.True(LocationTerrainWriter.Tick(1000f));
+
+            Assert.Empty(LocationTerrainLedger.Waiting());
+            Assert.Contains(TerrainOf(A), d => d != 0f);
+        }
+        finally { ServerOnlyMode.Set(false); }
+    }
+
+    [Fact]
+    public void TheClockIsBoundedAndSilentWhenThereIsNothingToDo()
+    {
+        ServerOnlyMode.Set(true);
+        try
+        {
+            // Nothing outstanding: no work, however often it is called.
+            Assert.False(LocationTerrainWriter.Tick(1000f));
+
+            Heightmap hmA = Load(A);
+            hmA.m_terrainComp!.m_nview.GetZDO().SetOwner(ZDOMan.instance.m_sessionID + 1);
+            LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
+
+            // Something outstanding, but the clock has just run: not again yet.
+            Assert.True(LocationTerrainWriter.Tick(2000f));
+            Assert.False(LocationTerrainWriter.Tick(2000f + LocationTerrainWriter.TickSeconds / 2f));
+            Assert.True(LocationTerrainWriter.Tick(2000f + LocationTerrainWriter.TickSeconds));
+        }
+        finally { ServerOnlyMode.Set(false); }
+    }
+
+    [Fact]
+    public void TheClockDoesNothingOutsideServerOnlyMode()
+    {
+        Heightmap hmA = Load(A);
+        hmA.m_terrainComp!.m_nview.GetZDO().SetOwner(ZDOMan.instance.m_sessionID + 1);
+        ServerOnlyMode.Set(true);
+        LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
+        ServerOnlyMode.Set(false);
+
+        Assert.False(LocationTerrainWriter.Tick(9999f));
+        Assert.NotEmpty(LocationTerrainLedger.Waiting());
+    }
+
+    [Fact]
+    public void WorkOutstandingAtAShutdownIsTakenUpAgainAfterTheRestart()
+    {
+        // The pending set is memory and a restart empties it, while the zones it
+        // concerned are already generated and will never run their own hook
+        // again. Without the reseed, a site left half written by a shutdown
+        // stays half written for the life of the world.
+        ServerOnlyMode.Set(true);
+        try
+        {
+            var site = BoundarySite();
+
+            // B is written; A is generated but its compiler is held, so A waits.
+            Heightmap hmB = Load(B);
+            LocationTerrainWriter.WriteZone(B, hmB, new List<LocationTerrainPlan.PlacedSite> { site });
+            Generated(B);
+            Heightmap hmA = Load(A);
+            hmA.m_terrainComp!.m_nview.GetZDO().SetOwner(ZDOMan.instance.m_sessionID + 1);
+            Generated(A);
+            LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { site });
+            Assert.Contains(LocationTerrainLedger.Waiting(), e => e.Zone == A);
+            float[] bBefore = TerrainOf(B);
+
+            // Restart: the ledger and the pending set are gone, the world is not.
+            LocationTerrainWriter.Reset();
+            Assert.Empty(LocationTerrainLedger.All());
+            hmA.m_terrainComp.m_nview.GetZDO().SetOwner(0L);
+
+            int outstanding = LocationTerrainWriter.Reseed(new[] { site });
+
+            // B is recognised as already carried -- from its own compiler, not
+            // from a memory of ours -- and only A is outstanding.
+            Assert.Equal(1, outstanding);
+            Assert.Contains(LocationTerrainLedger.All(),
+                e => e.Zone == B && e.State == LocationTerrainLedger.State.Done);
+            Assert.Contains(LocationTerrainLedger.Waiting(), e => e.Zone == A);
+
+            Assert.True(LocationTerrainWriter.Tick(5000f));
+            Assert.Empty(LocationTerrainLedger.Waiting());
+            Assert.Contains(TerrainOf(A), d => d != 0f);
+            Assert.Equal(bBefore, TerrainOf(B));
+        }
+        finally { ServerOnlyMode.Set(false); }
+    }
+
+    [Fact]
+    public void AFinishedSiteIsNotPlannedAgainAfterARestart()
+    {
+        ServerOnlyMode.Set(true);
+        try
+        {
+            var site = BoundarySite();
+            Heightmap hmA = Load(A);
+            Heightmap hmB = Load(B);
+            LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { site });
+            Generated(A);
+            LocationTerrainWriter.WriteZone(B, hmB, new List<LocationTerrainPlan.PlacedSite> { site });
+            Generated(B);
+            Assert.Empty(LocationTerrainLedger.Waiting());
+
+            LocationTerrainWriter.Reset();
+            Assert.Equal(0, LocationTerrainWriter.Reseed(new[] { site }));
+            Assert.Empty(LocationTerrainLedger.Waiting());
+            Assert.Empty(LocationTerrainLedger.Failures());
+        }
+        finally { ServerOnlyMode.Set(false); }
+    }
+
+    [Fact]
+    public void AZoneThatWasNeverGeneratedIsNotOutstanding()
+    {
+        // Its own hook will find the proxy vanilla saved. Treating it as
+        // outstanding would write terrain for a zone the world has not made.
+        ServerOnlyMode.Set(true);
+        try
+        {
+            Assert.Equal(0, LocationTerrainWriter.Reseed(new[] { BoundarySite() }));
+            Assert.Empty(LocationTerrainLedger.All());
+        }
+        finally { ServerOnlyMode.Set(false); }
+    }
+
     [Fact]
     public void ARepairRefusesToWriteBehindALiveCompiler()
     {

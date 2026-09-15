@@ -50,6 +50,7 @@ public static class LocationTerrainWriter
     internal static void Reset()
     {
         s_pendingWork.Clear();
+        s_nextTick = 0f;
         LocationTerrainLedger.Reset();
     }
 
@@ -291,10 +292,110 @@ public static class LocationTerrainWriter
     }
 
     /// <summary>
-    /// Give every outstanding conversion another chance while zones are being
-    /// generated. Bounded per call so one tick cannot spend the frame, and each
-    /// attempt is counted, so a wait that will never resolve becomes a reported
-    /// failure rather than silence.
+    /// Retry outstanding conversions on a clock, not only when a zone is
+    /// generated.
+    ///
+    /// Zone generation is driven by where players are. If the LAST zone a site
+    /// owes is waiting — its compiler belongs to someone else, or its heights
+    /// are not built — and nobody moves far enough to generate another zone,
+    /// nothing ever calls back and the site stays half shaped. The injected
+    /// failure recovered on 15 Sep only because a neighbouring zone happened to
+    /// generate straight afterwards; that is luck, not recovery.
+    ///
+    /// <paramref name="now"/> is the game's own clock in seconds. Work happens
+    /// at most every <see cref="TickSeconds"/> and is bounded per tick, so an
+    /// idle server does nothing measurable and a busy one cannot lose a frame
+    /// to this.
+    /// </summary>
+    /// <returns>Whether this call did any work, for tests and the status line.</returns>
+    public static bool Tick(float now)
+    {
+        if (!ServerOnlyMode.Enabled)
+            return false;
+        if (now < s_nextTick)
+            return false;
+        s_nextTick = now + TickSeconds;
+
+        if (LocationTerrainLedger.Waiting().Count == 0)
+            return false;
+        RetryWaiting();
+        return true;
+    }
+
+    /// <summary>How often the retry clock may do anything, in seconds.</summary>
+    internal const float TickSeconds = 5f;
+
+    private static float s_nextTick;
+
+    /// <summary>
+    /// Take up outstanding work again after a restart.
+    ///
+    /// The pending set lives in memory and a restart empties it, while the zones
+    /// it concerned are already generated and will never run their own hook
+    /// again. Without this, a site left half written by a shutdown stays half
+    /// written for the life of the world.
+    ///
+    /// <para>The durable record is the one already on each zone's compiler, so
+    /// nothing new is persisted: a (site, zone) is outstanding exactly when the
+    /// zone is GENERATED and its saved compiler does not name the site. A zone
+    /// that has never been generated is not outstanding — its own hook will find
+    /// the proxy, which vanilla saved.</para>
+    /// </summary>
+    /// <param name="sites">
+    /// The placed sites the caller found, which on a restart is every location
+    /// proxy of ours in the world. Reading them is a pass over saved data; it
+    /// generates nothing.
+    /// </param>
+    public static int Reseed(IReadOnlyList<LocationTerrainPlan.PlacedSite> sites)
+    {
+        if (sites == null)
+            return 0;
+
+        int outstanding = 0;
+        foreach (LocationTerrainPlan.PlacedSite site in sites)
+        {
+            if (site.Operations == null || site.Operations.Count == 0)
+                continue;
+            Remember(site);
+            foreach (Vector2s zone in LocationTerrainReader.ZonesTouched(site.Operations))
+            {
+                if (!IsGenerated(zone))
+                    continue;
+                foreach (LocationTerrainWork item in LocationTerrainPlan.For(zone, new[] { site }))
+                {
+                    if (CarriedByZone(item))
+                    {
+                        Done(item, " (already carried by this zone before this process started)");
+                        continue;
+                    }
+                    Wait(item, "outstanding when this process started");
+                    outstanding++;
+                }
+            }
+        }
+        if (outstanding > 0)
+            Log.LogWarning(
+                $"{outstanding} terrain conversion(s) were outstanding when this world loaded; " +
+                "they will be retried.");
+        return outstanding;
+    }
+
+    /// <summary>
+    /// Whether the zone's saved compiler already names this conversion. This is
+    /// the durable record — the same one <c>TerrainConversion.ApplyOnce</c>
+    /// consults — so a restart asks the world rather than a memory of its own.
+    /// </summary>
+    private static bool CarriedByZone(LocationTerrainWork item)
+    {
+        TerrainZoneDeltas zone = LocationTerrainBridge.AdoptSaved(
+            item.Zone, ZoneWidth, ZoneScale, out _, out string problem);
+        return problem == null && zone != null && zone.HasApplied(item.SiteId);
+    }
+
+    /// <summary>
+    /// Give every outstanding conversion another chance. Bounded per call so one
+    /// pass cannot spend the frame, and each attempt is counted, so a wait that
+    /// will never resolve becomes a reported failure rather than silence.
     /// </summary>
     private static void RetryWaiting()
     {

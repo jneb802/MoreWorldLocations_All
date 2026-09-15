@@ -35,12 +35,36 @@ public static class ServerOnlyAllowlist
     /// <summary>
     /// Approved templates, keyed by name.
     ///
-    /// Empty until the audit passes one: the starter set is chosen from
-    /// <c>template-audit.json</c>, not from how promising a name looks. An
-    /// empty allowlist is a server that places no MWL location at all, which
-    /// is the correct behaviour for a build whose audit has not run.
+    /// A name is here because it has been watched end to end on a client that
+    /// does not have the mod — arrival by prefab and transform, collision, and
+    /// the same site again after a save and a restart — not because an audit
+    /// found nothing wrong with it. The audit is screening; it decides what is
+    /// worth running, and the run decides what ships. The runtime template is
+    /// the authority in any case: MWL_FulingRock1 has two terrain modifiers once
+    /// Jötunn has resolved it where the bundle shows one.
+    ///
+    /// The four below are the ones with that evidence, recorded in
+    /// <c>MWL-STEP3-EVIDENCE.md</c>, <c>MWL-STEP4-EVIDENCE.md</c> and
+    /// <c>MWL-NIGHT-20260915.md</c>:
+    ///
+    /// <list type="bullet">
+    /// <item><c>MWL_MeadowsTomb4</c> — 11 networked children, no terrain.</item>
+    /// <item><c>MWL_WoodTower2</c> — 42 children including a chest, no terrain.</item>
+    /// <item><c>MWL_RuinsWell1</c> — one level operation, −2 m, no paint.</item>
+    /// <item><c>MWL_Ruins1</c> — level, smooth and Dirt paint together.</item>
+    /// </list>
+    ///
+    /// Deliberately NOT here: <c>MWL_FulingRock1</c>. Its zone-boundary and
+    /// failure-recovery runs established how the terrain writer behaves; they
+    /// established nothing about its 87 objects, its two spawners or its chest.
     /// </summary>
-    public static readonly IReadOnlyCollection<string> Approved = new HashSet<string>();
+    public static readonly IReadOnlyCollection<string> Approved = new HashSet<string>
+    {
+        "MWL_MeadowsTomb4",
+        "MWL_WoodTower2",
+        "MWL_RuinsWell1",
+        "MWL_Ruins1",
+    };
 
     /// <summary>
     /// Whether <paramref name="locationName"/> from <paramref name="packName"/>

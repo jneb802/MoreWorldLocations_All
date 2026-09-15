@@ -26,12 +26,26 @@ public class AllowlistTests
     }
 
     [Fact]
-    public void TheApprovedSetIsEmptyUntilTheAuditPassesSomething()
+    public void OnlyTemplatesWatchedEndToEndAreApproved()
     {
-        // A build whose audit has not run places no MWL location at all. That
-        // is the safe reading of "nothing has been approved", and it makes the
-        // first approval a visible commit rather than a default.
-        Assert.Empty(ServerOnlyAllowlist.Approved);
+        // The rule this replaces was "empty until the audit passes something".
+        // The audit is screening; what ships is what has been watched on a
+        // client without the mod. These four have that evidence and nothing
+        // else does -- MWL_FulingRock1 in particular proved how the terrain
+        // writer behaves at a zone boundary and under a failure, and proved
+        // nothing about its 87 objects.
+        Assert.Equal(
+            new[] { "MWL_MeadowsTomb4", "MWL_Ruins1", "MWL_RuinsWell1", "MWL_WoodTower2" },
+            ServerOnlyAllowlist.Approved.OrderBy(n => n));
+        Assert.DoesNotContain("MWL_FulingRock1", ServerOnlyAllowlist.Approved);
+    }
+
+    [Fact]
+    public void AnApprovedTemplateInAnExcludedPackIsStillRefused()
+    {
+        // Membership in Approved is not a way past the pack exclusions.
+        Assert.False(ServerOnlyAllowlist.Allows("Dungeons", "MWL_Ruins1"));
+        Assert.True(ServerOnlyAllowlist.Allows("Meadows", "MWL_Ruins1"));
     }
 
     [Theory]
