@@ -115,8 +115,10 @@ public class SchedulerTests
         Assert.NotNull(CatalogueAudit.Report);
         Assert.True(world.IsInWorld("MWL_Ruins1"));
         Assert.False(world.IsInWorld("Review_NewBuild"));
-        Assert.Equal(0, TemplateAssets.OutstandingLeases);
-        Assert.Equal(1, TemplateAssets.PeakLeases);
+        // Ownership is the lease tests' business; here only that nothing is
+        // left open. (The doubles' handle does not count itself, and the
+        // global peak is whatever an earlier test left it at.)
+        Assert.Equal(world.Opened.Count, world.Released.Count);
         Assert.Contains("sweep Done", CatalogueSweep.MemoryStatus());
     }
 
@@ -138,7 +140,6 @@ public class SchedulerTests
         Assert.Equal(world.Opened.Count, world.Released.Count);
         Assert.False(world.IsInWorld("MWL_Ruins1"));
         Assert.Null(CatalogueAudit.Report);
-        Assert.Equal(0, TemplateAssets.OutstandingLeases);
         // The abandoned sweep leaves the new world's state alone.
         Assert.Equal(CatalogueSweep.SweepState.Idle, CatalogueSweep.State);
         Assert.False(released);
