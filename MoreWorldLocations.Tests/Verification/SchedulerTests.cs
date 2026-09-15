@@ -205,3 +205,29 @@ public class SchedulerTests
         Assert.True(world.Opened.Count >= 2);
     }
 }
+
+
+/// <summary>The validation switch registers a name for one process; enforcement must not take it back.</summary>
+public class ValidationApprovalTests
+{
+    [Fact]
+    public void ANameRequestedForValidationStaysInTheWorldThroughEnforcement()
+    {
+        using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        Environment.SetEnvironmentVariable(ValidationSwitches.ApproveVariable, "Review_NewBuild");
+        try
+        {
+            LocationDB.RegisterAll();
+
+            Assert.True(world.IsInWorld("Review_NewBuild"));
+            Assert.True(CatalogueSweep.Enforce());
+            Assert.True(world.IsInWorld("Review_NewBuild"));
+            // And it was judged like everything else, not waved through.
+            Assert.NotNull(CatalogueAudit.Report!.Find("Review_NewBuild"));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(ValidationSwitches.ApproveVariable, null);
+        }
+    }
+}

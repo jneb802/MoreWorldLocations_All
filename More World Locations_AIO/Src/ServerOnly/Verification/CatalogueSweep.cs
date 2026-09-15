@@ -407,6 +407,13 @@ public static class CatalogueSweep
             if (entry.Registered)
                 approved.Add(entry.Name);
         }
+        // A validation run's requested names are registered for this process
+        // on purpose — somebody is about to watch them — and the run says so
+        // loudly at registration. Enforcement withdrawing them again made the
+        // switch register a location and then take it back before anything
+        // was placed. They are still judged and still in the report.
+        foreach (string requested in ValidationSwitches.ApprovedForValidation())
+            approved.Add(requested);
 
         foreach (MWLLocation location in LocationDB.All)
         {
