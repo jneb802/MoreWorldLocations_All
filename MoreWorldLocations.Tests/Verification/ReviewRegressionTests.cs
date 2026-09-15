@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using More_World_Locations_AIO;
 using More_World_Locations_AIO.ServerOnly;
@@ -386,6 +387,35 @@ public class ReviewRegressionTests
         LocationDB.RegisterAll();
 
         Assert.All(LocationDB.All, location => Assert.False(world.IsInWorld(location.Name)));
+    }
+
+    [Fact]
+    public void R4_RegistrationItselfNeverAdmitsWhatTheAuditDidNotApprove()
+    {
+        // Distinct from the withdrawal test, and it has to be: enforcement runs
+        // at the end of registration and would take back a wrongly registered
+        // name, so a test that only looks at the world afterwards cannot tell a
+        // correct filter from a broken one rescued by the guard. This looks at
+        // what registration itself produced.
+        // Observed from what registration ANNOUNCED, not from the world
+        // afterwards: enforcement runs at the end of RegisterAll and would take
+        // a wrongly registered name straight back out, so looking at the world
+        // cannot tell a correct filter from a broken one the guard rescued.
+        using var world = new TemplateWorld();
+        TemplateAssets.Source = null;   // nothing can be judged, so nothing is approved
+
+        var lines = new List<string>();
+        BepInEx.Logging.ManualLogSource.Captured = lines;
+        try
+        {
+            LocationDB.RegisterAll();
+        }
+        finally
+        {
+            BepInEx.Logging.ManualLogSource.Captured = null;
+        }
+
+        Assert.Contains("Server-only mode registered no locations.", lines);
     }
 
     [Fact]

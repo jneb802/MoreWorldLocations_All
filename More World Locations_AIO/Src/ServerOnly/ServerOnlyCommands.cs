@@ -61,6 +61,18 @@ public static class ServerOnlyCommands
                 return true;
             });
 
+        new Terminal.ConsoleCommand("mwl_memory", "Server-only mode: what the audit and the terrain caches are holding. 'mwl_memory resweep' judges the catalogue again in this process, which is how a second sweep can be compared with the first",
+            (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
+            {
+                if (args.Length > 1 && args[1] == "resweep")
+                {
+                    args.Context.AddString("before: " + CatalogueSweep.MemoryStatus());
+                    CatalogueSweep.Resweep();
+                }
+                args.Context.AddString(CatalogueSweep.MemoryStatus());
+                return true;
+            });
+
         new Terminal.ConsoleCommand("mwl_location", "Server-only mode: everything the audit found about one location, by exact name",
             (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
             {

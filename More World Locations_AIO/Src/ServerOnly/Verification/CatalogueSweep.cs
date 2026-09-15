@@ -140,6 +140,40 @@ public static class CatalogueSweep
     }
 
     /// <summary>
+    /// What this mode is holding, in the terms a memory run is judged in.
+    ///
+    /// One line, from the process itself, so that an external sampler's private
+    /// bytes and this mode's own accounting can be read against each other. A
+    /// sampler alone cannot say which owner grew; this alone cannot see the
+    /// allocator.
+    /// </summary>
+    public static string MemoryStatus() =>
+        $"leases held {TemplateAssets.OutstandingLeases} (peak {TemplateAssets.PeakLeases}); " +
+        $"signatures {TemplateFactsExtractor.StockSignatureBytes / 1024} KiB in " +
+        $"{TemplateFactsExtractor.StockSignatureEntries} entr(ies) of " +
+        $"{TemplateFactsExtractor.StockSignatureBudgetBytes / 1024 / 1024} MiB; " +
+        $"heights {LocationTerrainBridge.GeneratedHeightBytes / 1024} KiB in " +
+        $"{LocationTerrainBridge.GeneratedHeightEntries} zone(s) " +
+        $"({LocationTerrainBridge.GeneratedHeightPins} in use) of " +
+        $"{LocationTerrainBridge.GeneratedHeightBudgetBytes / 1024 / 1024} MiB; " +
+        $"managed heap {System.GC.GetTotalMemory(false) / 1024 / 1024} MiB";
+
+    /// <summary>
+    /// Judge the catalogue again in this process.
+    ///
+    /// <para>Only a measurement uses it. A sweep runs once per world, so the
+    /// question "does the second one retain more than the first" cannot be asked
+    /// at all without a way to ask for another — and restarting between sweeps
+    /// is exactly what would hide an owner that grows.</para>
+    /// </summary>
+    public static CatalogueReport Resweep()
+    {
+        CatalogueReport report = Audit();
+        Enforce();
+        return report;
+    }
+
+    /// <summary>
     /// Every name a report has to account for: the catalogue's known names and
     /// every definition this build declares, reconciled by identity.
     ///
