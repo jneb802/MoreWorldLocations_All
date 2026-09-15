@@ -123,15 +123,26 @@ public class Heightmap
     public static UnityEngine.Color m_paintMaskClearVegetation = new(0f, 0f, 0f, 0f);
     public static UnityEngine.Color m_paintMaskDeepSnow = new(1f, 1f, 1f, 1f);
     public static Heightmap? Registered;
+    /// <summary>
+    /// Every loaded heightmap, by zone. A dedicated server keeps almost none
+    /// loaded, and the whole reconciliation question is what happens for a zone
+    /// that has none, so the harness has to be able to say which are loaded.
+    /// </summary>
+    public static readonly System.Collections.Generic.Dictionary<Vector2s, Heightmap> Loaded = new();
 
     public Transform transform = new();
     public float m_scale = 1f;
     public TerrainComp? m_terrainComp;
     public int PokeCount;
+    /// <summary>The generated heights this heightmap was built from; null until built.</summary>
+    public HeightmapBuilder.HMBuildData? m_buildData;
 
-    public static Heightmap? FindHeightmap(UnityEngine.Vector3 point) => Registered;
+    public static Heightmap? FindHeightmap(UnityEngine.Vector3 point) =>
+        Loaded.TryGetValue(ZoneSystem.GetZone(point), out var hm) ? hm : Registered;
     public static System.Collections.Generic.List<Heightmap> GetAllHeightmaps() =>
-        Registered == null ? new() : new() { Registered };
+        Loaded.Count > 0
+            ? new System.Collections.Generic.List<Heightmap>(Loaded.Values)
+            : (Registered == null ? new() : new() { Registered });
     /// <summary>Like the game: the zone's live compiler, or a new one (with a new ZDO) if it has none.</summary>
     public TerrainComp GetAndCreateTerrainCompiler() => m_terrainComp ??= new TerrainComp(this, 64);
     /// <summary>Valheim 1.0: the argument selects which late pass rebuilds
@@ -211,6 +222,9 @@ public class ZDO
     public UnityEngine.Vector3 GetPosition() => m_position;
     public Vector2s GetSector() => ZoneSystem.GetZone(m_position);
     public void SetPosition(UnityEngine.Vector3 position) => m_position = position;
+    public UnityEngine.Quaternion GetRotation() => m_rotation;
+    public void SetRotation(UnityEngine.Quaternion rotation) => m_rotation = rotation;
+    private UnityEngine.Quaternion m_rotation = UnityEngine.Quaternion.identity;
 
     public void Set(int hash, int value) => m_ints[hash] = value;
     public int GetInt(int hash, int defaultValue = 0) => m_ints.TryGetValue(hash, out int v) ? v : defaultValue;
@@ -295,6 +309,8 @@ public class TerrainComp
     /// <summary>The zone's live compiler: the one on the registered heightmap, if that heightmap has one.</summary>
     public static TerrainComp? FindTerrainCompiler(UnityEngine.Vector3 pos)
     {
+        if (Heightmap.Loaded.TryGetValue(ZoneSystem.GetZone(pos), out var loaded))
+            return loaded.m_terrainComp;
         var hm = Heightmap.Registered;
         if (hm?.m_terrainComp == null)
             return null;
@@ -322,14 +338,55 @@ public class TerrainComp
         m_modifiedPaint = new bool[n];
     }
 
-    /// <summary>Like the game: only the owner's compiler saves, into the ZDO's TCData.</summary>
+    /// <summary>
+    /// Like the game: only the owner's compiler saves, into the ZDO's TCData.
+    ///
+    /// The bytes are transcribed from TerrainComp.Save in the decompiled 1.0
+    /// assembly -- a version, the operation counter with its point and radius,
+    /// then a flag per height vertex with the two deltas for the modified ones,
+    /// then a flag per paint texel with its colour. The mod has its own
+    /// transcription in TerrainBlob; that they agree is the point, so this one
+    /// is written from the game and not from that.
+    ///
+    /// SaveFails makes the write do nothing while still reporting nothing, which
+    /// is what the game does for a compiler this peer does not own.
+    /// </summary>
+    public bool SaveFails;
+
     public void Save()
     {
         if (m_nview == null || !m_nview.IsValid() || !m_nview.IsOwner())
             return;
         SaveCount++;
-        m_nview.GetZDO().Set(ZDOVars.s_TCData, new byte[] { 1 });
+        if (SaveFails)
+            return;
+        var pkg = new ZPackage();
+        pkg.Write(1);
+        pkg.Write(Operations);
+        pkg.Write(LastOpPoint);
+        pkg.Write(LastOpRadius);
+        pkg.Write(m_modifiedHeight.Length);
+        for (int i = 0; i < m_modifiedHeight.Length; i++)
+        {
+            pkg.Write(m_modifiedHeight[i]);
+            if (m_modifiedHeight[i]) { pkg.Write(m_levelDelta[i]); pkg.Write(m_smoothDelta[i]); }
+        }
+        pkg.Write(m_modifiedPaint.Length);
+        for (int j = 0; j < m_modifiedPaint.Length; j++)
+        {
+            pkg.Write(m_modifiedPaint[j]);
+            if (m_modifiedPaint[j])
+            {
+                pkg.Write(m_paintMask[j].r); pkg.Write(m_paintMask[j].g);
+                pkg.Write(m_paintMask[j].b); pkg.Write(m_paintMask[j].a);
+            }
+        }
+        m_nview.GetZDO().Set(ZDOVars.s_TCData, Utils.Compress(pkg.GetArray()));
     }
+
+    public int Operations;
+    public UnityEngine.Vector3 LastOpPoint;
+    public float LastOpRadius;
 }
 
 /// <summary>Shim for ZDOVars: the ZDO keys the road code reads.</summary>
@@ -464,6 +521,10 @@ public class ZoneSystem
     public void LoadLocationsGeneratedFromSave(bool generated) => m_locationsGenerated = generated;
 
     // Valheim 1.0 types a zone id as Vector2s, not Vector2i.
+    /// <summary>Zones this world has generated. SpawnZone sets it; tests set it directly.</summary>
+    public readonly System.Collections.Generic.HashSet<Vector2s> Generated = new();
+    public bool IsZoneGenerated(Vector2s zone) => Generated.Contains(zone);
+
     public static Vector2s GetZone(UnityEngine.Vector3 point) =>
         new(UnityEngine.Mathf.FloorToInt((point.x + ZoneSize / 2f) / ZoneSize),
             UnityEngine.Mathf.FloorToInt((point.z + ZoneSize / 2f) / ZoneSize));
@@ -510,4 +571,84 @@ public class TerrainModifier
     public PaintType m_paintType;
     public float m_paintRadius = 2f;
     public float m_paintStrength = 1f;
+}
+
+/// <summary>
+/// Shim for Valheim's ZPackage: the binary buffer the terrain blob is written
+/// into. Only the reads and writes the blob uses, in the same order, so a
+/// round trip through it exercises the encoder against the decoder.
+/// </summary>
+public class ZPackage
+{
+    private readonly System.Collections.Generic.List<byte> m_write = new();
+    private readonly byte[] m_read;
+    private int m_pos;
+
+    public ZPackage() { m_read = System.Array.Empty<byte>(); }
+    public ZPackage(byte[] data) { m_read = data; }
+
+    public void Write(int v) => m_write.AddRange(System.BitConverter.GetBytes(v));
+    public void Write(float v) => m_write.AddRange(System.BitConverter.GetBytes(v));
+    public void Write(bool v) => m_write.Add(v ? (byte)1 : (byte)0);
+    public void Write(UnityEngine.Vector3 v) { Write(v.x); Write(v.y); Write(v.z); }
+
+    public int ReadInt() { int v = System.BitConverter.ToInt32(m_read, m_pos); m_pos += 4; return v; }
+    public float ReadSingle() { float v = System.BitConverter.ToSingle(m_read, m_pos); m_pos += 4; return v; }
+    public bool ReadBool() => m_read[m_pos++] != 0;
+    public UnityEngine.Vector3 ReadVector3() => new(ReadSingle(), ReadSingle(), ReadSingle());
+
+    public byte[] GetArray() => m_write.ToArray();
+}
+
+/// <summary>
+/// Shim for Valheim's Utils, for the two calls the terrain blob makes. The
+/// game's own compression is not ours to test, so here it is the identity: what
+/// the tests exercise is the structure the encoder and decoder agree on.
+/// </summary>
+public static class Utils
+{
+    public static byte[] Compress(byte[] data) => data;
+    public static byte[] Decompress(byte[] data) => data;
+}
+
+/// <summary>
+/// Shim for HeightmapBuilder: the generated heights a client builds for itself.
+/// Tests register an array per zone; a zone with none is one the builder has not
+/// built, which is the case the bridge must refuse rather than convert against
+/// zero.
+/// </summary>
+public class HeightmapBuilder
+{
+    public class HMBuildData
+    {
+        public System.Collections.Generic.List<float> m_baseHeights = new();
+    }
+
+    public static HeightmapBuilder? instance;
+
+    public readonly System.Collections.Generic.Dictionary<Vector2s, HMBuildData> Built = new();
+    public int SyncRequests;
+
+    public bool IsTerrainReady(UnityEngine.Vector3 centre, int width, float scale, bool distantLod, WorldGenerator gen) =>
+        Built.ContainsKey(ZoneSystem.GetZone(centre));
+
+    public HMBuildData? RequestTerrainSync(UnityEngine.Vector3 centre, int width, float scale, bool distantLod, WorldGenerator gen)
+    {
+        SyncRequests++;
+        return Built.TryGetValue(ZoneSystem.GetZone(centre), out var d) ? d : null;
+    }
+
+    /// <summary>Build a zone's heights from a generator, the way the game's builder does.</summary>
+    public HMBuildData Build(Vector2s zone, WorldGenerator gen, int width = 64, float scale = 1f)
+    {
+        var centre = ZoneSystem.GetZonePos(zone);
+        var data = new HMBuildData();
+        int pitch = width + 1;
+        for (int y = 0; y < pitch; y++)
+            for (int x = 0; x < pitch; x++)
+                data.m_baseHeights.Add(gen.GetHeight(
+                    centre.x + (x - width / 2) * scale, centre.z + (y - width / 2) * scale));
+        Built[zone] = data;
+        return data;
+    }
 }

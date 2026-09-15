@@ -34,6 +34,9 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainReader.cs" Link="ModSrc/LocationTerrainReader.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainBridge.cs" Link="ModSrc/LocationTerrainBridge.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainPlan.cs" Link="ModSrc/LocationTerrainPlan.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainBlob.cs" Link="ModSrc/TerrainBlob.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainLedger.cs" Link="ModSrc/LocationTerrainLedger.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainWriter.cs" Link="ModSrc/LocationTerrainWriter.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/SiteTerrainLedger.cs" Link="ModSrc/SiteTerrainLedger.cs"/>
     </ItemGroup>
 

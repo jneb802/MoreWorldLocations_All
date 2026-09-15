@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using More_World_Locations_AIO.ServerOnly;
 using UnityEngine;
@@ -21,10 +22,14 @@ public class LocationTerrainBridgeTests : IDisposable
     private readonly Vector2s _zone = new(2, -3);
     private readonly SyntheticWorld _world = new();
 
+    private readonly HeightmapBuilder _builder = new();
+
     public LocationTerrainBridgeTests()
     {
         ZDOMan.instance = new ZDOMan();
         WorldGenerator.instance = _world;
+        HeightmapBuilder.instance = _builder;
+        ZoneSystem.instance = new ZoneSystem();
         Heightmap.Registered = null;
     }
 
@@ -32,12 +37,21 @@ public class LocationTerrainBridgeTests : IDisposable
     {
         ZDOMan.instance = null;
         WorldGenerator.instance = null;
+        HeightmapBuilder.instance = null;
+        ZoneSystem.instance = null;
         Heightmap.Registered = null;
     }
 
-    private Heightmap Zone(bool withCompiler = true)
+    /// <summary>
+    /// A zone as the game hands it over during generation: a heightmap whose
+    /// build data is already there, because that array is what the client will
+    /// use and the bridge is required to read it rather than re-derive it.
+    /// </summary>
+    private Heightmap Zone(bool withCompiler = true, bool built = true)
     {
         Heightmap hm = Heightmap.CreateForZone(_zone, width: 64, withCompiler: withCompiler);
+        if (built)
+            hm.m_buildData = _builder.Build(_zone, _world);
         Heightmap.Registered = hm;
         return hm;
     }
@@ -153,7 +167,7 @@ public class LocationTerrainBridgeTests : IDisposable
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(compiler);
 
         Assert.True(TerrainConversion.ApplyOnce(
-            "site#1", Well(hm), zone, LocationTerrainBridge.GeneratedHeightAt(zone), out var result));
+            "site#1", Well(hm), zone, LocationTerrainBridge.GeneratedHeightAt(zone, hm), out var result));
         Assert.True(result.VerticesChanged > 0);
 
         Assert.True(LocationTerrainBridge.WriteBack(compiler, zone));
@@ -197,7 +211,7 @@ public class LocationTerrainBridgeTests : IDisposable
         TerrainZoneDeltas first = LocationTerrainBridge.Adopt(compiler);
         Assert.True(TerrainConversion.ApplyOnce(
             "MWL_RuinsWell1@100,50#2,-3", Well(hm), first,
-            LocationTerrainBridge.GeneratedHeightAt(first), out _));
+            LocationTerrainBridge.GeneratedHeightAt(first, hm), out _));
         Assert.True(LocationTerrainBridge.WriteBack(compiler, first));
 
         // A fresh adopt is what a restart does: the compiler comes back from its
@@ -207,7 +221,7 @@ public class LocationTerrainBridgeTests : IDisposable
 
         Assert.False(TerrainConversion.ApplyOnce(
             "MWL_RuinsWell1@100,50#2,-3", Well(hm), reloaded,
-            LocationTerrainBridge.GeneratedHeightAt(reloaded), out var again));
+            LocationTerrainBridge.GeneratedHeightAt(reloaded, hm), out var again));
         Assert.True(again.Representable);   // already written, not refused
     }
 
@@ -221,25 +235,61 @@ public class LocationTerrainBridgeTests : IDisposable
     // ---- the base height ---------------------------------------------------
 
     [Fact]
-    public void TheBaseHeightIsWhatTheWorldGeneratorGives()
+    public void TheBaseHeightIsTheHeightmapsOwnBuildData()
     {
         // The contract on TerrainConversion.VertexHeight is the height the
-        // client generates for ITSELF, before any compiler delta. Anything that
-        // already carries the deltas would fold them in a second time.
+        // client generates for ITSELF, before any compiler delta -- and that is
+        // the builder's array, which the heightmap already holds. Re-deriving it
+        // from WorldGenerator.GetHeight is a different function: the builder
+        // takes the biome at the zone's four CORNERS and blends when they
+        // disagree, while GetHeight looks the biome up per point.
         Heightmap hm = Zone();
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
-        var heightAt = LocationTerrainBridge.GeneratedHeightAt(zone);
+        var heightAt = LocationTerrainBridge.GeneratedHeightAt(zone, hm);
 
-        int half = zone.Width / 2;
         for (int y = 0; y < zone.Pitch; y += 17)
-        {
             for (int x = 0; x < zone.Pitch; x += 17)
-            {
-                float wx = zone.Origin.x + (x - half) * zone.Scale;
-                float wz = zone.Origin.z + (y - half) * zone.Scale;
-                Assert.Equal(_world.GetHeight(wx, wz), heightAt(x, y));
-            }
-        }
+                Assert.Equal(hm.m_buildData!.m_baseHeights[y * zone.Pitch + x], heightAt(x, y));
+
+        // And it does not go and ask the builder again when the heightmap has it.
+        Assert.Equal(0, _builder.SyncRequests);
+    }
+
+    [Fact]
+    public void ThereIsNoConversionWithoutGeneratedHeights()
+    {
+        // Converting against zero writes the site into ground nobody generates
+        // and records it as done. A zone whose heights are not built is a zone
+        // to leave alone.
+        Heightmap hm = Zone(built: false);
+        _builder.Built.Clear();
+        TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
+
+        Assert.False(LocationTerrainBridge.HeightsReady(zone, hm));
+        Assert.Throws<InvalidOperationException>(() => LocationTerrainBridge.GeneratedHeightAt(zone, hm));
+    }
+
+    [Fact]
+    public void WithNoHeightmapTheBuilderIsAsked()
+    {
+        // The repair path for an already-generated zone has no heightmap at all.
+        Heightmap hm = Zone();
+        TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
+
+        var heightAt = LocationTerrainBridge.GeneratedHeightAt(zone, null);
+        Assert.Equal(hm.m_buildData!.m_baseHeights[0], heightAt(0, 0));
+        Assert.True(_builder.SyncRequests > 0);
+    }
+
+    [Fact]
+    public void AHeightArrayOfTheWrongWidthIsRefused()
+    {
+        Heightmap hm = Zone();
+        hm.m_buildData!.m_baseHeights = hm.m_buildData.m_baseHeights.Take(16).ToList();
+        _builder.Built.Clear();
+        TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
+
+        Assert.Throws<InvalidOperationException>(() => LocationTerrainBridge.GeneratedHeightAt(zone, hm));
     }
 
     [Fact]
@@ -257,7 +307,7 @@ public class LocationTerrainBridgeTests : IDisposable
 
         TerrainZoneDeltas clean = LocationTerrainBridge.Adopt(compiler);
         Assert.True(TerrainConversion.ApplyOnce(
-            "clean", Well(hm), clean, LocationTerrainBridge.GeneratedHeightAt(clean), out _));
+            "clean", Well(hm), clean, LocationTerrainBridge.GeneratedHeightAt(clean, hm), out _));
 
         // Someone raised this zone by three metres before the site arrived.
         for (int i = 0; i < compiler.m_levelDelta.Length; i++)
@@ -268,7 +318,7 @@ public class LocationTerrainBridgeTests : IDisposable
 
         TerrainZoneDeltas overDug = LocationTerrainBridge.Adopt(compiler);
         Assert.True(TerrainConversion.ApplyOnce(
-            "over-dug", Well(hm), overDug, LocationTerrainBridge.GeneratedHeightAt(overDug), out var result));
+            "over-dug", Well(hm), overDug, LocationTerrainBridge.GeneratedHeightAt(overDug, hm), out var result));
 
         // Inside the site's own footprint the deltas are the same, not three
         // metres smaller. Outside it the three metres are still there: the
@@ -304,12 +354,12 @@ public class LocationTerrainBridgeTests : IDisposable
         TerrainComp compiler = hm.m_terrainComp;
 
         TerrainZoneDeltas first = LocationTerrainBridge.Adopt(compiler);
-        TerrainConversion.ApplyOnce("a", Well(hm), first, LocationTerrainBridge.GeneratedHeightAt(first), out _);
+        TerrainConversion.ApplyOnce("a", Well(hm), first, LocationTerrainBridge.GeneratedHeightAt(first, hm), out _);
         LocationTerrainBridge.WriteBack(compiler, first);
         float[] afterOne = (float[])compiler.m_levelDelta.Clone();
 
         TerrainZoneDeltas second = LocationTerrainBridge.Adopt(compiler);
-        TerrainConversion.ApplyOnce("b", Well(hm), second, LocationTerrainBridge.GeneratedHeightAt(second), out _);
+        TerrainConversion.ApplyOnce("b", Well(hm), second, LocationTerrainBridge.GeneratedHeightAt(second, hm), out _);
         LocationTerrainBridge.WriteBack(compiler, second);
 
         Assert.Equal(afterOne, compiler.m_levelDelta);
@@ -332,7 +382,7 @@ public class LocationTerrainBridgeTests : IDisposable
         };
 
         Assert.False(TerrainConversion.ApplyOnce(
-            "deep", tooDeep, zone, LocationTerrainBridge.GeneratedHeightAt(zone), out var result));
+            "deep", tooDeep, zone, LocationTerrainBridge.GeneratedHeightAt(zone, hm), out var result));
         Assert.False(result.Representable);
         Assert.NotEmpty(result.BeyondCompilerRange);
         Assert.All(zone.LevelDelta, d => Assert.Equal(0f, d));

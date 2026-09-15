@@ -116,6 +116,12 @@ public struct Color
         this.a = a;
     }
 
+    public static bool operator ==(Color a, Color b) =>
+        a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+    public static bool operator !=(Color a, Color b) => !(a == b);
+    public override bool Equals(object? o) => o is Color c && this == c;
+    public override int GetHashCode() => (r, g, b, a).GetHashCode();
+
     public static Color Lerp(Color x, Color y, float t)
     {
         t = Mathf.Clamp01(t);
@@ -194,4 +200,12 @@ public static class Mathf
         t = -2f * t * t * t + 3f * t * t;
         return to * t + from * (1f - t);
     }
+}
+
+/// <summary>Shim for Quaternion: the terrain work only ever stores identity.</summary>
+public struct Quaternion
+{
+    public float x, y, z, w;
+    public Quaternion(float x, float y, float z, float w) { this.x = x; this.y = y; this.z = z; this.w = w; }
+    public static Quaternion identity => new(0f, 0f, 0f, 1f);
 }

@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.ServerOnly;
@@ -33,15 +34,8 @@ namespace More_World_Locations_AIO.ServerOnly;
 /// comes close: the largest smooth radius in the catalogue is 14 m against a
 /// 64 m zone.</para>
 /// </summary>
-[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.PlaceLocations))]
 public static class LocationTerrainWriter
 {
-    /// <summary>Modifiers read off a resolved template, in template order, once per name.</summary>
-    private static readonly Dictionary<string, List<TerrainModifier>> s_templateModifiers = new();
-
-    /// <summary>Sites already reported as reaching too far, so the log says it once.</summary>
-    private static readonly HashSet<string> s_reportedOutOfReach = new();
-
     private static BepInEx.Logging.ManualLogSource Log =>
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
 
@@ -55,39 +49,64 @@ public static class LocationTerrainWriter
     /// </summary>
     internal static void Reset()
     {
-        s_templateModifiers.Clear();
-        s_reportedOutOfReach.Clear();
+        s_pendingWork.Clear();
+        LocationTerrainLedger.Reset();
     }
 
-    private static void Postfix(Vector2s zoneID, Heightmap hmap, ZoneSystem.SpawnMode mode)
-    {
-        if (!ServerOnlyMode.Enabled || hmap == null)
-            return;
-        // Ghost is a dedicated server generating for a peer; Full is a host
-        // generating for itself. Client mode rebuilds from ZDOs and must not
-        // write.
-        if (mode != ZoneSystem.SpawnMode.Ghost && mode != ZoneSystem.SpawnMode.Full)
-            return;
+    /// <summary>Where the terrain stands; see <see cref="LocationTerrainLedger.Status"/>.</summary>
+    public static string Status() => LocationTerrainLedger.Status();
 
-        try
+    /// <summary>
+    /// Convert everything zone <paramref name="zoneID"/> owes, having been
+    /// handed the sites near it.
+    ///
+    /// The discovery of those sites is engine glue and lives in the patch; this
+    /// is the dispatch, and it is the thing worth testing: which zones get
+    /// written now, which are repaired behind them, what stays outstanding and
+    /// what is a failure.
+    /// </summary>
+    internal static void WriteZone(Vector2s zoneID, Heightmap hmap, List<LocationTerrainPlan.PlacedSite> sites)
+    {
+        if (sites == null || sites.Count == 0)
         {
-            Write(zoneID, hmap);
+            RetryWaiting();
+            return;
         }
-        catch (System.Exception ex)
+        foreach (LocationTerrainPlan.PlacedSite site in sites)
+            Remember(site);
+
+        // 1. What this zone owes, with its own heightmap in hand. This is the
+        //    only path that gets the exact generated heights for free.
+        Apply(zoneID, hmap, LocationTerrainPlan.For(zoneID, sites));
+
+        // 2. What a NEIGHBOUR owes to a site discovered here. A zone's hook runs
+        //    once: a zone generated before this site existed will never look at
+        //    it again, so it is repaired now, through its saved compiler, or it
+        //    is recorded as outstanding. A zone not yet generated needs nothing —
+        //    its own hook will find this proxy, because the proxy is already
+        //    saved.
+        foreach (LocationTerrainPlan.PlacedSite site in sites)
         {
-            // One zone's failure is one zone's. Letting it out of here would
-            // stop the game generating the world.
-            Log.LogError($"Terrain for zone {zoneID.x},{zoneID.y} failed: {ex}");
+            foreach (Vector2s other in LocationTerrainReader.ZonesTouched(site.Operations))
+            {
+                if (other == zoneID || !IsGenerated(other))
+                    continue;
+                Reconcile(other, LocationTerrainPlan.For(other, new[] { site }));
+            }
         }
+
+        // 3. Anything still waiting gets another attempt while a zone is being
+        //    generated, which is when compilers come alive and heights get built.
+        RetryWaiting();
     }
 
-    private static void Write(Vector2s zoneID, Heightmap hmap)
-    {
-        List<LocationTerrainPlan.PlacedSite> sites = SitesNear(zoneID);
-        if (sites.Count == 0)
-            return;
+    private static bool IsGenerated(Vector2s zone) =>
+        ZoneSystem.instance != null && ZoneSystem.instance.IsZoneGenerated(zone);
 
-        List<LocationTerrainWork> work = LocationTerrainPlan.For(zoneID, sites);
+    /// <summary>Convert into a zone whose heightmap is in hand.</summary>
+    private static void Apply(Vector2s zoneID, Heightmap hmap, List<LocationTerrainWork> work)
+    {
+        work = Outstanding(work);
         if (work.Count == 0)
             return;
 
@@ -95,22 +114,98 @@ public static class LocationTerrainWriter
             LocationTerrainBridge.Acquire(hmap, zoneID, out TerrainComp compiler);
         if (readiness != LocationTerrainBridge.Readiness.Ready)
         {
-            Log.LogWarning(
-                $"Zone {zoneID.x},{zoneID.y} owes terrain to {work.Count} site(s) but its compiler is " +
-                $"{readiness}; the ground there is what the client generates.");
+            foreach (LocationTerrainWork item in work)
+                Wait(item, $"the zone's compiler is {readiness}");
             return;
         }
 
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(compiler);
-        TerrainConversion.VertexHeight baseHeight = LocationTerrainBridge.GeneratedHeightAt(zone);
-        int applied = 0;
+        if (!LocationTerrainBridge.HeightsReady(zone, hmap))
+        {
+            foreach (LocationTerrainWork item in work)
+                Wait(item, "the zone's generated heights are not built yet");
+            return;
+        }
 
+        TerrainConversion.VertexHeight baseHeight = LocationTerrainBridge.GeneratedHeightAt(zone, hmap);
+        List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
+        if (converted.Count == 0)
+            return;
+
+        if (LocationTerrainBridge.WriteBack(compiler, zone, out string failure))
+            foreach (LocationTerrainWork item in converted)
+                Done(item);
+        else
+            foreach (LocationTerrainWork item in converted)
+                Wait(item, "the compiler did not save: " + failure);
+    }
+
+    /// <summary>
+    /// Convert into a zone that is already generated and is not loaded here,
+    /// through its saved compiler.
+    /// </summary>
+    private static void Reconcile(Vector2s zoneID, List<LocationTerrainWork> work)
+    {
+        work = Outstanding(work);
+        if (work.Count == 0)
+            return;
+
+        Heightmap live = Heightmap.FindHeightmap(ZoneSystem.GetZonePos(zoneID));
+        if (live != null)
+        {
+            // It is loaded after all; the ordinary path owns those arrays.
+            Apply(zoneID, live, work);
+            return;
+        }
+
+        TerrainZoneDeltas zone = LocationTerrainBridge.AdoptSaved(
+            zoneID, ZoneWidth, ZoneScale, out TerrainBlob.Header header, out string problem);
+        if (zone == null)
+        {
+            foreach (LocationTerrainWork item in work)
+                Fail(item, "its saved terrain could not be read: " + problem);
+            return;
+        }
+        if (!LocationTerrainBridge.HeightsReady(zone, null))
+        {
+            foreach (LocationTerrainWork item in work)
+                Wait(item, "its generated heights are not built yet");
+            return;
+        }
+
+        TerrainConversion.VertexHeight baseHeight = LocationTerrainBridge.GeneratedHeightAt(zone, null);
+        List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
+        if (converted.Count == 0)
+            return;
+
+        if (LocationTerrainBridge.WriteDetached(zoneID, zone, header, out string failure))
+        {
+            foreach (LocationTerrainWork item in converted)
+                Done(item, " (repaired through its saved compiler)");
+        }
+        else
+        {
+            foreach (LocationTerrainWork item in converted)
+                Wait(item, "the saved compiler did not take the write: " + failure);
+        }
+    }
+
+    /// <summary>
+    /// Run the conversion for each piece of work into the shared zone. Returns
+    /// the ones that changed the zone and therefore need the write to land; a
+    /// refusal is recorded as a failure and never as a retry.
+    /// </summary>
+    private static List<LocationTerrainWork> Convert(
+        Vector2s zoneID, TerrainZoneDeltas zone, TerrainConversion.VertexHeight baseHeight,
+        List<LocationTerrainWork> work)
+    {
+        var converted = new List<LocationTerrainWork>();
         foreach (LocationTerrainWork item in work)
         {
             if (TerrainConversion.ApplyOnce(
                     item.SiteId, item.Operations, zone, baseHeight, out TerrainConversionResult result))
             {
-                applied++;
+                converted.Add(item);
                 Log.LogInfo(
                     $"{item.LocationName} in zone {zoneID.x},{zoneID.y}: {result.VerticesChanged} vertices, " +
                     $"{result.TexelsPainted} texels, largest {result.LargestChange:0.00} m" +
@@ -118,140 +213,90 @@ public static class LocationTerrainWriter
                         ? $", {result.ContestedVertices.Count} vertex/vertices already carried terrain"
                         : ""));
             }
-            else if (!result.Representable)
+            else if (result.Representable)
             {
-                // A decision, not a retry: the site needs more than a compiler
-                // can hold, and writing what fits would record a cut short as
-                // done. Say which vertices and leave the ground alone.
-                Log.LogError(
-                    $"{item.LocationName} in zone {zoneID.x},{zoneID.y} cannot be served as authored: " +
-                    $"{result.BeyondCompilerRange.Count} vertex/vertices beyond the compiler's range " +
-                    $"(first: {result.BeyondCompilerRange[0]}). Nothing was written; exclude the template.");
+                // Already in this zone's arrays: nothing to write, and the
+                // ledger should say so rather than leaving it outstanding.
+                Done(item, " (already carried by this zone)");
+            }
+            else
+            {
+                Fail(item,
+                    $"the compiler cannot hold it: {result.BeyondCompilerRange.Count} vertex/vertices " +
+                    $"beyond range (first {result.BeyondCompilerRange[0]}). Nothing was written.");
             }
         }
+        return converted;
+    }
 
-        if (applied == 0)
-            return;
-        if (!LocationTerrainBridge.WriteBack(compiler, zone))
-            Log.LogError($"Zone {zoneID.x},{zoneID.y}: {applied} site(s) converted but the compiler did not save.");
+    /// <summary>Work this process has not already finished.</summary>
+    private static List<LocationTerrainWork> Outstanding(List<LocationTerrainWork> work) =>
+        work.Where(item => !LocationTerrainLedger.IsDone(item.SiteId)).ToList();
+
+    private static void Done(LocationTerrainWork item, string suffix = "")
+    {
+        LocationTerrainLedger.Record(item.SiteId, item.Zone, item.LocationName,
+            LocationTerrainLedger.State.Done, "written" + suffix);
+    }
+
+    private static void Wait(LocationTerrainWork item, string reason)
+    {
+        LocationTerrainLedger.Entry entry = LocationTerrainLedger.Record(
+            item.SiteId, item.Zone, item.LocationName, LocationTerrainLedger.State.Waiting, reason);
+        if (entry.State == LocationTerrainLedger.State.Failed)
+            Log.LogError($"{item.SiteId}: {entry.Reason}");
+    }
+
+    private static void Fail(LocationTerrainWork item, string reason)
+    {
+        LocationTerrainLedger.Record(item.SiteId, item.Zone, item.LocationName,
+            LocationTerrainLedger.State.Failed, reason);
+        Log.LogError($"{item.LocationName} in zone {item.Zone.x},{item.Zone.y}: {reason}");
     }
 
     /// <summary>
-    /// The sites whose terrain could reach this zone: the location proxies in it
-    /// and its eight neighbours, read from saved data.
+    /// Give every outstanding conversion another chance while zones are being
+    /// generated. Bounded per call so one tick cannot spend the frame, and each
+    /// attempt is counted, so a wait that will never resolve becomes a reported
+    /// failure rather than silence.
     /// </summary>
-    private static List<LocationTerrainPlan.PlacedSite> SitesNear(Vector2s zoneID)
+    private static void RetryWaiting()
     {
-        var sites = new List<LocationTerrainPlan.PlacedSite>();
-        if (ZDOMan.instance == null || ZoneSystem.instance == null)
-            return sites;
-
-        var visited = new HashSet<ZoneSystem.SectorIndex>();
-        var zdos = new List<ZDO>();
-        for (int x = zoneID.x - 1; x <= zoneID.x + 1; x++)
-            for (int y = zoneID.y - 1; y <= zoneID.y + 1; y++)
-                ZDOMan.instance.FindObjects(new Vector2s(x, y), zdos, visited);
-
-        foreach (ZDO zdo in zdos)
+        IReadOnlyList<LocationTerrainLedger.Entry> waiting = LocationTerrainLedger.Waiting();
+        int budget = Math.Min(waiting.Count, RetriesPerZone);
+        for (int i = 0; i < budget; i++)
         {
-            if (zdo.GetPrefab() != LocationProxyPrefab)
+            LocationTerrainLedger.Entry entry = waiting[i];
+            if (!s_pendingWork.TryGetValue(entry.SiteId, out LocationTerrainWork item))
                 continue;
-            int locationHash = zdo.GetInt(ZDOVars.s_location, 0);
-            if (locationHash == 0)
-                continue;
-            if (!ZoneSystem.instance.m_locationsByHash.TryGetValue(locationHash, out ZoneSystem.ZoneLocation location))
-                continue;
-
-            string name = location.m_prefabName;
-            // Only ours. A vanilla location's modifiers are in a template the
-            // stock client HAS, so it shapes that ground itself; converting them
-            // as well would apply the deltas on top and sink the site twice.
-            if (!ServerOnlySelection.IsOurs(name))
-                continue;
-
-            List<TerrainModifier> modifiers = ModifiersOf(location, name);
-            if (modifiers == null || modifiers.Count == 0)
-                continue;
-
-            Vector3 placement = zdo.GetPosition();
-            Quaternion rotation = zdo.GetRotation();
-            GameObject asset = location.m_prefab.Asset;
-            if (asset == null)
-                continue;
-
-            List<LocationTerrainOperation> operations = LocationTerrainReader.Operations(
-                modifiers,
-                modifier => placement + rotation * asset.transform.InverseTransformPoint(modifier.transform.position));
-            if (operations.Count == 0)
-                continue;
-
-            if (ReachesTooFar(zdo, operations, name, placement))
-                continue;
-
-            sites.Add(new LocationTerrainPlan.PlacedSite(name, placement, operations));
+            Heightmap live = Heightmap.FindHeightmap(ZoneSystem.GetZonePos(entry.Zone));
+            if (live != null)
+                Apply(entry.Zone, live, new List<LocationTerrainWork> { item });
+            else if (IsGenerated(entry.Zone))
+                Reconcile(entry.Zone, new List<LocationTerrainWork> { item });
         }
-        return sites;
     }
 
     /// <summary>
-    /// Whether a site reaches beyond the ring of zones this scheme can see.
-    ///
-    /// The per-zone rule works because two neighbouring zones each find the
-    /// other's proxy. A site reaching two zones away would be found by the near
-    /// neighbour and not by the far one, and the far one would keep the ground
-    /// the client generated — a step in the middle of the site. It is reported
-    /// and skipped entirely rather than written where it happens to be seen.
+    /// Keep the work behind every zone a site touches, so a retry has something
+    /// to run even when the zone that discovered it is long finished.
     /// </summary>
-    private static bool ReachesTooFar(
-        ZDO zdo, IReadOnlyList<LocationTerrainOperation> operations, string name, Vector3 placement)
+    private static void Remember(LocationTerrainPlan.PlacedSite site)
     {
-        Vector2s home = zdo.GetSector();
-        foreach (Vector2s touched in LocationTerrainReader.ZonesTouched(operations))
-        {
-            if (Mathf.Abs(touched.x - home.x) <= 1 && Mathf.Abs(touched.y - home.y) <= 1)
-                continue;
-            string id = LocationTerrainReader.SiteId(name, placement, home);
-            if (s_reportedOutOfReach.Add(id))
-                Log.LogError(
-                    $"{name} at {placement.x:0},{placement.z:0} shapes ground in zone " +
-                    $"{touched.x},{touched.y}, more than one zone from its own {home.x},{home.y}. " +
-                    "No part of it was converted: writing only the zones that can see it would leave " +
-                    "a step across the site.");
-            return true;
-        }
-        return false;
+        foreach (Vector2s touched in LocationTerrainReader.ZonesTouched(site.Operations))
+            foreach (LocationTerrainWork item in LocationTerrainPlan.For(touched, new[] { site }))
+                s_pendingWork[item.SiteId] = item;
     }
 
-    /// <summary>
-    /// A template's terrain modifiers, in the order they appear in it.
-    ///
-    /// <c>Utils.GetEnabledComponentsInChildren</c> is what vanilla itself uses to
-    /// read a location's children, so the set here is the set the game would
-    /// instantiate on a client that has the template — including the rule that a
-    /// child under an inactive parent does not count.
-    /// </summary>
-    private static List<TerrainModifier> ModifiersOf(ZoneSystem.ZoneLocation location, string name)
-    {
-        if (s_templateModifiers.TryGetValue(name, out List<TerrainModifier> cached))
-            return cached;
+    /// <summary>How many outstanding conversions one zone generation may retry.</summary>
+    private const int RetriesPerZone = 4;
 
-        GameObject asset = location.m_prefab.Asset;
-        if (asset == null)
-            return null;
+    /// <summary>A zone heightmap is 64 vertices across at 1 m.</summary>
+    private const int ZoneWidth = 64;
+    private const float ZoneScale = 1f;
 
-        var modifiers = new List<TerrainModifier>(global::Utils.GetEnabledComponentsInChildren<TerrainModifier>(asset));
-        s_templateModifiers[name] = modifiers;
-        if (modifiers.Count > 0)
-            Log.LogInfo($"{name}: {modifiers.Count} terrain modifier(s) to convert for stock clients.");
-        return modifiers;
-    }
+    /// <summary>The work behind each outstanding ledger entry, so a retry has something to run.</summary>
+    private static readonly Dictionary<string, LocationTerrainWork> s_pendingWork =
+        new Dictionary<string, LocationTerrainWork>();
 
-    private static readonly int LocationProxyPrefab = "LocationProxy".GetStableHashCode();
-}
-
-/// <summary>A new world: forget the templates read for the last one.</summary>
-[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Awake))]
-public static class LocationTerrainWriterReset
-{
-    private static void Postfix() => LocationTerrainWriter.Reset();
 }

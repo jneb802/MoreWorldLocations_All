@@ -147,14 +147,47 @@ public static class LocationTerrainBridge
     /// <c>TerrainComp.Save</c> returns without a word when this peer does not own
     /// the compiler, so the write is confirmed rather than assumed.
     /// </summary>
-    public static bool WriteBack(TerrainComp compiler, TerrainZoneDeltas zone)
+    public static bool WriteBack(TerrainComp compiler, TerrainZoneDeltas zone) =>
+        WriteBack(compiler, zone, out _);
+
+    /// <summary>
+    /// As above, reporting why a write did not land.
+    ///
+    /// <para><b>The completion record goes in only after the terrain is
+    /// confirmed.</b> It used to be written first and the save judged by
+    /// "TCData is not null", which a blob left by anyone — a player's digging,
+    /// an earlier site, the game itself — satisfies without this write having
+    /// landed at all. That pairs a new completed identity with old terrain, and
+    /// the site is then never looked at again.</para>
+    ///
+    /// <para>What is checked instead is the saved bytes, decoded back and
+    /// compared against the arrays this call intended. A write that changes
+    /// nothing is still a pass: the test is equality with the intended state,
+    /// not that some hash moved.</para>
+    ///
+    /// <para>The remaining window is a crash between the confirmed terrain and
+    /// the completion record. That direction is safe — the site is converted
+    /// again on the next pass, and the conversion states absolute heights, so a
+    /// repeat lands on the same ground. The unsafe direction, a completion
+    /// record with no terrain, is what the ordering removes.</para>
+    /// </summary>
+    public static bool WriteBack(TerrainComp compiler, TerrainZoneDeltas zone, out string failure)
     {
         if (compiler == null) throw new ArgumentNullException(nameof(compiler));
         if (zone == null) throw new ArgumentNullException(nameof(zone));
 
+        failure = null;
         ZNetView view = compiler.m_nview;
-        if (view == null || !view.IsValid() || !view.IsOwner())
+        if (view == null || !view.IsValid())
+        {
+            failure = "the compiler has no valid view";
             return false;
+        }
+        if (!view.IsOwner())
+        {
+            failure = "another peer owns this compiler, so the game's own Save would do nothing";
+            return false;
+        }
 
         int n = zone.Pitch * zone.Pitch;
         Array.Copy(zone.LevelDelta, compiler.m_levelDelta, n);
@@ -163,12 +196,21 @@ public static class LocationTerrainBridge
         Array.Copy(zone.PaintMask, compiler.m_paintMask, n);
         Array.Copy(zone.ModifiedPaint, compiler.m_modifiedPaint, n);
 
-        // The record goes in before Save, so a restart cannot find terrain
-        // written with no note of which site wrote it.
-        view.GetZDO().Set(AppliedSitesKey, zone.SerializeApplied());
         compiler.Save();
-        if (view.GetZDO().GetByteArray(ZDOVars.s_TCData) == null)
+
+        byte[] saved = view.GetZDO().GetByteArray(ZDOVars.s_TCData);
+        if (saved == null)
+        {
+            failure = "the compiler saved no terrain data at all";
             return false;
+        }
+        if (!TerrainBlob.Matches(saved, zone, out string mismatch))
+        {
+            failure = "the saved terrain is not what this write intended: " + mismatch;
+            return false;
+        }
+
+        view.GetZDO().Set(AppliedSitesKey, zone.SerializeApplied());
 
         // Valheim 1.0 turned Poke's bool into a selector for WHICH late pass
         // rebuilds; 1 is the LateUpdate pass the game's own terrain edits use.
@@ -177,24 +219,208 @@ public static class LocationTerrainBridge
     }
 
     /// <summary>
+    /// The zone's saved compiler ZDO, or null.
+    ///
+    /// More than one is a fault in itself — the game keeps one per zone and two
+    /// destroy each other on every load — so this reports the count rather than
+    /// picking one.
+    /// </summary>
+    public static ZDO SavedCompiler(Vector2s zone, out int count)
+    {
+        count = 0;
+        ZDO found = null;
+        if (ZDOMan.instance == null)
+            return null;
+        var zdos = new List<ZDO>();
+        ZDOMan.instance.FindObjects(zone, zdos, new HashSet<ZoneSystem.SectorIndex>());
+        foreach (ZDO zdo in zdos)
+        {
+            if (zdo.GetPrefab() != TerrainCompilerPrefab)
+                continue;
+            count++;
+            if (found == null)
+                found = zdo;
+        }
+        return found;
+    }
+
+    /// <summary>
+    /// Read a zone's terrain from its saved compiler, with no live compiler
+    /// anywhere. Returns null when the zone has none.
+    /// </summary>
+    public static TerrainZoneDeltas AdoptSaved(Vector2s zoneId, int width, float scale, out TerrainBlob.Header header, out string problem)
+    {
+        header = TerrainBlob.Header.Fresh;
+        problem = null;
+        ZDO zdo = SavedCompiler(zoneId, out int count);
+        if (count > 1)
+        {
+            problem = $"zone {zoneId.x},{zoneId.y} has {count} terrain compilers; the game keeps one, " +
+                      "and two destroy each other on every load";
+            return null;
+        }
+
+        var zone = new TerrainZoneDeltas(ZoneSystem.GetZonePos(zoneId), width, scale);
+        if (zdo == null)
+            return zone;
+
+        byte[] saved = zdo.GetByteArray(ZDOVars.s_TCData);
+        if (saved != null && !TerrainBlob.TryDecode(saved, zone, out header, out problem))
+            return null;
+        zone.DeserializeApplied(zdo.GetString(AppliedSitesKey, ""));
+        return zone;
+    }
+
+    /// <summary>
+    /// Write a zone's terrain with no live compiler: the repair path for a zone
+    /// that is already generated and is not loaded here.
+    ///
+    /// A dedicated server keeps almost no zone loaded, and a zone's generation
+    /// hook does not run a second time, so a site discovered from a NEIGHBOUR's
+    /// generation has no other way to reach ground it already shaped. The bytes
+    /// are the compiler's own format and the header is carried through unchanged,
+    /// so a client loads this exactly as it loads the game's own write.
+    ///
+    /// <para>It refuses when a live compiler exists for the zone: that object
+    /// owns those arrays, would overwrite this on its next save, and is the path
+    /// to use instead.</para>
+    /// </summary>
+    public static bool WriteDetached(Vector2s zoneId, TerrainZoneDeltas zone, TerrainBlob.Header header, out string failure)
+    {
+        failure = null;
+        if (zone == null) throw new ArgumentNullException(nameof(zone));
+        if (ZDOMan.instance == null)
+        {
+            failure = "there is no ZDOMan, so there is nowhere to write";
+            return false;
+        }
+
+        Vector3 zonePos = ZoneSystem.GetZonePos(zoneId);
+        if (TerrainComp.FindTerrainCompiler(zonePos) != null)
+        {
+            failure = "this zone has a live compiler; write through it rather than behind it";
+            return false;
+        }
+
+        ZDO zdo = SavedCompiler(zoneId, out int count);
+        if (count > 1)
+        {
+            failure = $"zone {zoneId.x},{zoneId.y} already has {count} terrain compilers";
+            return false;
+        }
+        if (zdo == null)
+        {
+            zdo = ZDOMan.instance.CreateNewZDO(zonePos, TerrainCompilerPrefab);
+            zdo.Persistent = true;
+            zdo.SetPrefab(TerrainCompilerPrefab);
+            zdo.SetRotation(Quaternion.identity);
+        }
+        if (!zdo.IsOwner())
+        {
+            failure = "another peer owns this zone's compiler";
+            return false;
+        }
+
+        zdo.Set(ZDOVars.s_TCData, TerrainBlob.Encode(zone, header));
+
+        byte[] saved = zdo.GetByteArray(ZDOVars.s_TCData);
+        if (!TerrainBlob.Matches(saved, zone, out string mismatch))
+        {
+            failure = "the terrain written back does not read as intended: " + mismatch;
+            return false;
+        }
+        zdo.Set(AppliedSitesKey, zone.SerializeApplied());
+        return true;
+    }
+
+    /// <summary>
     /// The height a client generates for itself at a vertex of this zone — the
     /// value <c>TerrainConversion</c>'s contract asks for.
     ///
-    /// This is the world generator's own answer, which is what a stock client's
-    /// heightmap is built from before any compiler delta is added. It is
-    /// deliberately not <c>m_hmap.GetHeight</c>: that is the height AFTER the
-    /// compiler has been applied, and using it would measure the site against
-    /// ground that already carries the deltas being replaced.
+    /// <para><b>It is the heightmap builder's array, not
+    /// <c>WorldGenerator.GetHeight</c>.</b> They are not the same function.
+    /// <c>HeightmapBuilder.Build</c> takes the biome at the zone's four CORNERS
+    /// and, when those disagree, bilinearly blends four <c>GetBiomeHeight</c>
+    /// results with smoothstep weights; <c>WorldGenerator.GetHeight</c> looks the
+    /// biome up per point. Inside one biome they agree, which is why a Meadows
+    /// site measured correct in game; across a biome boundary they do not, and
+    /// the difference would go straight into the written delta and displace the
+    /// site by it.</para>
+    ///
+    /// <para>It is also deliberately not <c>m_hmap.GetHeight</c>, which is the
+    /// height AFTER the compiler has been applied: that would measure the site
+    /// against ground already carrying the deltas being replaced.</para>
+    ///
+    /// <para>Heights in the build data are relative to the heightmap's own
+    /// <c>transform.position.y</c>, which is what <c>GetWorldBaseHeight</c> adds
+    /// back, so this adds it too.</para>
     /// </summary>
-    public static TerrainConversion.VertexHeight GeneratedHeightAt(TerrainZoneDeltas zone)
+    /// <param name="heightmap">
+    /// The zone's heightmap when one is in hand — during generation it is, and
+    /// its <c>m_buildData</c> is the exact array the client will use, already
+    /// built. Null asks the builder instead.
+    /// </param>
+    /// <exception cref="InvalidOperationException">
+    /// When neither the heightmap nor the builder can supply the array. There is
+    /// no fallback to zero: converting against a height nobody generates writes
+    /// the site into the wrong ground and records it as done.
+    /// </exception>
+    public static TerrainConversion.VertexHeight GeneratedHeightAt(TerrainZoneDeltas zone, Heightmap heightmap)
     {
         if (zone == null) throw new ArgumentNullException(nameof(zone));
-        int half = zone.Width / 2;
-        return (x, y) =>
-        {
-            float wx = zone.Origin.x + (x - half) * zone.Scale;
-            float wz = zone.Origin.z + (y - half) * zone.Scale;
-            return WorldGenerator.instance != null ? WorldGenerator.instance.GetHeight(wx, wz) : 0f;
-        };
+
+        List<float> baseHeights = BaseHeights(zone, heightmap, out float originY);
+        if (baseHeights == null)
+            throw new InvalidOperationException(
+                $"no generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0}: " +
+                "neither its heightmap nor the builder has them, and converting against zero " +
+                "would write the site into ground nobody generates");
+
+        int pitch = zone.Pitch;
+        if (baseHeights.Count < pitch * pitch)
+            throw new InvalidOperationException(
+                $"the generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0} are " +
+                $"{baseHeights.Count} long, not {pitch * pitch}: the builder was asked for a " +
+                "different width than the compiler holds");
+
+        return (x, y) => baseHeights[y * pitch + x] + originY;
     }
+
+    /// <summary>
+    /// The zone's generated heights: the heightmap's own build data when it has
+    /// it, otherwise the builder's, and null when neither can answer.
+    /// </summary>
+    private static List<float> BaseHeights(TerrainZoneDeltas zone, Heightmap heightmap, out float originY)
+    {
+        originY = 0f;
+        if (heightmap != null && heightmap.m_buildData != null
+            && heightmap.m_buildData.m_baseHeights != null
+            && heightmap.m_buildData.m_baseHeights.Count >= zone.Pitch * zone.Pitch)
+        {
+            originY = heightmap.transform.position.y;
+            return heightmap.m_buildData.m_baseHeights;
+        }
+
+        if (HeightmapBuilder.instance == null || WorldGenerator.instance == null)
+            return null;
+
+        // Asking for a zone the builder has not built blocks until it has.
+        // IsTerrainReady queues the work and answers whether it is done, which is
+        // the check SpawnZone itself makes before generating.
+        var centre = new Vector3(zone.Origin.x, 0f, zone.Origin.z);
+        if (!HeightmapBuilder.instance.IsTerrainReady(centre, zone.Width, zone.Scale, false, WorldGenerator.instance))
+            return null;
+
+        HeightmapBuilder.HMBuildData data =
+            HeightmapBuilder.instance.RequestTerrainSync(centre, zone.Width, zone.Scale, false, WorldGenerator.instance);
+        return data?.m_baseHeights;
+    }
+
+    /// <summary>
+    /// Whether the zone's generated heights can be had right now, without
+    /// building them. A caller that cannot proceed should leave the zone pending
+    /// rather than convert against something else.
+    /// </summary>
+    public static bool HeightsReady(TerrainZoneDeltas zone, Heightmap heightmap) =>
+        BaseHeights(zone, heightmap, out _) != null;
 }
