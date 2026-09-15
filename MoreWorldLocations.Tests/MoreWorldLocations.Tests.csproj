@@ -38,6 +38,26 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainLedger.cs" Link="ModSrc/LocationTerrainLedger.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainWriter.cs" Link="ModSrc/LocationTerrainWriter.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/SiteTerrainLedger.cs" Link="ModSrc/SiteTerrainLedger.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFacts.cs" Link="ModSrc/Verification/TemplateFacts.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFinding.cs" Link="ModSrc/Verification/TemplateFinding.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/StockPrefabRegistry.cs" Link="ModSrc/Verification/StockPrefabRegistry.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/ComponentPolicy.cs" Link="ModSrc/Verification/ComponentPolicy.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplatePolicy.cs" Link="ModSrc/Verification/TemplatePolicy.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFingerprint.cs" Link="ModSrc/Verification/TemplateFingerprint.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/ApprovedSelection.cs" Link="ModSrc/Verification/ApprovedSelection.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/VerificationData.cs" Link="ModSrc/Verification/VerificationData.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueReport.cs" Link="ModSrc/Verification/CatalogueReport.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueAudit.cs" Link="ModSrc/Verification/CatalogueAudit.cs"/>
+    </ItemGroup>
+
+    <!--
+      The same two data files the mod embeds, under the same logical names, so
+      the tests check the shipped snapshot and the shipped selection rather than
+      fixtures that agree with themselves.
+    -->
+    <ItemGroup>
+        <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/StockPrefabs.tsv" LogicalName="MoreWorldLocations.ServerOnly.StockPrefabs.tsv"/>
+        <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/ApprovedSelection.tsv" LogicalName="MoreWorldLocations.ServerOnly.ApprovedSelection.tsv"/>
     </ItemGroup>
 
     <ItemGroup>

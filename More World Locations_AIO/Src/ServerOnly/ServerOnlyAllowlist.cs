@@ -16,10 +16,10 @@ namespace More_World_Locations_AIO.ServerOnly;
 /// Membership is by exact name and nothing else. A template that has not been
 /// audited is not "probably fine": the audit is what establishes that every
 /// part a player needs is a networked child of a prefab the stock client
-/// already has, so an unaudited name is blocked. That is also why the
-/// allowlist is a fixed list in code for the first release rather than a
-/// config key -- an operator adding a name to a config file would be
-/// approving a template nobody audited.
+/// already has, so an unaudited name is blocked. That is also why the approved
+/// set is generated and embedded rather than exposed as a config key -- an
+/// operator adding a name to a config file would be approving a template
+/// nobody audited.
 /// </summary>
 public static class ServerOnlyAllowlist
 {
@@ -33,38 +33,23 @@ public static class ServerOnlyAllowlist
         new[] { "Ports", "Traders", "Trainers", "Dungeons" };
 
     /// <summary>
-    /// Approved templates, keyed by name.
+    /// Approved templates, from the generated selection and nowhere else.
     ///
-    /// A name is here because it has been watched end to end on a client that
-    /// does not have the mod — arrival by prefab and transform, collision, and
-    /// the same site again after a save and a restart — not because an audit
-    /// found nothing wrong with it. The audit is screening; it decides what is
-    /// worth running, and the run decides what ships. The runtime template is
-    /// the authority in any case: MWL_FulingRock1 has two terrain modifiers once
-    /// Jötunn has resolved it where the bundle shows one.
+    /// <para>This used to be a list in source, and four names fit in one. A
+    /// catalogue does not: the same set would end up written out here, in the
+    /// auditor and in the documentation, the three would drift apart quietly,
+    /// and the world would follow whichever the code happened to read. So the
+    /// audit writes <see cref="Verification.ApprovedSelection"/>, this reads
+    /// it, and there is one answer to "what does this build serve".</para>
     ///
-    /// The four below are the ones with that evidence, recorded in
-    /// <c>MWL-STEP3-EVIDENCE.md</c>, <c>MWL-STEP4-EVIDENCE.md</c> and
-    /// <c>MWL-NIGHT-20260915.md</c>:
-    ///
-    /// <list type="bullet">
-    /// <item><c>MWL_MeadowsTomb4</c> — 11 networked children, no terrain.</item>
-    /// <item><c>MWL_WoodTower2</c> — 42 children including a chest, no terrain.</item>
-    /// <item><c>MWL_RuinsWell1</c> — one level operation, −2 m, no paint.</item>
-    /// <item><c>MWL_Ruins1</c> — level, smooth and Dirt paint together.</item>
-    /// </list>
-    ///
-    /// Deliberately NOT here: <c>MWL_FulingRock1</c>. Its zone-boundary and
-    /// failure-recovery runs established how the terrain writer behaves; they
-    /// established nothing about its 87 objects, its two spawners or its chest.
+    /// <para>A name is in that file because the audit approved it, and each
+    /// entry is bound to the fingerprint of the template it was approved for —
+    /// so content that changed since is re-checked rather than inherited. The
+    /// four entries still carrying <c>*</c> are the ones watched end to end on
+    /// a stock client before this build could fingerprint anything; the
+    /// registration reports them as unbound every time it reads them.</para>
     /// </summary>
-    public static readonly IReadOnlyCollection<string> Approved = new HashSet<string>
-    {
-        "MWL_MeadowsTomb4",
-        "MWL_WoodTower2",
-        "MWL_RuinsWell1",
-        "MWL_Ruins1",
-    };
+    public static IReadOnlyCollection<string> Approved => Verification.VerificationData.ApprovedSelection.Names;
 
     /// <summary>
     /// Whether <paramref name="locationName"/> from <paramref name="packName"/>

@@ -81,6 +81,25 @@ public static class ServerOnlySelection
     public static void SetRegistered(IEnumerable<string> registered) =>
         Registered = new HashSet<string>(registered ?? new string[0]);
 
+    /// <summary>
+    /// Take a name back out of the registered set.
+    ///
+    /// Called when the catalogue sweep withdraws a location the shipped
+    /// selection approved and this run does not stand behind. Registration and
+    /// the sweep are two steps and the second can overrule the first, so the
+    /// record of what this process serves has to be able to shrink — otherwise
+    /// the terrain conversion would go on treating a withdrawn template as ours
+    /// and convert the modifiers of a site nothing will place.
+    /// </summary>
+    public static void Forget(string locationName)
+    {
+        if (string.IsNullOrEmpty(locationName))
+            return;
+        var remaining = new HashSet<string>(Registered);
+        remaining.Remove(locationName);
+        Registered = remaining;
+    }
+
     /// <summary>Whether this location is one server-only mode registered.</summary>
     public static bool IsOurs(string locationName) =>
         !string.IsNullOrEmpty(locationName) && Registered.Contains(locationName);
