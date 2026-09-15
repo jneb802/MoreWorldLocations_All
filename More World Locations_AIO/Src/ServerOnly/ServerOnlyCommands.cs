@@ -85,6 +85,15 @@ public static class ServerOnlyCommands
                 return true;
             });
 
+        new Terminal.ConsoleCommand("mwl_heights", "Server-only mode, diagnostic driver: read generated heights for N distinct zones through the production path, holding the first H of them, to exercise the height budget's reservation, eviction, deferral and recovery: mwl_heights <zones> [hold]",
+            (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
+            {
+                int zones = args.Length > 1 && int.TryParse(args[1], out int z) ? z : 8;
+                int hold = args.Length > 2 && int.TryParse(args[2], out int h) ? h : 0;
+                args.Context.AddString(HeightBudgetDriver.Run(zones, hold));
+                return true;
+            });
+
         new Terminal.ConsoleCommand("mwl_location", "Server-only mode: everything the audit found about one location, by exact name",
             (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
             {
