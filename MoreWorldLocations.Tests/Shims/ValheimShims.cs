@@ -193,6 +193,7 @@ public class ZDO
     private readonly System.Collections.Generic.Dictionary<int, int> m_ints = new();
     private readonly System.Collections.Generic.Dictionary<int, long> m_longs = new();
     private readonly System.Collections.Generic.Dictionary<int, byte[]> m_byteArrays = new();
+    private readonly System.Collections.Generic.Dictionary<int, string> m_strings = new();
 
     public ZDO(UnityEngine.Vector3 position, int prefab)
     {
@@ -215,6 +216,9 @@ public class ZDO
     public int GetInt(int hash, int defaultValue = 0) => m_ints.TryGetValue(hash, out int v) ? v : defaultValue;
     public void Set(int hash, long value) => m_longs[hash] = value;
     public long GetLong(int hash, long defaultValue = 0L) => m_longs.TryGetValue(hash, out long v) ? v : defaultValue;
+    public void Set(int hash, string value) => m_strings[hash] = value;
+    public string GetString(int hash, string defaultValue = "") =>
+        m_strings.TryGetValue(hash, out string? v) ? v : defaultValue;
     public void Set(int hash, byte[] value) => m_byteArrays[hash] = value;
     public byte[]? GetByteArray(int hash, byte[]? defaultValue = null) =>
         m_byteArrays.TryGetValue(hash, out var v) ? v : defaultValue;
@@ -486,4 +490,24 @@ public class TerrainModifier
         ClearVegetation,
         DeepSnow,
     }
+
+    // The settings LocationTerrainReader copies, with the game's own defaults so
+    // a test that leaves one out gets what an unconfigured modifier in Unity
+    // gets, not a zero the game never produces.
+    public bool enabled = true;
+    public int m_sortOrder;
+    public bool m_useTerrainCompiler;
+    public bool m_playerModifiction;
+    public float m_levelOffset;
+    public bool m_level;
+    public float m_levelRadius = 2f;
+    public bool m_square = true;
+    public bool m_smooth;
+    public float m_smoothRadius = 2f;
+    public float m_smoothPower = 3f;
+    public bool m_paintCleared = true;
+    public bool m_paintHeightCheck;
+    public PaintType m_paintType;
+    public float m_paintRadius = 2f;
+    public float m_paintStrength = 1f;
 }
