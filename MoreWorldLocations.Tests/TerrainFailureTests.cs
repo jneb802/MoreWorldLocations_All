@@ -104,18 +104,19 @@ public class TerrainFailureTests
     }
 
     [Fact]
-    public void AFailureDuringThePaintPassDoesNotKeepTheLevellingThatSucceeded()
+    public void AFailureLateInTheConversionDoesNotKeepTheHeightsThatSucceeded()
     {
-        // Level runs before paint. Publishing per pass rather than per operation
-        // would leave the ground cut and the mask untouched, which is a state no
-        // retry can reason about.
+        // Heights are written before paint. Publishing per pass rather than per
+        // conversion would leave the ground cut and the mask untouched, which is
+        // a state no retry can reason about.
         TerrainZoneDeltas zone = Zone();
 
-        // Count the reads a whole operation makes, then fail on the last one --
-        // deep inside the paint pass, well after levelling has done its work.
+        // Count the reads a whole conversion makes, then fail on the last one --
+        // after the authored heights have been worked out and the deltas written
+        // into the scratch zone.
         int reads = 0;
-        TerrainConversion.Apply(Sink(), Zone(), (x, y) => { reads++; return 30f; });
-        Assert.True(reads > 1, "the operation has to read more than once for this to mean anything");
+        TerrainConversion.Convert(new[] { Sink() }, Zone(), (x, y) => { reads++; return 30f; });
+        Assert.True(reads > 1, "the conversion has to read more than once for this to mean anything");
 
         Assert.Throws<InvalidOperationException>(() =>
             TerrainConversion.ApplyOnce("site/terrain", Sink(), zone, ThrowsOnCall(reads)));
@@ -156,10 +157,16 @@ public class TerrainFailureTests
     }
 
     [Fact]
-    public void ACompletionRecordThatWasNotSavedLetsTheSiteBeWrittenTwice()
+    public void ACompletionRecordThatWasNotSavedLetsTheSiteBePaintedTwice()
     {
         // The negative half of the one above, stated so the consequence of
         // dropping the record is on the record rather than assumed.
+        //
+        // Heights survive a repeat: they are stated absolutely, so a second pass
+        // lands on the same ground. Paint does not. Heightmap.PaintCleared lerps
+        // the mask TOWARDS a colour, so running it again moves the mask further
+        // and the site comes out a different shade of dirt than the author drew.
+        // That is what the record is for now that heights are safe.
         TerrainZoneDeltas before = Zone();
         TerrainConversion.ApplyOnce("site/terrain", Sink(), before, Flat);
 
@@ -168,9 +175,20 @@ public class TerrainFailureTests
         // ...and no DeserializeApplied.
 
         Assert.True(TerrainConversion.ApplyOnce("site/terrain", Sink(), afterRestart, Flat));
+
         TerrainConversion.WorldToVertex(afterRestart, new Vector3(0f, 30f, 0f), out int cx, out int cy);
-        Assert.Equal(-2f, before.LevelDelta[before.Index(cx, cy)], 3);
-        Assert.Equal(-4f, afterRestart.LevelDelta[afterRestart.Index(cx, cy)], 3);
+        int centre = afterRestart.Index(cx, cy);
+        Assert.Equal(before.LevelDelta[centre], afterRestart.LevelDelta[centre], 3);
+
+        // Away from the centre, where the weight is below 1 and the lerp has not
+        // already arrived: at the centre itself the first pass saturates and a
+        // second changes nothing, which would make this pass for the wrong
+        // reason.
+        TerrainConversion.WorldToVertexMask(afterRestart, new Vector3(-0.5f, 30f, -0.5f), out int mx, out int my);
+        int mask = afterRestart.Index(mx + 2, my);
+        Assert.True(before.PaintMask[mask].r < 1f, "the sample has to be a texel the lerp had not finished");
+        Assert.True(afterRestart.PaintMask[mask].r > before.PaintMask[mask].r,
+            "a second pass moves the mask further towards the paint colour");
     }
 
     [Fact]

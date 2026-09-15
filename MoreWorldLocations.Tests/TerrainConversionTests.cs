@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using More_World_Locations_AIO.ServerOnly;
 using UnityEngine;
 using Xunit;
@@ -6,294 +8,333 @@ using Xunit;
 namespace More_World_Locations_AIO.Tests;
 
 /// <summary>
-/// Turning a location's TerrainModifier into something a client without the mod
-/// receives.
+/// Whether a client without the mod ends up standing on the ground the author
+/// drew.
 ///
-/// The failure being guarded against is not a crash. It is a ruin standing on
-/// ground that was never flattened, because the flattening lived in a component
-/// the client never got — visible only to someone standing there. So these
-/// tests check the ground the client would end up on, vertex by vertex, against
-/// the arithmetic vanilla itself uses.
+/// The review of 9657742 made the point these are written around: copying
+/// <c>TerrainComp</c>'s arithmetic reproduces a hoe, not a location. A location's
+/// modifiers run through <c>Heightmap.ApplyModifiers</c>, which walks them over a
+/// mutating height array — so a modifier's smooth pass reads ground its own level
+/// pass has already flattened, and a second modifier reads the first one's
+/// result. The compiler's passes both read the height from before the operation.
+/// The two agree on a level-only modifier and disagree on every other kind, and
+/// MWL uses the other kinds.
+///
+/// So the expected numbers below are worked out by hand from
+/// <c>Heightmap.LevelTerrain</c> and <c>SmoothTerrain2</c> in the decompiled 1.0
+/// assembly, not read back from the converter. Where a number is derived, the
+/// derivation is written next to it.
 /// </summary>
 public class TerrainConversionTests
 {
     private const int Width = 32;
     private const float Scale = 1f;
 
-    /// <summary>
-    /// A zone of rolling ground, the way a real one arrives: heights relative to
-    /// the heightmap origin, varying across the grid so a levelling operation
-    /// has something to level. Deterministic, so a failure is reproducible.
-    /// </summary>
-    private sealed class Ground
-    {
-        private readonly float[] _heights = new float[(Width + 1) * (Width + 1)];
-
-        public Ground(Func<int, int, float> shape)
-        {
-            for (int y = 0; y <= Width; y++)
-                for (int x = 0; x <= Width; x++)
-                    _heights[y * (Width + 1) + x] = shape(x, y);
-        }
-
-        /// <summary>Heightmap.GetHeight: 0 outside the grid, like the game.</summary>
-        public float At(int x, int y)
-        {
-            if (x < 0 || y < 0 || x > Width || y > Width) return 0f;
-            return _heights[y * (Width + 1) + x];
-        }
-
-        /// <summary>
-        /// What the client's terrain ends up as: its own generated height plus
-        /// the compiler's deltas, exactly as TerrainComp.ApplyToHeightmap adds
-        /// them (and with vanilla's ±8 m clamp against the base height).
-        /// </summary>
-        public float AsReceived(TerrainZoneDeltas zone, int x, int y)
-        {
-            int i = zone.Index(x, y);
-            float height = At(x, y);
-            if (zone.LevelDelta[i] == 0f && zone.SmoothDelta[i] == 0f)
-                return height;
-            return Mathf.Clamp(height + zone.LevelDelta[i] + zone.SmoothDelta[i], height - 8f, height + 8f);
-        }
-    }
-
-    private static Ground Slope() => new Ground((x, y) => 20f + x * 0.25f + y * 0.1f);
+    /// <summary>The centre vertex of a zone whose origin is the world origin.</summary>
+    private const int Centre = 16;
 
     private static TerrainZoneDeltas Zone() =>
         new TerrainZoneDeltas(new Vector3(0f, 0f, 0f), Width, Scale);
 
-    /// <summary>World position of the grid centre vertex, so a radius fits inside.</summary>
-    private static Vector3 Centre(float height) => new Vector3(0f, height, 0f);
+    private static Vector3 At(float x, float height, float z) => new Vector3(x, height, z);
 
-    // --- levelling -------------------------------------------------------
+    /// <summary>Ground the client generates for itself: flat, so the arithmetic is checkable by hand.</summary>
+    private static TerrainConversion.VertexHeight Flat(float height) => (x, y) => height;
+
+    /// <summary>Ground that rises eastwards, for the cases where flat would hide a mistake.</summary>
+    private static TerrainConversion.VertexHeight Slope() => (x, y) => 20f + x * 0.25f;
+
+    /// <summary>
+    /// What the client's terrain ends up as: the height it generated, plus the
+    /// compiler's two deltas, clamped against the generated height — exactly
+    /// <c>TerrainComp.ApplyToHeightmap</c>.
+    /// </summary>
+    private static float AsReceived(TerrainZoneDeltas zone, TerrainConversion.VertexHeight generated, int x, int y)
+    {
+        int i = zone.Index(x, y);
+        float own = generated(x, y);
+        if (zone.LevelDelta[i] == 0f && zone.SmoothDelta[i] == 0f)
+            return own;
+        return Mathf.Clamp(own + zone.LevelDelta[i] + zone.SmoothDelta[i], own - 8f, own + 8f);
+    }
+
+    private static IReadOnlyList<LocationTerrainOperation> One(LocationTerrainOperation op) => new[] { op };
+
+    // --- the case that separates the authored path from the compiler's -----
 
     [Fact]
-    public void LevellingBringsEveryVertexInRangeToTheModifiersHeight()
+    public void LevelAndSmoothTogetherLeaveTheLevelledGroundExactlyAtTheTarget()
     {
-        // MWL_Ruins1's modifier: level, radius 3, square. Against a slope, the
-        // 7x7 block around the centre must come out flat at the target.
-        Ground ground = Slope();
+        // MWL_Ruins1's one modifier is level r=3 AND smooth r=3, and this is
+        // where the old approach was wrong. Live: level sets the ground to 25,
+        // then smooth lerps from 25 towards 25 and changes nothing. Copying the
+        // compiler instead adds a smooth delta computed from the ORIGINAL 30, and
+        // the middle of the ruin ends up below its own floor.
         TerrainZoneDeltas zone = Zone();
-        LocationTerrainOperation op = new(Centre(25f), level: true, levelRadius: 3f, square: true);
+        TerrainConversion.VertexHeight ground = Flat(30f);
 
-        TerrainConversion.Apply(op, zone, ground.At);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(
+                At(0f, 25f, 0f),
+                level: true, levelRadius: 3f, square: true,
+                smooth: true, smoothRadius: 3f, smoothPower: 4f)),
+            zone, ground);
 
-        TerrainConversion.WorldToVertex(zone, Centre(25f), out int cx, out int cy);
-        for (int y = cy - 3; y <= cy + 3; y++)
-            for (int x = cx - 3; x <= cx + 3; x++)
-                Assert.Equal(25f, ground.AsReceived(zone, x, y), 3);
+        for (int y = Centre - 3; y <= Centre + 3; y++)
+            for (int x = Centre - 3; x <= Centre + 3; x++)
+                Assert.Equal(25f, AsReceived(zone, ground, x, y), 3);
     }
 
     [Fact]
-    public void LevellingLeavesGroundOutsideTheRadiusAlone()
+    public void SmoothingReachesBeyondTheLevelledGroundByHandCheckedAmounts()
     {
-        // The site's footprint has to stop where the audit says it stops; a
-        // modifier that quietly reshapes the next ridge would move a road.
-        Ground ground = Slope();
+        // Flat 30, levelled to 25 within 3 m, smoothed within 6 m with power 3.
+        // Heightmap.SmoothTerrain2: n = d/r, w = 1 - n^3, h = lerp(h, 25, w).
+        //   d = 4 -> n = 0.6667, n^3 = 0.2963, w = 0.7037, h = 30 - 5*0.7037 = 26.481
+        //   d = 6 -> n = 1,      w = 0,        h = 30
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(25f), level: true, levelRadius: 3f, square: true),
-            zone, ground.At);
+        TerrainConversion.VertexHeight ground = Flat(30f);
 
-        TerrainConversion.WorldToVertex(zone, Centre(25f), out int cx, out int cy);
-        Assert.Equal(ground.At(cx + 5, cy), ground.AsReceived(zone, cx + 5, cy), 4);
-        Assert.False(zone.ModifiedHeight[zone.Index(cx + 5, cy)]);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(
+                At(0f, 25f, 0f),
+                level: true, levelRadius: 3f, square: true,
+                smooth: true, smoothRadius: 6f, smoothPower: 3f)),
+            zone, ground);
+
+        Assert.Equal(25f, AsReceived(zone, ground, Centre, Centre), 3);
+        Assert.Equal(26.481f, AsReceived(zone, ground, Centre + 4, Centre), 2);
+        Assert.Equal(30f, AsReceived(zone, ground, Centre + 6, Centre), 3);
+    }
+
+    [Fact]
+    public void ALaterModifierOverridesAnEarlierOneWhereTheyOverlap()
+    {
+        // ApplyModifiers walks the instances in order over the same array, so two
+        // modifiers of one site are not independent. Converting them one at a
+        // time against the untouched ground -- which is what a per-modifier
+        // conversion would do -- loses this entirely.
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Flat(30f);
+
+        LocationTerrainOperation first = new(
+            At(0f, 25f, 0f), level: true, levelRadius: 5f, square: true, sortOrder: 0);
+        LocationTerrainOperation second = new(
+            At(0f, 27f, 0f), level: true, levelRadius: 2f, square: true, sortOrder: 1);
+
+        TerrainConversion.Convert(new[] { first, second }, zone, ground);
+
+        Assert.Equal(27f, AsReceived(zone, ground, Centre, Centre), 3);      // both, second wins
+        Assert.Equal(25f, AsReceived(zone, ground, Centre + 4, Centre), 3);  // first only
+        Assert.Equal(30f, AsReceived(zone, ground, Centre + 6, Centre), 3);  // neither
+    }
+
+    [Fact]
+    public void TheSortOrderDecidesWhichModifierWinsAndNotTheOrderTheyArrivedIn()
+    {
+        // Vanilla sorts by m_sortOrder before applying. Handing them over in the
+        // other order must not change the ground, or the site depends on how the
+        // template happened to be walked.
+        TerrainConversion.VertexHeight ground = Flat(30f);
+        LocationTerrainOperation low = new(
+            At(0f, 25f, 0f), level: true, levelRadius: 5f, square: true, sortOrder: 0);
+        LocationTerrainOperation high = new(
+            At(0f, 27f, 0f), level: true, levelRadius: 2f, square: true, sortOrder: 1);
+
+        TerrainZoneDeltas asGiven = Zone();
+        TerrainConversion.Convert(new[] { low, high }, asGiven, ground);
+
+        TerrainZoneDeltas reversed = Zone();
+        TerrainConversion.Convert(new[] { high, low }, reversed, ground);
+
+        Assert.Equal(asGiven.LevelDelta, reversed.LevelDelta);
+        Assert.Equal(27f, AsReceived(reversed, ground, Centre, Centre), 3);
+    }
+
+    [Fact]
+    public void ModifiersWithTheSameSortOrderKeepTheOrderTheTemplateGaveThem()
+    {
+        // Vanilla breaks a sort-order tie by creation order, which for a
+        // location's children is their order in the template. Letting the sort
+        // pick would make the ground depend on something nobody wrote down.
+        TerrainConversion.VertexHeight ground = Flat(30f);
+        LocationTerrainOperation first = new(At(0f, 25f, 0f), level: true, levelRadius: 3f, square: true);
+        LocationTerrainOperation second = new(At(0f, 27f, 0f), level: true, levelRadius: 3f, square: true);
+
+        TerrainZoneDeltas oneWay = Zone();
+        TerrainConversion.Convert(new[] { first, second }, oneWay, ground);
+        Assert.Equal(27f, AsReceived(oneWay, ground, Centre, Centre), 3);
+
+        TerrainZoneDeltas otherWay = Zone();
+        TerrainConversion.Convert(new[] { second, first }, otherWay, ground);
+        Assert.Equal(25f, AsReceived(otherWay, ground, Centre, Centre), 3);
+    }
+
+    // --- the ground the client lands on ------------------------------------
+
+    [Fact]
+    public void WhatTheClientReceivesIsTheAuthoredGroundVertexForVertex()
+    {
+        // The whole claim, stated over the whole grid and on ground that is not
+        // flat: after the deltas are applied the way the game applies them, the
+        // client stands exactly where the author drew.
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Slope();
+
+        IReadOnlyList<LocationTerrainOperation> site = new[]
+        {
+            new LocationTerrainOperation(At(-4f, 24f, 0f), level: true, levelRadius: 4f, square: true,
+                smooth: true, smoothRadius: 7f, smoothPower: 3f, sortOrder: 0),
+            new LocationTerrainOperation(At(3f, 26f, 2f), level: true, levelRadius: 3f, sortOrder: 1),
+        };
+
+        float[] authored = TerrainConversion.AuthoredHeights(site, zone, ground);
+        TerrainConversion.Convert(site, zone, ground);
+
+        for (int y = 0; y < zone.Pitch; y++)
+            for (int x = 0; x < zone.Pitch; x++)
+                Assert.Equal(authored[zone.Index(x, y)], AsReceived(zone, ground, x, y), 3);
+    }
+
+    [Fact]
+    public void GroundTheSiteDoesNotReachIsLeftWhereTheWorldGeneratorPutIt()
+    {
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Slope();
+
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 25f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, ground);
+
+        Assert.False(zone.ModifiedHeight[zone.Index(Centre + 5, Centre)]);
+        Assert.Equal(ground(Centre + 5, Centre), AsReceived(zone, ground, Centre + 5, Centre), 4);
     }
 
     [Fact]
     public void ARoundFootprintDoesNotTouchItsCorners()
     {
-        // square=false is a circle in vanilla, and MWL_RuinsWell1 uses one. The
-        // corner of the bounding box is outside it.
-        Ground ground = Slope();
+        // square=false is a circle in vanilla, and MWL_RuinsWell1 uses one.
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(25f), level: true, levelRadius: 4f, square: false),
-            zone, ground.At);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 25f, 0f), level: true, levelRadius: 4f, square: false)),
+            zone, Flat(30f));
 
-        TerrainConversion.WorldToVertex(zone, Centre(25f), out int cx, out int cy);
-        Assert.True(zone.ModifiedHeight[zone.Index(cx + 4, cy)], "the rim on the axis is inside a radius-4 circle");
-        Assert.False(zone.ModifiedHeight[zone.Index(cx + 4, cy + 4)], "the corner of the box is outside it");
+        Assert.True(zone.ModifiedHeight[zone.Index(Centre + 4, Centre)],
+            "the rim on the axis is inside a radius-4 circle");
+        Assert.False(zone.ModifiedHeight[zone.Index(Centre + 4, Centre + 4)],
+            "the corner of the box is outside it");
     }
 
     [Fact]
     public void TheLevelOffsetSinksTheGroundBelowTheModifier()
     {
-        // MWL_RuinsWell1 levels to Position + up * -2. If the offset were
-        // dropped the well would sit flush with the meadow instead of in a dip,
-        // and the structure around it would be two metres out.
-        Ground ground = new Ground((x, y) => 30f);
+        // MWL_RuinsWell1 levels to Position + up * -2. Drop the offset and the
+        // well sits flush with the meadow, two metres above its own floor.
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(30f), level: true, levelRadius: 4f, levelOffset: -2f),
-            zone, ground.At);
+        TerrainConversion.VertexHeight ground = Flat(30f);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), level: true, levelRadius: 4f, levelOffset: -2f)),
+            zone, ground);
 
-        TerrainConversion.WorldToVertex(zone, Centre(30f), out int cx, out int cy);
-        Assert.Equal(28f, ground.AsReceived(zone, cx, cy), 3);
+        Assert.Equal(28f, AsReceived(zone, ground, Centre, Centre), 3);
     }
 
+    // --- what the compiler cannot hold -------------------------------------
+
     [Fact]
-    public void LevellingIsClampedTheWayVanillaClampsIt()
+    public void ACutDeeperThanTheCompilerCanHoldIsReportedRatherThanApproximated()
     {
-        // A 20 m cut is not a 20 m cut: TerrainComp clamps accumulated levelling
-        // to +/-8 m, so the server and the client agree on a limited change
-        // rather than the server believing in one the client cannot represent.
-        Ground ground = new Ground((x, y) => 50f);
+        // Heightmap.LevelTerrain sets a location's ground absolutely with no
+        // limit; a compiler delta is clamped to +/-8 m. A template that needs 20
+        // cannot be served as authored, and saying so is the difference between
+        // excluding it and shipping a ruin sitting twelve metres in the air.
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(30f), level: true, levelRadius: 3f, square: true),
-            zone, ground.At);
+        TerrainConversionResult result = TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, Flat(50f));
 
-        TerrainConversion.WorldToVertex(zone, Centre(30f), out int cx, out int cy);
-        Assert.Equal(-TerrainConversion.MaxLevelDelta, zone.LevelDelta[zone.Index(cx, cy)], 4);
-        Assert.Equal(42f, ground.AsReceived(zone, cx, cy), 3);
+        Assert.False(result.Representable);
+        Assert.NotEmpty(result.BeyondCompilerRange);
+        Assert.Contains("needs -20.0 m", result.BeyondCompilerRange[0]);
+        Assert.Equal(-20f, result.LargestChange, 3);
     }
 
-    // --- smoothing -------------------------------------------------------
-
     [Fact]
-    public void SmoothingPullsTowardsTheModifierAndFadesToNothingAtTheRim()
+    public void AnOrdinaryCutIsWithinRangeAndSaysSo()
     {
-        Ground ground = new Ground((x, y) => 20f);
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(21f), smooth: true, smoothRadius: 4f, smoothPower: 3f),
-            zone, ground.At);
+        TerrainConversionResult result = TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 28f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, Flat(30f));
 
-        TerrainConversion.WorldToVertex(zone, Centre(21f), out int cx, out int cy);
-        int centre = zone.Index(cx, cy);
-
-        // At the centre the distance is 0, so the lerp is the whole way.
-        Assert.Equal(1f, zone.SmoothDelta[centre], 3);
-        // At the rim it is 0, so nothing moves even though the vertex is marked.
-        Assert.Equal(0f, zone.SmoothDelta[zone.Index(cx + 4, cy)], 3);
-        // In between, something less than the whole way.
-        float half = zone.SmoothDelta[zone.Index(cx + 2, cy)];
-        Assert.InRange(half, 0.01f, 0.99f);
+        Assert.True(result.Representable);
+        Assert.Empty(result.BeyondCompilerRange);
+        Assert.Equal(-2f, result.LargestChange, 3);
+        Assert.Equal(7 * 7, result.VerticesChanged);
     }
 
     [Fact]
-    public void SmoothingIsClampedToOneMetre()
+    public void PreviewAnswersTheSameQuestionWithoutWritingAnything()
     {
-        Ground ground = new Ground((x, y) => 20f);
+        // How a template is judged before anything is committed to a world.
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(40f), smooth: true, smoothRadius: 4f, smoothPower: 3f),
-            zone, ground.At);
+        TerrainConversionResult preview = TerrainConversion.Preview(
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, Flat(50f));
 
-        TerrainConversion.WorldToVertex(zone, Centre(40f), out int cx, out int cy);
-        Assert.Equal(TerrainConversion.MaxSmoothDelta, zone.SmoothDelta[zone.Index(cx, cy)], 4);
+        Assert.False(preview.Representable);
+        Assert.All(zone.ModifiedHeight, Assert.False);
+        Assert.Empty(zone.AppliedOperations);
     }
 
+    // --- two writers on one vertex ----------------------------------------
+
     [Fact]
-    public void LevellingAbsorbsSmoothingRatherThanAddingToIt()
+    public void GroundAnotherWriterHadAlreadyMovedIsReportedAsContested()
     {
-        // Vanilla's LevelTerrain takes the smooth delta into its own and zeroes
-        // it. Applying them the other way round, or adding both, leaves the
-        // client a metre off from what the author shaped.
-        Ground ground = new Ground((x, y) => 20f);
+        // A road and a site wanting the same vertex is a planning question, not
+        // something to average. The site's ground wins and the collision is
+        // named, so it can be seen rather than discovered by standing on it.
         TerrainZoneDeltas zone = Zone();
+        zone.LevelDelta[zone.Index(Centre, Centre)] = 1.5f;
+        zone.ModifiedHeight[zone.Index(Centre, Centre)] = true;
 
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(
-                Centre(25f),
-                level: true, levelRadius: 3f, square: true,
-                smooth: true, smoothRadius: 3f, smoothPower: 3f),
-            zone, ground.At);
+        TerrainConversion.VertexHeight ground = Flat(30f);
+        TerrainConversionResult result = TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 28f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, ground);
 
-        TerrainConversion.WorldToVertex(zone, Centre(25f), out int cx, out int cy);
-        int centre = zone.Index(cx, cy);
-
-        // Level ran first and left nothing for smooth to absorb, so smooth's own
-        // contribution is still there -- but the level delta is the plain
-        // difference, not the difference plus a metre.
-        Assert.Equal(5f, zone.LevelDelta[centre], 3);
+        Assert.Contains(Centre + "," + Centre, result.ContestedVertices);
+        Assert.Equal(28f, AsReceived(zone, ground, Centre, Centre), 3);
     }
 
     [Fact]
-    public void WritingTheSameOperationTwiceDisplacesTheGroundTwice()
+    public void AZoneNobodyElseTouchedHasNothingContested()
     {
-        // Vanilla's arithmetic is not idempotent here, and it matters. The level
-        // delta is the difference between the target and the height the CLIENT
-        // generates for itself, which does not change between passes; a hoe in
-        // the game escapes this only because the heightmap is rebuilt with the
-        // first operation before the second runs. A bake has no such rebuild, so
-        // a site written twice sinks twice as far. Pinned rather than hoped for.
-        Ground ground = new Ground((x, y) => 30f);
-        LocationTerrainOperation op = new(Centre(30f), level: true, levelRadius: 3f, levelOffset: -2f, square: true);
+        TerrainConversionResult result = TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 28f, 0f), level: true, levelRadius: 3f, square: true)),
+            Zone(), Flat(30f));
 
-        TerrainZoneDeltas once = Zone();
-        TerrainConversion.Apply(op, once, ground.At);
-
-        TerrainZoneDeltas twice = Zone();
-        TerrainConversion.Apply(op, twice, ground.At);
-        TerrainConversion.Apply(op, twice, ground.At);
-
-        TerrainConversion.WorldToVertex(once, Centre(30f), out int cx, out int cy);
-        Assert.Equal(28f, ground.AsReceived(once, cx, cy), 3);
-        Assert.Equal(26f, ground.AsReceived(twice, cx, cy), 3);
+        Assert.Empty(result.ContestedVertices);
     }
 
-    [Fact]
-    public void ApplyOnceRefusesToWriteTheSameOperationAgain()
-    {
-        // Which is why a bake goes through ApplyOnce: re-running a site's
-        // terrain after a restart, a retry or a second pass over the same zone
-        // must leave the ground where it already is.
-        Ground ground = new Ground((x, y) => 30f);
-        TerrainZoneDeltas zone = Zone();
-        LocationTerrainOperation op = new(Centre(30f), level: true, levelRadius: 3f, levelOffset: -2f, square: true);
-
-        Assert.True(TerrainConversion.ApplyOnce("site7/Terrain1", op, zone, ground.At));
-        Assert.False(TerrainConversion.ApplyOnce("site7/Terrain1", op, zone, ground.At));
-        Assert.True(zone.HasApplied("site7/Terrain1"));
-
-        TerrainConversion.WorldToVertex(zone, Centre(30f), out int cx, out int cy);
-        Assert.Equal(28f, ground.AsReceived(zone, cx, cy), 3);
-    }
-
-    [Fact]
-    public void ApplyOnceStillWritesADifferentOperationInTheSameZone()
-    {
-        // Two modifiers of one site, or two sites in one zone, are different
-        // work: the guard is per operation, not per zone.
-        Ground ground = new Ground((x, y) => 30f);
-        TerrainZoneDeltas zone = Zone();
-        LocationTerrainOperation op = new(Centre(30f), level: true, levelRadius: 3f, levelOffset: -1f, square: true);
-
-        Assert.True(TerrainConversion.ApplyOnce("site7/Terrain1", op, zone, ground.At));
-        Assert.True(TerrainConversion.ApplyOnce("site7/Terrain2", op, zone, ground.At));
-
-        TerrainConversion.WorldToVertex(zone, Centre(30f), out int cx, out int cy);
-        Assert.Equal(28f, ground.AsReceived(zone, cx, cy), 3);
-    }
-
-    [Fact]
-    public void ApplyOnceRefusesAnOperationWithNoIdentity()
-    {
-        Ground ground = new Ground((x, y) => 30f);
-        Assert.Throws<ArgumentException>(() =>
-            TerrainConversion.ApplyOnce("", new LocationTerrainOperation(Centre(30f)), Zone(), ground.At));
-    }
-
-    // --- paint -----------------------------------------------------------
+    // --- paint -------------------------------------------------------------
 
     [Fact]
     public void PaintingMovesTheMaskTowardsTheGamesOwnColour()
     {
-        Ground ground = new Ground((x, y) => 20f);
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(
-                Centre(20f), paint: true, paintRadius: 3f,
-                paintType: TerrainModifier.PaintType.Dirt),
-            zone, ground.At);
+        TerrainConversionResult result = TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), paint: true, paintRadius: 3f,
+                paintType: TerrainModifier.PaintType.Dirt)),
+            zone, Flat(30f));
 
-        TerrainConversion.WorldToVertexMask(zone, new Vector3(-0.5f, 20f, -0.5f), out int cx, out int cy);
+        TerrainConversion.WorldToVertexMask(zone, At(-0.5f, 30f, -0.5f), out int cx, out int cy);
         int centre = zone.Index(cx, cy);
         Assert.True(zone.ModifiedPaint[centre]);
         Assert.Equal(Heightmap.m_paintMaskDirt.r, zone.PaintMask[centre].r, 3);
+        Assert.True(result.TexelsPainted > 0);
+        Assert.Equal(0, result.VerticesChanged);
     }
 
     [Fact]
@@ -301,78 +342,48 @@ public class TerrainConversionTests
     {
         // The alpha channel is the cleared-vegetation channel. Dirt must not
         // quietly clear the grass; ClearVegetation must.
-        Ground ground = new Ground((x, y) => 20f);
-
         TerrainZoneDeltas dirt = Zone();
         for (int i = 0; i < dirt.PaintMask.Length; i++) dirt.PaintMask[i] = new Color(0f, 0f, 0f, 1f);
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(20f), paint: true, paintRadius: 3f,
-                paintType: TerrainModifier.PaintType.Dirt),
-            dirt, ground.At);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), paint: true, paintRadius: 3f,
+                paintType: TerrainModifier.PaintType.Dirt)),
+            dirt, Flat(30f));
 
         TerrainZoneDeltas cleared = Zone();
         for (int i = 0; i < cleared.PaintMask.Length; i++) cleared.PaintMask[i] = new Color(0f, 0f, 0f, 1f);
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(20f), paint: true, paintRadius: 3f,
-                paintType: TerrainModifier.PaintType.ClearVegetation),
-            cleared, ground.At);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), paint: true, paintRadius: 3f,
+                paintType: TerrainModifier.PaintType.ClearVegetation)),
+            cleared, Flat(30f));
 
-        TerrainConversion.WorldToVertexMask(dirt, new Vector3(-0.5f, 20f, -0.5f), out int cx, out int cy);
+        TerrainConversion.WorldToVertexMask(dirt, At(-0.5f, 30f, -0.5f), out int cx, out int cy);
         int centre = dirt.Index(cx, cy);
         Assert.Equal(1f, dirt.PaintMask[centre].a, 3);
         Assert.True(cleared.PaintMask[centre].a < 1f, "clearing vegetation has to move the alpha");
     }
 
     [Fact]
-    public void ThePaintGridAgreesWithTheHeightGridOnAZoneAndNotInGeneral()
-    {
-        // Heightmap has two mappings, and they are written differently:
-        // WorldToVertex adds m_width/2 outside the floor, WorldToVertexMask adds
-        // (m_width+1)/2 inside it. For an even width the integer division makes
-        // both halves the same number and the two agree exactly -- which is the
-        // case on a zone heightmap, m_width 32. They part company on an odd
-        // width. Pinned in both directions so the conversion is not resting on a
-        // coincidence nobody wrote down.
-        Vector3 pos = new Vector3(0.2f, 0f, 3.7f);
-
-        TerrainZoneDeltas even = new TerrainZoneDeltas(new Vector3(0f, 0f, 0f), 32, Scale);
-        TerrainConversion.WorldToVertex(even, pos, out int vx, out int vy);
-        TerrainConversion.WorldToVertexMask(even, pos, out int mx, out int my);
-        Assert.Equal((vx, vy), (mx, my));
-
-        TerrainZoneDeltas odd = new TerrainZoneDeltas(new Vector3(0f, 0f, 0f), 33, Scale);
-        TerrainConversion.WorldToVertex(odd, pos, out int ovx, out int ovy);
-        TerrainConversion.WorldToVertexMask(odd, pos, out int omx, out int omy);
-        Assert.NotEqual((ovx, ovy), (omx, omy));
-    }
-
-    [Fact]
     public void PaintUsesTheMaskMappingAndNotTheHeightMapping()
     {
-        // On a zone the two mappings agree, so a conversion that used the wrong
-        // one would look right and no test on a zone could tell. Checked on an
-        // odd width, where they part company, so the choice is actually
-        // defended rather than assumed.
+        // On a zone the two mappings agree, so a conversion using the wrong one
+        // would look right and no test on a zone could tell. Checked on an odd
+        // width, where they part company.
         const int odd = 33;
-        Ground flat = new Ground((x, y) => 20f);
         TerrainZoneDeltas zone = new TerrainZoneDeltas(new Vector3(0f, 0f, 0f), odd, Scale);
 
-        // A radius under one vertex, so exactly one texel is painted and the
-        // test can say which.
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(Centre(20f), paint: true, paintRadius: 0.4f,
-                paintType: TerrainModifier.PaintType.Dirt),
-            zone, flat.At);
+        // A radius under one vertex, so the painted block is 3x3 and its centre
+        // says which mapping was used; a single texel would not, since the two
+        // candidate centres are only one apart.
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(0f, 20f, 0f), paint: true, paintRadius: 0.4f,
+                paintType: TerrainModifier.PaintType.Dirt)),
+            zone, Flat(20f));
 
-        Vector3 offsetPos = new Vector3(-0.5f, 20f, -0.5f);
+        Vector3 offsetPos = At(-0.5f, 20f, -0.5f);
         TerrainConversion.WorldToVertexMask(zone, offsetPos, out int mx, out int my);
         TerrainConversion.WorldToVertex(zone, offsetPos, out int vx, out int vy);
         Assert.NotEqual((mx, my), (vx, vy));
 
-        // The scanned block is centred on the mapping the conversion used, so
-        // compare the block's centre rather than a single texel: at radius 0.4
-        // the block is 3x3 and the two candidate centres are one apart, so both
-        // would show a painted texel either way.
         int minX = int.MaxValue, maxX = int.MinValue, minY = int.MaxValue, maxY = int.MinValue;
         for (int y = 0; y < zone.Pitch; y++)
             for (int x = 0; x < zone.Pitch; x++)
@@ -387,16 +398,36 @@ public class TerrainConversionTests
         Assert.Equal((mx, my), ((minX + maxX) / 2, (minY + maxY) / 2));
     }
 
-    // --- what the operation claims to reach -------------------------------
+    [Fact]
+    public void ThePaintGridAgreesWithTheHeightGridOnAZoneAndNotInGeneral()
+    {
+        // WorldToVertex adds m_width/2 outside the floor; WorldToVertexMask adds
+        // (m_width+1)/2 inside it. For an even width the integer division makes
+        // both halves the same number. Pinned in both directions so the
+        // conversion is not resting on a coincidence nobody wrote down.
+        Vector3 pos = At(0.2f, 0f, 3.7f);
+
+        TerrainZoneDeltas even = new TerrainZoneDeltas(new Vector3(0f, 0f, 0f), 32, Scale);
+        TerrainConversion.WorldToVertex(even, pos, out int vx, out int vy);
+        TerrainConversion.WorldToVertexMask(even, pos, out int mx, out int my);
+        Assert.Equal((vx, vy), (mx, my));
+
+        TerrainZoneDeltas odd = new TerrainZoneDeltas(new Vector3(0f, 0f, 0f), 33, Scale);
+        TerrainConversion.WorldToVertex(odd, pos, out int ovx, out int ovy);
+        TerrainConversion.WorldToVertexMask(odd, pos, out int omx, out int omy);
+        Assert.NotEqual((ovx, ovy), (omx, omy));
+    }
+
+    // --- what the operation claims to reach --------------------------------
 
     [Fact]
     public void TheRadiusIsTheLargestEnabledPart()
     {
         // The planner uses this to decide which zones a site touches. Counting a
         // disabled part would bake zones nothing writes to; missing an enabled
-        // one would leave a site half-shaped at a zone boundary.
+        // one would leave a site half-shaped at a boundary.
         LocationTerrainOperation op = new(
-            Centre(20f),
+            At(0f, 20f, 0f),
             level: true, levelRadius: 3f,
             smooth: false, smoothRadius: 40f,
             paint: true, paintRadius: 6f);
@@ -406,36 +437,40 @@ public class TerrainConversionTests
     [Fact]
     public void AnOperationThatDoesNothingTouchesNothing()
     {
-        Ground ground = Slope();
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(new LocationTerrainOperation(Centre(25f)), zone, ground.At);
+        TerrainConversionResult result =
+            TerrainConversion.Convert(One(new LocationTerrainOperation(At(0f, 25f, 0f))), zone, Slope());
 
         Assert.All(zone.ModifiedHeight, Assert.False);
         Assert.All(zone.ModifiedPaint, Assert.False);
-        Assert.Equal(0f, op0Sum(zone.LevelDelta), 5);
-        Assert.Equal(0f, op0Sum(zone.SmoothDelta), 5);
+        Assert.Equal(0, result.VerticesChanged);
+        Assert.Equal(0, result.TexelsPainted);
+        Assert.True(result.Representable);
     }
 
-    private static float op0Sum(float[] values)
+    [Fact]
+    public void ASiteWithNoModifiersLeavesTheZoneAlone()
     {
-        float total = 0f;
-        foreach (float v in values) total += Mathf.Abs(v);
-        return total;
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversionResult result =
+            TerrainConversion.Convert(new List<LocationTerrainOperation>(), zone, Slope());
+
+        Assert.Equal(0, result.VerticesChanged);
+        Assert.All(zone.ModifiedHeight, Assert.False);
     }
 
-    // --- the zone boundary ------------------------------------------------
+    // --- the zone boundary -------------------------------------------------
 
     [Fact]
     public void AnOperationOutsideTheZoneWritesNothingIntoIt()
     {
-        // A site near a boundary is applied once per affected zone with the same
-        // operation; the zone that it does not reach must come away untouched
+        // A site near a boundary is converted once per affected zone with the
+        // same modifiers; a zone it does not reach must come away untouched
         // rather than with a stripe along its edge.
-        Ground ground = Slope();
         TerrainZoneDeltas zone = Zone();
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(new Vector3(200f, 25f, 200f), level: true, levelRadius: 4f, square: true),
-            zone, ground.At);
+        TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(200f, 25f, 200f), level: true, levelRadius: 4f, square: true)),
+            zone, Slope());
 
         Assert.All(zone.ModifiedHeight, Assert.False);
     }
@@ -443,22 +478,81 @@ public class TerrainConversionTests
     [Fact]
     public void AnOperationStraddlingTheEdgeWritesOnlyTheVerticesInside()
     {
-        // Half in, half out: vanilla's bounds check drops the outside half
-        // rather than wrapping it to the far side of the grid.
-        Ground ground = Slope();
+        // Half in, half out: vanilla's bounds check drops the outside half rather
+        // than wrapping it to the far side of the grid.
         TerrainZoneDeltas zone = Zone();
-        // The grid's -x edge in world terms: origin.x - width/2 * scale.
         float edgeX = -(Width / 2) * Scale;
-        TerrainConversion.Apply(
-            new LocationTerrainOperation(new Vector3(edgeX, 25f, 0f), level: true, levelRadius: 3f, square: true),
-            zone, ground.At);
+        TerrainConversionResult result = TerrainConversion.Convert(
+            One(new LocationTerrainOperation(At(edgeX, 25f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, Slope());
 
-        int touched = 0;
-        foreach (bool modified in zone.ModifiedHeight) if (modified) touched++;
-
-        Assert.InRange(touched, 1, 7 * 7 - 1);
-        TerrainConversion.WorldToVertex(zone, new Vector3(edgeX, 25f, 0f), out int cx, out int cy);
+        Assert.InRange(result.VerticesChanged, 1, 7 * 7 - 1);
+        TerrainConversion.WorldToVertexMask(zone, At(edgeX, 25f, 0f), out int cx, out int cy);
         Assert.Equal(0, cx);
         Assert.True(zone.ModifiedHeight[zone.Index(cx, cy)], "the centre vertex is inside");
+    }
+
+    // --- writing it once ---------------------------------------------------
+
+    [Fact]
+    public void ApplyOnceWritesTheSiteAndThenRefusesToWriteItAgain()
+    {
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Flat(30f);
+        LocationTerrainOperation op = new(At(0f, 30f, 0f), level: true, levelRadius: 3f, levelOffset: -2f,
+            square: true, paint: true, paintRadius: 3f);
+
+        Assert.True(TerrainConversion.ApplyOnce("MWL_RuinsWell1@8,12", One(op), zone, ground, out _));
+        Assert.False(TerrainConversion.ApplyOnce("MWL_RuinsWell1@8,12", One(op), zone, ground, out _));
+        Assert.Equal(28f, AsReceived(zone, ground, Centre, Centre), 3);
+    }
+
+    [Fact]
+    public void WritingTheSameSiteTwiceWouldNotMoveTheGroundEvenIfItGotThrough()
+    {
+        // Heights are stated absolutely, so a repeat lands on the same ground
+        // rather than sinking the site twice -- the failure the previous
+        // accumulating conversion had. The completion record is still what stops
+        // the repeat, because paint is a lerp and a second pass leaves a
+        // different mask; this is the second lock, not the first.
+        TerrainConversion.VertexHeight ground = Flat(30f);
+        LocationTerrainOperation op = new(At(0f, 30f, 0f), level: true, levelRadius: 3f,
+            levelOffset: -2f, square: true);
+
+        TerrainZoneDeltas once = Zone();
+        TerrainConversion.Convert(One(op), once, ground);
+
+        TerrainZoneDeltas twice = Zone();
+        TerrainConversion.Convert(One(op), twice, ground);
+        TerrainConversion.Convert(One(op), twice, ground);
+
+        Assert.Equal(once.LevelDelta, twice.LevelDelta);
+        Assert.Equal(28f, AsReceived(twice, ground, Centre, Centre), 3);
+    }
+
+    [Fact]
+    public void ApplyOnceRefusesAConversionWithNoIdentity()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            TerrainConversion.ApplyOnce("", One(new LocationTerrainOperation(At(0f, 30f, 0f))),
+                Zone(), Flat(30f), out _));
+    }
+
+    [Fact]
+    public void TwoSitesInOneZoneAreTwoConversions()
+    {
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Flat(30f);
+
+        Assert.True(TerrainConversion.ApplyOnce("siteA@8,12",
+            One(new LocationTerrainOperation(At(-6f, 28f, 0f), level: true, levelRadius: 2f, square: true)),
+            zone, ground, out _));
+        Assert.True(TerrainConversion.ApplyOnce("siteB@8,12",
+            One(new LocationTerrainOperation(At(6f, 27f, 0f), level: true, levelRadius: 2f, square: true)),
+            zone, ground, out _));
+
+        Assert.Equal(28f, AsReceived(zone, ground, Centre - 6, Centre), 3);
+        Assert.Equal(27f, AsReceived(zone, ground, Centre + 6, Centre), 3);
+        Assert.Equal(2, zone.AppliedOperations.Count());
     }
 }

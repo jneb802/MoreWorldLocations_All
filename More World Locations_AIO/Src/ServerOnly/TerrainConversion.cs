@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.ServerOnly;
@@ -32,10 +33,8 @@ public sealed class TerrainZoneDeltas
     public readonly bool[] ModifiedPaint;
 
     /// <summary>
-    /// Which operations have already been written here, by the caller's own
-    /// identifier. Levelling accumulates a difference against the client's
-    /// unmodified height, so applying one operation twice displaces the ground
-    /// twice -- see <see cref="TerrainConversion.ApplyOnce"/>.
+    /// Which conversions have already been written here, by the caller's own
+    /// identifier.
     ///
     /// Sorted, because it is serialised: a set's iteration order is not a thing
     /// to let decide what a saved world says.
@@ -46,7 +45,7 @@ public sealed class TerrainZoneDeltas
 
     public bool HasApplied(string operationId) => _applied.Contains(operationId);
 
-    /// <summary>The operations written here, in a stable order.</summary>
+    /// <summary>The conversions written here, in a stable order.</summary>
     public IEnumerable<string> AppliedOperations => _applied;
 
     internal bool RecordApplied(string operationId) => _applied.Add(operationId);
@@ -94,10 +93,10 @@ public sealed class TerrainZoneDeltas
     /// Take another zone's terrain and paint, leaving this one's completion
     /// record alone.
     ///
-    /// Two callers. <see cref="TerrainConversion.ApplyOnce"/> publishes its
-    /// scratch state here once the conversion has returned; and the runtime
-    /// adapter loads a live compiler's arrays into a fresh zone after a restart,
-    /// where the completion record comes from elsewhere and must not be
+    /// Two callers. <see cref="TerrainConversion.ApplyOnce(string, IReadOnlyList{LocationTerrainOperation}, TerrainZoneDeltas, TerrainConversion.VertexHeight, out TerrainConversionResult)"/>
+    /// publishes its scratch state here once the conversion has returned; and the
+    /// runtime adapter loads a live compiler's arrays into a fresh zone after a
+    /// restart, where the completion record comes from elsewhere and must not be
     /// overwritten by whatever the other object happens to hold.
     /// </summary>
     public void AdoptTerrainFrom(TerrainZoneDeltas other)
@@ -117,10 +116,10 @@ public sealed class TerrainZoneDeltas
     /// Rebuild the completion record from what a saved world carries.
     ///
     /// The record has to outlive the process, not just the object: a server that
-    /// restarts mid-bake and forgets which operations it wrote would write them
-    /// again, and a second write sinks the site twice. The compiler state itself
-    /// is persisted by the game in the TerrainComp's ZDO; these identities are
-    /// persisted beside it by the caller.
+    /// restarts mid-bake and forgets which sites it wrote would paint them
+    /// again, and paint is a lerp towards a colour, so a second pass leaves a
+    /// different mask. The compiler state itself is persisted by the game in the
+    /// TerrainComp's ZDO; these identities are persisted beside it by the caller.
     /// </summary>
     public void RestoreApplied(IEnumerable<string> operationIds)
     {
@@ -149,125 +148,157 @@ public sealed class TerrainZoneDeltas
     }
 }
 
+/// <summary>What a conversion did, and whether the compiler could hold it.</summary>
+public sealed class TerrainConversionResult
+{
+    /// <summary>Vertices whose height the site changes.</summary>
+    public int VerticesChanged { get; internal set; }
+
+    /// <summary>Mask texels the site paints.</summary>
+    public int TexelsPainted { get; internal set; }
+
+    /// <summary>The largest height change any vertex needs, in metres, signed.</summary>
+    public float LargestChange { get; internal set; }
+
+    /// <summary>
+    /// Vertices the compiler cannot express, as "x,y needs -11.2 m". A compiler
+    /// delta is clamped to ±8 m and the authored path is not, so a template that
+    /// cuts deeper than that cannot be served to a stock client as authored.
+    /// </summary>
+    public IReadOnlyList<string> BeyondCompilerRange { get; internal set; } = new List<string>();
+
+    /// <summary>
+    /// Vertices another writer had already moved — a road, or an overlapping
+    /// site. The site's own ground wins, so this is reported rather than
+    /// silently merged: two writers on one vertex is a planning question.
+    /// </summary>
+    public IReadOnlyList<string> ContestedVertices { get; internal set; } = new List<string>();
+
+    /// <summary>
+    /// True when every vertex the site wants is within the compiler's range. A
+    /// false here is a template to exclude, not an approximation to accept.
+    /// </summary>
+    public bool Representable => BeyondCompilerRange.Count == 0;
+}
+
 /// <summary>
-/// Reproduces a location's <c>TerrainModifier</c> as persistent compiler deltas.
+/// Turns a location's <c>TerrainModifier</c> children into terrain a client
+/// without the mod receives.
 ///
-/// The arithmetic is vanilla's, taken from <c>TerrainComp.LevelTerrain</c>,
-/// <c>SmoothTerrain</c> and <c>Heightmap.PaintCleared</c> rather than invented:
-/// levelling accumulates the difference between the target height and the
-/// vertex's current height and absorbs any smoothing already there, smoothing
-/// lerps towards the modifier's own height by a power of the normalised
-/// distance, and painting lerps the mask towards the paint colour by
-/// distance^0.1 × strength. The clamps are vanilla's too -- ±8 m on level, ±1 m
-/// on smooth -- and they matter: a modifier that would cut more than 8 m is
-/// silently limited by the game as well.
+/// <para><b>What this is not.</b> An earlier version mirrored <c>TerrainComp</c>'s
+/// own arithmetic — the level/smooth accumulation a hoe drives. That reproduces
+/// the hoe, not the author, and the two differ for exactly the modifiers MWL
+/// uses. A location's modifier is applied by <c>Heightmap.ApplyModifiers</c>,
+/// which runs each modifier over the heights array in turn: its smooth pass
+/// reads ground its own level pass has already flattened, and a second modifier
+/// reads the first one's result. The compiler's two passes both read the height
+/// from before the operation. On a modifier with both level and smooth —
+/// <c>MWL_Ruins1</c> has one — copying the compiler leaves a non-zero smooth
+/// delta on top of ground that was already levelled, and the site ends up
+/// somewhere the author never put it.</para>
 ///
-/// <para><b>A client that has the mod sees the change twice.</b>
-/// <c>Heightmap.ApplyModifiers</c> applies the live <c>TerrainModifier</c>
-/// instances to the heights and then adds the compiler's deltas on top
-/// (<c>TerrainComp.ApplyToHeightmap</c>). A stock client has no live instance
-/// and gets the shaping once, which is the point; a client running the same
-/// build of MWL builds the proxy half, gets the instance, and is displaced
-/// twice. That has to be decided and measured before a modded client is
-/// supported on a server-only world -- it is not a thing to guess at.</para>
+/// <para><b>What this is.</b> The authored path is simulated exactly, in
+/// vanilla's order, over a scratch copy of the heights the client generates for
+/// itself. That result is the ground the author drew. It is then expressed as
+/// the one thing a stock client can receive: a level delta per vertex equal to
+/// authored minus generated, with the smooth delta cleared. The client's final
+/// height is generated + level + smooth
+/// (<c>TerrainComp.ApplyToHeightmap</c>), so it lands on the authored height by
+/// construction rather than by resemblance.</para>
+///
+/// <para><b>The contract for <c>baseHeightAt</c>.</b> It returns the height the
+/// CLIENT generates for that vertex on its own — <c>Heightmap.GetHeight</c>
+/// before any compiler delta, relative to the heightmap origin. It is never
+/// progressively updated between modifiers: the simulation keeps its own scratch
+/// heights for that, so the sequencing is not each caller's problem to get
+/// right.</para>
+///
+/// <para><b>Clamps are a representability question, not a rounding one.</b>
+/// <c>Heightmap.LevelTerrain</c> sets a location's height absolutely with no
+/// limit; a compiler delta is clamped to ±8 m, and clamped again against the
+/// base height when applied. A modifier that cuts deeper cannot be served as
+/// authored, and the result says so instead of writing eight metres and calling
+/// it done.</para>
+///
+/// <para><b>A client that has the mod is displaced twice</b>, because
+/// <c>ApplyModifiers</c> adds the compiler's deltas on top of the live
+/// instance's work. That is why server-only mode admits stock clients only.</para>
 /// </summary>
 public static class TerrainConversion
 {
-    /// <summary>Vanilla clamps accumulated levelling to ±8 m.</summary>
+    /// <summary>Vanilla clamps an accumulated compiler level delta to ±8 m.</summary>
     public const float MaxLevelDelta = 8f;
 
-    /// <summary>Vanilla clamps accumulated smoothing to ±1 m.</summary>
+    /// <summary>Vanilla clamps an accumulated compiler smooth delta to ±1 m.</summary>
     public const float MaxSmoothDelta = 1f;
 
     /// <summary>
-    /// Height of a vertex in the zone's grid, relative to the heightmap origin
-    /// — <c>Heightmap.GetHeight(x, y)</c>, which returns 0 outside the grid.
+    /// The height the client generates for a vertex of this zone on its own,
+    /// relative to the heightmap origin — <c>Heightmap.GetHeight(x, y)</c>
+    /// before any compiler delta. Returns 0 outside the grid, like the game.
     /// </summary>
     public delegate float VertexHeight(int x, int y);
 
-    /// <summary>
-    /// Apply one operation to one zone's deltas. Only the parts of the
-    /// operation that reach into this zone have any effect, so a site straddling
-    /// a boundary is handled by calling this once per affected zone with the
-    /// same operation.
-    /// </summary>
-    public static void Apply(LocationTerrainOperation op, TerrainZoneDeltas zone, VertexHeight heightAt)
-    {
-        if (zone == null) throw new ArgumentNullException(nameof(zone));
-        if (heightAt == null) throw new ArgumentNullException(nameof(heightAt));
-
-        // Vanilla's order, and it is not interchangeable: levelling zeroes the
-        // smoothing already at a vertex, so smoothing first would be thrown away.
-        if (op.Level)
-            LevelTerrain(zone, heightAt, Raise(op.Position, op.LevelOffset), op.LevelRadius, op.Square);
-
-        if (op.Smooth)
-            SmoothTerrain(zone, heightAt, Raise(op.Position, op.LevelOffset), op.SmoothRadius, op.SmoothPower);
-
-        if (op.Paint)
-            PaintCleared(zone, heightAt, op);
-    }
+    // ---- the authored path ------------------------------------------------
 
     /// <summary>
-    /// Apply an operation to a zone unless that same operation has already been
-    /// written there, and say which happened.
-    ///
-    /// This is the entry point a bake should use. <see cref="Apply"/> is
-    /// vanilla's arithmetic and is deliberately not idempotent: the level delta
-    /// is the difference between the target and the height the client generates
-    /// for itself, which does not change, so writing it twice moves the ground
-    /// twice. In the game a hoe does not have this problem, because by the time
-    /// a second operation runs the heightmap has already been rebuilt with the
-    /// first; a bake computing against generated heights has no such rebuild
-    /// between passes.
+    /// The ground these modifiers draw, simulated the way
+    /// <c>Heightmap.ApplyModifiers</c> draws it: each modifier in turn over a
+    /// mutating height array, level then smooth, each pass reading what the
+    /// previous one left.
     /// </summary>
-    /// <param name="operationId">
-    /// Stable identity for this modifier within this site -- the site's id and
-    /// the modifier's path in the template. Two different modifiers must not
-    /// share one, or the second is silently dropped.
+    /// <param name="operations">
+    /// Vanilla sorts by <c>m_sortOrder</c> and breaks ties by creation order,
+    /// which for a location's children is the order they appear in the template.
+    /// The caller supplies that order and ties keep it, because a sort that
+    /// silently decides its own ties is a selector nobody wrote.
     /// </param>
-    /// <returns>True if it was written, false if it was already there.</returns>
-    /// <remarks>
-    /// All of it or none of it. The conversion runs on a copy of the zone and
-    /// the copy is published only once it has returned, so a read that throws
-    /// part of the way through leaves the caller's terrain, paint and completion
-    /// record exactly as they were and the operation can be retried. Recording
-    /// completion first -- which this did -- turns one failed read into a site
-    /// that is marked done, is not done, and has some of its vertices moved.
-    /// </remarks>
-    public static bool ApplyOnce(
-        string operationId, LocationTerrainOperation op, TerrainZoneDeltas zone, VertexHeight heightAt)
+    public static float[] AuthoredHeights(
+        IReadOnlyList<LocationTerrainOperation> operations, TerrainZoneDeltas zone, VertexHeight baseHeightAt)
     {
-        if (string.IsNullOrEmpty(operationId))
-            throw new ArgumentException("an operation needs an identity to be applied once", nameof(operationId));
+        if (operations == null) throw new ArgumentNullException(nameof(operations));
         if (zone == null) throw new ArgumentNullException(nameof(zone));
-        if (heightAt == null) throw new ArgumentNullException(nameof(heightAt));
+        if (baseHeightAt == null) throw new ArgumentNullException(nameof(baseHeightAt));
 
-        if (zone.HasApplied(operationId))
-            return false;
+        float[] heights = new float[zone.Pitch * zone.Pitch];
+        for (int y = 0; y < zone.Pitch; y++)
+            for (int x = 0; x < zone.Pitch; x++)
+                heights[zone.Index(x, y)] = baseHeightAt(x, y);
 
-        TerrainZoneDeltas scratch = zone.Clone();
-        Apply(op, scratch, heightAt);
+        foreach (LocationTerrainOperation op in InVanillaOrder(operations))
+        {
+            // Heightmap.ApplyModifier: level, then smooth, over the same array.
+            if (op.Level)
+                LiveLevel(zone, heights, Raise(op.Position, op.LevelOffset), op.LevelRadius, op.Square);
+            if (op.Smooth)
+                LiveSmooth(zone, heights, Raise(op.Position, op.LevelOffset), op.SmoothRadius, op.SmoothPower);
+        }
 
-        zone.AdoptTerrainFrom(scratch);
-        zone.RecordApplied(operationId);
-        return true;
+        return heights;
     }
 
-    private static Vector3 Raise(Vector3 position, float offset) =>
-        new Vector3(position.x, position.y + offset, position.z);
+    /// <summary>
+    /// Vanilla's order: <c>m_sortOrder</c> ascending, ties left exactly as the
+    /// caller gave them. LINQ's OrderBy is documented stable, so a tie keeps the
+    /// template's own order rather than letting the sort pick.
+    /// </summary>
+    private static IEnumerable<LocationTerrainOperation> InVanillaOrder(
+        IReadOnlyList<LocationTerrainOperation> operations) =>
+        operations.OrderBy(op => op.SortOrder);
 
     /// <summary>
-    /// <c>TerrainComp.LevelTerrain</c>: bring every vertex in range to the
-    /// modifier's height. The delta is against the vertex's CURRENT height, so
-    /// what is stored is "how far this vertex has to move", which is exactly
-    /// what a client can apply to terrain it generated itself.
+    /// <c>Heightmap.LevelTerrain</c> for a non-player modifier: sets the height,
+    /// with no clamp at all.
     /// </summary>
-    private static void LevelTerrain(
-        TerrainZoneDeltas zone, VertexHeight heightAt, Vector3 worldPos, float radius, bool square)
+    private static void LiveLevel(
+        TerrainZoneDeltas zone, float[] heights, Vector3 worldPos, float radius, bool square)
     {
-        WorldToVertex(zone, worldPos, out int centreX, out int centreY);
-        float targetHeight = worldPos.y - zone.Origin.y;
+        // The live level pass addresses the grid through WorldToVertexMask where
+        // the compiler's pass uses WorldToVertex. On an even width -- a zone's 32
+        // -- the two are the same mapping; this follows the live one because this
+        // is the live path.
+        WorldToVertexMask(zone, worldPos, out int centreX, out int centreY);
+        float target = worldPos.y - zone.Origin.y;
         float radiusInVertices = radius / zone.Scale;
         int reach = Mathf.CeilToInt(radiusInVertices);
 
@@ -275,37 +306,23 @@ public static class TerrainConversion
         {
             for (int x = centreX - reach; x <= centreX + reach; x++)
             {
-                if (!square && Distance(centreX, centreY, x, y) > radiusInVertices)
-                    continue;
-                if (!zone.Inside(x, y))
-                    continue;
-
-                int index = zone.Index(x, y);
-                float delta = targetHeight - heightAt(x, y);
-
-                // Smoothing already at this vertex is absorbed rather than added
-                // to: levelling wins over an earlier smooth in vanilla.
-                delta += zone.SmoothDelta[index];
-                zone.SmoothDelta[index] = 0f;
-
-                zone.LevelDelta[index] = Mathf.Clamp(
-                    zone.LevelDelta[index] + delta, -MaxLevelDelta, MaxLevelDelta);
-                zone.ModifiedHeight[index] = true;
+                if (!square && Distance(centreX, centreY, x, y) > radiusInVertices) continue;
+                if (!zone.Inside(x, y)) continue;
+                heights[zone.Index(x, y)] = target;
             }
         }
     }
 
     /// <summary>
-    /// <c>TerrainComp.SmoothTerrain</c>: lerp each vertex towards the modifier's
-    /// height, weighted by 1 − (distance/radius)^power, so the effect fades to
-    /// nothing at the rim. Always circular, whatever <c>Square</c> says —
-    /// vanilla's smooth has no square branch.
+    /// <c>Heightmap.SmoothTerrain2</c> for a non-player modifier: lerp each
+    /// vertex towards the modifier's height by 1 − (distance/radius)^power,
+    /// reading and writing the same array, so it sees what level just did.
     /// </summary>
-    private static void SmoothTerrain(
-        TerrainZoneDeltas zone, VertexHeight heightAt, Vector3 worldPos, float radius, float power)
+    private static void LiveSmooth(
+        TerrainZoneDeltas zone, float[] heights, Vector3 worldPos, float radius, float power)
     {
         WorldToVertex(zone, worldPos, out int centreX, out int centreY);
-        float targetHeight = worldPos.y - zone.Origin.y;
+        float target = worldPos.y - zone.Origin.y;
         float radiusInVertices = radius / zone.Scale;
         int reach = Mathf.CeilToInt(radiusInVertices);
 
@@ -314,69 +331,188 @@ public static class TerrainConversion
             for (int x = centreX - reach; x <= centreX + reach; x++)
             {
                 float distance = Distance(centreX, centreY, x, y);
-                if (distance > radiusInVertices || !zone.Inside(x, y))
-                    continue;
+                if (distance > radiusInVertices || !zone.Inside(x, y)) continue;
 
                 float normalised = distance / radiusInVertices;
                 normalised = power == 3f
                     ? normalised * normalised * normalised
                     : Mathf.Pow(normalised, power);
 
-                float height = heightAt(x, y);
-                float delta = Mathf.Lerp(height, targetHeight, 1f - normalised) - height;
-
                 int index = zone.Index(x, y);
-                zone.SmoothDelta[index] = Mathf.Clamp(
-                    zone.SmoothDelta[index] + delta, -MaxSmoothDelta, MaxSmoothDelta);
-                zone.ModifiedHeight[index] = true;
+                heights[index] = Mathf.Lerp(heights[index], target, 1f - normalised);
             }
         }
     }
 
     /// <summary>
-    /// <c>Heightmap.PaintCleared</c> — the overload a location's modifier reaches,
-    /// not the hoe's. The half-vertex offset and the mask grid are vanilla's:
-    /// the paint mask is addressed by <c>WorldToVertexMask</c>, which is not the
-    /// same mapping as the height grid's.
+    /// <c>Heightmap.PaintCleared</c> for each modifier in turn, over a mask that
+    /// starts as the one the zone already carries.
     /// </summary>
-    private static void PaintCleared(TerrainZoneDeltas zone, VertexHeight heightAt, LocationTerrainOperation op)
+    private static int AuthoredPaint(
+        IReadOnlyList<LocationTerrainOperation> operations, TerrainZoneDeltas zone,
+        float[] authoredHeights, Color[] mask, bool[] painted)
     {
-        Vector3 worldPos = new Vector3(op.Position.x - 0.5f, op.Position.y, op.Position.z - 0.5f);
-        float modifierHeight = worldPos.y - zone.Origin.y;
-        WorldToVertexMask(zone, worldPos, out int centreX, out int centreY);
-
-        float radiusInVertices = op.PaintRadius / zone.Scale;
-        int reach = Mathf.CeilToInt(radiusInVertices);
-        Color target = PaintColour(op.PaintType);
-
-        for (int y = centreY - reach; y <= centreY + reach; y++)
+        foreach (LocationTerrainOperation op in InVanillaOrder(operations))
         {
-            for (int x = centreX - reach; x <= centreX + reach; x++)
+            if (!op.Paint) continue;
+
+            Vector3 worldPos = new Vector3(op.Position.x - 0.5f, op.Position.y, op.Position.z - 0.5f);
+            float modifierHeight = worldPos.y - zone.Origin.y;
+            WorldToVertexMask(zone, worldPos, out int centreX, out int centreY);
+
+            float radiusInVertices = op.PaintRadius / zone.Scale;
+            int reach = Mathf.CeilToInt(radiusInVertices);
+            Color target = PaintColour(op.PaintType);
+
+            for (int y = centreY - reach; y <= centreY + reach; y++)
             {
-                if (!zone.Inside(x, y))
-                    continue;
-                if (op.PaintHeightCheck && heightAt(x, y) > modifierHeight)
-                    continue;
+                for (int x = centreX - reach; x <= centreX + reach; x++)
+                {
+                    if (!zone.Inside(x, y)) continue;
+                    int index = zone.Index(x, y);
+                    if (op.PaintHeightCheck && authoredHeights[index] > modifierHeight) continue;
 
-                float distance = Distance(centreX, centreY, x, y);
-                float weight = 1f - Mathf.Clamp01(distance / radiusInVertices);
-                weight = Mathf.Pow(weight, 0.1f) * op.PaintStrength;
+                    float distance = Distance(centreX, centreY, x, y);
+                    float weight = 1f - Mathf.Clamp01(distance / radiusInVertices);
+                    weight = Mathf.Pow(weight, 0.1f) * op.PaintStrength;
 
-                int index = zone.Index(x, y);
-                Color current = zone.PaintMask[index];
-                float alpha = current.a;
-                Color painted = Color.Lerp(current, target, weight);
+                    Color current = mask[index];
+                    float alpha = current.a;
+                    Color result = Color.Lerp(current, target, weight);
 
-                // Vanilla keeps the existing alpha except when clearing
-                // vegetation, where the alpha channel IS the clearing.
-                if (op.PaintType != TerrainModifier.PaintType.ClearVegetation)
-                    painted.a = alpha;
+                    // Vanilla keeps the existing alpha except when clearing
+                    // vegetation, where the alpha channel IS the clearing.
+                    if (op.PaintType != TerrainModifier.PaintType.ClearVegetation)
+                        result.a = alpha;
 
-                zone.PaintMask[index] = painted;
-                zone.ModifiedPaint[index] = true;
+                    mask[index] = result;
+                    painted[index] = true;
+                }
             }
         }
+
+        int count = 0;
+        foreach (bool wasPainted in painted) if (wasPainted) count++;
+        return count;
     }
+
+    // ---- expressing it as compiler deltas ---------------------------------
+
+    /// <summary>
+    /// What the compiler would have to hold for a client to land on the authored
+    /// ground, without writing anything. Use it to decide whether a template is
+    /// servable before committing to it.
+    /// </summary>
+    public static TerrainConversionResult Preview(
+        IReadOnlyList<LocationTerrainOperation> operations, TerrainZoneDeltas zone, VertexHeight baseHeightAt)
+    {
+        if (zone == null) throw new ArgumentNullException(nameof(zone));
+        return Convert(operations, zone.Clone(), baseHeightAt);
+    }
+
+    /// <summary>
+    /// Write the deltas into <paramref name="zone"/> and report what happened.
+    /// Prefer <see cref="ApplyOnce(string, IReadOnlyList{LocationTerrainOperation}, TerrainZoneDeltas, VertexHeight, out TerrainConversionResult)"/>,
+    /// which is atomic and refuses a repeat.
+    /// </summary>
+    public static TerrainConversionResult Convert(
+        IReadOnlyList<LocationTerrainOperation> operations, TerrainZoneDeltas zone, VertexHeight baseHeightAt)
+    {
+        float[] authored = AuthoredHeights(operations, zone, baseHeightAt);
+
+        TerrainConversionResult result = new TerrainConversionResult();
+        List<string> beyond = new List<string>();
+        List<string> contested = new List<string>();
+        float largest = 0f;
+        int changed = 0;
+
+        for (int y = 0; y < zone.Pitch; y++)
+        {
+            for (int x = 0; x < zone.Pitch; x++)
+            {
+                int index = zone.Index(x, y);
+                float required = authored[index] - baseHeightAt(x, y);
+                if (Mathf.Abs(required) < 1e-5f)
+                    continue;
+
+                if (zone.ModifiedHeight[index]
+                    && (zone.LevelDelta[index] != 0f || zone.SmoothDelta[index] != 0f))
+                    contested.Add(x + "," + y);
+
+                if (Mathf.Abs(required) > MaxLevelDelta)
+                    beyond.Add(x + "," + y + " needs " + required.ToString("0.0") + " m");
+
+                // Stated absolutely rather than added to whatever was there, so
+                // the client lands on the authored height and a second pass lands
+                // on the same one.
+                zone.LevelDelta[index] = Mathf.Clamp(required, -MaxLevelDelta, MaxLevelDelta);
+                zone.SmoothDelta[index] = 0f;
+                zone.ModifiedHeight[index] = true;
+                changed++;
+                if (Mathf.Abs(required) > Mathf.Abs(largest)) largest = required;
+            }
+        }
+
+        result.VerticesChanged = changed;
+        result.LargestChange = largest;
+        result.BeyondCompilerRange = beyond;
+        result.ContestedVertices = contested;
+        result.TexelsPainted = AuthoredPaint(operations, zone, authored, zone.PaintMask, zone.ModifiedPaint);
+        return result;
+    }
+
+    /// <summary>
+    /// Convert a site's modifiers into this zone unless that conversion has
+    /// already been written here.
+    /// </summary>
+    /// <param name="operationId">
+    /// Stable identity for this site's terrain in this zone — the site's id and
+    /// the zone's coordinates. All of a site's modifiers in one zone are ONE
+    /// conversion, because they have to be simulated together: two of them
+    /// converted separately would each see the untouched ground, and the second
+    /// would undo the first.
+    /// </param>
+    /// <remarks>
+    /// All of it or none of it. The conversion runs on a copy of the zone and the
+    /// copy is published only once it has returned, so a height read that throws
+    /// part of the way through leaves the caller's terrain, paint and completion
+    /// record exactly as they were and the site can be retried. Recording
+    /// completion first — which this did — turns one failed read into a site that
+    /// is marked done, is not done, and has some of its vertices moved.
+    /// </remarks>
+    public static bool ApplyOnce(
+        string operationId, IReadOnlyList<LocationTerrainOperation> operations,
+        TerrainZoneDeltas zone, VertexHeight baseHeightAt, out TerrainConversionResult result)
+    {
+        if (string.IsNullOrEmpty(operationId))
+            throw new ArgumentException("a conversion needs an identity to be applied once", nameof(operationId));
+        if (zone == null) throw new ArgumentNullException(nameof(zone));
+        if (baseHeightAt == null) throw new ArgumentNullException(nameof(baseHeightAt));
+
+        if (zone.HasApplied(operationId))
+        {
+            result = new TerrainConversionResult();
+            return false;
+        }
+
+        TerrainZoneDeltas scratch = zone.Clone();
+        result = Convert(operations, scratch, baseHeightAt);
+
+        zone.AdoptTerrainFrom(scratch);
+        zone.RecordApplied(operationId);
+        return true;
+    }
+
+    /// <summary>One modifier, for callers that do not need the report.</summary>
+    public static bool ApplyOnce(
+        string operationId, LocationTerrainOperation operation,
+        TerrainZoneDeltas zone, VertexHeight baseHeightAt) =>
+        ApplyOnce(operationId, new[] { operation }, zone, baseHeightAt, out _);
+
+    // ---- shared geometry --------------------------------------------------
+
+    private static Vector3 Raise(Vector3 position, float offset) =>
+        new Vector3(position.x, position.y + offset, position.z);
 
     private static Color PaintColour(TerrainModifier.PaintType type)
     {
@@ -403,15 +539,15 @@ public static class TerrainConversion
     }
 
     /// <summary>
-    /// <c>Heightmap.WorldToVertexMask</c>, which the paint pass uses where the
-    /// height passes use <see cref="WorldToVertex"/>.
+    /// <c>Heightmap.WorldToVertexMask</c>, which the live level pass and the
+    /// paint pass use.
     ///
-    /// It is written differently -- the half is (width+1)/2 and it is added
-    /// inside the floor -- but for an even width the integer division makes it
-    /// the same half, so on a zone heightmap (m_width 32) the two mappings
-    /// agree exactly. Kept separate because it is the call vanilla makes, so
-    /// the conversion does not quietly depend on that coincidence holding for
-    /// some other width.
+    /// It is written differently — the half is (width+1)/2 and it is added
+    /// inside the floor — but for an even width the integer division makes it the
+    /// same half, so on a zone heightmap (m_width 32) the two mappings agree
+    /// exactly. Kept separate because it is the call vanilla makes, so the
+    /// conversion does not quietly depend on that coincidence holding for some
+    /// other width.
     /// </summary>
     public static void WorldToVertexMask(TerrainZoneDeltas zone, Vector3 worldPos, out int x, out int y)
     {

@@ -105,24 +105,51 @@ a `TerrainComp` operation on the server is therefore the conversion the first
 milestone needs, and across all 193 templates it is 220 modifiers, every one of
 them `m_useTerrainCompiler = false` (see [`COMPATIBILITY.md`](COMPATIBILITY.md)).
 
-Two consequences of that conversion, both read from the same source and both
-pinned by tests in `MoreWorldLocations.Tests/TerrainConversionTests.cs`:
+### Copying the compiler's arithmetic is not the conversion
+
+There are two terrain algorithms in the game and they are not the same one.
+
+`TerrainComp.LevelTerrain` and `SmoothTerrain` are what a hoe drives: both read
+`m_hmap.GetHeight` as it stood before the operation, accumulate deltas, and clamp
+them (±8 m level, ±1 m smooth). `Heightmap.LevelTerrain` and `SmoothTerrain2` are
+what a location's modifiers drive through `ApplyModifiers`: each modifier runs
+over the heights array in turn, **level writes an absolute height with no clamp
+at all**, and smooth reads and writes the same array — so it sees ground its own
+level pass has just flattened, and a later modifier sees an earlier one's result.
+
+The two agree on a level-only modifier and disagree on every other kind. MWL uses
+the other kinds: `MWL_Ruins1`'s single modifier is level *and* smooth over the
+same radius, where the live path leaves the middle exactly at the target and the
+compiler's arithmetic adds a smooth delta computed from the original ground on
+top of it.
+
+So the conversion simulates the **authored** path over the heights the client
+generates for itself, and expresses the result as the one thing a stock client
+can receive: a level delta per vertex equal to authored minus generated, smooth
+cleared. The client's height is generated + level + smooth
+(`TerrainComp.ApplyToHeightmap`), so it lands on the authored ground by
+construction.
+
+Three consequences, all pinned by tests in
+`MoreWorldLocations.Tests/TerrainConversionTests.cs`:
 
 * **A client that has the mod is displaced twice.** `ApplyModifiers` applies the
-  live modifiers to the heights and *then* adds the compiler's deltas on top
-  (`TerrainComp.ApplyToHeightmap`). A stock client has no live instance and gets
-  the shaping once. A client running the same build builds the proxy half, gets
-  the instance, and gets both. **Decided: server-only mode is for stock clients
-  only.** A peer that reports MWL is refused whatever version it reports, and
-  told to disable the mod for this server. Supporting mixed clients needs
-  explicit suppression of the duplicate local shaping and its own acceptance
-  evidence; neither exists, so the mode does not claim it.
-* **The conversion is not idempotent, and must not be.** The level delta is the
-  difference between the target and the height the client generates for itself,
-  which does not change between passes; vanilla's hoe escapes this only because
-  the heightmap is rebuilt between operations. A bake has no such rebuild, so
-  writing one site's terrain twice sinks it twice. `TerrainConversion.ApplyOnce`
-  records the operation's identity and refuses the repeat.
+  live modifiers to the heights and *then* adds the compiler's deltas on top. A
+  stock client has no live instance and gets the shaping once; a client running
+  the same build builds the proxy half and gets both. **Decided: server-only mode
+  is for stock clients only.** A peer that reports MWL is refused whatever
+  version it reports, and told to disable the mod for this server. Mixed clients
+  need explicit suppression of the duplicate local shaping and their own
+  acceptance evidence; neither exists, so the mode does not claim them.
+* **All of a site's modifiers in one zone are one conversion.** They have to be
+  simulated together, in `m_sortOrder` order with ties in template order:
+  converting them one at a time against the untouched ground would let the second
+  undo the first.
+* **A cut deeper than 8 m cannot be served as authored.** The live path has no
+  limit and the compiler has two (the accumulated delta, and again against the
+  base height on apply). The conversion reports such vertices instead of writing
+  eight metres and calling it done, and a template that hits it is one to
+  exclude.
 
 ## Clearing comes for free
 

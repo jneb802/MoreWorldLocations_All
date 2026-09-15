@@ -22,6 +22,14 @@ public readonly struct LocationTerrainOperation
     /// <summary>World position of the modifier, after the location's own placement.</summary>
     public readonly Vector3 Position;
 
+    /// <summary>
+    /// <c>TerrainModifier.m_sortOrder</c>. Vanilla sorts the live instances by
+    /// it before applying them, and the order matters: a later modifier reads
+    /// the ground an earlier one left. Ties fall back to creation order, which
+    /// for a location's children is the order they appear in the template.
+    /// </summary>
+    public readonly int SortOrder;
+
     public readonly bool Level;
     public readonly float LevelRadius;
 
@@ -53,9 +61,11 @@ public readonly struct LocationTerrainOperation
         bool smooth = false, float smoothRadius = 0f, float smoothPower = 3f,
         bool paint = false, float paintRadius = 0f, float paintStrength = 1f,
         TerrainModifier.PaintType paintType = TerrainModifier.PaintType.Dirt,
-        bool paintHeightCheck = false)
+        bool paintHeightCheck = false,
+        int sortOrder = 0)
     {
         Position = position;
+        SortOrder = sortOrder;
         Level = level;
         LevelRadius = levelRadius;
         LevelOffset = levelOffset;
