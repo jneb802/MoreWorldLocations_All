@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Jotunn.Configs;
 using Jotunn.Managers;
+using More_World_Locations_AIO.ServerOnly;
 
 namespace More_World_Locations_AIO;
 
@@ -31,23 +32,23 @@ public static class LocationDB
 
     public static void RegisterAll()
     {
-        Register(LocationDefinitions.Meadows);
-        Register(LocationDefinitions.BlackForest);
-        Register(LocationDefinitions.Swamp);
-        Register(LocationDefinitions.Mountains);
-        Register(LocationDefinitions.Plains);
-        Register(LocationDefinitions.Mistlands);
-        Register(LocationDefinitions.Ashlands);
-        Register(LocationDefinitions.Dungeons);
+        Register("Meadows", LocationDefinitions.Meadows);
+        Register("BlackForest", LocationDefinitions.BlackForest);
+        Register("Swamp", LocationDefinitions.Swamp);
+        Register("Mountains", LocationDefinitions.Mountains);
+        Register("Plains", LocationDefinitions.Plains);
+        Register("Mistlands", LocationDefinitions.Mistlands);
+        Register("Ashlands", LocationDefinitions.Ashlands);
+        Register("Dungeons", LocationDefinitions.Dungeons);
 
         if (PortInit.EnablePortLocations.Value != PortInit.Toggle.Off)
-            Register(LocationDefinitions.Ports);
+            Register("Ports", LocationDefinitions.Ports);
 
         if (BepinexConfigs.EnableTraders.Value != PortInit.Toggle.Off)
-            Register(LocationDefinitions.Traders);
+            Register("Traders", LocationDefinitions.Traders);
 
         if (BepinexConfigs.EnableTrainers.Value != PortInit.Toggle.Off)
-            Register(LocationDefinitions.Trainers);
+            Register("Trainers", LocationDefinitions.Trainers);
 
         ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
     }
@@ -75,9 +76,17 @@ public static class LocationDB
             .ToArray();
     }
 
-    private static void Register(MWLLocation[] pack)
+    private static void Register(string packName, MWLLocation[] pack)
     {
-        foreach (var loc in pack)
+        // Server-only mode registers the audited subset and nothing else. The
+        // filter runs here, before Register, because turning features off
+        // afterwards does not describe a vanilla subset: this method registers
+        // the Dungeons pack whatever the port and trader toggles say.
+        IEnumerable<MWLLocation> registering = ServerOnlyMode.Enabled
+            ? ServerOnlyAllowlist.Filter(packName, pack)
+            : pack;
+
+        foreach (MWLLocation loc in registering)
             loc.Register();
     }
 }

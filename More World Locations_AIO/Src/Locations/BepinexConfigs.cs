@@ -14,9 +14,20 @@ public class BepinexConfigs
     public static ConfigEntry<PortInit.Toggle> UseCustomTraderConfigs = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomLocationYAML = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomLocalization = null!;
+    public static ConfigEntry<PortInit.Toggle> ServerOnly = null!;
 
     public static void BindFeatureConfigs()
     {
+        // Not synced: this entry decides which peers are admitted at all, so a
+        // value that only arrives after admission would be no use, and a client
+        // has no business overriding it. It is a config key rather than an
+        // environment variable because it is an operating mode an operator sets
+        // once, not a validation switch.
+        ServerOnly = PortInit.plugin.Config.BindConfig("0 - Server Only", "Enable Server Only Mode", PortInit.Toggle.Off,
+            "If On, this server serves an audited subset of MWL locations to players who have no mod installed: " +
+            "peers that do not answer MWL's version check are admitted, and only approved templates are registered. " +
+            "Ports, traders, trainers and dungeons are never registered in this mode.", synced: false);
+
         EnableShrines = PortInit.plugin.Config.BindConfig("0 - Features", "Enable Shrines", PortInit.Toggle.On,
             "If Off, shrine ward objects will be destroyed on load", synced: true);
         EnableWaystones = PortInit.plugin.Config.BindConfig("0 - Features", "Enable Waystones", PortInit.Toggle.On,

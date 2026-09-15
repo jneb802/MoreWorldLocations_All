@@ -8,6 +8,7 @@ using BepInEx.Logging;
 using Common;
 using HarmonyLib;
 using Jotunn.Managers;
+using More_World_Locations_AIO.ServerOnly;
 using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
@@ -70,6 +71,17 @@ namespace More_World_Locations_AIO
             
             PortInit.Init(root);
             BepinexConfigs.BindFeatureConfigs();
+
+            // Read once, here, and let every other decision ask the flag. This
+            // runs long before ZNet exists, so no peer can connect against a
+            // mode that is still unset.
+            ServerOnlyMode.Set(BepinexConfigs.ServerOnly.Value == PortInit.Toggle.On);
+            if (ServerOnlyMode.Enabled)
+            {
+                More_World_Locations_AIOLogger.LogInfo(
+                    "Server-only mode: clients without More World Locations are admitted, " +
+                    "and only approved locations are registered.");
+            }
             
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
 

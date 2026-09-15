@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!--
+          net48 matches the mod's own target and runs under Mono (closest to
+          Valheim's in-game runtime); net10.0 is the fast local loop that
+          `dotnet test` uses. Run both through run-tests.sh.
+        -->
+        <TargetFrameworks>net48;net10.0</TargetFrameworks>
+        <LangVersion>10</LangVersion>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>More_World_Locations_AIO.Tests</RootNamespace>
+        <AssemblyName>MoreWorldLocations.Tests</AssemblyName>
+        <!-- CS8602/8604 fire only because shim types are null-annotated where the game's aren't -->
+        <NoWarn>$(NoWarn);CS8602;CS8604</NoWarn>
+    </PropertyGroup>
+
+    <!--
+      Compile the real mod sources against the shims in Shims/ rather than
+      against the Unity/Valheim/BepInEx assemblies, so the tests exercise the
+      shipped code and not a copy of it. Only pure-logic files can be listed
+      here; anything that is a Harmony patch or touches the engine cannot.
+    -->
+    <ItemGroup>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/PeerAdmission.cs" Link="ModSrc/PeerAdmission.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyMode.cs" Link="ModSrc/ServerOnlyMode.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyAllowlist.cs" Link="ModSrc/ServerOnlyAllowlist.cs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
+        <PackageReference Include="xunit" Version="2.8.1"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1"/>
+        <PackageReference Include="xunit.runner.console" Version="2.8.1">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
