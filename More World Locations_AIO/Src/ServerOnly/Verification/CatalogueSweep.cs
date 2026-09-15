@@ -41,6 +41,7 @@ public static class CatalogueSweep
     public static CatalogueReport Audit()
     {
         CatalogueAudit.Progress = line => Log.LogInfo(line);
+        Observe(() => SweepStarted?.Invoke());
         CatalogueReport report;
         try
         {
@@ -65,6 +66,7 @@ public static class CatalogueSweep
         // Said before registration rather than after, so that a world that comes
         // up wrong has its explanation above the symptom in the log.
         Announce(report);
+        Observe(() => SweepFinished?.Invoke());
         return report;
     }
 
@@ -154,9 +156,11 @@ public static class CatalogueSweep
         $"{TemplateFactsExtractor.StockSignatureBudgetBytes / 1024 / 1024} MiB; " +
         $"heights {LocationTerrainBridge.GeneratedHeightBytes / 1024} KiB in " +
         $"{LocationTerrainBridge.GeneratedHeightEntries} zone(s) " +
-        $"({LocationTerrainBridge.GeneratedHeightPins} in use) of " +
+        $"({LocationTerrainBridge.GeneratedHeightPins} in use, " +
+        $"{LocationTerrainBridge.GeneratedHeightAdopted} adopted outside the table) of " +
         $"{LocationTerrainBridge.GeneratedHeightBudgetBytes / 1024 / 1024} MiB; " +
-        $"managed heap {System.GC.GetTotalMemory(false) / 1024 / 1024} MiB";
+        $"managed heap {System.GC.GetTotalMemory(false) / 1024 / 1024} MiB; " +
+        MockReferenceGuard.Status();
 
     /// <summary>
     /// Judge the catalogue again in this process.
@@ -228,18 +232,65 @@ public static class CatalogueSweep
                 "Every verdict in this report is unresolved for that reason and none of them is about a template.");
         }
 
-        using ITemplateHandle? handle = TemplateAssets.Open(subject.Name);
-        if (handle?.Asset == null)
+        TemplateFacts facts;
+        using (ITemplateHandle? handle = TemplateAssets.Open(subject.Name))
         {
-            return TemplateFacts.Unreadable(subject.Name, subject.Pack,
-                "no asset loaded under this exact name. Names are case-sensitive: a definition and an asset that " +
-                "differ only in capitalisation are two names, and one of them places nothing.");
-        }
+            if (handle?.Asset == null)
+            {
+                return TemplateFacts.Unreadable(subject.Name, subject.Pack,
+                    "no asset loaded under this exact name. Names are case-sensitive: a definition and an asset that " +
+                    "differ only in capitalisation are two names, and one of them places nothing.");
+            }
 
-        return TemplateFactsExtractor.Extract(
-            subject.Name, subject.Pack, handle.Asset,
-            subject.InteriorPrefabName, subject.DungeonTheme,
-            TemplateAssets.StockPrefabs, TemplateAssets.BaselineProvenance);
+            facts = TemplateFactsExtractor.Extract(
+                subject.Name, subject.Pack, handle.Asset,
+                subject.InteriorPrefabName, subject.DungeonTheme,
+                TemplateAssets.StockPrefabs, TemplateAssets.BaselineProvenance);
+            Observe(() => TemplateRead?.Invoke(subject.Name, handle.Asset));
+        }
+        Observe(() => TemplateReleased?.Invoke(subject.Name));
+        return facts;
+    }
+
+    /// <summary>
+    /// Where a lifecycle trace watches the sweep from. Set only by a validation
+    /// switch; null in a shipped run.
+    ///
+    /// <para>The three moments a trace needs and cannot get from outside: a
+    /// template while the sweep still holds it, the same template the instant
+    /// it has been given back, and the end of the sweep. They observe and never
+    /// decide: an observer that throws is swallowed the same way a log sink that
+    /// throws is, because R4 was exactly a caller that only wanted a message
+    /// deciding what the world contains.</para>
+    /// </summary>
+    public static Action<string, GameObject?>? TemplateRead { get; set; }
+
+    /// <summary>See <see cref="TemplateRead"/>.</summary>
+    public static Action<string>? TemplateReleased { get; set; }
+
+    /// <summary>See <see cref="TemplateRead"/>.</summary>
+    public static Action? SweepFinished { get; set; }
+
+    /// <summary>See <see cref="TemplateRead"/>: before the first template is opened.</summary>
+    public static Action? SweepStarted { get; set; }
+
+    private static void Observe(Action observer)
+    {
+        try
+        {
+            observer();
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                Log.LogWarning($"a lifecycle observer threw and was ignored: {ex.GetType().Name}: {ex.Message}");
+            }
+            catch
+            {
+                // The observer is not allowed to change anything, including by failing.
+            }
+        }
     }
 
     /// <summary>Which pack a name came from, for scope exclusion.</summary>

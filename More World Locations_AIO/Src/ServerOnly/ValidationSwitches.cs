@@ -59,6 +59,52 @@ public static class ValidationSwitches
             : fallback;
     }
 
+    /// <summary>The environment variable that turns on the template lifecycle trace.</summary>
+    public const string TraceVariable = Prefix + "TRACE";
+
+    /// <summary>
+    /// Which templates a run should trace through load, release and reload, and
+    /// which prefabs to probe beside them.
+    ///
+    /// <para>Value: <c>MWL_A,MWL_B;probe=Pickable_SurtlingCoreStand</c>. The
+    /// names before the semicolon are templates the sweep snapshots while it
+    /// holds them and again the instant they are released; <c>probe=</c> names
+    /// prefabs whose loader state and component identities are recorded in
+    /// every snapshot. Unset means no trace and no observers installed, which is
+    /// the shipped behaviour.</para>
+    /// </summary>
+    public static bool TraceRequested(out IReadOnlyCollection<string> templates, out IReadOnlyCollection<string> probes) =>
+        ParseTrace(Environment.GetEnvironmentVariable(TraceVariable), out templates, out probes);
+
+    /// <summary>The parse, apart from the environment, so it can be tested.</summary>
+    public static bool ParseTrace(string? value, out IReadOnlyCollection<string> templates, out IReadOnlyCollection<string> probes)
+    {
+        var names = new HashSet<string>();
+        var probed = new HashSet<string>();
+        templates = names;
+        probes = probed;
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+
+        foreach (string part in value!.Split(';'))
+        {
+            string trimmed = part.Trim();
+            if (trimmed.Length == 0)
+                continue;
+            if (trimmed.StartsWith("probe=", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (string name in ParseNames(trimmed.Substring("probe=".Length)))
+                    probed.Add(name);
+            }
+            else
+            {
+                foreach (string name in ParseNames(trimmed))
+                    names.Add(name);
+            }
+        }
+        return names.Count > 0 || probed.Count > 0;
+    }
+
     /// <summary>The environment variable naming a zone whose first write must fail.</summary>
     public const string FaultZoneOnceVariable = Prefix + "FAULT_ZONE_ONCE";
 

@@ -24,6 +24,8 @@ public static class GameTemplateAssets
         TemplateAssets.Source = Open;
         TemplateAssets.StockPrefabs = StockPrefab;
         TemplateAssets.BaselineProvenance = Provenance();
+        // A validation switch, off in a shipped run: the lifecycle trace.
+        LifecycleTrace.Install();
     }
 
     /// <summary>

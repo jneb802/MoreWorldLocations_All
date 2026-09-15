@@ -73,6 +73,16 @@ public static class ServerOnlyCommands
                 return true;
             });
 
+        new Terminal.ConsoleCommand("mwl_lifecycle", "Server-only mode, diagnostic: trace named templates through load, release, deferred cleanup and reload; 'hold:<name>' keeps one lease across the run, 'probe:<prefab>' probes a prefab in every snapshot. Output goes to the BepInEx log",
+            (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
+            {
+                var tokens = new System.Collections.Generic.List<string>();
+                for (int i = 1; i < args.Length; i++)
+                    tokens.Add(args[i]);
+                args.Context.AddString(LifecycleTrace.Run(tokens));
+                return true;
+            });
+
         new Terminal.ConsoleCommand("mwl_location", "Server-only mode: everything the audit found about one location, by exact name",
             (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
             {
