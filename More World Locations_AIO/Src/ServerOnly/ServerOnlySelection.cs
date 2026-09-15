@@ -64,6 +64,28 @@ public static class ServerOnlySelection
               string.Join(", ", registered.OrderBy(name => name));
 
     /// <summary>
+    /// What this process actually registered, for the parts of the runtime that
+    /// have to tell an MWL location from a vanilla one.
+    ///
+    /// The terrain conversion is the reason this exists. It converts a
+    /// location's modifiers because a stock client cannot build them — it does
+    /// not have the template. A VANILLA location's modifiers it does have, and
+    /// builds, so converting those as well would add the compiler's deltas on
+    /// top of the shaping the client already did and sink every dolmen and
+    /// wood house in the world a second time. Membership is by exact name and
+    /// an unregistered name is not ours.
+    /// </summary>
+    public static IReadOnlyCollection<string> Registered { get; private set; } = new HashSet<string>();
+
+    /// <summary>Record what registration produced. Called once, as registration ends.</summary>
+    public static void SetRegistered(IEnumerable<string> registered) =>
+        Registered = new HashSet<string>(registered ?? new string[0]);
+
+    /// <summary>Whether this location is one server-only mode registered.</summary>
+    public static bool IsOurs(string locationName) =>
+        !string.IsNullOrEmpty(locationName) && Registered.Contains(locationName);
+
+    /// <summary>
     /// Approved names that no pack produced.
     ///
     /// A misspelled name registers no location and looks exactly like a

@@ -69,6 +69,11 @@ public static class LocationDB
 
         if (ServerOnlyMode.Enabled)
         {
+            // The runtime has to be able to tell an MWL location from a vanilla
+            // one: the terrain conversion applies to ours and must not touch
+            // theirs, which a stock client builds for itself.
+            ServerOnlySelection.SetRegistered(_registered);
+
             var logger = More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
             logger.LogInfo(ServerOnlySelection.RegisteredNotice(_registered));
             foreach (string name in ServerOnlySelection.Unmatched(_approved, _registered))

@@ -163,6 +163,12 @@ public static class LocationTerrainWriter
                 continue;
 
             string name = location.m_prefabName;
+            // Only ours. A vanilla location's modifiers are in a template the
+            // stock client HAS, so it shapes that ground itself; converting them
+            // as well would apply the deltas on top and sink the site twice.
+            if (!ServerOnlySelection.IsOurs(name))
+                continue;
+
             List<TerrainModifier> modifiers = ModifiersOf(location, name);
             if (modifiers == null || modifiers.Count == 0)
                 continue;

@@ -122,6 +122,55 @@ public class ServerOnlySelectionTests
             ServerOnlySelection.RegisteredNotice(new HashSet<string>()));
     }
 
+    // ---- telling our locations from the game's own -------------------------
+
+    [Fact]
+    public void AVanillaLocationIsNotOurs()
+    {
+        // Found in game, not by a test: the first terrain run converted
+        // Eikthyrnir, three dolmens, three wood houses and a stone circle
+        // alongside MWL_RuinsWell1. A stock client HAS those templates and
+        // shapes their ground itself, so the conversion would have been added on
+        // top and sunk every one of them a second time.
+        ServerOnlySelection.SetRegistered(new[] { "MWL_RuinsWell1" });
+
+        Assert.True(ServerOnlySelection.IsOurs("MWL_RuinsWell1"));
+        Assert.False(ServerOnlySelection.IsOurs("Eikthyrnir"));
+        Assert.False(ServerOnlySelection.IsOurs("Dolmen01"));
+        Assert.False(ServerOnlySelection.IsOurs("StoneCircle"));
+    }
+
+    [Fact]
+    public void AnMwlTemplateThatWasNotRegisteredIsNotOursEither()
+    {
+        // Registration is the fact, not the prefix. A template the allowlist
+        // refused is one nobody audited, and its ground is not ours to write.
+        ServerOnlySelection.SetRegistered(new[] { "MWL_RuinsWell1" });
+
+        Assert.False(ServerOnlySelection.IsOurs("MWL_StoneBeacon1"));
+    }
+
+    [Fact]
+    public void BeforeRegistrationNothingIsOurs()
+    {
+        ServerOnlySelection.SetRegistered(new string[0]);
+
+        Assert.False(ServerOnlySelection.IsOurs("MWL_RuinsWell1"));
+        Assert.False(ServerOnlySelection.IsOurs(""));
+        Assert.False(ServerOnlySelection.IsOurs(null));
+    }
+
+    [Fact]
+    public void RegisteringAgainReplacesTheSetRatherThanAddingToIt()
+    {
+        // One process can serve more than one world.
+        ServerOnlySelection.SetRegistered(new[] { "MWL_WoodTower2" });
+        ServerOnlySelection.SetRegistered(new[] { "MWL_RuinsWell1" });
+
+        Assert.False(ServerOnlySelection.IsOurs("MWL_WoodTower2"));
+        Assert.True(ServerOnlySelection.IsOurs("MWL_RuinsWell1"));
+    }
+
     // ---- the switch itself ------------------------------------------------
 
     [Fact]
