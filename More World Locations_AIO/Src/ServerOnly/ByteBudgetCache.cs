@@ -30,6 +30,18 @@ public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
     }
 
     private readonly Dictionary<TKey, Entry> _entries;
+
+    /// <summary>
+    /// Entries taken out of the table while a lease still held them.
+    ///
+    /// They are gone as far as lookups are concerned and very much present as
+    /// far as memory is concerned, so their bytes keep counting until the last
+    /// lease returns. Without this, replacing or clearing a pinned key made the
+    /// old allocation vanish from the accounting while the conversion reading it
+    /// still had it — the budget would report eight bytes with sixteen alive.
+    /// </summary>
+    private readonly List<Entry> _retired = new List<Entry>();
+
     private readonly Func<TValue, int> _bytesOf;
     private long _clock;
 
@@ -44,8 +56,14 @@ public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
     /// <summary>The cap. Nothing here exceeds it except a single pinned working set, which is reported.</summary>
     public long BudgetBytes { get; }
 
-    /// <summary>What is held right now, counting pinned entries.</summary>
+    /// <summary>
+    /// What is held right now: everything in the table, plus anything retired
+    /// that a lease has not finished with.
+    /// </summary>
     public long Bytes { get; private set; }
+
+    /// <summary>Allocations no longer reachable through the cache and not yet released by their leases.</summary>
+    public int Retired => _retired.Count;
 
     public int Count => _entries.Count;
 
@@ -86,6 +104,10 @@ public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
         if (value == null) throw new ArgumentNullException(nameof(value));
 
         int bytes = _bytesOf(value);
+        // The old value under this key is retired, not forgotten: if a lease
+        // still holds it, it is still memory and still counts. That is what
+        // keeps the replacement honest — with the old one retained, a new one
+        // has to fit alongside it or not be admitted at all.
         Remove(key);
         if (bytes > BudgetBytes)
             return false;
@@ -119,15 +141,35 @@ public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
         if (!_entries.TryGetValue(key, out Entry entry))
             return false;
         _entries.Remove(key);
-        Bytes -= entry.Bytes;
+        Retire(entry);
         return true;
     }
 
-    /// <summary>Drop everything. A world's heights describe that world and nowhere else.</summary>
+    /// <summary>
+    /// Drop everything the cache can reach.
+    ///
+    /// Anything a lease still holds is retired rather than forgotten: its bytes
+    /// keep counting until that lease returns. A teardown that zeroed the
+    /// accounting while a conversion was still reading an array would report a
+    /// bound it was not keeping — and it is exactly during teardown that
+    /// something is most likely to be mid-operation.
+    /// </summary>
     public void Clear()
     {
+        foreach (KeyValuePair<TKey, Entry> entry in _entries)
+            Retire(entry.Value);
         _entries.Clear();
-        Bytes = 0;
+    }
+
+    /// <summary>Out of the table; out of the accounting only once nothing holds it.</summary>
+    private void Retire(Entry entry)
+    {
+        if (entry.Pins > 0)
+        {
+            _retired.Add(entry);
+            return;
+        }
+        Bytes -= entry.Bytes;
     }
 
     private void MakeRoomFor(int bytes)
@@ -174,9 +216,12 @@ public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
         {
             if (_entry == null)
                 return;
-            _entry.Pins--;
+            Entry entry = _entry;
             _entry = null;
-            _ = _cache;
+            entry.Pins--;
+            // The last lease on a retired entry is what finally frees its bytes.
+            if (entry.Pins == 0 && _cache._retired.Remove(entry))
+                _cache.Bytes -= entry.Bytes;
             _ = _key;
         }
     }

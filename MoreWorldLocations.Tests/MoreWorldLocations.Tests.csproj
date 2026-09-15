@@ -57,6 +57,8 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueAudit.cs" Link="ModSrc/Verification/CatalogueAudit.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueNames.cs" Link="ModSrc/Verification/CatalogueNames.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateAssets.cs" Link="ModSrc/Verification/TemplateAssets.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateOwnership.cs" Link="ModSrc/Verification/TemplateOwnership.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateLease.cs" Link="ModSrc/Verification/TemplateLease.cs"/>
         <!--
           The engine-facing halves. They need an object hierarchy, which is what
           the Unity doubles in Shims/VerificationShims.cs are for; everything

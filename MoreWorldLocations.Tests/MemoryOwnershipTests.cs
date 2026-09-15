@@ -262,3 +262,76 @@ public class TerrainTemplateTests
         Assert.Equal(0f, terrain.Reach);
     }
 }
+
+/// <summary>
+/// The two accounting defects a review found with reproductions against the
+/// production cache, ported so they run with the rest of the suite.
+///
+/// Both are the same mistake: memory that is still alive stops being counted.
+/// A budget that forgets what a lease is still holding is not a budget.
+/// </summary>
+public class RetiredAllocationTests
+{
+    private static ByteBudgetCache<string, byte[]> Cache(long budget) =>
+        new ByteBudgetCache<string, byte[]>(budget, value => value.Length);
+
+    [Fact]
+    public void ReplacingAPinnedKeyCannotHideTheOldAllocation()
+    {
+        // Eight bytes of budget, eight bytes pinned. Replacing the key used to
+        // subtract the old entry's bytes while the lease still held the array,
+        // so sixteen bytes were alive and the cache reported eight.
+        ByteBudgetCache<string, byte[]> cache = Cache(8);
+        cache.Put("a", new byte[8]);
+        using ByteBudgetCache<string, byte[]>.Lease lease = cache.Pin("a")!;
+
+        bool admitted = cache.Put("a", new byte[8]);
+        long retained = lease.Value.Length + (admitted ? cache.Peek("a")!.Length : 0);
+
+        Assert.True(retained <= cache.BudgetBytes, $"retained {retained} over a budget of {cache.BudgetBytes}");
+        Assert.True(cache.Bytes >= retained, $"reported {cache.Bytes} while {retained} is alive");
+    }
+
+    [Fact]
+    public void ClearCannotReportZeroWhileALeaseStillHoldsAnArray()
+    {
+        // And it is during teardown that something is most likely to be
+        // mid-operation, so this is the worst moment to start lying.
+        ByteBudgetCache<string, byte[]> cache = Cache(8);
+        cache.Put("a", new byte[8]);
+        using ByteBudgetCache<string, byte[]>.Lease lease = cache.Pin("a")!;
+
+        cache.Clear();
+
+        Assert.True(cache.Bytes >= lease.Value.Length,
+            $"lease holds {lease.Value.Length} and the cache reports {cache.Bytes}");
+        Assert.Equal(1, cache.Retired);
+    }
+
+    [Fact]
+    public void ARetiredAllocationStopsCountingWhenItsLastLeaseReturns()
+    {
+        ByteBudgetCache<string, byte[]> cache = Cache(8);
+        cache.Put("a", new byte[8]);
+        ByteBudgetCache<string, byte[]>.Lease lease = cache.Pin("a")!;
+        cache.Clear();
+
+        lease.Dispose();
+
+        Assert.Equal(0, cache.Bytes);
+        Assert.Equal(0, cache.Retired);
+    }
+
+    [Fact]
+    public void AnUnpinnedEntryIsDroppedOutrightRatherThanRetired()
+    {
+        // Retiring is for memory somebody still holds. Everything else goes.
+        ByteBudgetCache<string, byte[]> cache = Cache(16);
+        cache.Put("a", new byte[8]);
+
+        cache.Clear();
+
+        Assert.Equal(0, cache.Bytes);
+        Assert.Equal(0, cache.Retired);
+    }
+}

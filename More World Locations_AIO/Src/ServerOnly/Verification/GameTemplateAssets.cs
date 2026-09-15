@@ -89,7 +89,7 @@ public static class GameTemplateAssets
         // exists: resolution swaps every mock for the real prefab and brings its
         // children, components and settings with it.
         AssetManager.Instance.ResolveMocksOnLoad(reference.m_assetID, null, null);
-        return SoftReferenceLease.Take(reference);
+        return TemplateLease.Take(new SoftReferenceOwnership(reference));
     }
 
     /// <summary>
@@ -121,73 +121,45 @@ public static class GameTemplateAssets
     }
 
     /// <summary>
-    /// One reference to one template, given back exactly once.
+    /// The game's own ownership of one soft-referenced asset.
     ///
-    /// <para><b>What the loader actually does</b>, from the game's own
-    /// assembly: <c>SoftReference.Load</c> calls the loader's <c>Load</c>, which
-    /// increments the asset's reference count and THEN loads it;
-    /// <c>Release</c> decrements and unloads asynchronously at zero. Jötunn
-    /// patches that release and destroys the resolved mock clone on the same
-    /// zero. So a reference is acquired whether or not the load succeeds, and
-    /// the only balanced thing to do is take one and give one back.</para>
-    ///
-    /// <para><b>Acquisition point.</b> The increment is the third statement of
-    /// the loader's <c>Load</c>, after an initialisation wait and a table
-    /// lookup. Those are the only things that can throw before it, and the
-    /// lookup is already guarded by <c>IsValid</c>. A throw is therefore treated
-    /// as "nothing acquired" and releases nothing — the safe direction, since
-    /// releasing a reference we do not own would decrement somebody else's.</para>
+    /// The reference count comes from the loader's tables, which the publicized
+    /// assemblies make readable. It is the only thing in this process that can
+    /// say whether an acquisition actually happened, which is what the lease
+    /// needs when a load throws.
     /// </summary>
-    private sealed class SoftReferenceLease : ITemplateHandle
+    private sealed class SoftReferenceOwnership : ITemplateOwnership
     {
         private SoftReference<GameObject> _reference;
-        private bool _held;
 
-        private SoftReferenceLease(SoftReference<GameObject> reference)
+        public SoftReferenceOwnership(SoftReference<GameObject> reference) => _reference = reference;
+
+        public GameObject? Asset => _reference.Asset;
+
+        public bool TryReferenceCount(out uint count)
         {
-            _reference = reference;
-        }
-
-        /// <summary>
-        /// Take a lease, or null when there is no such asset.
-        ///
-        /// A static factory rather than a constructor that loads: a constructor
-        /// that throws hands the caller nothing to dispose, and whatever it had
-        /// already acquired would be lost.
-        /// </summary>
-        public static SoftReferenceLease? Take(SoftReference<GameObject> reference)
-        {
-            if (!reference.IsValid)
-                return null;
-
-            var lease = new SoftReferenceLease(reference);
+            count = 0;
             try
             {
-                // The result is not checked: a failed load still acquired, and
-                // the caller learns about it from a null Asset.
-                lease._reference.Load();
+                AssetBundleLoader loader = AssetBundleLoader.Instance;
+                if (loader == null || loader.m_assetIDToLoaderIndex == null)
+                    return false;
+                if (!loader.m_assetIDToLoaderIndex.TryGetValue(_reference.m_assetID, out int index))
+                    return false;
+                count = loader.m_assetLoaders[index].ReferenceCount;
+                return true;
             }
             catch
             {
-                // Before the increment; see the type remarks. Nothing to give
-                // back, and the caller gets no lease to dispose.
-                return null;
+                // The count is a diagnostic, not a decision: failing to read it
+                // must not fail the load. The lease treats it as "cannot see".
+                return false;
             }
-
-            lease._held = true;
-            TemplateAssets.LeaseTaken();
-            return lease;
         }
 
-        public GameObject? Asset => _held ? _reference.Asset : null;
+        public void Load() => _reference.Load();
 
-        public void Dispose()
-        {
-            if (!_held)
-                return;
-            _held = false;
-            TemplateAssets.LeaseReturned();
-            _reference.Release();
-        }
+        public void Release() => _reference.Release();
     }
+
 }

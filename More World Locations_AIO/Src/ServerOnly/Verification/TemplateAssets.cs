@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.ServerOnly.Verification;
@@ -100,11 +101,35 @@ public static class TemplateAssets
 
     internal static void LeaseReturned() => OutstandingLeases--;
 
+    /// <summary>
+    /// Leases whose fate could not be established: a release that threw, or a
+    /// load that threw where the reference count could not be read.
+    ///
+    /// Kept apart from <see cref="OutstandingLeases"/> and reported, because a
+    /// zero reached by assuming the unknown went well is worse than a number
+    /// that admits it does not know.
+    /// </summary>
+    public static int UnresolvedLeases { get; private set; }
+
+    /// <summary>The reasons, in order, so the report names them rather than counting them.</summary>
+    public static IReadOnlyList<string> UnresolvedReasons => s_unresolved;
+
+    private static readonly List<string> s_unresolved = new List<string>();
+
+    internal static void LeaseUnresolved(string reason)
+    {
+        UnresolvedLeases++;
+        if (s_unresolved.Count < 32)
+            s_unresolved.Add(reason);
+    }
+
     /// <summary>Forget the accounting for a new world. Never called to paper over a leak.</summary>
     public static void ResetAccounting()
     {
         OutstandingLeases = 0;
         PeakLeases = 0;
+        UnresolvedLeases = 0;
+        s_unresolved.Clear();
     }
 
     /// <summary>Whether this process can load templates at all.</summary>
