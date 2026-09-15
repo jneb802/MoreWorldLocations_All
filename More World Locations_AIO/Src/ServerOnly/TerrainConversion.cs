@@ -36,12 +36,18 @@ public sealed class TerrainZoneDeltas
     /// identifier. Levelling accumulates a difference against the client's
     /// unmodified height, so applying one operation twice displaces the ground
     /// twice -- see <see cref="TerrainConversion.ApplyOnce"/>.
+    ///
+    /// Sorted, because it is serialised: a set's iteration order is not a thing
+    /// to let decide what a saved world says.
     /// </summary>
-    private readonly HashSet<string> _applied = new HashSet<string>();
+    private readonly SortedSet<string> _applied = new SortedSet<string>(StringComparer.Ordinal);
 
     public int Pitch => Width + 1;
 
     public bool HasApplied(string operationId) => _applied.Contains(operationId);
+
+    /// <summary>The operations written here, in a stable order.</summary>
+    public IEnumerable<string> AppliedOperations => _applied;
 
     internal bool RecordApplied(string operationId) => _applied.Add(operationId);
 
@@ -65,6 +71,82 @@ public sealed class TerrainZoneDeltas
     public int Index(int x, int y) => y * Pitch + x;
 
     public bool Inside(int x, int y) => x >= 0 && y >= 0 && x < Pitch && y < Pitch;
+
+    /// <summary>
+    /// A copy carrying the same terrain, paint and completion record. Used as
+    /// scratch state: a conversion that fails part way through is discarded with
+    /// the copy rather than left half-written over the caller's arrays.
+    /// </summary>
+    public TerrainZoneDeltas Clone()
+    {
+        TerrainZoneDeltas copy = new TerrainZoneDeltas(Origin, Width, Scale);
+        Array.Copy(LevelDelta, copy.LevelDelta, LevelDelta.Length);
+        Array.Copy(SmoothDelta, copy.SmoothDelta, SmoothDelta.Length);
+        Array.Copy(ModifiedHeight, copy.ModifiedHeight, ModifiedHeight.Length);
+        Array.Copy(PaintMask, copy.PaintMask, PaintMask.Length);
+        Array.Copy(ModifiedPaint, copy.ModifiedPaint, ModifiedPaint.Length);
+        foreach (string applied in _applied)
+            copy._applied.Add(applied);
+        return copy;
+    }
+
+    /// <summary>
+    /// Take another zone's terrain and paint, leaving this one's completion
+    /// record alone.
+    ///
+    /// Two callers. <see cref="TerrainConversion.ApplyOnce"/> publishes its
+    /// scratch state here once the conversion has returned; and the runtime
+    /// adapter loads a live compiler's arrays into a fresh zone after a restart,
+    /// where the completion record comes from elsewhere and must not be
+    /// overwritten by whatever the other object happens to hold.
+    /// </summary>
+    public void AdoptTerrainFrom(TerrainZoneDeltas other)
+    {
+        if (other == null) throw new ArgumentNullException(nameof(other));
+        if (other.Width != Width || other.Scale != Scale)
+            throw new ArgumentException("zones of different shapes cannot be merged", nameof(other));
+
+        Array.Copy(other.LevelDelta, LevelDelta, LevelDelta.Length);
+        Array.Copy(other.SmoothDelta, SmoothDelta, SmoothDelta.Length);
+        Array.Copy(other.ModifiedHeight, ModifiedHeight, ModifiedHeight.Length);
+        Array.Copy(other.PaintMask, PaintMask, PaintMask.Length);
+        Array.Copy(other.ModifiedPaint, ModifiedPaint, ModifiedPaint.Length);
+    }
+
+    /// <summary>
+    /// Rebuild the completion record from what a saved world carries.
+    ///
+    /// The record has to outlive the process, not just the object: a server that
+    /// restarts mid-bake and forgets which operations it wrote would write them
+    /// again, and a second write sinks the site twice. The compiler state itself
+    /// is persisted by the game in the TerrainComp's ZDO; these identities are
+    /// persisted beside it by the caller.
+    /// </summary>
+    public void RestoreApplied(IEnumerable<string> operationIds)
+    {
+        if (operationIds == null) throw new ArgumentNullException(nameof(operationIds));
+        foreach (string id in operationIds)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException("a saved completion record contains an empty identity", nameof(operationIds));
+            _applied.Add(id);
+        }
+    }
+
+    /// <summary>
+    /// The completion record as one string, for storing beside the compiler.
+    /// Newline-separated and sorted, so the same set always produces the same
+    /// bytes and a diff of two saves means the sets differ.
+    /// </summary>
+    public string SerializeApplied() => string.Join("\n", _applied);
+
+    /// <summary>The inverse of <see cref="SerializeApplied"/>; empty means nothing was written.</summary>
+    public void DeserializeApplied(string serialized)
+    {
+        if (string.IsNullOrEmpty(serialized))
+            return;
+        RestoreApplied(serialized.Split('\n'));
+    }
 }
 
 /// <summary>
@@ -145,17 +227,30 @@ public static class TerrainConversion
     /// share one, or the second is silently dropped.
     /// </param>
     /// <returns>True if it was written, false if it was already there.</returns>
+    /// <remarks>
+    /// All of it or none of it. The conversion runs on a copy of the zone and
+    /// the copy is published only once it has returned, so a read that throws
+    /// part of the way through leaves the caller's terrain, paint and completion
+    /// record exactly as they were and the operation can be retried. Recording
+    /// completion first -- which this did -- turns one failed read into a site
+    /// that is marked done, is not done, and has some of its vertices moved.
+    /// </remarks>
     public static bool ApplyOnce(
         string operationId, LocationTerrainOperation op, TerrainZoneDeltas zone, VertexHeight heightAt)
     {
         if (string.IsNullOrEmpty(operationId))
             throw new ArgumentException("an operation needs an identity to be applied once", nameof(operationId));
         if (zone == null) throw new ArgumentNullException(nameof(zone));
+        if (heightAt == null) throw new ArgumentNullException(nameof(heightAt));
 
-        if (!zone.RecordApplied(operationId))
+        if (zone.HasApplied(operationId))
             return false;
 
-        Apply(op, zone, heightAt);
+        TerrainZoneDeltas scratch = zone.Clone();
+        Apply(op, scratch, heightAt);
+
+        zone.AdoptTerrainFrom(scratch);
+        zone.RecordApplied(operationId);
         return true;
     }
 
