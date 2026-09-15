@@ -103,6 +103,35 @@ public static class LocationTerrainWriter
     private static bool IsGenerated(Vector2s zone) =>
         ZoneSystem.instance != null && ZoneSystem.instance.IsZoneGenerated(zone);
 
+    /// <summary>
+    /// A validation switch: make one named zone's FIRST write fail, once.
+    ///
+    /// Proving recovery in a running game needs a failure that happens on
+    /// purpose and exactly once. The counter is per zone and is not reset with
+    /// the ledger, so "the first write" stays the first even if the world is
+    /// regenerated, and the switch strips out with the environment.
+    /// </summary>
+    private static bool FaultOnce(Vector2s zone)
+    {
+        if (s_faultZone == null)
+        {
+            s_faultZone = ValidationSwitches.FaultZoneOnce(out int fx, out int fz)
+                ? new Vector2s(fx, fz)
+                : (Vector2s?)default;
+            if (s_faultZone.HasValue)
+                Log.LogWarning(
+                    $"{ValidationSwitches.FaultZoneOnceVariable} is set: the first terrain write " +
+                    $"for zone {s_faultZone.Value.x},{s_faultZone.Value.y} will be failed on purpose, once.");
+        }
+        if (!s_faultZone.HasValue || s_faultZone.Value != zone || s_faultFired)
+            return false;
+        s_faultFired = true;
+        return true;
+    }
+
+    private static Vector2s? s_faultZone;
+    private static bool s_faultFired;
+
     /// <summary>Convert into a zone whose heightmap is in hand.</summary>
     private static void Apply(Vector2s zoneID, Heightmap hmap, List<LocationTerrainWork> work)
     {
@@ -131,6 +160,13 @@ public static class LocationTerrainWriter
         List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
         if (converted.Count == 0)
             return;
+
+        if (FaultOnce(zoneID))
+        {
+            foreach (LocationTerrainWork item in converted)
+                Wait(item, "a validation switch failed this write on purpose");
+            return;
+        }
 
         if (LocationTerrainBridge.WriteBack(compiler, zone, out string failure))
             foreach (LocationTerrainWork item in converted)

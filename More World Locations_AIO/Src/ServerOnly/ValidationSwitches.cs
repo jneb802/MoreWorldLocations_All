@@ -36,6 +36,36 @@ public static class ValidationSwitches
     public static IReadOnlyCollection<string> ApprovedForValidation() =>
         ParseNames(Environment.GetEnvironmentVariable(ApproveVariable));
 
+    /// <summary>The environment variable naming a zone whose first write must fail.</summary>
+    public const string FaultZoneOnceVariable = Prefix + "FAULT_ZONE_ONCE";
+
+    /// <summary>
+    /// A zone whose FIRST terrain write is made to fail, once, and never again.
+    ///
+    /// It exists to prove in a running game what the tests prove in isolation:
+    /// that a write which does not land is reported as outstanding rather than
+    /// vanishing, and that the next attempt completes it. Unset by default, so
+    /// an unset environment behaves exactly as the shipped build.
+    /// </summary>
+    public static bool FaultZoneOnce(out int x, out int z) =>
+        TryParseZone(Environment.GetEnvironmentVariable(FaultZoneOnceVariable), out x, out z);
+
+    /// <summary>
+    /// "x,z" as zone indices. Anything else names no zone rather than a wrong
+    /// one: a typo that silently faulted zone 0,0 would be worse than no switch.
+    /// </summary>
+    public static bool TryParseZone(string? value, out int x, out int z)
+    {
+        x = 0;
+        z = 0;
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+        string[] parts = value.Split(',');
+        return parts.Length == 2
+               && int.TryParse(parts[0].Trim(), out x)
+               && int.TryParse(parts[1].Trim(), out z);
+    }
+
     /// <summary>
     /// The parse, separately from the environment, so it can be tested and so
     /// the caller can report what it read.

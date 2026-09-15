@@ -207,6 +207,43 @@ public class ServerOnlySelectionTests
         Assert.Single(ValidationSwitches.ParseNames("MWL_WoodTower2,MWL_WoodTower2"));
     }
 
+    [Theory]
+    [InlineData("3,-4", true, 3, -4)]
+    [InlineData(" 3 , -4 ", true, 3, -4)]
+    [InlineData("3", false, 0, 0)]
+    [InlineData("3,-4,5", false, 0, 0)]
+    [InlineData("x,y", false, 0, 0)]
+    [InlineData("", false, 0, 0)]
+    [InlineData(null, false, 0, 0)]
+    public void AFaultZoneIsAZoneOrItIsNothing(string? value, bool parsed, int x, int z)
+    {
+        // A typo that silently faulted zone 0,0 would be worse than no switch.
+        Assert.Equal(parsed, ValidationSwitches.TryParseZone(value, out int gx, out int gz));
+        Assert.Equal(x, gx);
+        Assert.Equal(z, gz);
+    }
+
+    [Fact]
+    public void TheFaultSwitchLivesInTheEnvironmentToo()
+    {
+        Assert.Equal("MOREWORLDLOCATIONS_FAULT_ZONE_ONCE", ValidationSwitches.FaultZoneOnceVariable);
+
+        string? saved = Environment.GetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable);
+        try
+        {
+            Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, "21,-45");
+            Assert.True(ValidationSwitches.FaultZoneOnce(out int x, out int z));
+            Assert.Equal((21, -45), (x, z));
+
+            Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, null);
+            Assert.False(ValidationSwitches.FaultZoneOnce(out _, out _));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, saved);
+        }
+    }
+
     [Fact]
     public void TheEnvironmentIsWhereTheSwitchLives()
     {
