@@ -5,9 +5,9 @@ Every MWL 5.0.9 location template, measured against the four predicates in
 actually receives. Assistant-written.
 
 **Nothing here is an approval.** `ServerOnlyAllowlist.Approved` is empty and
-stays empty until a template has been through the runtime dump and the one-site
-experiment as well. This is the audit's structural half — necessary, checkable
-from the assets, and not sufficient.
+stays empty until a template has been through the one-site experiment in game as
+well. This is the audit's structural half — necessary, checkable from the assets,
+and not sufficient.
 
 ## What was read
 
@@ -24,22 +24,32 @@ validation station:
   dungeon rooms and other non-location prefabs.
 * `mwl_ruins1` `c465607de57e…`, `mwl_ruinswell1` `649d9436d598…`.
 
-Measured by an offline auditor that walks the prefab hierarchy straight out of
-the bundle. It lives with the validation tooling rather than in this repository,
-since building the mod does not need it.
+Judged against the **stock prefab registry**: every name
+`ZNetScene.m_namedPrefabs` holds at the pinned game build, read from
+`Assets/Systems/_GameMain.prefab` inside the game's own SoftRef bundles. **4644
+prefabs at Steam buildid 25253764**, all resolved, no duplicate names and no
+hash collisions. `m_nonNetViewPrefabs` is empty in this build. That is the whole
+of the question "can the stock client turn this ZDO back into an object":
+`GetPrefab(hash)` is a lookup in that dictionary and nothing else.
+
+Both measured by offline tooling that reads the bundles directly. It lives with
+the validation tooling rather than in this repository, since building the mod
+does not need it.
 
 ## Result
 
 | verdict | templates | meaning |
 | --- | --- | --- |
-| candidate | 16 | nothing found: every part is a networked child |
-| needs conversion | 169 | terrain, or a scale whose fate the bundle cannot settle |
-| blocked | 8 | something a player would notice is in the proxy half |
+| candidate | 10 | every part is a networked child and every name resolves |
+| needs conversion | 104 | terrain, or a scale whose fate the bundle cannot settle |
+| blocked | 79 | emits a name no stock client has, or strands structure |
 
 | finding | count |
 | --- | --- |
-| `terrain_in_proxy_half` | 220 across 166 templates |
+| `unknown_prefab` | 467 — a name the stock registry does not hold |
 | `mock_scale_unresolved` | 352 |
+| `terrain_in_proxy_half` | 220 across 166 templates |
+| `double_mock_prefix` | 55, all in one template |
 | `structure_in_proxy_half` | 16 across 7 templates |
 | `inactive_root` | 1 |
 
@@ -79,21 +89,32 @@ unresolved rather than as failures: whether a scaled piece survives to a stock
 client depends on the **real** prefab's `m_syncInitialScale`, which this bundle
 does not contain. Settling those needs a runtime dump or the game's own assets.
 
-### 3. Prefabs the stock client may not have
+### 3. Prefabs the stock client does not have
 
-66 of 193 templates emit at least one mod-local prefab. The recurring ones:
+467 emissions across 79 templates name something the registry does not hold.
+They fall into four kinds, and only the first was expected:
 
-| name | instances | what it is |
+| kind | example | instances |
 | --- | --- | --- |
-| `MD_Kit_widestone` | 135 | a `widestone` clone with `Destructible` removed |
-| `MWL_Shrine` | 38 | shrine ward, excluded by the plan |
-| `MWL_Waystone` | 14 | excluded by the plan |
-| `MWL_*_Vendor`, `MWL_*_Trainer`, `MWL_*_Runestone1` | 1 each | ports and traders, excluded packs |
-| `MWL_SwampChurch1_Spawner1..11` | 1 each | custom creature spawners |
+| mod-local prefabs | `MD_Kit_widestone` (a `widestone` clone with `Destructible` removed), `MWL_Shrine`, `MWL_Waystone`, `MWL_*_Vendor` | 135, 38, 14, 1 each |
+| **wrong case** | `Vines` where the game has `vines`; `swamptree1` where it has `SwampTree1` | 51 |
+| **not standalone network prefabs** | `dvergrtown_metal_wall_2x2`, `dvergrtown_1x1x1` and the rest of the Mistlands town kit; `Stoneblock`, `StonePillar`, `Hanging_RoyalJelly` | ~90 |
+| **the mock prefix twice** | `JVLmock_JVLmock_stone_wall_2x1` | 55 |
 
-The 127 remaining templates emit only names that look vanilla. *Look* is the
-operative word: this cannot be confirmed until a stock prefab registry is
-captured at the pinned game build, which is the outstanding Step 0 item. All
+The last three are worth saying plainly, because they are not about server-only
+mode at all.
+
+`GetStableHashCode` is case-sensitive and `m_namedPrefabs` is keyed by it, so
+`Vines` resolves to nothing — on any client, modded or not. Jötunn's
+`IsMockName` strips exactly one prefix, so a doubly-prefixed mock looks for
+`JVLmock_stone_wall_2x1`, does not find it, and never swaps the real prefab in —
+again on the server as much as the client. All 55 of those are in
+`MWL_StoneBeacon1`, the same template whose root is inactive. And the
+`dvergrtown_*` kit exists in the game as dungeon-room content rather than as
+entries in `ZNetScene`, so a location emitting one as a standalone ZDO is asking
+for something no client can build.
+
+The remaining 114 templates emit only names the registry holds. All
 `Spawner_Draugr`-style names are vanilla spawners, not MWL's.
 
 ### 4. Loot arrives, but not MWL's loot
@@ -119,13 +140,14 @@ is the only template of the 193 like this.
 
 ## The starter set
 
-Ten templates have **no findings at all and emit no mod-local prefab**:
+Ten templates have **no findings at all**: every part is a networked child and
+every name it emits is in the stock registry.
 
-`MWL_AshWallPost1`, `MWL_MarbleCage1`, `MWL_MeadowsTomb4`, `MWL_RuinsTower8`,
-`MWL_StoneCastle1`, `MWL_SwampHouse1`, `MWL_SwampRuin1`, `MWL_TreeTowers1`,
-`MWL_WoodTower1`, `MWL_WoodTower2`.
+`MWL_AshWallPost1`, `MWL_MarbleCage1`, `MWL_MeadowsTomb4` (11 children),
+`MWL_RuinsTower8`, `MWL_StoneCastle1`, `MWL_SwampHouse1`, `MWL_SwampRuin1`,
+`MWL_TreeTowers1`, `MWL_WoodTower1`, `MWL_WoodTower2` (42 children).
 
-A further 78 need only the terrain conversion.
+A further 104 need only the terrain conversion.
 
 For the first milestone the plan wants one small Meadows site made of vanilla
 pieces. Two fit, and both need only the terrain conversion:
@@ -143,9 +165,13 @@ pieces. Two fit, and both need only the terrain conversion:
 vegetation, and a −2 m offset that makes the terrain change unmistakable when it
 is missing. `MWL_Ruins1` exercises paint and smoothing as well.
 
+Both need the terrain conversion, so neither is the *first* site to prove. For
+that, the plan's order wants a location needing no conversion at all, and
+`MWL_MeadowsTomb4` (11 networked children) or `MWL_WoodTower2` (42) are the
+smallest of the ten.
+
 ## Still unknown
 
-* Every name's presence in the stock registry. No registry captured.
 * The real prefabs' `m_syncInitialScale` for the 352 scaled mocks.
 * Whether the runtime hierarchy after soft-reference and mock resolution matches
   what the bundle says. **The runtime dump is what makes this audit
