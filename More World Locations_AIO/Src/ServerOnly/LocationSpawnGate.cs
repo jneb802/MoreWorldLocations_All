@@ -115,8 +115,30 @@ public static class LocationSpawnGate
         if (operations.Count == 0)
             return true;
 
-        return Record(siteId, name, position, SitePreflight.Decide(siteId, home, operations, GroundOf));
+        // Every zone this decision reads is pinned for as long as the decision
+        // lasts. The builder hands its answer over once, so a site that touches
+        // four zones must not have its first zone evicted by its fourth while it
+        // is still deciding about the site as a whole.
+        var pinned = new List<IDisposable>();
+        try
+        {
+            s_pinning = pinned;
+            return Record(siteId, name, position, SitePreflight.Decide(siteId, home, operations, GroundOf));
+        }
+        finally
+        {
+            s_pinning = null;
+            foreach (IDisposable pin in pinned)
+                pin.Dispose();
+        }
     }
+
+    /// <summary>
+    /// Where a decision in progress collects its height pins. Null outside one,
+    /// which makes GroundOf usable from anywhere without pinning by accident.
+    /// </summary>
+    [ThreadStatic]
+    private static List<IDisposable>? s_pinning;
 
     /// <summary>
     /// Write the decision down and answer it. Nothing here decides anything; it
@@ -180,30 +202,21 @@ public static class LocationSpawnGate
     {
         unreadable = null;
 
-        // ModifiersOf returns null when the template would not load and an empty
-        // list when it loaded and has none. Those were one answer here, and they
-        // are opposite answers: one is "this shapes no ground", the other is
-        // "nobody knows what this does to the ground".
-        List<TerrainModifier> modifiers = LocationTerrainPatch.ModifiersOf(location, name);
-        if (modifiers == null)
+        // TerrainOf returns null when the template would not load and an empty
+        // description when it loaded and has none. Those were one answer once,
+        // and they are opposite answers: one is "this shapes no ground", the
+        // other is "nobody knows what this does to the ground".
+        TerrainTemplate? terrain = LocationTerrainPatch.TerrainOf(location, name);
+        if (terrain == null)
         {
             unreadable = $"the template for '{name}' would not load, so what it does to the ground is unknown.";
             return new List<LocationTerrainOperation>();
         }
-        if (modifiers.Count == 0)
-            return new List<LocationTerrainOperation>();
 
-        GameObject asset = location.m_prefab.Asset;
-        if (asset == null)
-        {
-            unreadable = $"the template for '{name}' has {modifiers.Count} terrain modifier(s) and no loaded asset " +
-                         "to place them against, so where they would shape the ground is unknown.";
-            return new List<LocationTerrainOperation>();
-        }
-
-        return LocationTerrainReader.Operations(
-            modifiers,
-            modifier => position + rotation * asset.transform.InverseTransformPoint(modifier.transform.position));
+        // No asset is needed and none is held: the descriptors carry
+        // root-relative positions, so the site's ground is worked out from
+        // numbers rather than from a template that has to stay loaded.
+        return terrain.OperationsAt(position, rotation);
     }
 
     /// <summary>
@@ -229,8 +242,16 @@ public static class LocationSpawnGate
         // for any other zone this comes from the builder, once, and is kept --
         // see LocationTerrainBridge.BaseHeights. Without the keeping, asking
         // here would consume the answer the conversion needs afterwards.
-        return LocationTerrainBridge.TryGeneratedHeightAt(deltas, Heightmap.FindHeightmap(
+        bool read = LocationTerrainBridge.TryGeneratedHeightAt(deltas, Heightmap.FindHeightmap(
             new Vector3(deltas.Origin.x, 0f, deltas.Origin.z)), out baseHeightAt, out _);
+
+        if (read && s_pinning != null)
+        {
+            IDisposable pin = LocationTerrainBridge.PinGeneratedHeights(zone, ZoneWidth, ZoneScale);
+            if (pin != null)
+                s_pinning.Add(pin);
+        }
+        return read;
     }
 
     /// <summary>

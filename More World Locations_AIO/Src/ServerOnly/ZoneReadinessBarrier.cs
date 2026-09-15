@@ -127,23 +127,20 @@ public static class ZoneReadinessBarrier
     {
         why = null;
 
-        List<TerrainModifier> modifiers = LocationTerrainPatch.ModifiersOf(location, name);
-        if (modifiers == null)
+        TerrainTemplate? terrain = LocationTerrainPatch.TerrainOf(location, name);
+        if (terrain == null)
         {
             why = $"the template for '{name}' has not loaded yet, so what it does to the ground is unknown.";
             return false;
         }
-        if (modifiers.Count == 0)
+        if (terrain.Modifiers.Count == 0)
             return true;
 
-        GameObject asset = location.m_prefab.Asset;
-        if (asset == null)
-        {
-            why = $"the template for '{name}' has terrain and no loaded asset to place it against.";
-            return false;
-        }
-
-        float reach = Reach(modifiers, asset);
+        // Rotation-free, from the description's own bound: a placement's
+        // rotation turns a point about the origin and cannot move it further
+        // from the origin, which is what lets readiness be asked before
+        // PlaceLocations has chosen one.
+        float reach = terrain.Reach;
         if (HeightmapBuilder.instance == null || WorldGenerator.instance == null)
         {
             why = "the terrain builder is not running, so no ground can be read.";
@@ -167,30 +164,6 @@ public static class ZoneReadinessBarrier
         return true;
     }
 
-    /// <summary>
-    /// How far the template's terrain can reach from the placement, at ANY
-    /// rotation: the furthest modifier's distance from the origin plus its own
-    /// largest radius. Rotation turns a point around the origin and cannot move
-    /// it further from it.
-    /// </summary>
-    private static float Reach(IReadOnlyList<TerrainModifier> modifiers, GameObject asset)
-    {
-        float reach = 0f;
-        foreach (TerrainModifier modifier in modifiers)
-        {
-            if (modifier == null || !modifier.enabled || modifier.m_useTerrainCompiler)
-                continue;
-            Vector3 local = asset.transform.InverseTransformPoint(modifier.transform.position);
-            float offset = new Vector2(local.x, local.z).magnitude;
-            float radius = Mathf.Max(
-                modifier.m_level ? modifier.m_levelRadius : 0f,
-                Mathf.Max(
-                    modifier.m_smooth ? modifier.m_smoothRadius : 0f,
-                    modifier.m_paintCleared ? modifier.m_paintRadius : 0f));
-            reach = Mathf.Max(reach, offset + radius);
-        }
-        return reach;
-    }
 }
 
 /// <summary>

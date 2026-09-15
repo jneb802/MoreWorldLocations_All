@@ -4,12 +4,21 @@ using UnityEngine;
 namespace More_World_Locations_AIO.ServerOnly.Verification;
 
 /// <summary>
-/// A resolved template, held open for as long as it is being read.
+/// A template held open for as long as it is being read, and exactly one
+/// reference to it.
 ///
-/// Disposable because the alternative is holding every template in the
-/// catalogue at once: a sweep over 190-odd of them would keep the lot in memory
-/// on a dedicated server, and a server that ran out of memory checking its
-/// locations would be a poor trade for the check.
+/// <para><b>Presence is not ownership.</b> The first version asked whether the
+/// asset was already loaded and took a reference only if it was not. That is
+/// two bugs in one line: when somebody else had it loaded we never acquired,
+/// and when we had loaded it ourselves the release depended on remembering
+/// that. The loader counts references — <c>Load</c> increments before it loads,
+/// <c>Release</c> decrements and unloads at zero, and Jötunn destroys the
+/// resolved clone on that same zero — so a lease that takes one and gives one
+/// back is the whole contract, whoever else is holding the asset.</para>
+///
+/// <para>Disposal is idempotent, and it happens on every path: a normal read, a
+/// refusal, a cancellation, an exception. A sweep over 190-odd templates that
+/// leaked one reference each would keep the whole catalogue resident.</para>
 /// </summary>
 public interface ITemplateHandle : IDisposable
 {
@@ -62,6 +71,41 @@ public static class TemplateAssets
     /// reported with every verdict rather than living in a comment.
     /// </summary>
     public static string BaselineProvenance { get; set; } = "";
+
+    /// <summary>
+    /// Leases taken out and not yet given back.
+    ///
+    /// Counted here rather than inside an implementation so that a test and a
+    /// station run ask the same question of the same number. Zero after a sweep
+    /// — success or failure — is the whole of "the audit gave back what it
+    /// took".
+    /// </summary>
+    public static int OutstandingLeases { get; private set; }
+
+    /// <summary>The most leases held at once, so a sweep's working set has a number.</summary>
+    public static int PeakLeases { get; private set; }
+
+    /// <summary>The same accounting, reachable from a test double. See LeaseTaken.</summary>
+    public static void LeaseTakenForTest() => LeaseTaken();
+
+    /// <summary>The same accounting, reachable from a test double. See LeaseReturned.</summary>
+    public static void LeaseReturnedForTest() => LeaseReturned();
+
+    internal static void LeaseTaken()
+    {
+        OutstandingLeases++;
+        if (OutstandingLeases > PeakLeases)
+            PeakLeases = OutstandingLeases;
+    }
+
+    internal static void LeaseReturned() => OutstandingLeases--;
+
+    /// <summary>Forget the accounting for a new world. Never called to paper over a leak.</summary>
+    public static void ResetAccounting()
+    {
+        OutstandingLeases = 0;
+        PeakLeases = 0;
+    }
 
     /// <summary>Whether this process can load templates at all.</summary>
     public static bool CanLoad => Source != null;

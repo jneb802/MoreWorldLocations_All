@@ -1,0 +1,183 @@
+using System;
+using System.Collections.Generic;
+
+namespace More_World_Locations_AIO.ServerOnly;
+
+/// <summary>
+/// A cache that knows how many bytes it is holding, evicts the least recently
+/// used when it would go over, and never evicts something in use.
+///
+/// <para><b>Why a budget and not a count.</b> The two things cached here are
+/// wildly different sizes — a zone's generated heights are a fixed 16 kB, a
+/// template's subtree signature is anything from a line to a megabyte — so "a
+/// hundred entries" is not a memory bound in either case. A byte budget is, and
+/// it is the number a run can be held to.</para>
+///
+/// <para><b>Why leases.</b> The heights cache exists because the terrain builder
+/// hands its answer over once; two callers need it, and the second must not find
+/// it evicted between them. An entry in use is pinned, and eviction skips it —
+/// so a cache under pressure defers rather than pulling the ground out from
+/// under a conversion in progress.</para>
+/// </summary>
+public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
+{
+    internal sealed class Entry
+    {
+        public TValue Value;
+        public int Bytes;
+        public int Pins;
+        public long UsedAt;
+    }
+
+    private readonly Dictionary<TKey, Entry> _entries;
+    private readonly Func<TValue, int> _bytesOf;
+    private long _clock;
+
+    public ByteBudgetCache(long budgetBytes, Func<TValue, int> bytesOf, IEqualityComparer<TKey>? comparer = null)
+    {
+        if (budgetBytes <= 0) throw new ArgumentOutOfRangeException(nameof(budgetBytes));
+        BudgetBytes = budgetBytes;
+        _bytesOf = bytesOf ?? throw new ArgumentNullException(nameof(bytesOf));
+        _entries = new Dictionary<TKey, Entry>(comparer);
+    }
+
+    /// <summary>The cap. Nothing here exceeds it except a single pinned working set, which is reported.</summary>
+    public long BudgetBytes { get; }
+
+    /// <summary>What is held right now, counting pinned entries.</summary>
+    public long Bytes { get; private set; }
+
+    public int Count => _entries.Count;
+
+    /// <summary>Entries currently in use and therefore not evictable.</summary>
+    public int Pinned
+    {
+        get
+        {
+            int pinned = 0;
+            foreach (KeyValuePair<TKey, Entry> entry in _entries)
+            {
+                if (entry.Value.Pins > 0)
+                    pinned++;
+            }
+            return pinned;
+        }
+    }
+
+    /// <summary>The value, or null, without changing what is held.</summary>
+    public TValue? Peek(TKey key)
+    {
+        if (!_entries.TryGetValue(key, out Entry entry))
+            return null;
+        entry.UsedAt = ++_clock;
+        return entry.Value;
+    }
+
+    /// <summary>
+    /// Put a value in, evicting unpinned entries until it fits.
+    ///
+    /// <para>A value larger than the whole budget is NOT cached: it is returned
+    /// to the caller to use and drop. Admitting it would evict everything else
+    /// and still be over, which is a cache that has stopped being one.</para>
+    /// </summary>
+    /// <returns>True when it was kept; false when it was too large to keep.</returns>
+    public bool Put(TKey key, TValue value)
+    {
+        if (value == null) throw new ArgumentNullException(nameof(value));
+
+        int bytes = _bytesOf(value);
+        Remove(key);
+        if (bytes > BudgetBytes)
+            return false;
+
+        MakeRoomFor(bytes);
+        if (Bytes + bytes > BudgetBytes)
+            return false;   // everything left is pinned
+
+        _entries[key] = new Entry { Value = value, Bytes = bytes, UsedAt = ++_clock };
+        Bytes += bytes;
+        return true;
+    }
+
+    /// <summary>
+    /// Hold an entry against eviction until the lease is returned.
+    ///
+    /// Null when there is nothing under that key. The lease is idempotent, like
+    /// every other one here: a double release would unpin somebody else's use.
+    /// </summary>
+    public Lease? Pin(TKey key)
+    {
+        if (!_entries.TryGetValue(key, out Entry entry))
+            return null;
+        entry.Pins++;
+        entry.UsedAt = ++_clock;
+        return new Lease(this, key, entry);
+    }
+
+    public bool Remove(TKey key)
+    {
+        if (!_entries.TryGetValue(key, out Entry entry))
+            return false;
+        _entries.Remove(key);
+        Bytes -= entry.Bytes;
+        return true;
+    }
+
+    /// <summary>Drop everything. A world's heights describe that world and nowhere else.</summary>
+    public void Clear()
+    {
+        _entries.Clear();
+        Bytes = 0;
+    }
+
+    private void MakeRoomFor(int bytes)
+    {
+        while (Bytes + bytes > BudgetBytes)
+        {
+            TKey? oldest = default;
+            long oldestUsedAt = long.MaxValue;
+            bool found = false;
+            foreach (KeyValuePair<TKey, Entry> candidate in _entries)
+            {
+                // Never the pinned ones: something is reading that right now,
+                // and the whole reason this cache exists is that the source can
+                // only be asked once.
+                if (candidate.Value.Pins > 0 || candidate.Value.UsedAt >= oldestUsedAt)
+                    continue;
+                oldest = candidate.Key;
+                oldestUsedAt = candidate.Value.UsedAt;
+                found = true;
+            }
+            if (!found)
+                return;     // everything left is in use
+            Remove(oldest!);
+        }
+    }
+
+    /// <summary>One use of one entry, held against eviction until it is returned.</summary>
+    public sealed class Lease : IDisposable
+    {
+        private readonly ByteBudgetCache<TKey, TValue> _cache;
+        private readonly TKey _key;
+        private Entry? _entry;
+
+        internal Lease(ByteBudgetCache<TKey, TValue> cache, TKey key, Entry entry)
+        {
+            _cache = cache;
+            _key = key;
+            _entry = entry;
+        }
+
+        public TValue Value => _entry?.Value ?? throw new ObjectDisposedException(nameof(Lease));
+
+        public void Dispose()
+        {
+            if (_entry == null)
+                return;
+            _entry.Pins--;
+            _entry = null;
+            _ = _cache;
+            _ = _key;
+        }
+    }
+}

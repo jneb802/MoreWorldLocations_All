@@ -164,10 +164,7 @@ public class GateAndSubtreeTests
     {
         // Most templates. Holding them would empty the world.
         using var world = new TerrainWorld();
-        var location = new ZoneSystem.ZoneLocation { m_prefabName = "ReviewSite" };
-        location.m_prefab.Name = "ReviewSite";
-        location.m_prefab.Asset = new GameObject("ReviewSite");
-        ServerOnlySelection.SetRegistered(new[] { "ReviewSite" });
+        ZoneSystem.ZoneLocation location = world.LocationWithoutTerrain("ReviewSite");
 
         Assert.True(LocationSpawnGate.MayPublish(location, Vector3.zero, Quaternion.identity));
     }

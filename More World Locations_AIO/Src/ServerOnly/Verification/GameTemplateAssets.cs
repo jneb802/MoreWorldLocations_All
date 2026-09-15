@@ -89,7 +89,7 @@ public static class GameTemplateAssets
         // exists: resolution swaps every mock for the real prefab and brings its
         // children, components and settings with it.
         AssetManager.Instance.ResolveMocksOnLoad(reference.m_assetID, null, null);
-        return new SoftReferenceHandle(reference);
+        return SoftReferenceLease.Take(reference);
     }
 
     /// <summary>
@@ -120,28 +120,74 @@ public static class GameTemplateAssets
         return PrefabManager.Instance?.GetPrefab(name);
     }
 
-    private sealed class SoftReferenceHandle : ITemplateHandle
+    /// <summary>
+    /// One reference to one template, given back exactly once.
+    ///
+    /// <para><b>What the loader actually does</b>, from the game's own
+    /// assembly: <c>SoftReference.Load</c> calls the loader's <c>Load</c>, which
+    /// increments the asset's reference count and THEN loads it;
+    /// <c>Release</c> decrements and unloads asynchronously at zero. Jötunn
+    /// patches that release and destroys the resolved mock clone on the same
+    /// zero. So a reference is acquired whether or not the load succeeds, and
+    /// the only balanced thing to do is take one and give one back.</para>
+    ///
+    /// <para><b>Acquisition point.</b> The increment is the third statement of
+    /// the loader's <c>Load</c>, after an initialisation wait and a table
+    /// lookup. Those are the only things that can throw before it, and the
+    /// lookup is already guarded by <c>IsValid</c>. A throw is therefore treated
+    /// as "nothing acquired" and releases nothing — the safe direction, since
+    /// releasing a reference we do not own would decrement somebody else's.</para>
+    /// </summary>
+    private sealed class SoftReferenceLease : ITemplateHandle
     {
         private SoftReference<GameObject> _reference;
-        private readonly bool _loadedHere;
+        private bool _held;
 
-        public SoftReferenceHandle(SoftReference<GameObject> reference)
+        private SoftReferenceLease(SoftReference<GameObject> reference)
         {
             _reference = reference;
-            // Only release what this handle loaded. Releasing a template the
-            // game had already loaded for its own reasons would pull it out from
-            // under whatever asked for it.
-            _loadedHere = _reference.Asset == null;
-            if (_loadedHere)
-                _reference.Load();
         }
 
-        public GameObject? Asset => _reference.Asset;
+        /// <summary>
+        /// Take a lease, or null when there is no such asset.
+        ///
+        /// A static factory rather than a constructor that loads: a constructor
+        /// that throws hands the caller nothing to dispose, and whatever it had
+        /// already acquired would be lost.
+        /// </summary>
+        public static SoftReferenceLease? Take(SoftReference<GameObject> reference)
+        {
+            if (!reference.IsValid)
+                return null;
+
+            var lease = new SoftReferenceLease(reference);
+            try
+            {
+                // The result is not checked: a failed load still acquired, and
+                // the caller learns about it from a null Asset.
+                lease._reference.Load();
+            }
+            catch
+            {
+                // Before the increment; see the type remarks. Nothing to give
+                // back, and the caller gets no lease to dispose.
+                return null;
+            }
+
+            lease._held = true;
+            TemplateAssets.LeaseTaken();
+            return lease;
+        }
+
+        public GameObject? Asset => _held ? _reference.Asset : null;
 
         public void Dispose()
         {
-            if (_loadedHere)
-                _reference.Release();
+            if (!_held)
+                return;
+            _held = false;
+            TemplateAssets.LeaseReturned();
+            _reference.Release();
         }
     }
 }

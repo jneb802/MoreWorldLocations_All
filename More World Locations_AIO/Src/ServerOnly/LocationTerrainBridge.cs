@@ -460,7 +460,28 @@ public static class LocationTerrainBridge
     /// <para>Only zones somebody asked about are kept, which is the zones our
     /// sites touch, and the whole thing is dropped when a world is.</para>
     /// </summary>
-    private static readonly Dictionary<GridKey, List<float>> s_generatedHeights = new();
+    /// <summary>
+    /// How many bytes of generated heights this mode may hold.
+    ///
+    /// One zone at width 64 is 65×65 floats — 16,900 bytes before overhead — so
+    /// this is a few hundred zones. The dictionary it replaces had no bound at
+    /// all and kept every zone a player had ever walked through until the world
+    /// closed; ten thousand zones would have been about 161 MiB of payload for
+    /// ground that had long since been written.
+    /// </summary>
+    public const long GeneratedHeightBudgetBytes = 32L * 1024 * 1024;
+
+    private static readonly ByteBudgetCache<GridKey, List<float>> s_generatedHeights =
+        new ByteBudgetCache<GridKey, List<float>>(
+            GeneratedHeightBudgetBytes, heights => heights.Count * sizeof(float));
+
+    /// <summary>What the height cache is holding, for the operator command and a run's accounting.</summary>
+    public static long GeneratedHeightBytes => s_generatedHeights.Bytes;
+
+    /// <summary>How many zones' heights are held, and how many of those are in use.</summary>
+    public static int GeneratedHeightEntries => s_generatedHeights.Count;
+
+    public static int GeneratedHeightPins => s_generatedHeights.Pinned;
 
     /// <summary>
     /// What a kept set of heights is FOR: one zone, at one grid.
@@ -471,7 +492,7 @@ public static class LocationTerrainBridge
     /// 4225 — for ever, because the wrong entry is preferred over a correct
     /// build that is sitting ready.
     /// </summary>
-    private readonly struct GridKey : System.IEquatable<GridKey>
+    internal readonly struct GridKey : System.IEquatable<GridKey>
     {
         private readonly Vector2s _zone;
         private readonly int _width;
@@ -504,6 +525,20 @@ public static class LocationTerrainBridge
     internal static void ForgetGeneratedHeights() => s_generatedHeights.Clear();
 
     /// <summary>
+    /// Hold one zone's heights against eviction for as long as an operation
+    /// needs them.
+    ///
+    /// The preflight asks about a zone and the write asks again afterwards, and
+    /// the builder hands its answer over only once — so between those two the
+    /// entry must not be the one the cache decides to drop. Null when nothing is
+    /// held for that grid, which is not an error: the caller reads through
+    /// TryGeneratedHeightAt as usual and the ask is simply repeated.
+    /// </summary>
+    internal static ByteBudgetCache<GridKey, List<float>>.Lease? PinGeneratedHeights(
+        Vector2s zone, int width, float scale) =>
+        s_generatedHeights.Pin(new GridKey(zone, width, scale));
+
+    /// <summary>
     /// The zone's generated heights: the heightmap's own build data when it has
     /// it, then anything already collected from the builder, then the builder
     /// itself. Null when none of them can answer.
@@ -527,11 +562,12 @@ public static class LocationTerrainBridge
 
         Vector2s zoneId = ZoneSystem.GetZone(new Vector3(zone.Origin.x, 0f, zone.Origin.z));
         var key = new GridKey(zoneId, zone.Width, zone.Scale);
-        if (s_generatedHeights.TryGetValue(key, out List<float> kept))
+        List<float> kept = s_generatedHeights.Peek(key);
+        if (kept != null)
         {
             // A kept entry of the wrong length is a bug in the keeping, not
             // something to reinterpret. Drop it and ask again.
-            if (kept != null && kept.Count == needed)
+            if (kept.Count == needed)
                 return kept;
             s_generatedHeights.Remove(key);
         }
@@ -550,7 +586,12 @@ public static class LocationTerrainBridge
             HeightmapBuilder.instance.RequestTerrainSync(centre, zone.Width, zone.Scale, false, WorldGenerator.instance);
         List<float> heights = data?.m_baseHeights;
         if (heights != null && heights.Count == needed)
-            s_generatedHeights[key] = heights;
+        {
+            // A refusal to keep it is not a refusal to use it: the caller has
+            // the array in hand and the work goes ahead. It only means the next
+            // caller has to ask the builder again, which is what a budget buys.
+            s_generatedHeights.Put(key, heights);
+        }
         return heights;
     }
 

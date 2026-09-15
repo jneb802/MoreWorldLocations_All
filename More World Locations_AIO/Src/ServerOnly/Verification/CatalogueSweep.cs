@@ -41,12 +41,26 @@ public static class CatalogueSweep
     public static CatalogueReport Audit()
     {
         CatalogueAudit.Progress = line => Log.LogInfo(line);
-        CatalogueReport report = CatalogueAudit.Run(
-            Subjects(),
-            FactsOf,
-            VerificationData.StockPrefabs,
-            VerificationData.ApprovedSelection,
-            ServerOnlyAllowlist.ExcludedPacks);
+        CatalogueReport report;
+        try
+        {
+            report = CatalogueAudit.Run(
+                Subjects(),
+                FactsOf,
+                VerificationData.StockPrefabs,
+                VerificationData.ApprovedSelection,
+                ServerOnlyAllowlist.ExcludedPacks);
+        }
+        finally
+        {
+            // The signature cache is the AUDIT's, not the world's: it exists to
+            // avoid re-walking a stock prefab within one sweep and has no reader
+            // afterwards. Cleared however the sweep ended — finished, cancelled
+            // or thrown — because "we did not get to the end" is exactly when
+            // nobody is left to clear it.
+            TemplateFactsExtractor.ForgetStockSignatures();
+            CatalogueAudit.Progress = null;
+        }
 
         // Said before registration rather than after, so that a world that comes
         // up wrong has its explanation above the symptom in the log.

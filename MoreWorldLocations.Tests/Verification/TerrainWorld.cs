@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using More_World_Locations_AIO.ServerOnly;
+using More_World_Locations_AIO.ServerOnly.Verification;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.Tests.Verification;
@@ -34,6 +35,43 @@ public sealed class TerrainWorld : IDisposable
         LocationSpawnGate.Forget();
         ZoneReadinessBarrier.Forget();
         ServerOnlySelection.SetRegistered(Array.Empty<string>());
+        TemplateAssets.ResetAccounting();
+        // Templates reach the terrain reader through the same lease the audit
+        // uses. That is the point of the shared seam: a test that handed the
+        // reader a GameObject directly would not exercise the ownership at all.
+        TemplateAssets.Source = name => _assets.TryGetValue(name, out GameObject asset)
+            ? new Lease(this, name, asset)
+            : null;
+    }
+
+    private readonly Dictionary<string, GameObject> _assets = new(StringComparer.Ordinal);
+    private readonly List<string> _opened = new();
+
+    /// <summary>Templates opened through the lease, in order.</summary>
+    public IReadOnlyList<string> Opened => _opened;
+
+    private sealed class Lease : ITemplateHandle
+    {
+        private readonly TerrainWorld _world;
+        private bool _held = true;
+
+        public Lease(TerrainWorld world, string name, GameObject asset)
+        {
+            _world = world;
+            Asset = asset;
+            world._opened.Add(name);
+            TemplateAssets.LeaseTakenForTest();
+        }
+
+        public GameObject? Asset { get; }
+
+        public void Dispose()
+        {
+            if (!_held)
+                return;
+            _held = false;
+            TemplateAssets.LeaseReturnedForTest();
+        }
     }
 
     public SyntheticWorld World { get; }
@@ -67,6 +105,19 @@ public sealed class TerrainWorld : IDisposable
         var location = new ZoneSystem.ZoneLocation { m_prefabName = name };
         location.m_prefab.Name = name;
         location.m_prefab.Asset = asset;
+        _assets[name] = asset;
+        ServerOnlySelection.SetRegistered(new[] { name });
+        return location;
+    }
+
+    /// <summary>A registered location whose template shapes no ground at all. Most templates.</summary>
+    public ZoneSystem.ZoneLocation LocationWithoutTerrain(string name)
+    {
+        var asset = new GameObject(name);
+        var location = new ZoneSystem.ZoneLocation { m_prefabName = name };
+        location.m_prefab.Name = name;
+        location.m_prefab.Asset = asset;
+        _assets[name] = asset;
         ServerOnlySelection.SetRegistered(new[] { name });
         return location;
     }
@@ -100,5 +151,6 @@ public sealed class TerrainWorld : IDisposable
         LocationTerrainPatch.Forget();
         LocationSpawnGate.Forget();
         ZoneReadinessBarrier.Forget();
+        TemplateAssets.Source = null;
     }
 }

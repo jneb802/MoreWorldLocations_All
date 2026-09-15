@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using More_World_Locations_AIO.ServerOnly.Verification;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.ServerOnly;
@@ -26,8 +27,17 @@ public static class LocationTerrainPatch
     private static BepInEx.Logging.ManualLogSource Log =>
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
 
-    /// <summary>Modifiers read off a resolved template, in template order, once per name.</summary>
-    private static readonly Dictionary<string, List<TerrainModifier>> s_templateModifiers = new();
+    /// <summary>
+    /// Terrain read off a resolved template, as values, once per name.
+    ///
+    /// Values and not components. A cached <c>TerrainModifier</c> keeps its
+    /// GameObject, which keeps the template, which keeps the bundle — so every
+    /// template ever read stayed resident for the life of the world and the
+    /// release that would have unloaded it could never take effect. A null entry
+    /// records a template that would not load, so the next caller does not try
+    /// again and log again.
+    /// </summary>
+    private static readonly Dictionary<string, TerrainTemplate?> s_templateTerrain = new();
 
     /// <summary>Sites already reported as reaching too far, so the log says it once.</summary>
     private static readonly HashSet<string> s_reportedOutOfReach = new();
@@ -35,7 +45,7 @@ public static class LocationTerrainPatch
     /// <summary>A new world reads its own templates; see LocationTerrainWriter.Reset.</summary>
     internal static void Forget()
     {
-        s_templateModifiers.Clear();
+        s_templateTerrain.Clear();
         s_reportedOutOfReach.Clear();
     }
 
@@ -109,19 +119,17 @@ public static class LocationTerrainPatch
             if (!ServerOnlySelection.IsOurs(name))
                 return null;
 
-            List<TerrainModifier> modifiers = ModifiersOf(location, name);
-            if (modifiers == null || modifiers.Count == 0)
+            TerrainTemplate? terrain = TerrainOf(location, name);
+            if (terrain == null || terrain.Modifiers.Count == 0)
                 return null;
 
             Vector3 placement = zdo.GetPosition();
             Quaternion rotation = zdo.GetRotation();
-            GameObject asset = location.m_prefab.Asset;
-            if (asset == null)
-                return null;
 
-            List<LocationTerrainOperation> operations = LocationTerrainReader.Operations(
-                modifiers,
-                modifier => placement + rotation * asset.transform.InverseTransformPoint(modifier.transform.position));
+            // No asset needed: the descriptors carry root-relative positions, so
+            // a site's ground can be worked out long after its template has been
+            // released.
+            List<LocationTerrainOperation> operations = terrain.OperationsAt(placement, rotation);
             if (operations.Count == 0)
                 return null;
 
@@ -169,30 +177,35 @@ public static class LocationTerrainPatch
     /// instantiate on a client that has the template — including the rule that a
     /// child under an inactive parent does not count.
     /// </summary>
-    internal static List<TerrainModifier> ModifiersOf(ZoneSystem.ZoneLocation location, string name)
+    internal static TerrainTemplate? TerrainOf(ZoneSystem.ZoneLocation location, string name)
     {
-        if (s_templateModifiers.TryGetValue(name, out List<TerrainModifier> cached))
+        if (s_templateTerrain.TryGetValue(name, out TerrainTemplate? cached))
             return cached;
 
-        // The template is a soft reference and its asset is null until something
-        // loads it. During generation the game has just done that; on the pass
-        // that takes up unfinished work after a restart it has not, which is why
-        // that pass found 136 proxies and nothing of ours. Load it the way
-        // ZoneSystem.SpawnLocation does.
-        if (location.m_prefab.Asset == null)
-            location.m_prefab.Load();
-        GameObject asset = location.m_prefab.Asset;
-        if (asset == null)
+        // Through the shared lease, so this read owns a reference for exactly as
+        // long as it is reading and gives it back afterwards. It used to call
+        // location.m_prefab.Load() with no release at all: an acquire with no
+        // matching give-back, which pinned the template and its bundle for the
+        // life of the process.
+        TerrainTemplate? terrain = null;
+        using (ITemplateHandle? lease = TemplateAssets.Open(name))
         {
-            Log.LogWarning($"{name}: its template would not load, so its terrain cannot be read.");
-            return null;
+            GameObject asset = lease?.Asset;
+            if (asset == null)
+            {
+                // Not cached as "no terrain": a template that would not load
+                // says nothing about what it does to the ground, and the
+                // difference decides whether a site is published or held.
+                Log.LogWarning($"{name}: its template would not load, so its terrain cannot be read.");
+                return null;
+            }
+            terrain = TerrainTemplate.Read(asset);
         }
 
-        var modifiers = new List<TerrainModifier>(global::Utils.GetEnabledComponentsInChildren<TerrainModifier>(asset));
-        s_templateModifiers[name] = modifiers;
-        if (modifiers.Count > 0)
-            Log.LogInfo($"{name}: {modifiers.Count} terrain modifier(s) to convert for stock clients.");
-        return modifiers;
+        s_templateTerrain[name] = terrain;
+        if (terrain.Modifiers.Count > 0)
+            Log.LogInfo($"{name}: {terrain.Modifiers.Count} terrain modifier(s) to convert for stock clients.");
+        return terrain;
     }
 
     /// <summary>

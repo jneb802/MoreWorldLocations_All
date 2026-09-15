@@ -194,21 +194,58 @@ public static class TemplateFactsExtractor
     ///
     /// <para>Cleared when a world is, beside the other per-world state.</para>
     /// </summary>
-    private static readonly Dictionary<string, string?> s_stockSignatures =
-        new Dictionary<string, string?>(StringComparer.Ordinal);
+    /// <summary>
+    /// How many bytes of stock signatures the audit may hold at once.
+    ///
+    /// A signature is text, and a large prefab's runs to hundreds of kilobytes;
+    /// an unbounded dictionary of them across a 194-template sweep is the second
+    /// thing that grew without limit. The budget is the audit's, not the
+    /// world's: it is cleared when the sweep ends, whether it ended by
+    /// finishing, by being cancelled, or by throwing.
+    /// </summary>
+    public const long StockSignatureBudgetBytes = 16L * 1024 * 1024;
 
-    /// <summary>A new world reloads its prefabs; see LocationTerrainWriter.Reset.</summary>
-    internal static void ForgetStockSignatures() => s_stockSignatures.Clear();
+    private static readonly ByteBudgetCache<string, string> s_stockSignatures =
+        new ByteBudgetCache<string, string>(
+            StockSignatureBudgetBytes, signature => signature.Length * sizeof(char), StringComparer.Ordinal);
+
+    /// <summary>Names whose stock prefab does not exist, kept as a fact rather than re-looked-up.</summary>
+    private static readonly HashSet<string> s_withoutStock = new HashSet<string>(StringComparer.Ordinal);
+
+    /// <summary>What the signature cache is holding, for a run's accounting.</summary>
+    public static long StockSignatureBytes => s_stockSignatures.Bytes;
+
+    public static int StockSignatureEntries => s_stockSignatures.Count;
+
+    /// <summary>The sweep is over, however it ended. Audit-owned memory goes with it.</summary>
+    internal static void ForgetStockSignatures()
+    {
+        s_stockSignatures.Clear();
+        s_withoutStock.Clear();
+    }
 
     private static string? StockSignature(
         string name, Func<string, GameObject?> stockPrefabOf, List<string> errors, ISet<string> uncompared)
     {
-        if (s_stockSignatures.TryGetValue(name, out string? cached))
+        if (s_withoutStock.Contains(name))
+            return null;
+
+        string cached = s_stockSignatures.Peek(name);
+        if (cached != null)
             return cached;
 
         GameObject? reference = Reference(stockPrefabOf, name, errors);
-        string? signature = reference == null ? null : Signature(reference, reference.transform, errors, uncompared);
-        s_stockSignatures[name] = signature;
+        if (reference == null)
+        {
+            s_withoutStock.Add(name);
+            return null;
+        }
+
+        string signature = Signature(reference, reference.transform, errors, uncompared);
+        // A signature too large for the whole budget is USED and not kept:
+        // admitting it would evict everything else and still be over. The
+        // comparison is identical; only the next caller pays for it again.
+        s_stockSignatures.Put(name, signature);
         return signature;
     }
 
