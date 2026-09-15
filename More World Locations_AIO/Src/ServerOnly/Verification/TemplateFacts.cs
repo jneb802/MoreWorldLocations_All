@@ -362,7 +362,9 @@ public sealed class TemplateFacts
         IReadOnlyList<string>? extractionErrors = null,
         bool complete = true,
         string interiorPrefabName = "",
-        string dungeonTheme = "")
+        string dungeonTheme = "",
+        IReadOnlyList<string>? uncomparedComponents = null,
+        string baselineProvenance = "")
     {
         Name = name ?? "";
         Pack = pack ?? "";
@@ -375,6 +377,8 @@ public sealed class TemplateFacts
         Complete = complete;
         InteriorPrefabName = interiorPrefabName ?? "";
         DungeonTheme = dungeonTheme ?? "";
+        UncomparedComponents = uncomparedComponents ?? System.Array.Empty<string>();
+        BaselineProvenance = baselineProvenance ?? "";
     }
 
     /// <summary>The exact name, with its exact capitalisation. Never folded: a name that differs only in case is a different asset lookup.</summary>
@@ -413,6 +417,32 @@ public sealed class TemplateFacts
 
     /// <summary>The dungeon theme the definition attaches, if any. Same reasoning as <see cref="InteriorPrefabName"/>.</summary>
     public string DungeonTheme { get; }
+
+    /// <summary>
+    /// Component types present in the compared subtrees whose settings this
+    /// build does not know how to read — animators, audio, particles, lights,
+    /// levels of detail and the like.
+    ///
+    /// Recorded, and reported, because "everything we know how to compare
+    /// matched" is a different claim from "these are equivalent" and only the
+    /// first one is true. It is not a reason to exclude a template: every stock
+    /// prefab in the game carries some of them, and treating that as a defect
+    /// would exclude the catalogue rather than check it.
+    /// </summary>
+    public IReadOnlyList<string> UncomparedComponents { get; }
+
+    /// <summary>
+    /// Why the stock prefabs compared against might not be stock, or empty when
+    /// nothing is known against them.
+    ///
+    /// The baseline is read from the running server's own registry, and this
+    /// process has the mod in it. MWL clones rather than mutating, so its own
+    /// presence is accounted for — but another plugin that edits a vanilla
+    /// prefab in place would move the baseline with it, and a comparison against
+    /// a moved baseline proves nothing. Naming the plugins that are loaded is
+    /// what turns that from a hidden assumption into a stated one.
+    /// </summary>
+    public string BaselineProvenance { get; }
 
     /// <summary>Whether this location builds an interior at spawn time rather than placing it from the template.</summary>
     public bool GeneratesInterior =>

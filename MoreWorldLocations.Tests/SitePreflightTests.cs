@@ -135,13 +135,17 @@ public class SitePreflightTests
         Assert.Equal(SiteVerdict.Refuse, decision.Verdict);
         Assert.Equal(SiteRefusalCodes.Contested, decision.Code);
     }
-
     [Fact]
-    public void GroundThatCannotBeReadIsUndecidedAndTheSiteIsStillPlaced()
+    public void GroundThatCannotBeReadIsUndecidedAndNothingIsPublished()
     {
-        // "We could not look" is not "the ground is wrong". Refusing here would
-        // delete locations whenever the generator had not reached a neighbouring
-        // zone yet, which is a data-availability problem, not a defect.
+        // This used to publish, on the reasoning that "we could not look" is not
+        // "the ground is wrong" and refusing would delete locations for a
+        // scheduling detail. Both halves true, conclusion wrong: if the ground
+        // later turns out to be contested or beyond the compiler's range, the
+        // buildings are already standing on it and the whole gap is back. The
+        // placement is HELD instead -- see ZoneReadinessBarrier -- so it is
+        // neither published nor deleted.
+        //
         // Zone 0,0 runs to x = 32, so this straddles the edge into zone 1,0.
         var operations = new[] { Level(new Vector3(30f, 0f, 0f), 30f, radius: 8f) };
 
@@ -150,9 +154,29 @@ public class SitePreflightTests
 
         Assert.Equal(SiteVerdict.Undecided, decision.Verdict);
         Assert.Equal(SiteRefusalCodes.GroundUnknown, decision.Code);
-        Assert.True(decision.MayPublish);
-        // And it is not a pass: the reason says so in as many words.
-        Assert.Contains("unchecked", decision.Reason);
+        Assert.False(decision.MayPublish);
+        Assert.Contains("not placed", decision.Reason);
+    }
+
+    [Fact]
+    public void ASiteWhoseZoneCarriesAnUnreadableCompilerIsNotPublished()
+    {
+        // A zone whose saved compiler will not decode is the opposite of an
+        // empty zone: it says there IS something written there and nobody can
+        // read it. Converting over that lands on another writer's ground.
+        SitePreflight.ZoneGround unreadable =
+            (Vector2s zone, out TerrainZoneDeltas deltas, out TerrainConversion.VertexHeight baseHeightAt) =>
+            {
+                deltas = null!;
+                baseHeightAt = Flat(31f);
+                return true;
+            };
+
+        SiteDecision decision = SitePreflight.Decide(
+            "site", new Vector2s(0, 0), new[] { Level(new Vector3(0f, 0f, 0f), 30f) }, unreadable);
+
+        Assert.Equal(SiteVerdict.Undecided, decision.Verdict);
+        Assert.False(decision.MayPublish);
     }
 
     [Fact]

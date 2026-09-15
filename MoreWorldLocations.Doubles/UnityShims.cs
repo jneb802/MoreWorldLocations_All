@@ -150,6 +150,13 @@ public struct Vector2Int
     }
 }
 
+/// <summary>Shim for UnityEngine.Time: the clock the outstanding-work tick runs on.</summary>
+public static class Time
+{
+    /// <summary>Seconds since start. Tests set it directly rather than waiting.</summary>
+    public static float time;
+}
+
 public static class Mathf
 {
     public const float PI = (float)System.Math.PI;
@@ -208,4 +215,26 @@ public struct Quaternion
     public float x, y, z, w;
     public Quaternion(float x, float y, float z, float w) { this.x = x; this.y = y; this.z = z; this.w = w; }
     public static Quaternion identity => new(0f, 0f, 0f, 1f);
+
+    /// <summary>
+    /// Only the part the template walk reads. Enough for a yaw, which is what
+    /// vanilla places a location with; a full rotation is not modelled and a
+    /// test that needed one would be testing the double.
+    /// </summary>
+    public Vector3 eulerAngles =>
+        new(0f, 2f * (float)System.Math.Atan2(y, w) * 180f / Mathf.PI, 0f);
+
+    /// <summary>Rotating a point about the y axis, which is all a placement does.</summary>
+    public static Vector3 operator *(Quaternion rotation, Vector3 point)
+    {
+        float radians = 2f * (float)System.Math.Atan2(rotation.y, rotation.w);
+        float cos = (float)System.Math.Cos(radians), sin = (float)System.Math.Sin(radians);
+        return new Vector3(point.x * cos + point.z * sin, point.y, -point.x * sin + point.z * cos);
+    }
+
+    public static Quaternion Euler(float x, float y, float z)
+    {
+        float half = y * Mathf.PI / 360f;
+        return new Quaternion(0f, (float)System.Math.Sin(half), 0f, (float)System.Math.Cos(half));
+    }
 }

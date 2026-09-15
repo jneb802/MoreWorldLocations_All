@@ -191,7 +191,7 @@ public static class CatalogueSweep
         return TemplateFactsExtractor.Extract(
             subject.Name, subject.Pack, handle.Asset,
             subject.InteriorPrefabName, subject.DungeonTheme,
-            TemplateAssets.StockPrefabs);
+            TemplateAssets.StockPrefabs, TemplateAssets.BaselineProvenance);
     }
 
     /// <summary>Which pack a name came from, for scope exclusion.</summary>

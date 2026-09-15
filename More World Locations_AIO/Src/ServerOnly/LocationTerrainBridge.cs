@@ -434,7 +434,7 @@ public static class LocationTerrainBridge
         }
 
         int pitch = zone.Pitch;
-        if (baseHeights.Count < pitch * pitch)
+        if (baseHeights.Count != pitch * pitch)
         {
             reason =
                 $"the generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0} are " +
@@ -460,7 +460,45 @@ public static class LocationTerrainBridge
     /// <para>Only zones somebody asked about are kept, which is the zones our
     /// sites touch, and the whole thing is dropped when a world is.</para>
     /// </summary>
-    private static readonly Dictionary<Vector2s, List<float>> s_generatedHeights = new();
+    private static readonly Dictionary<GridKey, List<float>> s_generatedHeights = new();
+
+    /// <summary>
+    /// What a kept set of heights is FOR: one zone, at one grid.
+    ///
+    /// The zone alone is not the identity. A 64-wide request and a 32-wide
+    /// request for the same zone are different arrays of different lengths, and
+    /// keeping them under one key hands the writer 1089 heights where it needs
+    /// 4225 — for ever, because the wrong entry is preferred over a correct
+    /// build that is sitting ready.
+    /// </summary>
+    private readonly struct GridKey : System.IEquatable<GridKey>
+    {
+        private readonly Vector2s _zone;
+        private readonly int _width;
+        private readonly float _scale;
+
+        public GridKey(Vector2s zone, int width, float scale)
+        {
+            _zone = zone;
+            _width = width;
+            _scale = scale;
+        }
+
+        public bool Equals(GridKey other) =>
+            _zone == other._zone && _width == other._width && _scale.Equals(other._scale);
+
+        public override bool Equals(object obj) => obj is GridKey other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = _zone.GetHashCode();
+                hash = hash * 397 ^ _width;
+                return hash * 397 ^ _scale.GetHashCode();
+            }
+        }
+    }
 
     /// <summary>A new world generates different ground. See LocationTerrainWriter.Reset.</summary>
     internal static void ForgetGeneratedHeights() => s_generatedHeights.Clear();
@@ -473,17 +511,30 @@ public static class LocationTerrainBridge
     private static List<float> BaseHeights(TerrainZoneDeltas zone, Heightmap heightmap, out float originY)
     {
         originY = 0f;
+        int needed = zone.Pitch * zone.Pitch;
+
+        // EXACTLY the right number, not at least. A longer array is a different
+        // grid, and reading it with this grid's stride walks a 65-wide zone
+        // along 33-wide rows: every row after the first comes from the wrong
+        // place, and the result looks like terrain.
         if (heightmap != null && heightmap.m_buildData != null
             && heightmap.m_buildData.m_baseHeights != null
-            && heightmap.m_buildData.m_baseHeights.Count >= zone.Pitch * zone.Pitch)
+            && heightmap.m_buildData.m_baseHeights.Count == needed)
         {
             originY = heightmap.transform.position.y;
             return heightmap.m_buildData.m_baseHeights;
         }
 
         Vector2s zoneId = ZoneSystem.GetZone(new Vector3(zone.Origin.x, 0f, zone.Origin.z));
-        if (s_generatedHeights.TryGetValue(zoneId, out List<float> kept))
-            return kept;
+        var key = new GridKey(zoneId, zone.Width, zone.Scale);
+        if (s_generatedHeights.TryGetValue(key, out List<float> kept))
+        {
+            // A kept entry of the wrong length is a bug in the keeping, not
+            // something to reinterpret. Drop it and ask again.
+            if (kept != null && kept.Count == needed)
+                return kept;
+            s_generatedHeights.Remove(key);
+        }
 
         if (HeightmapBuilder.instance == null || WorldGenerator.instance == null)
             return null;
@@ -498,8 +549,8 @@ public static class LocationTerrainBridge
         HeightmapBuilder.HMBuildData data =
             HeightmapBuilder.instance.RequestTerrainSync(centre, zone.Width, zone.Scale, false, WorldGenerator.instance);
         List<float> heights = data?.m_baseHeights;
-        if (heights != null)
-            s_generatedHeights[zoneId] = heights;
+        if (heights != null && heights.Count == needed)
+            s_generatedHeights[key] = heights;
         return heights;
     }
 

@@ -32,20 +32,21 @@ public static class LocationSpawnGate
     /// <summary>Placements refused, by site identity and reason, for the operator command.</summary>
     private static readonly Dictionary<string, SiteDecision> s_refused = new();
 
-    /// <summary>Placements published without the ground having been readable.</summary>
-    private static readonly Dictionary<string, SiteDecision> s_unchecked = new();
+    /// <summary>Placements held because nothing could be established about them yet.</summary>
+    private static readonly Dictionary<string, SiteDecision> s_held = new();
 
     internal static void Forget()
     {
         s_refused.Clear();
-        s_unchecked.Clear();
+        s_held.Clear();
     }
 
     /// <summary>What the gate has refused and what it could not check, for <c>mwl_terrain</c>.</summary>
     public static string Status()
     {
-        if (s_refused.Count == 0 && s_unchecked.Count == 0)
-            return "No placement has been refused, and every one was checked before it was placed.";
+        int waiting = ZoneReadinessBarrier.Holds.Count;
+        if (s_refused.Count == 0 && s_held.Count == 0 && waiting == 0)
+            return "No placement has been refused or held; every one was checked before it was placed.";
 
         var text = new System.Text.StringBuilder();
         text.Append(s_refused.Count).Append(" placement(s) refused before anything was placed:\n");
@@ -53,11 +54,20 @@ public static class LocationSpawnGate
             text.Append("  ").Append(entry.Key).Append(" — ").Append(entry.Value.Code).Append(": ")
                 .Append(entry.Value.Reason).Append('\n');
 
-        if (s_unchecked.Count > 0)
+        if (s_held.Count > 0)
         {
-            text.Append(s_unchecked.Count).Append(" placed without the ground being readable (NOT a pass):\n");
-            foreach (KeyValuePair<string, SiteDecision> entry in Sorted(s_unchecked))
-                text.Append("  ").Append(entry.Key).Append(" — ").Append(entry.Value.Reason).Append('\n');
+            text.Append(s_held.Count).Append(" placement(s) held, waiting for ground that can be read:\n");
+            foreach (KeyValuePair<string, SiteDecision> entry in Sorted(s_held))
+                text.Append("  ").Append(entry.Key).Append(" — ").Append(entry.Value.Code).Append(": ")
+                    .Append(entry.Value.Reason).Append('\n');
+        }
+        if (waiting > 0)
+        {
+            text.Append(waiting).Append(" zone(s) not generated yet, waiting for ground that can be read:\n");
+            foreach (KeyValuePair<Vector2s, int> hold in ZoneReadinessBarrier.Holds)
+                text.Append("  zone ").Append(hold.Key.x).Append(',').Append(hold.Key.y)
+                    .Append(" — held ").Append(hold.Value).Append(" of ")
+                    .Append(ZoneReadinessBarrier.MaxHolds).Append(" attempt(s)\n");
         }
         return text.ToString().TrimEnd('\n');
     }
@@ -83,37 +93,75 @@ public static class LocationSpawnGate
         if (string.IsNullOrEmpty(name) || !ServerOnlySelection.IsOurs(name))
             return true;
 
-        List<LocationTerrainOperation> operations = OperationsAt(location, name, position, rotation);
-        if (operations == null || operations.Count == 0)
-            return true;
-
         Vector2s home = ZoneSystem.GetZone(position);
         string siteId = LocationTerrainReader.SiteId(name, position, home);
-        SiteDecision decision = SitePreflight.Decide(siteId, home, operations, GroundOf);
 
-        switch (decision.Verdict)
+        // A placement the readiness barrier gave up on stays refused, whatever a
+        // fresh look would now say: it was held as long as the bound allows, and
+        // publishing it here would undo that.
+        if (s_refused.TryGetValue(siteId, out SiteDecision already))
+            return already.MayPublish;
+
+        List<LocationTerrainOperation> operations =
+            OperationsAt(location, name, position, rotation, out string unreadable);
+        if (unreadable != null)
         {
-            case SiteVerdict.Refuse:
-                if (!s_refused.ContainsKey(siteId))
-                {
-                    s_refused[siteId] = decision;
-                    Log.LogWarning(
-                        $"{name} at {position.x:0},{position.z:0} was NOT placed: {decision.Reason} " +
-                        "Nothing of it exists, which is the point — a site that cannot have its ground " +
-                        "shaped must not leave its buildings behind.");
-                }
-                return false;
+            // Not "no terrain". A template that would not load says nothing
+            // about what it does to the ground, and treating silence as "shapes
+            // nothing" publishes exactly the site this check exists to hold.
+            return Record(siteId, name, position, new SiteDecision(
+                SiteVerdict.Undecided, SiteRefusalCodes.TemplateUnreadable, unreadable));
+        }
+        if (operations.Count == 0)
+            return true;
 
-            case SiteVerdict.Undecided:
-                if (!s_unchecked.ContainsKey(siteId))
-                {
-                    s_unchecked[siteId] = decision;
-                    Log.LogWarning($"{name} at {position.x:0},{position.z:0} was placed UNCHECKED: {decision.Reason}");
-                }
-                return true;
+        return Record(siteId, name, position, SitePreflight.Decide(siteId, home, operations, GroundOf));
+    }
 
-            default:
-                return true;
+    /// <summary>
+    /// Write the decision down and answer it. Nothing here decides anything; it
+    /// exists so that every path out of the gate is on the record — a site that
+    /// was never built appears in no ledger of work, and an operator would
+    /// otherwise see a gap in the map with nothing anywhere saying why.
+    /// </summary>
+    private static bool Record(string siteId, string name, Vector3 position, SiteDecision decision)
+    {
+        if (decision.MayPublish)
+            return true;
+
+        Dictionary<string, SiteDecision> into =
+            decision.Verdict == SiteVerdict.Refuse ? s_refused : s_held;
+        if (!into.ContainsKey(siteId))
+        {
+            into[siteId] = decision;
+            Log.LogWarning(
+                $"{name} at {position.x:0},{position.z:0} was NOT placed ({decision.Code}): {decision.Reason} " +
+                "Nothing of it exists, which is the point — a site whose ground cannot be shaped must not " +
+                "leave its buildings behind.");
+        }
+        return false;
+    }
+
+    /// <summary>Give up on a placement permanently, so the zone stops being held for it.</summary>
+    internal static void GiveUp(string siteId, SiteDecision decision)
+    {
+        s_held.Remove(siteId);
+        if (!s_refused.ContainsKey(siteId))
+            s_refused[siteId] = decision;
+    }
+
+    /// <summary>Whether this placement has already been given up on.</summary>
+    internal static bool IsRefused(string siteId) => s_refused.ContainsKey(siteId);
+
+    /// <summary>Record a check that threw, so a withheld site still has a reason attached.</summary>
+    internal static void RecordCheckFailure(ZoneSystem.ZoneLocation location, Vector3 position, Exception ex)
+    {
+        string name = location?.m_prefabName ?? "(unknown)";
+        string siteId = LocationTerrainReader.SiteId(name, position, ZoneSystem.GetZone(position));
+        if (!s_held.ContainsKey(siteId))
+        {
+            s_held[siteId] = new SiteDecision(SiteVerdict.Undecided, SiteRefusalCodes.CheckFailed,
+                $"the check itself failed with {ex.GetType().Name}: {ex.Message}");
         }
     }
 
@@ -127,15 +175,31 @@ public static class LocationSpawnGate
     /// it is supposed to be predicting.
     /// </summary>
     private static List<LocationTerrainOperation> OperationsAt(
-        ZoneSystem.ZoneLocation location, string name, Vector3 position, Quaternion rotation)
+        ZoneSystem.ZoneLocation location, string name, Vector3 position, Quaternion rotation,
+        out string unreadable)
     {
+        unreadable = null;
+
+        // ModifiersOf returns null when the template would not load and an empty
+        // list when it loaded and has none. Those were one answer here, and they
+        // are opposite answers: one is "this shapes no ground", the other is
+        // "nobody knows what this does to the ground".
         List<TerrainModifier> modifiers = LocationTerrainPatch.ModifiersOf(location, name);
-        if (modifiers == null || modifiers.Count == 0)
-            return null;
+        if (modifiers == null)
+        {
+            unreadable = $"the template for '{name}' would not load, so what it does to the ground is unknown.";
+            return new List<LocationTerrainOperation>();
+        }
+        if (modifiers.Count == 0)
+            return new List<LocationTerrainOperation>();
 
         GameObject asset = location.m_prefab.Asset;
         if (asset == null)
-            return null;
+        {
+            unreadable = $"the template for '{name}' has {modifiers.Count} terrain modifier(s) and no loaded asset " +
+                         "to place them against, so where they would shape the ground is unknown.";
+            return new List<LocationTerrainOperation>();
+        }
 
         return LocationTerrainReader.Operations(
             modifiers,
@@ -169,9 +233,17 @@ public static class LocationSpawnGate
             new Vector3(deltas.Origin.x, 0f, deltas.Origin.z)), out baseHeightAt, out _);
     }
 
-    /// <summary>Heightmap.m_width for a zone, and its metres per vertex; the same values the compiler holds.</summary>
-    private const int ZoneWidth = 32;
-    private const float ZoneScale = 1f;
+    /// <summary>
+    /// The zone grid, from the one place that defines it.
+    ///
+    /// This used to be 32 here and 64 in the writer. The gate therefore built a
+    /// 33×33 grid over the middle of a 65×65 zone, and every modifier in the
+    /// outer half of a zone fell outside the vertices it was checking — so a cut
+    /// the compiler could never hold was waved through, and the buildings went
+    /// up on ground the conversion would later refuse.
+    /// </summary>
+    private const int ZoneWidth = TerrainZoneDeltas.ZoneWidth;
+    private const float ZoneScale = TerrainZoneDeltas.ZoneScale;
 
     private static TerrainZoneDeltas Empty(Vector2s zone) =>
         new TerrainZoneDeltas(ZoneSystem.GetZonePos(zone), ZoneWidth, ZoneScale);
@@ -207,12 +279,15 @@ public static class LocationSpawnGatePatch
         }
         catch (Exception ex)
         {
-            // A gate that throws must not become a gate that refuses. The site
-            // is placed, exactly as it would have been before this existed, and
-            // the failure is loud.
+            // A check that fails withholds. It used to publish, on the reasoning
+            // that our own bug should not cost the player a location -- but the
+            // cost of publishing is a building standing on ground the conversion
+            // will refuse, which is the outcome the whole gate exists to
+            // prevent. A missing location is visible and recoverable; a broken
+            // one is neither.
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError(
-                $"The site preflight failed and the location was placed unchecked: {ex}");
-            return true;
+                $"The site preflight failed, so the location was NOT placed: {ex}");
+            LocationSpawnGate.RecordCheckFailure(location, pos, ex);
         }
 
         __result = null;

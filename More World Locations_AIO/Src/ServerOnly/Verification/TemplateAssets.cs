@@ -54,6 +54,15 @@ public static class TemplateAssets
     public static ITemplateHandle? Open(string name) =>
         Source == null ? null : Source(name);
 
+    /// <summary>
+    /// What is known against the stock prefabs this process compares with, or
+    /// empty when nothing is.
+    ///
+    /// Set once at startup. It exists so that the limit on the baseline is
+    /// reported with every verdict rather than living in a comment.
+    /// </summary>
+    public static string BaselineProvenance { get; set; } = "";
+
     /// <summary>Whether this process can load templates at all.</summary>
     public static bool CanLoad => Source != null;
 }

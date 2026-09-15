@@ -17,7 +17,21 @@ namespace More_World_Locations_AIO.ServerOnly;
 /// </summary>
 public sealed class TerrainZoneDeltas
 {
-    /// <summary>Heightmap.m_width: 32 for a zone, so 33 vertices a side.</summary>
+    /// <summary>
+    /// A zone's grid: 64 across at one metre, so 65 vertices a side.
+    ///
+    /// Here, once, because two halves of this mode have to mean the same thing
+    /// by "a zone". They did not: the writer used 64 and the spawn gate used 32,
+    /// so the gate judged a 33×33 grid covering the middle of the zone and let
+    /// an impossible cut through anywhere in the outer half. A constant nobody
+    /// shares is a constant two people will disagree about.
+    /// </summary>
+    public const int ZoneWidth = 64;
+
+    /// <summary>Metres per vertex. See <see cref="ZoneWidth"/>.</summary>
+    public const float ZoneScale = 1f;
+
+    /// <summary>Heightmap.m_width: 64 for a zone, so 65 vertices a side.</summary>
     public readonly int Width;
 
     /// <summary>Metres per vertex (Heightmap.m_scale, 1 for a zone).</summary>

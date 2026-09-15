@@ -14,12 +14,21 @@ public enum SiteVerdict
     Refuse,
 
     /// <summary>
-    /// Nothing could be established either way.
+    /// Nothing could be established either way, so nothing is published yet.
     ///
-    /// The site is published, because refusing here would delete locations for a
-    /// data-availability reason rather than a known defect — and "we could not
-    /// look" is not "the ground is wrong". It is recorded as unchecked rather
-    /// than counted as a pass.
+    /// <para>This used to publish, on the reasoning that "we could not look" is
+    /// not "the ground is wrong" and refusing would delete locations for a data
+    /// availability reason. Both halves are true and the conclusion was wrong:
+    /// if the ground later turns out to be contested or beyond the compiler's
+    /// range, the buildings are already standing on it and the whole gap is
+    /// back. Writing "unchecked" in a log makes the evidence honest; it does not
+    /// make the site serveable.</para>
+    ///
+    /// <para>The placement is held instead — see
+    /// <see cref="ZoneReadinessBarrier"/>, which keeps the zone ungenerated
+    /// until the ground can be read, the way vanilla itself holds a zone whose
+    /// terrain is not ready. Nothing is deleted and nothing is published on a
+    /// guess.</para>
     /// </summary>
     Undecided,
 }
@@ -41,8 +50,14 @@ public sealed class SiteDecision
 
     public string Reason { get; }
 
-    /// <summary>Whether the site may be published. A refusal is the only thing that stops it.</summary>
-    public bool MayPublish => Verdict != SiteVerdict.Refuse;
+    /// <summary>
+    /// Whether the site may be published. Only a decided, servable site may.
+    ///
+    /// An undecided one is held, not published: the point of asking before the
+    /// buildings exist is lost the moment an unanswered question publishes them
+    /// anyway.
+    /// </summary>
+    public bool MayPublish => Verdict == SiteVerdict.Serve;
 
     public bool Serves => Verdict == SiteVerdict.Serve;
 
@@ -63,6 +78,15 @@ public static class SiteRefusalCodes
 
     /// <summary>The generated ground for one of the zones could not be read, so nothing can be decided.</summary>
     public const string GroundUnknown = "site_ground_unknown";
+
+    /// <summary>The template's own terrain could not be read, so what the site would do to the ground is unknown.</summary>
+    public const string TemplateUnreadable = "site_template_unreadable";
+
+    /// <summary>The check itself failed. The site is withheld rather than published unchecked.</summary>
+    public const string CheckFailed = "site_check_failed";
+
+    /// <summary>The ground never became readable within the bound, so the placement is given up rather than held for ever.</summary>
+    public const string NeverReadable = "site_never_readable";
 }
 
 /// <summary>
@@ -147,16 +171,15 @@ public static class SitePreflight
             if (!groundOf(zone, out TerrainZoneDeltas deltas, out TerrainConversion.VertexHeight baseHeightAt)
                 || deltas == null || baseHeightAt == null)
             {
-                // Undecided, not refused. The site is published and the later
-                // conversion retries it, exactly as before this check existed.
-                // Refusing here would delete locations whenever the generator
-                // had not got to a neighbouring zone yet, which is a data
-                // availability problem and not a defect in the ground.
+                // Undecided: held, not published and not deleted. The zone stays
+                // ungenerated until the ground can be read -- the same thing
+                // vanilla does when its own terrain is not ready yet.
                 return new SiteDecision(SiteVerdict.Undecided, SiteRefusalCodes.GroundUnknown,
                     string.Format(CultureInfo.InvariantCulture,
                         "the ground the client generates for zone {0},{1} could not be read, so nothing is " +
-                        "established about this placement either way. It is placed and the conversion will try " +
-                        "again; it is recorded as unchecked rather than counted as served.",
+                        "established about this placement either way. It is not placed: the zone waits until " +
+                        "the ground can be read, and publishing on an unanswered question is exactly the " +
+                        "outcome this check exists to prevent.",
                         zone.x, zone.y));
             }
 

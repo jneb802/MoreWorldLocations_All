@@ -446,9 +446,9 @@ public static class LocationTerrainWriter
     /// <summary>How many outstanding conversions one zone generation may retry.</summary>
     private const int RetriesPerZone = 4;
 
-    /// <summary>A zone heightmap is 64 vertices across at 1 m.</summary>
-    private const int ZoneWidth = 64;
-    private const float ZoneScale = 1f;
+    /// <summary>The zone grid, from the one place that defines it.</summary>
+    private const int ZoneWidth = TerrainZoneDeltas.ZoneWidth;
+    private const float ZoneScale = TerrainZoneDeltas.ZoneScale;
 
     /// <summary>The work behind each outstanding ledger entry, so a retry has something to run.</summary>
     private static readonly Dictionary<string, LocationTerrainWork> s_pendingWork =

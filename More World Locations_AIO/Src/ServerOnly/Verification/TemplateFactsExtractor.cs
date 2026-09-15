@@ -47,7 +47,8 @@ public static class TemplateFactsExtractor
     /// </param>
     public static TemplateFacts Extract(
         string name, string pack, GameObject? resolved, string interiorPrefabName = "", string dungeonTheme = "",
-        Func<string, GameObject?>? stockPrefabOf = null)
+        Func<string, GameObject?>? stockPrefabOf = null,
+        string baselineProvenance = "")
     {
         if (resolved == null)
             return TemplateFacts.Unreadable(name, pack, "the soft-referenced template resolved to null");
@@ -55,26 +56,29 @@ public static class TemplateFactsExtractor
         var children = new List<ChildFact>();
         var terrain = new List<TerrainFact>();
         var errors = new List<string>();
+        var uncompared = new SortedSet<string>(StringComparer.Ordinal);
 
         try
         {
             // The root itself, first. A walk that starts at the children never
             // reads it, and a behaviour attached there drives the whole site.
             children.Add(FactOf(resolved, resolved.transform, resolved.transform, name,
-                enabled: resolved.activeSelf, underNetworked: false, isRoot: true, stockPrefabOf, errors));
+                enabled: resolved.activeSelf, underNetworked: false, isRoot: true, stockPrefabOf, errors, uncompared));
             TerrainModifier rootModifier = resolved.GetComponent<TerrainModifier>();
             if (rootModifier != null)
                 terrain.Add(TerrainFactOf(rootModifier, resolved.transform, resolved.transform, name, resolved.activeSelf));
 
             Walk(resolved.transform, resolved.transform, name, resolved.activeSelf,
-                resolved.GetComponent<ZNetView>() != null, children, terrain, errors, stockPrefabOf);
+                resolved.GetComponent<ZNetView>() != null, children, terrain, errors, stockPrefabOf, uncompared);
         }
         catch (Exception ex)
         {
             errors.Add($"the walk threw at some point inside the hierarchy: {ex.GetType().Name}: {ex.Message}");
             return new TemplateFacts(name, pack, children: children, terrain: terrain,
                 extractionErrors: errors, complete: false,
-                interiorPrefabName: interiorPrefabName, dungeonTheme: dungeonTheme);
+                interiorPrefabName: interiorPrefabName, dungeonTheme: dungeonTheme,
+                uncomparedComponents: new List<string>(uncompared),
+                baselineProvenance: stockPrefabOf == null ? "" : baselineProvenance);
         }
 
         return new TemplateFacts(name, pack,
@@ -85,7 +89,9 @@ public static class TemplateFactsExtractor
             extractionErrors: errors,
             complete: true,
             interiorPrefabName: interiorPrefabName,
-            dungeonTheme: dungeonTheme);
+            dungeonTheme: dungeonTheme,
+            uncomparedComponents: new List<string>(uncompared),
+            baselineProvenance: stockPrefabOf == null ? "" : baselineProvenance);
     }
 
     /// <summary>
@@ -100,7 +106,7 @@ public static class TemplateFactsExtractor
         Transform node, Transform root, string rootName,
         bool enabledSoFar, bool underNetworked,
         List<ChildFact> children, List<TerrainFact> terrain, List<string> errors,
-        Func<string, GameObject?>? stockPrefabOf)
+        Func<string, GameObject?>? stockPrefabOf, ISet<string> uncompared)
     {
         for (int i = 0; i < node.childCount; i++)
         {
@@ -114,13 +120,13 @@ public static class TemplateFactsExtractor
             // game would not spawn a ZDO for it either.
             bool networked = view != null && view.enabled;
 
-            children.Add(FactOf(go, child, root, rootName, enabled, underNetworked, false, stockPrefabOf, errors));
+            children.Add(FactOf(go, child, root, rootName, enabled, underNetworked, false, stockPrefabOf, errors, uncompared));
 
             TerrainModifier modifier = go.GetComponent<TerrainModifier>();
             if (modifier != null)
                 terrain.Add(TerrainFactOf(modifier, child, root, rootName, enabled));
 
-            Walk(child, root, rootName, enabled, underNetworked || networked, children, terrain, errors, stockPrefabOf);
+            Walk(child, root, rootName, enabled, underNetworked || networked, children, terrain, errors, stockPrefabOf, uncompared);
         }
     }
 
@@ -128,7 +134,7 @@ public static class TemplateFactsExtractor
     private static ChildFact FactOf(
         GameObject go, Transform node, Transform root, string rootName,
         bool enabled, bool underNetworked, bool isRoot,
-        Func<string, GameObject?>? stockPrefabOf, List<string> errors)
+        Func<string, GameObject?>? stockPrefabOf, List<string> errors, ISet<string> uncompared)
     {
         ZNetView view = go.GetComponent<ZNetView>();
         bool networked = view != null && view.enabled;
@@ -136,13 +142,13 @@ public static class TemplateFactsExtractor
         // Only an object the client actually receives has a stock counterpart to
         // be compared against. For anything else the comparison is meaningless:
         // nothing is instantiated from a name.
-        string authored = networked ? Signature(go, node, errors) : "";
+        string authored = networked ? Signature(go, node, errors, uncompared) : "";
         string? stock = null;
         if (networked && stockPrefabOf != null && authored.Length > 0)
         {
             GameObject? reference = Reference(stockPrefabOf, go.name, errors);
             if (reference != null)
-                stock = Signature(reference, reference.transform, errors);
+                stock = Signature(reference, reference.transform, errors, uncompared);
         }
 
         Vector3 local = root.InverseTransformPoint(node.position);
@@ -182,22 +188,34 @@ public static class TemplateFactsExtractor
 
     /// <summary>
     /// Everything about one object that decides what a client ends up holding,
-    /// as one comparable string: its own extra components, and every descendant
-    /// with the same.
+    /// as one comparable string: its own components and their settings, and
+    /// every descendant with the same, plus where each descendant sits and
+    /// whether it is switched on.
     ///
-    /// <para>The network view itself is left out. It is what makes the object
-    /// reach the client at all and its settings are judged on their own — and a
-    /// template's copy and the stock prefab's copy differ in ways that say
-    /// nothing about what is built.</para>
+    /// <para><b>What is deliberately left out, and why only that.</b> The
+    /// emitted object's OWN transform. Its position and rotation are the
+    /// placement, sent in the ZDO; its scale is sent too when the prefab syncs
+    /// the initial scale, and judged by the scale rule when it does not. So
+    /// comparing the root's transform against a prefab's default would reject a
+    /// building the game reproduces perfectly — which it did. A DESCENDANT's
+    /// transform is sent nowhere at all: the client builds it from the stock
+    /// prefab, so a collider moved twenty metres, grown from one to twenty, or
+    /// switched off exists on the server and nowhere else, and those are
+    /// compared.</para>
+    ///
+    /// <para>The network view is left out for the same reason as the root
+    /// transform: it is what makes the object reach the client, its settings are
+    /// judged on their own, and a template's copy and the stock prefab's differ
+    /// in ways that say nothing about what is built.</para>
     ///
     /// <para>Empty means there is nothing to prove: an object with no extra
-    /// components and no children of its own is fully described by its name, and
-    /// the client's stock prefab of that name is the whole answer.</para>
+    /// components and no children is fully described by its name, and the
+    /// client's stock prefab of that name is the whole answer.</para>
     /// </summary>
-    private static string Signature(GameObject go, Transform node, List<string> errors)
+    private static string Signature(GameObject go, Transform node, List<string> errors, ISet<string> uncompared)
     {
         var text = new System.Text.StringBuilder();
-        AppendSignature(go, node, "", text, errors, depth: 0);
+        AppendSignature(go, node, "", text, errors, uncompared, depth: 0);
         string signature = text.ToString();
         return signature == "\n" ? "" : signature;
     }
@@ -206,7 +224,8 @@ public static class TemplateFactsExtractor
     private const int MaxSignatureDepth = 12;
 
     private static void AppendSignature(
-        GameObject go, Transform node, string path, System.Text.StringBuilder text, List<string> errors, int depth)
+        GameObject go, Transform node, string path, System.Text.StringBuilder text,
+        List<string> errors, ISet<string> uncompared, int depth)
     {
         if (depth > MaxSignatureDepth)
         {
@@ -223,23 +242,35 @@ public static class TemplateFactsExtractor
                 continue;
             }
             Type type = component.GetType();
-            // The transform is the geometry, recorded separately; the network
-            // view is the boundary, judged separately.
+            // The transform is geometry, recorded below; the network view is the
+            // boundary, judged separately.
             if (type.Name == "Transform" || type.Name == "ZNetView")
                 continue;
-            parts.Add(type.Name);
+            parts.Add(type.Name + ComponentValues(component, type, uncompared));
         }
         parts.Sort(StringComparer.Ordinal);
 
         foreach (string referenced in ReferencedPrefabs(go, errors))
             parts.Add("->" + referenced);
 
-        if (depth > 0 || parts.Count > 0)
+        if (depth > 0)
         {
+            // A descendant's whole transform and its activeness. None of it is
+            // transmitted, so a difference here is a difference the client never
+            // hears about.
             text.Append(path).Append('|')
-                .Append(Fixed(node.localScale.x)).Append(',')
-                .Append(Fixed(node.localScale.y)).Append(',')
-                .Append(Fixed(node.localScale.z)).Append('|')
+                .Append(go.activeSelf ? "on" : "off").Append('|')
+                .Append(Triple(node.localPosition)).Append('|')
+                .Append(Triple(node.localRotation.eulerAngles)).Append('|')
+                .Append(Triple(node.localScale)).Append('|')
+                .Append(string.Join(",", parts.ToArray()))
+                .Append('\n');
+        }
+        else if (parts.Count > 0)
+        {
+            // The emitted object itself: its components, not its transform.
+            text.Append(path).Append('|')
+                .Append(go.activeSelf ? "on" : "off").Append('|')
                 .Append(string.Join(",", parts.ToArray()))
                 .Append('\n');
         }
@@ -247,9 +278,148 @@ public static class TemplateFactsExtractor
         for (int i = 0; i < node.childCount; i++)
         {
             Transform child = node.GetChild(i);
-            AppendSignature(child.gameObject, child, path + "/" + child.gameObject.name, text, errors, depth + 1);
+            AppendSignature(child.gameObject, child, path + "/" + child.gameObject.name, text, errors, uncompared, depth + 1);
         }
     }
+
+    /// <summary>
+    /// The settings of one component that decide what a player meets.
+    ///
+    /// <para>Two sources, because Valheim prefabs carry two kinds of component.
+    /// The game's own are ordinary behaviours whose settings are public fields,
+    /// and those are read by reflection — a changed drop table, a changed
+    /// health, a changed spawn. Unity's built-in components keep their settings
+    /// in native properties that no field walk can see, so the ones deciding
+    /// whether a player can walk through something or see it are read by
+    /// name.</para>
+    ///
+    /// <para>What is left is engine and presentation state — animators, audio,
+    /// particles, lights, levels of detail. Those are named in
+    /// <paramref name="uncompared"/> rather than compared, and the evaluation
+    /// says so, because "we compared everything we know how to compare" is a
+    /// different claim from "these are equivalent" and only the first is
+    /// true.</para>
+    /// </summary>
+    private static string ComponentValues(Component component, Type type, ISet<string> uncompared)
+    {
+        string capability = CapabilityValues(component);
+        if (capability != null)
+            return "(" + capability + ")";
+
+        // The test is what was actually read, not which assembly the type came
+        // from. A Valheim behaviour keeps its settings in public fields and they
+        // are read here; Unity's own components keep theirs in native properties
+        // that no field walk can see, so reading their fields reads nothing at
+        // all — and "nothing" is the signal, wherever the type lives.
+        string fields = FieldValues(component, type);
+        if (fields.Length > 0)
+            return "(" + fields + ")";
+
+        uncompared.Add(type.Name);
+        return "(?)";
+    }
+
+    /// <summary>
+    /// Unity's own components, by capability: what a player can walk into, and
+    /// what they can see. Null for a type this does not know how to read.
+    /// </summary>
+    private static string CapabilityValues(Component component)
+    {
+        switch (component)
+        {
+            case BoxCollider box:
+                return $"trigger={box.isTrigger},enabled={box.enabled},size={Triple(box.size)},centre={Triple(box.center)}";
+            case SphereCollider sphere:
+                return $"trigger={sphere.isTrigger},enabled={sphere.enabled},r={Fixed(sphere.radius)},centre={Triple(sphere.center)}";
+            case CapsuleCollider capsule:
+                return $"trigger={capsule.isTrigger},enabled={capsule.enabled},r={Fixed(capsule.radius)}," +
+                       $"h={Fixed(capsule.height)},axis={capsule.direction},centre={Triple(capsule.center)}";
+            case MeshCollider mesh:
+                return $"trigger={mesh.isTrigger},enabled={mesh.enabled},convex={mesh.convex},mesh={Named(mesh.sharedMesh)}";
+            case Collider other:
+                return $"trigger={other.isTrigger},enabled={other.enabled}";
+            case MeshFilter filter:
+                return $"mesh={Named(filter.sharedMesh)}";
+            case Renderer renderer:
+                return $"enabled={renderer.enabled},materials={Materials(renderer)}";
+            default:
+                return null;
+        }
+    }
+
+    private static string Materials(Renderer renderer)
+    {
+        var names = new List<string>();
+        foreach (Material material in renderer.sharedMaterials)
+            names.Add(Named(material));
+        return string.Join("+", names.ToArray());
+    }
+
+    private static string Named(UnityEngine.Object value) => value == null ? "-" : value.name;
+
+    /// <summary>
+    /// A game component's public fields, as text.
+    ///
+    /// Values, enums, strings and references by name, one level deep. Not a dump
+    /// of engine state: a field holding another object is recorded by that
+    /// object's name, which is what decides what the server puts into the world,
+    /// and nothing is followed further.
+    /// </summary>
+    private static string FieldValues(Component component, Type type)
+    {
+        var parts = new List<string>();
+        foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+        {
+            string value = FieldValue(field.GetValue(component));
+            if (value != null)
+                parts.Add(field.Name + "=" + value);
+        }
+        parts.Sort(StringComparer.Ordinal);
+        return string.Join(",", parts.ToArray());
+    }
+
+    private static string FieldValue(object value)
+    {
+        switch (value)
+        {
+            case null:
+                return "-";
+            case string text:
+                return text;
+            case bool flag:
+                return flag ? "1" : "0";
+            case float number:
+                return Fixed(number);
+            case double number:
+                return Fixed((float)number);
+            case Enum choice:
+                return choice.ToString();
+            case UnityEngine.Object reference:
+                return reference.name;
+            case Vector3 point:
+                return Triple(point);
+            case System.Collections.IEnumerable list:
+                var parts = new List<string>();
+                int seen = 0;
+                foreach (object item in list)
+                {
+                    // Bounded: a long list is a list, and its first entries are
+                    // what a change to it moves.
+                    if (seen++ >= 32)
+                    {
+                        parts.Add("…");
+                        break;
+                    }
+                    parts.Add(FieldValue(item) ?? "?");
+                }
+                return "[" + string.Join(";", parts.ToArray()) + "]";
+            default:
+                return value.GetType().IsPrimitive ? value.ToString() : null;
+        }
+    }
+
+    private static string Triple(Vector3 value) =>
+        Fixed(value.x) + "," + Fixed(value.y) + "," + Fixed(value.z);
 
     private static string Fixed(float value) =>
         (value == 0f ? 0f : value).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);

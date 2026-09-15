@@ -26,8 +26,19 @@ public class SyntheticWorld : WorldGenerator
     public float IslandRadius = 600f;
     public float IslandPeakHeight = 18f; // above sea level at the island center
 
+    /// <summary>
+    /// When set, every point is at this height.
+    ///
+    /// For tests about a decision rather than about terrain: flat ground makes
+    /// the arithmetic checkable by hand, which is the only reason to want it.
+    /// </summary>
+    public float? FlatHeight;
+
     public override float GetHeight(float wx, float wy)
     {
+        if (FlatHeight.HasValue)
+            return FlatHeight.Value;
+
         float r = Mathf.Sqrt(wx * wx + wy * wy);
 
         // Island: smooth dome from sea floor (20) to a low inland plateau.

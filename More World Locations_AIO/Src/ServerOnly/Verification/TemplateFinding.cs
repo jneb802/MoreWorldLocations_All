@@ -91,6 +91,12 @@ public static class FindingCodes
 
     /// <summary>No stock prefab was available to compare an object against, so nothing can be said about what the client would build.</summary>
     public const string StockBaselineUnavailable = "stock_baseline_unavailable";
+
+    /// <summary>Component types were present whose settings this build cannot read, so the comparison is not a claim of full equivalence.</summary>
+    public const string SubtreeNotFullyCompared = "subtree_not_fully_compared";
+
+    /// <summary>The baseline came from a registry other mods could already have changed, so it is not independent stock evidence.</summary>
+    public const string StockBaselineProvenance = "stock_baseline_provenance";
 }
 
 /// <summary>

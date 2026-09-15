@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Jotunn.Managers;
 using SoftReferenceableAssets;
 using UnityEngine;
@@ -22,6 +23,51 @@ public static class GameTemplateAssets
     {
         TemplateAssets.Source = Open;
         TemplateAssets.StockPrefabs = StockPrefab;
+        TemplateAssets.BaselineProvenance = Provenance();
+    }
+
+    /// <summary>
+    /// What is known against the baseline: which other plugins are loaded in
+    /// this process.
+    ///
+    /// <para>The comparison reads the running server's registry, and this
+    /// process has MWL in it. That much is accounted for — MWL clones prefabs
+    /// rather than editing vanilla ones in place, so the entries it adds are
+    /// under names of their own. Another plugin editing a vanilla prefab in
+    /// place is a different matter: the baseline would move with it and a
+    /// comparison against a moved baseline proves nothing.</para>
+    ///
+    /// <para>There is no pristine copy available in-process to compare against
+    /// instead, so this is stated rather than solved: the verdict carries the
+    /// names of everything else that is loaded, and a run on a server with other
+    /// mods can be read for what it is.</para>
+    /// </summary>
+    private static string Provenance()
+    {
+        var others = new List<string>();
+        try
+        {
+            foreach (KeyValuePair<string, BepInEx.PluginInfo> plugin in BepInEx.Bootstrap.Chainloader.PluginInfos)
+            {
+                string id = plugin.Key ?? "";
+                if (id.Length == 0 || id.IndexOf("jotunn", StringComparison.OrdinalIgnoreCase) >= 0
+                    || id.IndexOf("moreworldlocations", StringComparison.OrdinalIgnoreCase) >= 0)
+                    continue;
+                others.Add(plugin.Value?.Metadata?.Name ?? id);
+            }
+        }
+        catch (Exception ex)
+        {
+            return $"the loaded plugin list could not be read ({ex.GetType().Name}), so nothing is known about " +
+                   "whether another mod has edited a vanilla prefab in place.";
+        }
+
+        if (others.Count == 0)
+            return "";
+
+        others.Sort(StringComparer.Ordinal);
+        return $"{others.Count} other plugin(s) are loaded — {string.Join(", ", others.ToArray())} — and any of " +
+               "them editing a vanilla prefab in place would move the baseline with it.";
     }
 
     private static ITemplateHandle? Open(string name)

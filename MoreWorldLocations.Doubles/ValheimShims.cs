@@ -407,6 +407,9 @@ public class TerrainComp
 /// <summary>Shim for ZDOVars: the ZDO keys the road code reads.</summary>
 public static class ZDOVars
 {
+    /// <summary>The location a LocationProxy stands for, by prefab hash.</summary>
+    public static readonly int s_location = "location".GetStableHashCode();
+
     public static readonly int s_TCData = "TCData".GetStableHashCode();
     /// <summary>The player who made an object; vanilla sets it on what a player builds.</summary>
     public static readonly int s_creator = "creator".GetStableHashCode();
@@ -468,16 +471,55 @@ public class ZoneSystem
 
     public static ZoneSystem? instance;
 
+    /// <summary>How the game is generating: for a peer, for itself, or rebuilding.</summary>
+    public enum SpawnMode
+    {
+        Full,
+        Client,
+        Ghost,
+    }
+
     public class ZoneLocation
     {
         public PrefabEntry m_prefab = new();
         public float m_exteriorRadius;
 
+        /// <summary>The exact name a location is registered and looked up under.</summary>
+        public string m_prefabName = "";
+
         public class PrefabEntry
         {
             public string Name = "";
+
+            /// <summary>The resolved template, or null until something loads it.</summary>
+            public UnityEngine.GameObject? Asset;
+
+            public void Load() { }
+            public void Release() { }
         }
     }
+
+    /// <summary>
+    /// The methods the mod's hooks are attached to. Bodies are empty: what these
+    /// doubles cannot establish is when Harmony runs a hook, which is the
+    /// in-game check.
+    /// </summary>
+    public UnityEngine.GameObject? SpawnLocation(
+        ZoneLocation location, int seed, UnityEngine.Vector3 pos, UnityEngine.Quaternion rot,
+        SpawnMode mode, System.Collections.Generic.List<UnityEngine.GameObject> spawnedGhostObjects, bool cheated) => null;
+
+    public bool SpawnZone(Vector2s zoneID, SpawnMode mode, out UnityEngine.GameObject? root)
+    {
+        root = null;
+        return true;
+    }
+
+    public void PlaceLocations(Vector2s zoneID, Heightmap hmap, SpawnMode mode) { }
+
+    public void Update() { }
+
+    /// <summary>The placements the game has decided on, one per zone, as vanilla keeps them.</summary>
+    public System.Collections.Generic.Dictionary<Vector2s, LocationInstance> m_locationInstances = new();
 
     /// <summary>
     /// The game's own "the location list is now complete" moment, and where
@@ -500,6 +542,9 @@ public class ZoneSystem
     {
         public ZoneLocation m_location;
         public UnityEngine.Vector3 m_position;
+
+        /// <summary>Set by PlaceLocations once the location has been spawned.</summary>
+        public bool m_placed;
     }
 
     public System.Collections.Generic.List<LocationInstance> Locations = new();
@@ -641,6 +686,31 @@ public static class Utils
 {
     public static byte[] Compress(byte[] data) => data;
     public static byte[] Decompress(byte[] data) => data;
+
+    /// <summary>
+    /// Vanilla's own reader for a location's children: enabled components, under
+    /// enabled parents, which is the set the game would instantiate.
+    /// </summary>
+    public static T[] GetEnabledComponentsInChildren<T>(UnityEngine.GameObject root) where T : UnityEngine.Component
+    {
+        var found = new System.Collections.Generic.List<T>();
+        Collect(root, true, found);
+        return found.ToArray();
+    }
+
+    private static void Collect<T>(UnityEngine.GameObject go, bool enabled, System.Collections.Generic.List<T> into)
+        where T : UnityEngine.Component
+    {
+        bool here = enabled && go.activeSelf;
+        if (here)
+        {
+            T component = go.GetComponent<T>();
+            if (component != null)
+                into.Add(component);
+        }
+        for (int i = 0; i < go.transform.childCount; i++)
+            Collect(go.transform.GetChild(i).gameObject, here, into);
+    }
 }
 
 /// <summary>

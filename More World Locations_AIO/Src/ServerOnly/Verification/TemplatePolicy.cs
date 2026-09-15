@@ -104,6 +104,7 @@ public static class TemplatePolicy
             EvaluateChild(child, registry, components, findings);
         EvaluateEmission(facts, findings);
         EvaluateTerrain(facts, findings);
+        EvaluateComparisonLimits(facts, findings);
 
         return new TemplateEvaluation(facts.Name, facts.Pack, VerdictOf(findings), findings);
     }
@@ -378,6 +379,42 @@ public static class TemplatePolicy
         findings.Add(new TemplateFinding(FindingCodes.NothingEmitted, FindingSeverity.Blocking, facts.Name,
             "the template emits no networked object and shapes no ground, so a client without the mod finds an " +
             "empty patch where the map says there is a location."));
+    }
+
+    /// <summary>
+    /// What the comparison could not read, said out loud.
+    ///
+    /// <para>Advisory, not blocking, and the distinction is the whole point.
+    /// Every stock prefab in the game carries an animator or a light or a level
+    /// of detail group, and blocking on them would exclude the catalogue rather
+    /// than check it. But passing silently would be claiming full equivalence
+    /// on a comparison that did not cover them, so the limit travels with the
+    /// verdict instead of being known only to whoever wrote the extractor.</para>
+    /// </summary>
+    private static void EvaluateComparisonLimits(TemplateFacts facts, List<TemplateFinding> findings)
+    {
+        // Two separate limits, reported separately. One is about what the
+        // comparison could read; the other is about whether the thing it
+        // compared against is stock at all.
+        if (facts.BaselineProvenance.Length > 0)
+        {
+            findings.Add(new TemplateFinding(FindingCodes.StockBaselineProvenance, FindingSeverity.Advisory, facts.Name,
+                "the stock prefabs compared against came from this server's own registry, which is not by itself " +
+                "independent evidence of what a stock client holds: " + facts.BaselineProvenance,
+                facts.BaselineProvenance));
+        }
+
+        if (facts.UncomparedComponents.Count == 0)
+            return;
+
+        findings.Add(new TemplateFinding(FindingCodes.SubtreeNotFullyCompared, FindingSeverity.Advisory, facts.Name,
+            "the objects the client receives were compared against the stock prefabs by hierarchy, transforms, " +
+            "activity, collision, meshes, materials and every game component's own settings — but these types " +
+            "carry settings this build cannot read: " +
+            string.Join(", ", new List<string>(facts.UncomparedComponents).ToArray()) +
+            ". They are presentation and engine state, not saved data a client rebuilds from, so this is a limit " +
+            "on the evidence rather than a defect in the template.",
+            string.Join(",", new List<string>(facts.UncomparedComponents).ToArray())));
     }
 
     private static void EvaluateTerrain(TemplateFacts facts, List<TemplateFinding> findings)

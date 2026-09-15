@@ -25,9 +25,68 @@ namespace UnityEngine
         public bool enabled = true;
     }
 
-    public class Renderer : Component { }
+    /// <summary>
+    /// A renderer, with the parts the subtree comparison reads: whether it is
+    /// on, and which materials it shows.
+    /// </summary>
+    public class Renderer : Component
+    {
+        public bool enabled = true;
+        public Material[] sharedMaterials = new Material[0];
+    }
 
-    public class Collider : Component { }
+    public class Material : Object { }
+
+    public class Mesh : Object { }
+
+    public class MeshFilter : Component
+    {
+        public Mesh? sharedMesh;
+    }
+
+    /// <summary>A named engine object: what the comparison records a reference by.</summary>
+    public class Object
+    {
+        public string name = "";
+    }
+
+    /// <summary>A collider, and the geometry a player actually meets.</summary>
+    public class Collider : Component
+    {
+        public bool enabled = true;
+        public bool isTrigger;
+    }
+
+    public class BoxCollider : Collider
+    {
+        public Vector3 size = new(1f, 1f, 1f);
+        public Vector3 center;
+    }
+
+    public class SphereCollider : Collider
+    {
+        public float radius = 0.5f;
+        public Vector3 center;
+    }
+
+    public class CapsuleCollider : Collider
+    {
+        public float radius = 0.5f;
+        public float height = 2f;
+        public int direction = 1;
+        public Vector3 center;
+    }
+
+    public class MeshCollider : Collider
+    {
+        public bool convex;
+        public Mesh? sharedMesh;
+    }
+
+    /// <summary>Engine and presentation state: present, and not compared. See TemplateFacts.UncomparedComponents.</summary>
+    public class Light : Component { }
+
+    public class Animator : Component { }
 
     /// <summary>
     /// An object in a template. Children are ordered, because a template's own
@@ -81,6 +140,22 @@ public partial class Transform : UnityEngine.Component
     public readonly System.Collections.Generic.List<Transform> children = new();
     public UnityEngine.Vector3 localScale = new(1f, 1f, 1f);
     public UnityEngine.Vector3 eulerAngles;
+    /// <summary>
+    /// Where this object sits relative to its parent.
+    ///
+    /// Derived from <see cref="position"/> rather than kept beside it, because
+    /// in Unity the two are one piece of state and a double that let them drift
+    /// apart would answer a question the engine never asks: a test that moved an
+    /// object by its world position would leave its local position unchanged,
+    /// and a check reading the local one would see nothing move.
+    /// </summary>
+    public UnityEngine.Vector3 localPosition
+    {
+        get => parent == null ? position : position - parent.position;
+        set => position = parent == null ? value : parent.position + value;
+    }
+
+    public UnityEngine.Quaternion localRotation = UnityEngine.Quaternion.identity;
 
     public new string name => gameObject.name;
     public int childCount => children.Count;

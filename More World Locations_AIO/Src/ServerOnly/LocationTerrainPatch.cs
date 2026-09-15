@@ -265,6 +265,7 @@ public static class LocationTerrainWriterReset
         LocationTerrainPatch.Forget();
         LocationTerrainTick.Forget();
         LocationSpawnGate.Forget();
+        ZoneReadinessBarrier.Forget();
         // A new world generates different ground, so the heights kept from the
         // builder for the last one describe nowhere.
         LocationTerrainBridge.ForgetGeneratedHeights();
