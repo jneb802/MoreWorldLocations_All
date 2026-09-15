@@ -27,7 +27,7 @@ namespace More_World_Locations_AIO
         internal const string ModName = "More_World_Locations_AIO";
         internal const string ModVersion = "5.0.9";
         internal const string Author = "warpalicious";
-        private const string ModGUID = Author + "." + ModName;
+        internal const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         internal static string ConnectionError = "";

@@ -259,8 +259,17 @@ public static class TemplateFactsExtractor
         return signature == "\n" ? "" : signature;
     }
 
-    /// <summary>How deep a subtree is walked before the comparison gives up and says so.</summary>
-    private const int MaxSignatureDepth = 12;
+    /// <summary>
+    /// How deep a subtree is walked before the comparison gives up and says so.
+    ///
+    /// Twelve was too shallow, measured: MWL_AshlandsFort3 came back unresolved
+    /// because a creature's finger bones sit deeper than that, and a rig is
+    /// ordinary content rather than anything unusual. Twenty-four clears every
+    /// hierarchy in the catalogue; anything past it is still reported rather
+    /// than quietly truncated, because a subtree compared in part is not a
+    /// subtree compared.
+    /// </summary>
+    private const int MaxSignatureDepth = 24;
 
     private static void AppendSignature(
         GameObject go, Transform node, string path, System.Text.StringBuilder text,

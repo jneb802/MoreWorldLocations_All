@@ -42,6 +42,9 @@ public static class GameTemplateAssets
     /// names of everything else that is loaded, and a run on a server with other
     /// mods can be read for what it is.</para>
     /// </summary>
+    /// <summary>Jötunn's plugin id. It adds prefabs of its own and edits no vanilla one.</summary>
+    private const string JotunnGuid = "com.jotunn.jotunn";
+
     private static string Provenance()
     {
         var others = new List<string>();
@@ -49,9 +52,14 @@ public static class GameTemplateAssets
         {
             foreach (KeyValuePair<string, BepInEx.PluginInfo> plugin in BepInEx.Bootstrap.Chainloader.PluginInfos)
             {
+                // By GUID, exactly. A substring match on "moreworldlocations"
+                // never fired against "warpalicious.More_World_Locations_AIO",
+                // so a station run reported the mod itself as a foreign plugin
+                // that might have moved the baseline.
                 string id = plugin.Key ?? "";
-                if (id.Length == 0 || id.IndexOf("jotunn", StringComparison.OrdinalIgnoreCase) >= 0
-                    || id.IndexOf("moreworldlocations", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (id.Length == 0
+                    || string.Equals(id, More_World_Locations_AIOPlugin.ModGUID, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(id, JotunnGuid, StringComparison.OrdinalIgnoreCase))
                     continue;
                 others.Add(plugin.Value?.Metadata?.Name ?? id);
             }
