@@ -12,6 +12,12 @@ public static class LocationDB
 
     private static readonly Dictionary<string, MWLLocation> _byName;
 
+    /// <summary>What this process treats as approved (see <see cref="ServerOnlySelection"/>).</summary>
+    private static HashSet<string> _approved = new HashSet<string>();
+
+    /// <summary>The names actually registered, so the run can say so and name what it did not.</summary>
+    private static readonly HashSet<string> _registered = new HashSet<string>();
+
     static LocationDB()
     {
         All = LocationDefinitions.Meadows
@@ -32,6 +38,17 @@ public static class LocationDB
 
     public static void RegisterAll()
     {
+        IReadOnlyCollection<string> requested = ServerOnlyMode.Enabled
+            ? ValidationSwitches.ApprovedForValidation()
+            : new HashSet<string>();
+        _approved = ServerOnlySelection.Compose(
+            ServerOnlyAllowlist.Approved, requested, ServerOnlyMode.Enabled);
+        _registered.Clear();
+
+        string? notice = ServerOnlySelection.ValidationNotice(requested);
+        if (notice != null)
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(notice);
+
         Register("Meadows", LocationDefinitions.Meadows);
         Register("BlackForest", LocationDefinitions.BlackForest);
         Register("Swamp", LocationDefinitions.Swamp);
@@ -49,6 +66,16 @@ public static class LocationDB
 
         if (BepinexConfigs.EnableTrainers.Value != PortInit.Toggle.Off)
             Register("Trainers", LocationDefinitions.Trainers);
+
+        if (ServerOnlyMode.Enabled)
+        {
+            var logger = More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
+            logger.LogInfo(ServerOnlySelection.RegisteredNotice(_registered));
+            foreach (string name in ServerOnlySelection.Unmatched(_approved, _registered))
+                logger.LogWarning(
+                    $"Approved template '{name}' matched no location: it is either misspelled " +
+                    "or in a pack server-only mode excludes. Nothing was registered for it.");
+        }
 
         ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
     }
@@ -83,10 +110,13 @@ public static class LocationDB
         // afterwards does not describe a vanilla subset: this method registers
         // the Dungeons pack whatever the port and trader toggles say.
         IEnumerable<MWLLocation> registering = ServerOnlyMode.Enabled
-            ? ServerOnlyAllowlist.Filter(packName, pack)
+            ? ServerOnlyAllowlist.Filter(packName, pack, _approved)
             : pack;
 
         foreach (MWLLocation loc in registering)
+        {
             loc.Register();
+            _registered.Add(loc.Name);
+        }
     }
 }
