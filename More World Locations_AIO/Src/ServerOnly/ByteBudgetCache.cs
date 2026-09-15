@@ -65,6 +65,42 @@ public sealed class ByteBudgetCache<TKey, TValue> where TValue : class
     /// <summary>Allocations no longer reachable through the cache and not yet released by their leases.</summary>
     public int Retired => _retired.Count;
 
+    /// <summary>
+    /// Make room for <paramref name="bytes"/> by evicting the least recently
+    /// used unpinned entries, and say whether it now fits.
+    ///
+    /// <para>Asked BEFORE a buffer is built or fetched, so that a caller whose
+    /// source hands its answer over once — the terrain builder — does not
+    /// consume it only to find the cache full. False means everything left is
+    /// in use: the caller defers and asks again, and nothing was consumed.</para>
+    /// </summary>
+    public bool TryReserve(int bytes)
+    {
+        if (bytes < 0) throw new ArgumentOutOfRangeException(nameof(bytes));
+        if (bytes > BudgetBytes)
+            return false;
+        MakeRoomFor(bytes);
+        return Bytes + bytes <= BudgetBytes;
+    }
+
+    /// <summary>
+    /// Count a buffer that is in use and NOT in the table — one the cache would
+    /// not admit, or one that must not be shared — until its lease returns.
+    ///
+    /// <para>The gap this closes: a builder result the cache refused was handed
+    /// to the caller and used, live, outside the reported budget, so the cache
+    /// number was not a bound on working memory. Adopted bytes are retired
+    /// bytes with no key: counted, unreachable, dropped on release.</para>
+    /// </summary>
+    public Lease Adopt(TValue value)
+    {
+        if (value == null) throw new ArgumentNullException(nameof(value));
+        var entry = new Entry { Value = value, Bytes = _bytesOf(value), Pins = 1, UsedAt = ++_clock };
+        _retired.Add(entry);
+        Bytes += entry.Bytes;
+        return new Lease(this, default!, entry);
+    }
+
     public int Count => _entries.Count;
 
     /// <summary>Entries currently in use and therefore not evictable.</summary>

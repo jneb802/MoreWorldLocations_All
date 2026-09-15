@@ -570,6 +570,48 @@ public class LocationTerrainDispatchTests : IDisposable
     }
 
     [Fact]
+    public void AFullHeightBudgetDefersTheWriteWithoutSpendingAnAttemptOrTheBuilder()
+    {
+        // Memory pressure is this mode's own doing, so it must not look like a
+        // site that cannot be written: no attempt is counted, and the builder's
+        // one-shot answer is not consumed only to be dropped.
+        Heightmap hmA = Load(A);
+        hmA.m_buildData = null;
+        int asked = _builder.SyncRequests;
+        LocationTerrainBridge.UseGeneratedHeightBudgetForTest(1);
+        try
+        {
+            LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
+
+            LocationTerrainLedger.Entry deferred = Assert.Single(LocationTerrainLedger.Waiting(), e => e.Zone == A);
+            Assert.Equal(0, deferred.Attempts);
+            Assert.Contains("budget", deferred.Reason);
+            Assert.Equal(asked, _builder.SyncRequests);
+            Assert.All(TerrainOf(A), d => Assert.Equal(0f, d));
+
+            // Deferred forty times over is still not a failure.
+            for (int i = 0; i < LocationTerrainLedger.MaxAttempts + 5; i++)
+                LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
+            Assert.Empty(LocationTerrainLedger.Failures());
+            Assert.Equal(0, Assert.Single(LocationTerrainLedger.Waiting(), e => e.Zone == A).Attempts);
+        }
+        finally
+        {
+            LocationTerrainBridge.UseGeneratedHeightBudgetForTest(LocationTerrainBridge.DefaultGeneratedHeightBudgetBytes);
+        }
+
+        // With room again the same work completes, its heights counted in the table.
+        LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
+
+        Assert.Contains(LocationTerrainLedger.All(), e => e.Zone == A && e.State == LocationTerrainLedger.State.Done);
+        Assert.Equal(asked + 1, _builder.SyncRequests);
+        Assert.Contains(TerrainOf(A), d => d != 0f);
+        Assert.Equal(1, LocationTerrainBridge.GeneratedHeightEntries);
+        Assert.Equal(0, LocationTerrainBridge.GeneratedHeightPins);
+        Assert.Equal(0, LocationTerrainBridge.GeneratedHeightAdopted);
+    }
+
+    [Fact]
     public void AZoneWithNoGeneratedHeightsWaitsRatherThanConvertingAgainstZero()
     {
         _builder.Built.Remove(A);

@@ -45,7 +45,8 @@ public static class LocationSpawnGate
     public static string Status()
     {
         int waiting = ZoneReadinessBarrier.Holds.Count;
-        if (s_refused.Count == 0 && s_held.Count == 0 && waiting == 0)
+        int deferred = ZoneReadinessBarrier.Deferred.Count;
+        if (s_refused.Count == 0 && s_held.Count == 0 && waiting == 0 && deferred == 0)
             return "No placement has been refused or held; every one was checked before it was placed.";
 
         var text = new System.Text.StringBuilder();
@@ -68,6 +69,12 @@ public static class LocationSpawnGate
                 text.Append("  zone ").Append(hold.Key.x).Append(',').Append(hold.Key.y)
                     .Append(" — held ").Append(hold.Value).Append(" of ")
                     .Append(ZoneReadinessBarrier.MaxHolds).Append(" attempt(s)\n");
+        }
+        if (deferred > 0)
+        {
+            text.Append(deferred).Append(" zone(s) waiting on the height budget, not counted against readiness:\n");
+            foreach (Vector2s zone in ZoneReadinessBarrier.Deferred)
+                text.Append("  zone ").Append(zone.x).Append(',').Append(zone.y).Append('\n');
         }
         return text.ToString().TrimEnd('\n');
     }
@@ -242,16 +249,28 @@ public static class LocationSpawnGate
         // for any other zone this comes from the builder, once, and is kept --
         // see LocationTerrainBridge.BaseHeights. Without the keeping, asking
         // here would consume the answer the conversion needs afterwards.
-        bool read = LocationTerrainBridge.TryGeneratedHeightAt(deltas, Heightmap.FindHeightmap(
-            new Vector3(deltas.Origin.x, 0f, deltas.Origin.z)), out baseHeightAt, out _);
+        LocationTerrainBridge.HeightOutcome outcome = LocationTerrainBridge.ReadGeneratedHeightAt(
+            deltas, Heightmap.FindHeightmap(new Vector3(deltas.Origin.x, 0f, deltas.Origin.z)),
+            out baseHeightAt, out string why, out IDisposable hold);
 
-        if (read && s_pinning != null)
+        // Every zone this decision reads stays held until the decision is made,
+        // so a site touching four zones cannot lose its first to its fourth.
+        if (hold != null)
         {
-            IDisposable pin = LocationTerrainBridge.PinGeneratedHeights(zone, ZoneWidth, ZoneScale);
-            if (pin != null)
-                s_pinning.Add(pin);
+            if (s_pinning != null)
+                s_pinning.Add(hold);
+            else
+                hold.Dispose();
         }
-        return read;
+        if (outcome == LocationTerrainBridge.HeightOutcome.Deferred)
+        {
+            // By construction the readiness barrier reserved this room before
+            // the zone was generated, so this is not expected; if it happens the
+            // decision is Undecided and says why, rather than a site published
+            // on ground nobody read.
+            Log.LogWarning($"site check for zone {zone.x},{zone.y}: {why}");
+        }
+        return outcome == LocationTerrainBridge.HeightOutcome.Read;
     }
 
     /// <summary>

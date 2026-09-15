@@ -156,30 +156,35 @@ public static class LocationTerrainWriter
         }
 
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(compiler);
-        if (!LocationTerrainBridge.TryGeneratedHeightAt(
-                zone, hmap, out TerrainConversion.VertexHeight baseHeight, out string why))
+        LocationTerrainBridge.HeightOutcome heights = LocationTerrainBridge.ReadGeneratedHeightAt(
+            zone, hmap, out TerrainConversion.VertexHeight baseHeight, out string why, out IDisposable hold);
+        if (heights != LocationTerrainBridge.HeightOutcome.Read)
         {
             foreach (LocationTerrainWork item in work)
-                Wait(item, why);
+                Postpone(item, heights, why);
             return;
         }
-        List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
-        if (converted.Count == 0)
-            return;
-
-        if (FaultOnce(zoneID))
+        // The heights are held for exactly as long as this write uses them.
+        using (hold)
         {
-            foreach (LocationTerrainWork item in converted)
-                Wait(item, "a validation switch failed this write on purpose");
-            return;
-        }
+            List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
+            if (converted.Count == 0)
+                return;
 
-        if (LocationTerrainBridge.WriteBack(compiler, zone, out string failure))
-            foreach (LocationTerrainWork item in converted)
-                Done(item);
-        else
-            foreach (LocationTerrainWork item in converted)
-                Wait(item, "the compiler did not save: " + failure);
+            if (FaultOnce(zoneID))
+            {
+                foreach (LocationTerrainWork item in converted)
+                    Wait(item, "a validation switch failed this write on purpose");
+                return;
+            }
+
+            if (LocationTerrainBridge.WriteBack(compiler, zone, out string failure))
+                foreach (LocationTerrainWork item in converted)
+                    Done(item);
+            else
+                foreach (LocationTerrainWork item in converted)
+                    Wait(item, "the compiler did not save: " + failure);
+        }
     }
 
     /// <summary>
@@ -208,34 +213,51 @@ public static class LocationTerrainWriter
                 Fail(item, "its saved terrain could not be read: " + problem);
             return;
         }
-        if (!LocationTerrainBridge.TryGeneratedHeightAt(
-                zone, null, out TerrainConversion.VertexHeight baseHeight, out string why))
+        LocationTerrainBridge.HeightOutcome heights = LocationTerrainBridge.ReadGeneratedHeightAt(
+            zone, null, out TerrainConversion.VertexHeight baseHeight, out string why, out IDisposable hold);
+        if (heights != LocationTerrainBridge.HeightOutcome.Read)
         {
             foreach (LocationTerrainWork item in work)
-                Wait(item, why);
+                Postpone(item, heights, why);
             return;
         }
-        List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
-        if (converted.Count == 0)
-            return;
-
-        if (FaultOnce(zoneID))
+        using (hold)
         {
-            foreach (LocationTerrainWork item in converted)
-                Wait(item, "a validation switch failed this write on purpose");
-            return;
-        }
+            List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
+            if (converted.Count == 0)
+                return;
 
-        if (LocationTerrainBridge.WriteDetached(zoneID, zone, header, out string failure))
-        {
-            foreach (LocationTerrainWork item in converted)
-                Done(item, " (repaired through its saved compiler)");
+            if (FaultOnce(zoneID))
+            {
+                foreach (LocationTerrainWork item in converted)
+                    Wait(item, "a validation switch failed this write on purpose");
+                return;
+            }
+
+            if (LocationTerrainBridge.WriteDetached(zoneID, zone, header, out string failure))
+            {
+                foreach (LocationTerrainWork item in converted)
+                    Done(item, " (repaired through its saved compiler)");
+            }
+            else
+            {
+                foreach (LocationTerrainWork item in converted)
+                    Wait(item, "the saved compiler did not take the write: " + failure);
+            }
         }
+    }
+
+    /// <summary>
+    /// A write that could not be tried: a wait when the ground is not built yet,
+    /// a deferral — not an attempt — when this mode's own height budget had no
+    /// room for it.
+    /// </summary>
+    private static void Postpone(LocationTerrainWork item, LocationTerrainBridge.HeightOutcome outcome, string why)
+    {
+        if (outcome == LocationTerrainBridge.HeightOutcome.Deferred)
+            LocationTerrainLedger.Defer(item.SiteId, item.Zone, item.LocationName, why);
         else
-        {
-            foreach (LocationTerrainWork item in converted)
-                Wait(item, "the saved compiler did not take the write: " + failure);
-        }
+            Wait(item, why);
     }
 
     /// <summary>

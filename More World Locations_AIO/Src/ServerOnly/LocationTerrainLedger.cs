@@ -89,6 +89,26 @@ public static class LocationTerrainLedger
     }
 
     /// <summary>Entries still waiting, oldest first, so a caller can retry them.</summary>
+    /// <summary>
+    /// Record a wait that is NOT an attempt: the work was not tried because
+    /// something this mode owns — the height budget — had no room for it yet.
+    ///
+    /// A scheduling or memory-pressure wait must not spend a site's failure
+    /// budget: forty deferrals in a busy stretch would otherwise turn a healthy
+    /// site into a reported failure without a single write having been tried.
+    /// The entry keeps its attempt count exactly as it was.
+    /// </summary>
+    public static Entry Defer(string siteId, Vector2s zone, string locationName, string reason)
+    {
+        Entry entry = s_entries.TryGetValue(Key(siteId), out Entry existing)
+            ? new Entry(existing.SiteId, existing.Zone, existing.LocationName,
+                existing.State == State.Done ? State.Done : State.Waiting,
+                existing.State == State.Done ? existing.Reason : reason, existing.Attempts)
+            : new Entry(siteId, zone, locationName, State.Waiting, reason, 0);
+        s_entries[Key(siteId)] = entry;
+        return entry;
+    }
+
     public static IReadOnlyList<Entry> Waiting() =>
         s_entries.Values.Where(e => e.State == State.Waiting)
                         .OrderByDescending(e => e.Attempts).ToList();

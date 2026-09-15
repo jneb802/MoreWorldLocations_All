@@ -53,10 +53,20 @@ public static class ZoneReadinessBarrier
 
     private static readonly Dictionary<Vector2s, int> s_holds = new();
 
-    internal static void Forget() => s_holds.Clear();
+    /// <summary>Zones waiting on the height budget rather than on the ground. Never counted.</summary>
+    private static readonly HashSet<Vector2s> s_deferred = new();
+
+    internal static void Forget()
+    {
+        s_holds.Clear();
+        s_deferred.Clear();
+    }
 
     /// <summary>Zones currently waiting, for the operator command.</summary>
     public static IReadOnlyDictionary<Vector2s, int> Holds => s_holds;
+
+    /// <summary>Zones waiting on the height budget, for the operator command.</summary>
+    public static IReadOnlyCollection<Vector2s> Deferred => s_deferred;
 
     /// <summary>
     /// Whether this zone may be generated now.
@@ -88,10 +98,21 @@ public static class ZoneReadinessBarrier
         if (LocationSpawnGate.IsRefused(siteId))
             return true;   // already given up on; the gate withholds the site itself
 
-        if (Readable(location, name, instance.m_position, out string why))
+        if (Readable(location, name, instance.m_position, out string why, out bool deferred))
         {
             s_holds.Remove(zoneID);
+            s_deferred.Remove(zoneID);
             return true;
+        }
+
+        if (deferred)
+        {
+            // Not counted. The ground is readable; this mode has nowhere to keep
+            // it yet. A memory-pressure wait spending the readiness budget would
+            // turn a busy stretch into a refused site with nothing wrong at it.
+            if (s_deferred.Add(zoneID))
+                Log.LogInfo($"Zone {zoneID.x},{zoneID.y} waits before generating, not counted: {why}");
+            return false;
         }
 
         s_holds.TryGetValue(zoneID, out int held);
@@ -123,9 +144,10 @@ public static class ZoneReadinessBarrier
     /// about its own zone, and it consumes nothing.
     /// </summary>
     private static bool Readable(
-        ZoneSystem.ZoneLocation location, string name, Vector3 placement, out string why)
+        ZoneSystem.ZoneLocation location, string name, Vector3 placement, out string why, out bool deferred)
     {
         why = null;
+        deferred = false;
 
         TerrainTemplate? terrain = LocationTerrainPatch.TerrainOf(location, name);
         if (terrain == null)
@@ -160,6 +182,22 @@ public static class ZoneReadinessBarrier
                 why = $"the ground for zone {x},{y}, which '{name}' could reach, is not built yet.";
                 return false;
             }
+        }
+
+        // The ground is built. Is there room to keep what the site check will
+        // read of it? Reserving here, before the zone is generated, is what
+        // keeps the check from consuming the builder's one answer with nowhere
+        // to put it. Room is made by evicting what is not in use; only a budget
+        // entirely in use says no, and that wait is not a readiness failure.
+        int zones = (max.x - min.x + 1) * (max.y - min.y + 1);
+        if (!LocationTerrainBridge.HasRoomForZoneHeights(zones))
+        {
+            deferred = true;
+            why = $"the height budget has no room for the {zones} zone(s) '{name}' could reach " +
+                  $"({LocationTerrainBridge.GeneratedHeightBytes / 1024} KiB held, " +
+                  $"{LocationTerrainBridge.GeneratedHeightPins} in use, " +
+                  $"{LocationTerrainBridge.GeneratedHeightAdopted} adopted).";
+            return false;
         }
         return true;
     }

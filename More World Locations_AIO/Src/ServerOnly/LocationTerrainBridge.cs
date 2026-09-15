@@ -419,32 +419,80 @@ public static class LocationTerrainBridge
         TerrainZoneDeltas zone, Heightmap heightmap,
         out TerrainConversion.VertexHeight height, out string reason)
     {
+        // The ask-only form: nothing is held afterwards, so a caller that keeps
+        // using the heights past this call must use ReadGeneratedHeightAt.
+        HeightOutcome outcome = ReadGeneratedHeightAt(zone, heightmap, out height, out reason, out IDisposable hold);
+        hold?.Dispose();
+        return outcome == HeightOutcome.Read;
+    }
+
+    /// <summary>What a request for a zone's generated heights came back with.</summary>
+    public enum HeightOutcome
+    {
+        /// <summary>Heights in hand, and held against eviction until the hold is returned.</summary>
+        Read,
+        /// <summary>Nothing can answer yet: the builder has not built the zone, or built the wrong grid. Try again.</summary>
+        NotReady,
+        /// <summary>
+        /// The height budget has no room and everything in it is in use. Nothing
+        /// was consumed; the work is deferred, and a deferral is not an attempt.
+        /// </summary>
+        Deferred,
+    }
+
+    /// <summary>
+    /// The zone's generated heights, held for as long as the caller uses them.
+    ///
+    /// <para>Every buffer that comes back through here is counted while it is
+    /// live: a cached entry is pinned, and a buffer the cache would not keep is
+    /// adopted into the same accounting until <paramref name="hold"/> is
+    /// returned. The heightmap's own build data is the game's array and is
+    /// reported as the game's, not ours.</para>
+    ///
+    /// <para>Room is reserved BEFORE the builder is asked, because the builder
+    /// hands its answer over once: consuming it and then finding no room would
+    /// lose the answer the write needs. With no room the outcome is
+    /// <see cref="HeightOutcome.Deferred"/>, and nothing was asked.</para>
+    /// </summary>
+    public static HeightOutcome ReadGeneratedHeightAt(
+        TerrainZoneDeltas zone, Heightmap heightmap,
+        out TerrainConversion.VertexHeight height, out string reason, out IDisposable hold)
+    {
         if (zone == null) throw new ArgumentNullException(nameof(zone));
         height = null;
         reason = null;
+        hold = null;
 
-        List<float> baseHeights = BaseHeights(zone, heightmap, out float originY);
+        HeightOutcome outcome = BaseHeights(zone, heightmap, out List<float> baseHeights, out float originY, out hold, out string why);
+        if (outcome == HeightOutcome.Deferred)
+        {
+            reason = why;
+            return outcome;
+        }
         if (baseHeights == null)
         {
-            reason = 
+            reason = why ??
                 $"no generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0}: " +
                 "neither its heightmap nor the builder has them, and converting against zero " +
                 "would write the site into ground nobody generates";
-            return false;
+            return HeightOutcome.NotReady;
         }
 
         int pitch = zone.Pitch;
         if (baseHeights.Count != pitch * pitch)
         {
+            hold?.Dispose();
+            hold = null;
             reason =
                 $"the generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0} are " +
                 $"{baseHeights.Count} long, not {pitch * pitch}: the builder was asked for a " +
                 "different width than the compiler holds";
-            return false;
+            return HeightOutcome.NotReady;
         }
 
-        height = (x, y) => baseHeights[y * pitch + x] + originY;
-        return true;
+        float origin = originY;
+        height = (x, y) => baseHeights[y * pitch + x] + origin;
+        return HeightOutcome.Read;
     }
 
     /// <summary>
@@ -469,11 +517,40 @@ public static class LocationTerrainBridge
     /// closed; ten thousand zones would have been about 161 MiB of payload for
     /// ground that had long since been written.
     /// </summary>
-    public const long GeneratedHeightBudgetBytes = 32L * 1024 * 1024;
+    public const long DefaultGeneratedHeightBudgetBytes = 32L * 1024 * 1024;
 
-    private static readonly ByteBudgetCache<GridKey, List<float>> s_generatedHeights =
-        new ByteBudgetCache<GridKey, List<float>>(
-            GeneratedHeightBudgetBytes, heights => heights.Count * sizeof(float));
+    /// <summary>The budget in force. The shipped value unless a test has narrowed it.</summary>
+    public static long GeneratedHeightBudgetBytes => s_generatedHeights.BudgetBytes;
+
+    private static ByteBudgetCache<GridKey, List<float>> s_generatedHeights = NewHeightCache(DefaultGeneratedHeightBudgetBytes);
+
+    private static ByteBudgetCache<GridKey, List<float>> NewHeightCache(long budget) =>
+        new ByteBudgetCache<GridKey, List<float>>(budget, heights => heights.Count * sizeof(float));
+
+    /// <summary>
+    /// Run with a different budget, for a test that needs to fill it. Never
+    /// called by the mod: the shipped budget is a constant.
+    /// </summary>
+    internal static void UseGeneratedHeightBudgetForTest(long budgetBytes) =>
+        s_generatedHeights = NewHeightCache(budgetBytes);
+
+    /// <summary>Buffers in use that the cache could not keep, counted until they are returned.</summary>
+    public static int GeneratedHeightAdopted => s_generatedHeights.Retired;
+
+    /// <summary>Bytes one zone's heights take at the zone grid.</summary>
+    public static int BytesPerZoneHeights =>
+        (TerrainZoneDeltas.ZoneWidth + 1) * (TerrainZoneDeltas.ZoneWidth + 1) * sizeof(float);
+
+    /// <summary>
+    /// Whether <paramref name="zones"/> more zones' heights could be held now,
+    /// evicting what is not in use to make the room.
+    ///
+    /// Asked by the readiness barrier before a zone is generated, so that a
+    /// placement is held — not counted against its readiness budget — rather
+    /// than reaching the site check with nowhere to keep the ground it reads.
+    /// </summary>
+    public static bool HasRoomForZoneHeights(int zones) =>
+        zones <= 0 || s_generatedHeights.TryReserve(checked(zones * BytesPerZoneHeights));
 
     /// <summary>What the height cache is holding, for the operator command and a run's accounting.</summary>
     public static long GeneratedHeightBytes => s_generatedHeights.Bytes;
@@ -525,27 +602,18 @@ public static class LocationTerrainBridge
     internal static void ForgetGeneratedHeights() => s_generatedHeights.Clear();
 
     /// <summary>
-    /// Hold one zone's heights against eviction for as long as an operation
-    /// needs them.
-    ///
-    /// The preflight asks about a zone and the write asks again afterwards, and
-    /// the builder hands its answer over only once — so between those two the
-    /// entry must not be the one the cache decides to drop. Null when nothing is
-    /// held for that grid, which is not an error: the caller reads through
-    /// TryGeneratedHeightAt as usual and the ask is simply repeated.
-    /// </summary>
-    internal static ByteBudgetCache<GridKey, List<float>>.Lease? PinGeneratedHeights(
-        Vector2s zone, int width, float scale) =>
-        s_generatedHeights.Pin(new GridKey(zone, width, scale));
-
-    /// <summary>
     /// The zone's generated heights: the heightmap's own build data when it has
     /// it, then anything already collected from the builder, then the builder
     /// itself. Null when none of them can answer.
     /// </summary>
-    private static List<float> BaseHeights(TerrainZoneDeltas zone, Heightmap heightmap, out float originY)
+    private static HeightOutcome BaseHeights(
+        TerrainZoneDeltas zone, Heightmap heightmap,
+        out List<float> heights, out float originY, out IDisposable hold, out string why)
     {
+        heights = null;
         originY = 0f;
+        hold = null;
+        why = null;
         int needed = zone.Pitch * zone.Pitch;
 
         // EXACTLY the right number, not at least. A longer array is a different
@@ -556,8 +624,10 @@ public static class LocationTerrainBridge
             && heightmap.m_buildData.m_baseHeights != null
             && heightmap.m_buildData.m_baseHeights.Count == needed)
         {
+            // The game's own array, owned by its heightmap: not ours to count.
             originY = heightmap.transform.position.y;
-            return heightmap.m_buildData.m_baseHeights;
+            heights = heightmap.m_buildData.m_baseHeights;
+            return HeightOutcome.Read;
         }
 
         Vector2s zoneId = ZoneSystem.GetZone(new Vector3(zone.Origin.x, 0f, zone.Origin.z));
@@ -568,31 +638,51 @@ public static class LocationTerrainBridge
             // A kept entry of the wrong length is a bug in the keeping, not
             // something to reinterpret. Drop it and ask again.
             if (kept.Count == needed)
-                return kept;
+            {
+                hold = s_generatedHeights.Pin(key);
+                heights = kept;
+                return HeightOutcome.Read;
+            }
             s_generatedHeights.Remove(key);
         }
 
         if (HeightmapBuilder.instance == null || WorldGenerator.instance == null)
-            return null;
+            return HeightOutcome.NotReady;
+
+        // Room first, builder second. The builder's answer can be collected
+        // once, so it is not asked for until there is somewhere to keep it.
+        int bytes = needed * sizeof(float);
+        if (!s_generatedHeights.TryReserve(bytes))
+        {
+            why = $"the height budget has no room for the zone at {zone.Origin.x:0},{zone.Origin.z:0}: " +
+                  $"{s_generatedHeights.Bytes / 1024} KiB of {s_generatedHeights.BudgetBytes / 1024 / 1024} MiB " +
+                  $"is held by {s_generatedHeights.Pinned} zone(s) in use and {s_generatedHeights.Retired} adopted " +
+                  "buffer(s). Deferred, not attempted: nothing was asked of the builder.";
+            return HeightOutcome.Deferred;
+        }
 
         // Asking for a zone the builder has not built blocks until it has.
         // IsTerrainReady queues the work and answers whether it is done, which is
         // the check SpawnZone itself makes before generating.
         var centre = new Vector3(zone.Origin.x, 0f, zone.Origin.z);
         if (!HeightmapBuilder.instance.IsTerrainReady(centre, zone.Width, zone.Scale, false, WorldGenerator.instance))
-            return null;
+            return HeightOutcome.NotReady;
 
         HeightmapBuilder.HMBuildData data =
             HeightmapBuilder.instance.RequestTerrainSync(centre, zone.Width, zone.Scale, false, WorldGenerator.instance);
-        List<float> heights = data?.m_baseHeights;
-        if (heights != null && heights.Count == needed)
-        {
-            // A refusal to keep it is not a refusal to use it: the caller has
-            // the array in hand and the work goes ahead. It only means the next
-            // caller has to ask the builder again, which is what a budget buys.
-            s_generatedHeights.Put(key, heights);
-        }
-        return heights;
+        List<float> built = data?.m_baseHeights;
+        if (built == null)
+            return HeightOutcome.NotReady;
+
+        // Counted either way. Kept when it fits — room was reserved, so it does
+        // unless one zone is larger than the whole budget — and adopted into the
+        // same accounting when it does not, so a live buffer is never outside
+        // the number this mode reports.
+        hold = s_generatedHeights.Put(key, built)
+            ? s_generatedHeights.Pin(key)
+            : s_generatedHeights.Adopt(built);
+        heights = built;
+        return HeightOutcome.Read;
     }
 
     // HeightsReady is deliberately gone. It looked like a harmless question and

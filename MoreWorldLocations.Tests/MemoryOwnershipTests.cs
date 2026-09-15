@@ -124,6 +124,47 @@ public class ByteBudgetCacheTests
     }
 
     [Fact]
+    public void AnAdoptedBufferCountsUntilItsLeaseReturns()
+    {
+        // The gap the review named: a builder result the cache refused was live
+        // and outside the reported bytes. Adopted, it is counted while it is
+        // used and dropped when its user is done, with no key to find it by.
+        ByteBudgetCache<string, string> cache = Cache(100);
+
+        ByteBudgetCache<string, string>.Lease lease = cache.Adopt(OfBytes(40));
+
+        Assert.Equal(40, cache.Bytes);
+        Assert.Equal(1, cache.Retired);
+        Assert.Equal(0, cache.Count);
+        Assert.Null(cache.Peek("anything"));
+        lease.Dispose();
+        lease.Dispose();
+        Assert.Equal(0, cache.Bytes);
+        Assert.Equal(0, cache.Retired);
+    }
+
+    [Fact]
+    public void ReservingRoomEvictsWhatIsNotInUseAndRefusesWhatIs()
+    {
+        ByteBudgetCache<string, string> cache = Cache(100);
+        cache.Put("idle", OfBytes(60));
+        cache.Put("busy", OfBytes(30));
+        using ByteBudgetCache<string, string>.Lease pin = cache.Pin("busy")!;
+
+        // Room is made from what nobody is reading.
+        Assert.True(cache.TryReserve(50));
+        Assert.Null(cache.Peek("idle"));
+        Assert.Equal(30, cache.Bytes);
+
+        // Everything left is in use: no, and nothing was touched to say so.
+        Assert.False(cache.TryReserve(80));
+        Assert.Equal(30, cache.Bytes);
+        Assert.NotNull(cache.Peek("busy"));
+        // Larger than the whole budget can never fit.
+        Assert.False(cache.TryReserve(101));
+    }
+
+    [Fact]
     public void ClearingDropsEverythingAndTheAccounting()
     {
         ByteBudgetCache<string, string> cache = Cache(100);

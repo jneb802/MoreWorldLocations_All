@@ -182,6 +182,37 @@ public class GateAndSubtreeTests
     }
 
     [Fact]
+    public void AZoneWaitingOnTheHeightBudgetIsNotCountedAgainstItsReadiness()
+    {
+        // The ground is built; this mode has nowhere to keep what the site check
+        // would read of it. That wait is ours, so it is not a readiness hold and
+        // it cannot give a placement up.
+        using var world = new TerrainWorld();
+        world.PlaceInstance("ReviewSite", new Vector2s(0, 0), atX: 0f, levelTo: 29f);
+        world.GroundEverywhere(30f);
+        LocationTerrainBridge.UseGeneratedHeightBudgetForTest(1);
+        try
+        {
+            for (int i = 0; i < ZoneReadinessBarrier.MaxHolds + 5; i++)
+                Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+
+            Assert.False(ZoneReadinessBarrier.Holds.ContainsKey(new Vector2s(0, 0)));
+            Assert.Contains(new Vector2s(0, 0), ZoneReadinessBarrier.Deferred);
+            Assert.Contains("height budget", LocationSpawnGate.Status());
+            Assert.StartsWith("0 placement(s) refused", LocationSpawnGate.Status());
+        }
+        finally
+        {
+            LocationTerrainBridge.UseGeneratedHeightBudgetForTest(LocationTerrainBridge.DefaultGeneratedHeightBudgetBytes);
+        }
+
+        Assert.True(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        Assert.Empty(ZoneReadinessBarrier.Deferred);
+        Assert.True(LocationSpawnGate.MayPublish(
+            world.Instance("ReviewSite").m_location, Vector3.zero, Quaternion.identity));
+    }
+
+    [Fact]
     public void AHeldZoneGeneratesOnceItsGroundIsReady()
     {
         // unavailable -> ready -> placed, exactly once, with nothing published
