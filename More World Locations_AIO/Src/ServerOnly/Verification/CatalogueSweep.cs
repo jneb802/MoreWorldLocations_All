@@ -91,6 +91,12 @@ public static class CatalogueSweep
     private static CatalogueAudit.CatalogueAuditRun? s_run;
     private static int s_generation;
 
+    /// <summary>The longest one frame spent judging a single name in the last sweep, and which.</summary>
+    public static double LongestJudgeMilliseconds { get; private set; }
+    public static string LongestJudged { get; private set; } = "";
+    private static double s_longestMs;
+    private static string s_longestName = "";
+
     /// <summary>
     /// Judge the whole catalogue in the calling frame, and answer.
     ///
@@ -147,6 +153,8 @@ public static class CatalogueSweep
             ServerOnlyAllowlist.ExcludedPacks);
         State = SweepState.Auditing;
         int token = ++s_generation;
+        s_longestMs = 0;
+        s_longestName = "";
         CatalogueAudit.Progress = line => Log.LogInfo(line);
         Observe(() => SweepStarted?.Invoke());
 
@@ -190,8 +198,17 @@ public static class CatalogueSweep
                 }
             }
 
-            // 2. Judge one name: open, read, release, in this frame.
+            // 2. Judge one name: open, read, release, in this frame. Timed,
+            //    because "one template per frame" is only a bound if the
+            //    longest one is known.
+            var clock = System.Diagnostics.Stopwatch.StartNew();
             Exception? fault = TryJudge(run);
+            clock.Stop();
+            if (clock.Elapsed.TotalMilliseconds > s_longestMs)
+            {
+                s_longestMs = clock.Elapsed.TotalMilliseconds;
+                s_longestName = name;
+            }
             preload?.Dispose();
             if (fault != null)
             {
@@ -310,9 +327,12 @@ public static class CatalogueSweep
         CatalogueAudit.Progress = null;
         State = state;
         s_run = null;
+        LongestJudgeMilliseconds = s_longestMs;
+        LongestJudged = s_longestName;
 
         if (report != null)
         {
+            Log.LogInfo($"catalogue sweep: longest single frame judging one name was {s_longestMs:0} ms on {s_longestName}");
             Announce(report);
             Observe(() => SweepFinished?.Invoke());
         }
@@ -415,7 +435,8 @@ public static class CatalogueSweep
     /// allocator.
     /// </summary>
     public static string MemoryStatus() =>
-        $"sweep {State}{(State == SweepState.Auditing ? " " + Progress : "")}; " +
+        $"sweep {State}{(State == SweepState.Auditing ? " " + Progress : "")}" +
+        $"{(LongestJudged.Length > 0 ? $" (longest frame {LongestJudgeMilliseconds:0} ms on {LongestJudged})" : "")}; " +
         $"leases held {TemplateAssets.OutstandingLeases} (peak {TemplateAssets.PeakLeases}); " +
         $"signatures {TemplateFactsExtractor.StockSignatureBytes / 1024} KiB in " +
         $"{TemplateFactsExtractor.StockSignatureEntries} entr(ies) of " +
