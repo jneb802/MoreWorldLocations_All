@@ -50,7 +50,7 @@ public static class HeightBudgetDriver
             var zone = new TerrainZoneDeltas(origin, TerrainZoneDeltas.ZoneWidth, TerrainZoneDeltas.ZoneScale);
 
             LocationTerrainBridge.HeightOutcome outcome = LocationTerrainBridge.HeightOutcome.NotReady;
-            string reason = "";
+            string reason = null;
             IDisposable? holdHandle = null;
             TerrainConversion.VertexHeight? height = null;
             int frames = 0;
@@ -67,7 +67,7 @@ public static class HeightBudgetDriver
             float sample = height != null ? height(32, 32) : float.NaN;
             string line = $"{Tag} zone {zoneId.x},{zoneId.y}: {outcome} after {frames} frame(s)" +
                           (outcome == LocationTerrainBridge.HeightOutcome.Read ? $", height at centre {sample:0.00}" : "") +
-                          (reason.Length > 0 ? $" — {reason}" : "") +
+                          (!string.IsNullOrEmpty(reason) ? $" — {reason}" : "") +
                           $" | cache {LocationTerrainBridge.GeneratedHeightBytes} B in {LocationTerrainBridge.GeneratedHeightEntries} zone(s), " +
                           $"{LocationTerrainBridge.GeneratedHeightPins} in use, {LocationTerrainBridge.GeneratedHeightAdopted} adopted, " +
                           $"budget {LocationTerrainBridge.GeneratedHeightBudgetBytes} B";
