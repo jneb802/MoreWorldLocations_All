@@ -97,10 +97,16 @@ Recorded here because it gates every runtime experiment, and a build that exits
    `assetBundleManifest_full` file. `plugins/Bundles/` contains only a
    `.gitkeep`, `assetBundleManifest_full` is absent, and both are `.gitignore`d.
    `thunderstore.toml` copies them into the release package, so they exist only
-   in the published Thunderstore build (or in the author's Unity project).
-   **No MWL package is installed anywhere on this machine.** Until the 5.0.9
-   release package is available, no location can be registered, placed,
-   generated or audited at runtime.
+   in the published Thunderstore build (or in the author's Unity project), and
+   no MWL package was installed on this machine.
+
+   Resolved for the audit by fetching the published package:
+   `warpalicious/More_World_Locations_AIO` **5.0.9**,
+   `b7790876e86eb161d9e4b123e92e396ee167f5e44cea620b6ebe28bdfde8f3c5`, 280,263,578
+   bytes, published 9 Sep 2026 — 264 bundles and the manifest
+   (`879003ecd4e9…`). It is kept with the validation tooling, unpacked and
+   uncommitted; it is someone else's release, not ours to vendor. A build of
+   this repository still cannot produce a runnable install on its own.
 
 2. **`assets/moreworldlocations_assetbundle_2` is an unresolved Git LFS
    pointer** (134 bytes standing in for 153,754,436), and `git lfs` is not
