@@ -448,8 +448,27 @@ public static class LocationTerrainBridge
     }
 
     /// <summary>
+    /// Generated heights the builder has already handed over, by zone.
+    ///
+    /// <para>The builder's ready list hands an entry out and REMOVES it, so its
+    /// answer can only be collected once. That was survivable while one caller
+    /// asked once; it is not, now that the site preflight has to know the ground
+    /// BEFORE a site is published and the conversion has to know it again
+    /// afterwards. Keeping the answer is the only way both can ask — the
+    /// alternative is one of them converting against nothing.</para>
+    ///
+    /// <para>Only zones somebody asked about are kept, which is the zones our
+    /// sites touch, and the whole thing is dropped when a world is.</para>
+    /// </summary>
+    private static readonly Dictionary<Vector2s, List<float>> s_generatedHeights = new();
+
+    /// <summary>A new world generates different ground. See LocationTerrainWriter.Reset.</summary>
+    internal static void ForgetGeneratedHeights() => s_generatedHeights.Clear();
+
+    /// <summary>
     /// The zone's generated heights: the heightmap's own build data when it has
-    /// it, otherwise the builder's, and null when neither can answer.
+    /// it, then anything already collected from the builder, then the builder
+    /// itself. Null when none of them can answer.
     /// </summary>
     private static List<float> BaseHeights(TerrainZoneDeltas zone, Heightmap heightmap, out float originY)
     {
@@ -461,6 +480,10 @@ public static class LocationTerrainBridge
             originY = heightmap.transform.position.y;
             return heightmap.m_buildData.m_baseHeights;
         }
+
+        Vector2s zoneId = ZoneSystem.GetZone(new Vector3(zone.Origin.x, 0f, zone.Origin.z));
+        if (s_generatedHeights.TryGetValue(zoneId, out List<float> kept))
+            return kept;
 
         if (HeightmapBuilder.instance == null || WorldGenerator.instance == null)
             return null;
@@ -474,7 +497,10 @@ public static class LocationTerrainBridge
 
         HeightmapBuilder.HMBuildData data =
             HeightmapBuilder.instance.RequestTerrainSync(centre, zone.Width, zone.Scale, false, WorldGenerator.instance);
-        return data?.m_baseHeights;
+        List<float> heights = data?.m_baseHeights;
+        if (heights != null)
+            s_generatedHeights[zoneId] = heights;
+        return heights;
     }
 
     // HeightsReady is deliberately gone. It looked like a harmless question and

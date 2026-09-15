@@ -169,7 +169,7 @@ public static class LocationTerrainPatch
     /// instantiate on a client that has the template — including the rule that a
     /// child under an inactive parent does not count.
     /// </summary>
-    private static List<TerrainModifier> ModifiersOf(ZoneSystem.ZoneLocation location, string name)
+    internal static List<TerrainModifier> ModifiersOf(ZoneSystem.ZoneLocation location, string name)
     {
         if (s_templateModifiers.TryGetValue(name, out List<TerrainModifier> cached))
             return cached;
@@ -264,5 +264,9 @@ public static class LocationTerrainWriterReset
         LocationTerrainWriter.Reset();
         LocationTerrainPatch.Forget();
         LocationTerrainTick.Forget();
+        LocationSpawnGate.Forget();
+        // A new world generates different ground, so the heights kept from the
+        // builder for the last one describe nowhere.
+        LocationTerrainBridge.ForgetGeneratedHeights();
     }
 }

@@ -31,6 +31,11 @@ public class LocationTerrainBridgeTests : IDisposable
         HeightmapBuilder.instance = _builder;
         ZoneSystem.instance = new ZoneSystem();
         Heightmap.Registered = null;
+        // The bridge keeps the heights the builder hands over, because the
+        // builder only hands them over once and two callers need them: the site
+        // preflight before a site is published, and the conversion afterwards.
+        // Kept state is per world, and each test is its own world.
+        LocationTerrainBridge.ForgetGeneratedHeights();
     }
 
     public void Dispose()

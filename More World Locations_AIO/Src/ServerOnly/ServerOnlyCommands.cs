@@ -36,6 +36,12 @@ public static class ServerOnlyCommands
             {
                 foreach (string line in LocationTerrainWriter.Status().Split('\n'))
                     args.Context.AddString(line);
+                // Refusals happen before a site exists, so they appear in no
+                // ledger of work: without this they would be invisible, and an
+                // operator would see a location missing from the map with
+                // nothing anywhere saying why.
+                foreach (string line in LocationSpawnGate.Status().Split('\n'))
+                    args.Context.AddString(line);
                 return true;
             });
 
