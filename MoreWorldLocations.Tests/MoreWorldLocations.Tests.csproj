@@ -66,6 +66,7 @@
         -->
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFactsExtractor.cs" Link="ModSrc/Verification/TemplateFactsExtractor.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueSweep.cs" Link="ModSrc/Verification/CatalogueSweep.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/MockReferenceGuard.cs" Link="ModSrc/Verification/MockReferenceGuard.cs"/>
         <Compile Include="../More World Locations_AIO/Src/Locations/LocationDB.cs" Link="ModSrc/LocationDB.cs"/>
     </ItemGroup>
 

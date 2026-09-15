@@ -459,3 +459,66 @@ public class ReviewRegressionTests
 /// </summary>
 [CollectionDefinition("templates", DisableParallelization = true)]
 public class TemplateCollection { }
+
+/// <summary>The lifecycle trace switch: what it parses, and that unset means off.</summary>
+public class TraceSwitchTests
+{
+    [Fact]
+    public void UnsetMeansNoTrace()
+    {
+        Assert.False(More_World_Locations_AIO.ServerOnly.ValidationSwitches.ParseTrace(null, out var templates, out var probes));
+        Assert.Empty(templates);
+        Assert.Empty(probes);
+        Assert.False(More_World_Locations_AIO.ServerOnly.ValidationSwitches.ParseTrace("  ; probe= ", out _, out _));
+    }
+
+    [Fact]
+    public void TemplatesAndProbesAreSeparatedAndTrimmed()
+    {
+        bool set = More_World_Locations_AIO.ServerOnly.ValidationSwitches.ParseTrace(
+            " MWL_A, MWL_B ;probe=Pickable_SurtlingCoreStand, fire_pit;MWL_C", out var templates, out var probes);
+
+        Assert.True(set);
+        Assert.Equal(new[] { "MWL_A", "MWL_B", "MWL_C" }, System.Linq.Enumerable.OrderBy(templates, n => n, System.StringComparer.Ordinal));
+        Assert.Equal(new[] { "Pickable_SurtlingCoreStand", "fire_pit" }, System.Linq.Enumerable.OrderBy(probes, n => n, System.StringComparer.Ordinal));
+    }
+}
+
+
+/// <summary>
+/// The guard on Jötunn's mock walk: hierarchy members are left alone, authored
+/// references are not.
+/// </summary>
+public class MockReferenceGuardTests
+{
+    [Fact]
+    public void EngineHierarchyMembersAreSkippedAndAuthoredOnesAreNot()
+    {
+        More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.ResetForTest();
+        var guard = typeof(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard);
+
+        Assert.True(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember("UnityEngine.Transform"));
+        Assert.True(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember("UnityEngine.GameObject"));
+        Assert.True(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember("UnityEngine.Component"));
+        // What a mod authors and what the fix exists for.
+        Assert.False(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember("UnityEngine.MeshFilter"));
+        Assert.False(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember("UnityEngine.Renderer"));
+        Assert.False(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember("Pickable"));
+        Assert.False(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.IsHierarchyMember(null));
+    }
+
+    [Fact]
+    public void ASkippedVisitIsCountedAndNamed()
+    {
+        More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.ResetForTest();
+        // A real property on a type named like Unity's Transform: the doubles'
+        // Transform lives in the global namespace, so this drives Allow with a
+        // member whose declaring type is NOT a hierarchy type and expects it
+        // to pass, then checks the name-based decision directly.
+        System.Reflection.PropertyInfo parent = typeof(global::Transform).GetProperty("parent")
+            ?? typeof(global::Transform).GetProperty("localScale")!;
+        Assert.True(More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.Allow(parent));
+        Assert.Equal(0, More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.Skipped);
+        Assert.Contains("no hierarchy member", More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuard.Status());
+    }
+}

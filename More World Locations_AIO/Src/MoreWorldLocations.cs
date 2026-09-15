@@ -93,6 +93,13 @@ namespace More_World_Locations_AIO
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
+            if (ServerOnlyMode.Enabled)
+            {
+                // Before any template is resolved: the audit opens every
+                // template in the catalogue, and an unguarded resolution of one
+                // with an unresolvable mock moves objects into vanilla prefabs.
+                More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuardPatch.Install(_harmony);
+            }
             SetupWatcher();
 
             Prefabs.LoadPrefabBundles();
