@@ -215,6 +215,13 @@ public static class LocationTerrainWriter
         if (converted.Count == 0)
             return;
 
+        if (FaultOnce(zoneID))
+        {
+            foreach (LocationTerrainWork item in converted)
+                Wait(item, "a validation switch failed this write on purpose");
+            return;
+        }
+
         if (LocationTerrainBridge.WriteDetached(zoneID, zone, header, out string failure))
         {
             foreach (LocationTerrainWork item in converted)

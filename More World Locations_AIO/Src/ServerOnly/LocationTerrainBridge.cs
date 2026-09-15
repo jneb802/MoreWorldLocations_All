@@ -315,11 +315,13 @@ public static class LocationTerrainBridge
             zdo.SetPrefab(TerrainCompilerPrefab);
             zdo.SetRotation(Quaternion.identity);
         }
-        if (!zdo.IsOwner())
+        if (!zdo.IsOwner() && !Claimable(zdo, out string held))
         {
-            failure = "another peer owns this zone's compiler";
+            failure = held;
             return false;
         }
+        if (!zdo.IsOwner())
+            zdo.SetOwner(ZDOMan.instance.m_sessionID);
 
         zdo.Set(ZDOVars.s_TCData, TerrainBlob.Encode(zone, header));
 
@@ -330,6 +332,36 @@ public static class LocationTerrainBridge
             return false;
         }
         zdo.Set(AppliedSitesKey, zone.SerializeApplied());
+        return true;
+    }
+
+    /// <summary>
+    /// Whether an owner recorded on a saved compiler is one this peer must
+    /// respect.
+    ///
+    /// Ownership is saved with the ZDO, so after a restart a compiler can name a
+    /// session that no longer exists — the client that last dug there. Refusing
+    /// on that leaves the repair blocked for the life of the world: observed on
+    /// 15 Sep, a zone stuck at "another peer owns this zone's compiler" with
+    /// zero peers connected. A live peer's compiler is still theirs; a
+    /// departed one's is nobody's, and vanilla reassigns by proximity anyway.
+    /// </summary>
+    private static bool Claimable(ZDO zdo, out string held)
+    {
+        held = null;
+        long owner = zdo.GetOwner();
+        if (owner == 0L)
+            return true;
+        if (ZNet.instance != null && ZNet.instance.GetPeer(owner) != null)
+        {
+            held = "a connected peer owns this zone's compiler";
+            return false;
+        }
+        if (ZNet.instance == null)
+        {
+            held = "another peer owns this zone's compiler and there is no network to ask about it";
+            return false;
+        }
         return true;
     }
 

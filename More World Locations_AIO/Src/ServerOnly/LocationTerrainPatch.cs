@@ -174,9 +174,19 @@ public static class LocationTerrainPatch
         if (s_templateModifiers.TryGetValue(name, out List<TerrainModifier> cached))
             return cached;
 
+        // The template is a soft reference and its asset is null until something
+        // loads it. During generation the game has just done that; on the pass
+        // that takes up unfinished work after a restart it has not, which is why
+        // that pass found 136 proxies and nothing of ours. Load it the way
+        // ZoneSystem.SpawnLocation does.
+        if (location.m_prefab.Asset == null)
+            location.m_prefab.Load();
         GameObject asset = location.m_prefab.Asset;
         if (asset == null)
+        {
+            Log.LogWarning($"{name}: its template would not load, so its terrain cannot be read.");
             return null;
+        }
 
         var modifiers = new List<TerrainModifier>(global::Utils.GetEnabledComponentsInChildren<TerrainModifier>(asset));
         s_templateModifiers[name] = modifiers;

@@ -684,3 +684,15 @@ public class HeightmapBuilder
         return data;
     }
 }
+
+
+/// <summary>
+/// Shim for ZNet: only the question "is this session id a peer that is here
+/// now", which is what tells a stale saved owner from a live one.
+/// </summary>
+public class ZNet
+{
+    public static ZNet? instance;
+    public readonly System.Collections.Generic.HashSet<long> ConnectedPeers = new();
+    public object? GetPeer(long uid) => ConnectedPeers.Contains(uid) ? (object)uid : null;
+}

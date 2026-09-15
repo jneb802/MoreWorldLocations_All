@@ -522,6 +522,54 @@ public class LocationTerrainDispatchTests : IDisposable
     }
 
     [Fact]
+    public void ACompilerLeftOwnedByADepartedPeerCanStillBeRepaired()
+    {
+        // Ownership is saved with the ZDO, so after a restart a compiler can
+        // name a session that no longer exists -- the client that last dug
+        // there. Observed on 15 Sep: a zone stuck at "another peer owns this
+        // zone's compiler" with zero peers connected, which would have blocked
+        // the repair for the life of the world.
+        ZNet.instance = new ZNet();
+        try
+        {
+            Heightmap hmA = Load(A);
+            TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hmA.m_terrainComp!);
+            LocationTerrainBridge.WriteBack(hmA.m_terrainComp!, zone);
+            Unload(A);
+
+            ZDO compiler = LocationTerrainBridge.SavedCompiler(A, out _);
+            compiler.SetOwner(4242L);                     // a session that is gone
+
+            Assert.True(LocationTerrainBridge.WriteDetached(
+                A, zone, TerrainBlob.Header.Fresh, out string failure), failure);
+
+            // A peer that IS connected still owns its own compiler.
+            compiler.SetOwner(4242L);
+            ZNet.instance.ConnectedPeers.Add(4242L);
+            Assert.False(LocationTerrainBridge.WriteDetached(
+                A, zone, TerrainBlob.Header.Fresh, out failure));
+            Assert.Contains("connected peer", failure);
+        }
+        finally { ZNet.instance = null; }
+    }
+
+    [Fact]
+    public void WithNoNetworkAForeignOwnerIsLeftAlone()
+    {
+        // No ZNet is no way to ask whether the owner is still here, and taking
+        // a compiler on a guess is how two writers end up on one zone.
+        Heightmap hmA = Load(A);
+        TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hmA.m_terrainComp!);
+        LocationTerrainBridge.WriteBack(hmA.m_terrainComp!, zone);
+        Unload(A);
+        LocationTerrainBridge.SavedCompiler(A, out _).SetOwner(4242L);
+
+        Assert.False(LocationTerrainBridge.WriteDetached(
+            A, zone, TerrainBlob.Header.Fresh, out string failure));
+        Assert.Contains("no network", failure);
+    }
+
+    [Fact]
     public void AZoneWithNoGeneratedHeightsWaitsRatherThanConvertingAgainstZero()
     {
         _builder.Built.Remove(A);
