@@ -522,7 +522,8 @@ public static class LocationTerrainBridge
     /// <summary>The budget in force. The shipped value unless a test has narrowed it.</summary>
     public static long GeneratedHeightBudgetBytes => s_generatedHeights.BudgetBytes;
 
-    private static ByteBudgetCache<GridKey, List<float>> s_generatedHeights = NewHeightCache(DefaultGeneratedHeightBudgetBytes);
+    private static ByteBudgetCache<GridKey, List<float>> s_generatedHeights =
+        NewHeightCache(ValidationSwitches.HeightBudgetBytes(DefaultGeneratedHeightBudgetBytes));
 
     private static ByteBudgetCache<GridKey, List<float>> NewHeightCache(long budget) =>
         new ByteBudgetCache<GridKey, List<float>>(budget, heights => heights.Count * sizeof(float));

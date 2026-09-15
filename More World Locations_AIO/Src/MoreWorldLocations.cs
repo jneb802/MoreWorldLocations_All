@@ -99,6 +99,15 @@ namespace More_World_Locations_AIO
                 // template in the catalogue, and an unguarded resolution of one
                 // with an unresolvable mock moves objects into vanilla prefabs.
                 More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuardPatch.Install(_harmony);
+                GenerationHold.Install();
+                // Jötunn injects its list into the world when the sweep starts;
+                // what the sweep approves is put into the world through Jötunn's
+                // own late path, which prepares the location the same way.
+                LocationDB.LateRegistration = name =>
+                {
+                    Jotunn.Entities.CustomLocation custom = ZoneManager.Instance.GetCustomLocation(name);
+                    ZoneManager.Instance.RegisterLocationInZoneSystem(custom.ZoneLocation);
+                };
             }
             SetupWatcher();
 

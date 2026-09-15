@@ -22,6 +22,8 @@ public static class GameTemplateAssets
     public static void Install()
     {
         TemplateAssets.Source = Open;
+        TemplateAssets.Preloader = Preload;
+        TemplateAssets.IsSettled = Settled;
         TemplateAssets.StockPrefabs = StockPrefab;
         TemplateAssets.BaselineProvenance = Provenance();
         // A validation switch, off in a shipped run: the lifecycle trace.
@@ -92,6 +94,81 @@ public static class GameTemplateAssets
         // children, components and settings with it.
         AssetManager.Instance.ResolveMocksOnLoad(reference.m_assetID, null, null);
         return TemplateLease.Take(new SoftReferenceOwnership(reference));
+    }
+
+    /// <summary>
+    /// Load a template through the loader's asynchronous path, holding one
+    /// reference until disposed. The loader's own async load runs the bundle
+    /// read off the main thread; the later synchronous Open then finds the
+    /// asset loaded and pays only for the read.
+    /// </summary>
+    private static ITemplatePreload? Preload(string name)
+    {
+        SoftReference<GameObject> reference = AssetManager.Instance.GetSoftReference<GameObject>(name);
+        if (!reference.IsValid)
+            return null;
+        AssetManager.Instance.ResolveMocksOnLoad(reference.m_assetID, null, null);
+        return new AsyncPreload(reference);
+    }
+
+    private sealed class AsyncPreload : ITemplatePreload
+    {
+        private SoftReference<GameObject> _reference;
+        private bool _held;
+
+        public AsyncPreload(SoftReference<GameObject> reference)
+        {
+            _reference = reference;
+            _reference.LoadAsync();
+            _held = true;
+            TemplateAssets.LeaseTaken();
+        }
+
+        public bool Loaded => _reference.IsLoaded;
+
+        public void Dispose()
+        {
+            if (!_held)
+                return;
+            _held = false;
+            try
+            {
+                _reference.Release();
+            }
+            catch (Exception ex)
+            {
+                TemplateAssets.LeaseUnresolved($"releasing a preload threw ({ex.GetType().Name}: {ex.Message})");
+                return;
+            }
+            TemplateAssets.LeaseReturned();
+        }
+    }
+
+    /// <summary>
+    /// Whether the template's own bundle has finished unloading. Read from the
+    /// loader's tables; unreadable counts as settled so a sweep cannot wait on
+    /// a question it cannot ask.
+    /// </summary>
+    private static bool Settled(string name)
+    {
+        try
+        {
+            SoftReference<GameObject> reference = AssetManager.Instance.GetSoftReference<GameObject>(name);
+            if (!reference.IsValid)
+                return true;
+            AssetBundleLoader loader = AssetBundleLoader.Instance;
+            if (loader == null || !loader.m_assetIDToLoaderIndex.TryGetValue(reference.m_assetID, out int index))
+                return true;
+            AssetLoader asset = loader.m_assetLoaders[index];
+            if (asset.ReferenceCount > 0)
+                return true;    // somebody else holds it; not ours to wait for
+            int own = HarmonyLib.Traverse.Create(asset).Field("m_bundleLoaderIndex").GetValue<int>();
+            return loader.m_bundleLoaders[own].LoadStatus == LoadStatus.NotLoaded;
+        }
+        catch
+        {
+            return true;
+        }
     }
 
     /// <summary>

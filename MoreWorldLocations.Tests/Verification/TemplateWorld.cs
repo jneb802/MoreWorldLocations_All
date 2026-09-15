@@ -38,6 +38,11 @@ public sealed class TemplateWorld : IDisposable
         ZoneSystem.instance = new ZoneSystem();
         ServerOnlyMode.Set(true);
         CatalogueSweep.Forget();
+        CatalogueSweep.ScheduleRoutine = null;
+        CatalogueSweep.ReleaseGeneration = null;
+        TemplateAssets.Preloader = null;
+        TemplateAssets.IsSettled = null;
+        LocationDB.LateRegistration = null;
         ServerOnlySelection.SetRegistered(Array.Empty<string>());
         TemplateAssets.Source = name => _assets.TryGetValue(name, out GameObject asset)
             ? new Handle(this, name, asset)
@@ -92,6 +97,11 @@ public sealed class TemplateWorld : IDisposable
         ZoneSystem.instance = null;
         ServerOnlyMode.Set(false);
         CatalogueSweep.Forget();
+        CatalogueSweep.ScheduleRoutine = null;
+        CatalogueSweep.ReleaseGeneration = null;
+        TemplateAssets.Preloader = null;
+        TemplateAssets.IsSettled = null;
+        LocationDB.LateRegistration = null;
         BepInEx.Logging.ManualLogSource.ThrowOnNextInfo = false;
     }
 

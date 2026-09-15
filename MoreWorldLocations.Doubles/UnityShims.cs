@@ -155,6 +155,10 @@ public static class Time
 {
     /// <summary>Seconds since start. Tests set it directly rather than waiting.</summary>
     public static float time;
+    /// <summary>Wall-clock seconds since start, for bounded waits. Tests advance it.</summary>
+    public static float realtimeSinceStartup;
+    /// <summary>Frames since start, for bounded waits. Tests advance it.</summary>
+    public static int frameCount;
 }
 
 public static class Mathf

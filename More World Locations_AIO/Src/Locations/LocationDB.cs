@@ -65,9 +65,85 @@ public static class LocationDB
         // only ever confirm what it already approved. Iterating the catalogue
         // changed the number of rows in the report and not the set of templates
         // actually opened.
+        //
+        // It runs a name per frame and registers when it concludes; until then
+        // nothing of ours is in the world's list and the engine holds the
+        // world's location generation. With no frames to give (a test) it
+        // concludes inside this call.
         if (ServerOnlyMode.Enabled)
-            _auditApproved = AuditBeforeRegistering(requested);
+        {
+            ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
+            if (!CatalogueSweep.BeginAudit(report => RegisterWhatTheAuditApproved(report, requested)))
+            {
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError(
+                    "A catalogue sweep is already running, so registration was not started; nothing is registered.");
+            }
+            return;
+        }
 
+        RegisterPacks();
+        ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
+    }
+
+    /// <summary>
+    /// The engine's late registration, for a location added after Jötunn has
+    /// already injected its list into the world. Null where the doubles'
+    /// Register puts a location straight into the world's list.
+    /// </summary>
+    public static System.Action<string>? LateRegistration { get; set; }
+
+    private static void RegisterWhatTheAuditApproved(CatalogueReport? report, IReadOnlyCollection<string> requested)
+    {
+        // Null is not "register the shipped selection". It is the case where
+        // the check did not happen, and Register registers nothing at all: an
+        // empty world with a loud reason is the right direction for a
+        // verification failure to fail. A validation run's requested names are
+        // the one exception, because somebody is deliberately about to watch
+        // them.
+        _auditApproved = ApprovedBy(report, requested);
+        RegisterPacks();
+
+        // The runtime has to be able to tell an MWL location from a vanilla
+        // one: the terrain conversion applies to ours and must not touch
+        // theirs, which a stock client builds for itself.
+        ServerOnlySelection.SetRegistered(_registered);
+
+        var logger = More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
+        logger.LogInfo(ServerOnlySelection.RegisteredNotice(_registered));
+        foreach (string name in ServerOnlySelection.Unmatched(_approved, _registered))
+            logger.LogWarning(
+                $"Approved template '{name}' matched no location: it is either misspelled " +
+                "or in a pack server-only mode excludes. Nothing was registered for it.");
+
+        // Jötunn injected its list when the sweep started, which was empty;
+        // what was registered since has to be put into the world by hand.
+        if (LateRegistration != null)
+        {
+            foreach (string name in _registered)
+            {
+                try
+                {
+                    LateRegistration(name);
+                }
+                catch (System.Exception ex)
+                {
+                    logger.LogError($"'{name}' was approved and could not be put into the world: {ex}");
+                }
+            }
+        }
+
+        // Enforcement closes the transaction HERE, where both halves have
+        // provably happened. It used to sit on a ZoneSystem.SetupLocations
+        // postfix, and a station run measured that hook running at the main
+        // menu, before this method had been called at all -- so it found no
+        // audit, withdrew the nothing that was registered, and reported a
+        // failure that had not happened. A guard whose ordering is a guess
+        // is a guard that reports on a world it has not seen.
+        CatalogueSweep.Enforce();
+    }
+
+    private static void RegisterPacks()
+    {
         Register("Meadows", LocationDefinitions.Meadows);
         Register("BlackForest", LocationDefinitions.BlackForest);
         Register("Swamp", LocationDefinitions.Swamp);
@@ -85,63 +161,20 @@ public static class LocationDB
 
         if (BepinexConfigs.EnableTrainers.Value != PortInit.Toggle.Off)
             Register("Trainers", LocationDefinitions.Trainers);
-
-        if (ServerOnlyMode.Enabled)
-        {
-            // The runtime has to be able to tell an MWL location from a vanilla
-            // one: the terrain conversion applies to ours and must not touch
-            // theirs, which a stock client builds for itself.
-            ServerOnlySelection.SetRegistered(_registered);
-
-            var logger = More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
-            logger.LogInfo(ServerOnlySelection.RegisteredNotice(_registered));
-            foreach (string name in ServerOnlySelection.Unmatched(_approved, _registered))
-                logger.LogWarning(
-                    $"Approved template '{name}' matched no location: it is either misspelled " +
-                    "or in a pack server-only mode excludes. Nothing was registered for it.");
-
-            // Enforcement closes the transaction HERE, where both halves have
-            // provably happened. It used to sit on a ZoneSystem.SetupLocations
-            // postfix, and a station run measured that hook running at the main
-            // menu, before this method had been called at all -- so it found no
-            // audit, withdrew the nothing that was registered, and reported a
-            // failure that had not happened. A guard whose ordering is a guess
-            // is a guard that reports on a world it has not seen.
-            CatalogueSweep.Enforce();
-        }
-
-        ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
     }
 
-    /// <summary>
-    /// Judge the catalogue and return the names that may be registered, or null
-    /// when the audit could not be completed.
-    ///
-    /// <para>Null is not "register the shipped selection". It is the case where
-    /// the check did not happen, and <see cref="Register"/> registers nothing at
-    /// all: an empty world with a loud reason is the right direction for a
-    /// verification failure to fail. A validation run's requested names are the
-    /// one exception, because somebody is deliberately about to watch them.</para>
-    /// </summary>
-    private static HashSet<string>? AuditBeforeRegistering(IReadOnlyCollection<string> requested)
+    /// <summary>The names a report lets this world register, or null when there is no report.</summary>
+    private static HashSet<string>? ApprovedBy(CatalogueReport? report, IReadOnlyCollection<string> requested)
     {
-        try
-        {
-            CatalogueReport report = CatalogueSweep.Audit();
-            var approved = new HashSet<string>(requested);
-            foreach (CatalogueEntry entry in report.Entries)
-            {
-                if (entry.Registered)
-                    approved.Add(entry.Name);
-            }
-            return approved;
-        }
-        catch (System.Exception ex)
-        {
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError(
-                $"The server-only catalogue audit failed, so nothing is registered: {ex}");
+        if (report == null)
             return null;
+        var approved = new HashSet<string>(requested);
+        foreach (CatalogueEntry entry in report.Entries)
+        {
+            if (entry.Registered)
+                approved.Add(entry.Name);
         }
+        return approved;
     }
 
     public static MWLLocation GetLocation(string name)

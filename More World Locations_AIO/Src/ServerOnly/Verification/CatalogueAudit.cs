@@ -78,24 +78,107 @@ public static class CatalogueAudit
         IReadOnlyCollection<string> excludedPacks,
         ComponentPolicy? components = null)
     {
+        // The loop form of the stepper below: same order, same judgement, same
+        // report. It exists for callers that have no frames to spread the work
+        // over — a test, or a synchronous resweep.
+        CatalogueAuditRun run = Begin(definitions, factsOf, registry, selection, excludedPacks, components);
+        while (!run.Done)
+            run.JudgeNext();
+        return run.Finish();
+    }
+
+    /// <summary>
+    /// Start a sweep that judges one name per <see cref="CatalogueAuditRun.JudgeNext"/>.
+    ///
+    /// <para>Why a stepper. Judging the whole catalogue in one call held the
+    /// game's main thread for the length of the sweep — six minutes on the
+    /// station — and gave Unity no frame in which to finish the destruction and
+    /// unloading each release had queued, so the sweep's peak was every
+    /// template's wreckage at once. A caller with frames judges one name, lets
+    /// the frame end, and judges the next; the report at the end is the same
+    /// report.</para>
+    /// </summary>
+    public static CatalogueAuditRun Begin(
+        IEnumerable<CatalogueSubject> definitions,
+        Func<CatalogueSubject, TemplateFacts> factsOf,
+        StockPrefabRegistry registry,
+        ApprovedSelection selection,
+        IReadOnlyCollection<string> excludedPacks,
+        ComponentPolicy? components = null)
+    {
         if (definitions == null) throw new ArgumentNullException(nameof(definitions));
         if (factsOf == null) throw new ArgumentNullException(nameof(factsOf));
         if (registry == null) throw new ArgumentNullException(nameof(registry));
         if (selection == null) throw new ArgumentNullException(nameof(selection));
         if (excludedPacks == null) throw new ArgumentNullException(nameof(excludedPacks));
 
-        components ??= ComponentPolicy.Default;
-        string policyFingerprint = TemplateFingerprint.OfPolicy(registry, components, excludedPacks);
-        var entries = new List<CatalogueEntry>();
+        return new CatalogueAuditRun(
+            new List<CatalogueSubject>(definitions), factsOf, registry, selection, excludedPacks,
+            components ?? ComponentPolicy.Default);
+    }
 
-        int judged = 0;
-        foreach (CatalogueSubject subject in definitions)
+    /// <summary>
+    /// One sweep in progress: the names still to judge, the rows judged so far,
+    /// and the report once every name has one.
+    /// </summary>
+    public sealed class CatalogueAuditRun
+    {
+        private readonly List<CatalogueSubject> _subjects;
+        private readonly Func<CatalogueSubject, TemplateFacts> _factsOf;
+        private readonly StockPrefabRegistry _registry;
+        private readonly ApprovedSelection _selection;
+        private readonly IReadOnlyCollection<string> _excludedPacks;
+        private readonly ComponentPolicy _components;
+        private readonly string _policyFingerprint;
+        private readonly List<CatalogueEntry> _entries = new List<CatalogueEntry>();
+        private int _next;
+
+        internal CatalogueAuditRun(
+            List<CatalogueSubject> subjects, Func<CatalogueSubject, TemplateFacts> factsOf,
+            StockPrefabRegistry registry, ApprovedSelection selection,
+            IReadOnlyCollection<string> excludedPacks, ComponentPolicy components)
         {
+            _subjects = subjects;
+            _factsOf = factsOf;
+            _registry = registry;
+            _selection = selection;
+            _excludedPacks = excludedPacks;
+            _components = components;
+            _policyFingerprint = TemplateFingerprint.OfPolicy(registry, components, excludedPacks);
+        }
+
+        /// <summary>How many names the sweep has to judge.</summary>
+        public int Total => _subjects.Count;
+
+        /// <summary>How many it has judged.</summary>
+        public int Judged => _next;
+
+        public bool Done => _next >= _subjects.Count;
+
+        /// <summary>The next name to be judged, or null when there is none.</summary>
+        public CatalogueSubject? Next => Done ? (CatalogueSubject?)null : _subjects[_next];
+
+        /// <summary>
+        /// Whether judging the next name opens a template. A name with no
+        /// definition, or in an excluded pack, is settled from the catalogue
+        /// alone and loads nothing.
+        /// </summary>
+        public bool NextOpensATemplate =>
+            !Done && _subjects[_next].SourceDeclared && !IsExcluded(_excludedPacks, _subjects[_next].Pack);
+
+        /// <summary>Judge exactly one name. Opens at most one template.</summary>
+        public void JudgeNext()
+        {
+            if (Done)
+                throw new InvalidOperationException("every name has been judged");
+
+            CatalogueSubject subject = _subjects[_next];
+            _next++;
             // A sweep over the whole catalogue opens 190-odd templates and takes
             // minutes. Without this it is indistinguishable from a hang, which
             // is what a station run first took it for.
-            if (++judged % 25 == 0)
-                Say($"catalogue audit: {judged} name(s) judged");
+            if (_next % 25 == 0)
+                Say($"catalogue audit: {_next} name(s) judged");
 
             TemplateFacts facts;
             if (!subject.SourceDeclared)
@@ -105,7 +188,7 @@ public static class CatalogueAudit
                 // it.
                 facts = TemplateFacts.MissingDefinition(subject.Name);
             }
-            else if (IsExcluded(excludedPacks, subject.Pack))
+            else if (IsExcluded(_excludedPacks, subject.Pack))
             {
                 // Same reasoning: a pack this mode does not serve is settled
                 // before any template is opened.
@@ -113,17 +196,24 @@ public static class CatalogueAudit
             }
             else
             {
-                facts = Read(subject, factsOf);
+                facts = Read(subject, _factsOf);
             }
 
-            TemplateEvaluation evaluation = TemplatePolicy.Evaluate(facts, registry, excludedPacks, components);
+            TemplateEvaluation evaluation = TemplatePolicy.Evaluate(facts, _registry, _excludedPacks, _components);
             string fingerprint = TemplateFingerprint.Of(facts);
-            SelectionDecision decision = selection.Decide(subject.Name, evaluation, fingerprint, policyFingerprint);
-            entries.Add(new CatalogueEntry(evaluation, decision, fingerprint));
+            SelectionDecision decision = _selection.Decide(subject.Name, evaluation, fingerprint, _policyFingerprint);
+            _entries.Add(new CatalogueEntry(evaluation, decision, fingerprint));
         }
 
-        Report = new CatalogueReport(entries, registry.GameBuildId, policyFingerprint);
-        return Report;
+        /// <summary>The report, once every name has a row. Also published as <see cref="Report"/>.</summary>
+        public CatalogueReport Finish()
+        {
+            if (!Done)
+                throw new InvalidOperationException($"{_subjects.Count - _next} name(s) have not been judged");
+            var report = new CatalogueReport(_entries, _registry.GameBuildId, _policyFingerprint);
+            Report = report;
+            return report;
+        }
     }
 
     /// <summary>

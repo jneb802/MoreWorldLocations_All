@@ -27,6 +27,13 @@ public interface ITemplateHandle : IDisposable
     GameObject? Asset { get; }
 }
 
+/// <summary>A template being loaded ahead of its read. Disposing gives the preload's reference back.</summary>
+public interface ITemplatePreload : IDisposable
+{
+    /// <summary>Whether the asset is loaded and a synchronous open would not touch the disk.</summary>
+    bool Loaded { get; }
+}
+
 /// <summary>
 /// Where a template to audit comes from, and where a stock prefab to compare it
 /// against comes from.
@@ -63,6 +70,31 @@ public static class TemplateAssets
     /// <summary>Open a template, or null when there is no source or it will not load.</summary>
     public static ITemplateHandle? Open(string name) =>
         Source == null ? null : Source(name);
+
+    /// <summary>
+    /// Start loading a template off the main thread, so that the frame in
+    /// which it is opened pays for the read and not for the disk.
+    ///
+    /// Null when this process has no asynchronous path, in which case Open
+    /// loads synchronously as it always did. The preload holds one reference of
+    /// its own and gives it back when disposed.
+    /// </summary>
+    public static Func<string, ITemplatePreload?>? Preloader { get; set; }
+
+    public static ITemplatePreload? Preload(string name) =>
+        Preloader == null ? null : Preloader(name);
+
+    /// <summary>
+    /// Whether a released template's bundle has actually gone: the loader's
+    /// deferred unload has finished and nothing of ours is left in it.
+    ///
+    /// Null means the question cannot be asked here, and a sweep moves on
+    /// without waiting. Completion means OUR references and clones are gone;
+    /// shared assets legitimately stay loaded.
+    /// </summary>
+    public static Func<string, bool>? IsSettled { get; set; }
+
+    public static bool Settled(string name) => IsSettled == null || IsSettled(name);
 
     /// <summary>
     /// What is known against the stock prefabs this process compares with, or

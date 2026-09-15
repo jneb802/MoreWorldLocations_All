@@ -105,6 +105,22 @@ public static class ValidationSwitches
         return names.Count > 0 || probed.Count > 0;
     }
 
+    /// <summary>The environment variable narrowing the generated-height budget for one run.</summary>
+    public const string HeightBudgetVariable = Prefix + "HEIGHT_BUDGET_BYTES";
+
+    /// <summary>
+    /// A smaller height budget, so a station run can reach eviction and
+    /// deferral with a few dozen zones instead of two thousand. Unset means the
+    /// shipped budget; anything that is not a positive number is ignored.
+    /// </summary>
+    public static long HeightBudgetBytes(long fallback)
+    {
+        string? value = Environment.GetEnvironmentVariable(HeightBudgetVariable);
+        if (string.IsNullOrWhiteSpace(value))
+            return fallback;
+        return long.TryParse(value.Trim(), out long parsed) && parsed > 0 ? parsed : fallback;
+    }
+
     /// <summary>The environment variable naming a zone whose first write must fail.</summary>
     public const string FaultZoneOnceVariable = Prefix + "FAULT_ZONE_ONCE";
 

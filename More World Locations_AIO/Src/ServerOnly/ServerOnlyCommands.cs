@@ -67,7 +67,9 @@ public static class ServerOnlyCommands
                 if (args.Length > 1 && args[1] == "resweep")
                 {
                     args.Context.AddString("before: " + CatalogueSweep.MemoryStatus());
-                    CatalogueSweep.Resweep();
+                    args.Context.AddString(CatalogueSweep.Resweep()
+                        ? "resweep started; it judges one name per frame and enforces when it concludes. mwl_memory shows its progress."
+                        : "a sweep is already running; nothing started.");
                 }
                 args.Context.AddString(CatalogueSweep.MemoryStatus());
                 return true;

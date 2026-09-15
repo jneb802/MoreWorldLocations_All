@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
@@ -28,46 +29,310 @@ public static class CatalogueSweep
     private static BepInEx.Logging.ManualLogSource Log =>
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
 
-    internal static void Forget() => CatalogueAudit.Forget();
+    /// <summary>
+    /// A new world: forget the last report, and cancel a sweep in progress —
+    /// it was judging templates for a world that no longer exists.
+    /// </summary>
+    internal static void Forget()
+    {
+        CatalogueAudit.Forget();
+        s_generation++;
+        s_run = null;
+        State = SweepState.Idle;
+        Observe(() => NewWorld?.Invoke());
+    }
+
+    /// <summary>Told when a world is forgotten, so an engine hold can forget with it.</summary>
+    public static Action? NewWorld { get; set; }
+
+    /// <summary>Where a sweep stands. Registration and generation read this.</summary>
+    public enum SweepState
+    {
+        /// <summary>No sweep has been asked for since the last world.</summary>
+        Idle,
+        /// <summary>Judging; nothing unverified may be registered or generated.</summary>
+        Auditing,
+        /// <summary>Finished with a complete report.</summary>
+        Done,
+        /// <summary>Stopped by a fault. The report is incomplete and nothing was approved.</summary>
+        Failed,
+        /// <summary>Stopped because the world went away.</summary>
+        Cancelled,
+    }
+
+    public static SweepState State { get; private set; }
+
+    /// <summary>"judged/total" while a sweep runs, for the status line.</summary>
+    public static string Progress => s_run == null ? "" : $"{s_run.Judged}/{s_run.Total}";
 
     /// <summary>
-    /// Judge the whole catalogue, and answer which names may be registered.
+    /// Whether the world's location generation must wait: server-only mode,
+    /// with a sweep still judging. No partial approval may leak into placement.
+    /// </summary>
+    public static bool HoldsGeneration => ServerOnlyMode.Enabled && State == SweepState.Auditing;
+
+    /// <summary>
+    /// How a sweep's frames are driven. The engine hands the routine to a
+    /// coroutine host; with none (a test, or no host yet) the sweep runs to
+    /// completion in the calling frame, which is the old synchronous behaviour.
+    /// </summary>
+    public static Func<IEnumerator, bool>? ScheduleRoutine { get; set; }
+
+    /// <summary>Let generation proceed once the sweep has concluded. Installed by the engine.</summary>
+    public static Action? ReleaseGeneration { get; set; }
+
+    /// <summary>The longest one template's preload may take before it is opened synchronously anyway.</summary>
+    public const float PreloadTimeoutSeconds = 10f;
+
+    /// <summary>The longest the sweep waits for a released template's bundle to go before opening the next.</summary>
+    public const float SettleTimeoutSeconds = 3f;
+    public const int SettleTimeoutFrames = 300;
+
+    private static CatalogueAudit.CatalogueAuditRun? s_run;
+    private static int s_generation;
+
+    /// <summary>
+    /// Judge the whole catalogue in the calling frame, and answer.
     ///
-    /// Called by <c>LocationDB.RegisterAll</c> before it registers anything.
-    /// Nothing here consults the registered set, which is the point: a template
-    /// has to be openable without first being approved, or the audit can only
-    /// ever confirm what it already approves.
+    /// The synchronous form, for a caller with no frames to give. Registration
+    /// uses <see cref="BeginAudit"/> instead.
     /// </summary>
     public static CatalogueReport Audit()
     {
-        CatalogueAudit.Progress = line => Log.LogInfo(line);
-        Observe(() => SweepStarted?.Invoke());
-        CatalogueReport report;
+        CatalogueReport? result = null;
+        Func<IEnumerator, bool>? scheduler = ScheduleRoutine;
+        ScheduleRoutine = null;
         try
         {
-            report = CatalogueAudit.Run(
-                Subjects(),
-                FactsOf,
-                VerificationData.StockPrefabs,
-                VerificationData.ApprovedSelection,
-                ServerOnlyAllowlist.ExcludedPacks);
+            if (!BeginAudit(report => result = report))
+                throw new InvalidOperationException("a sweep is already running");
         }
         finally
         {
-            // The signature cache is the AUDIT's, not the world's: it exists to
-            // avoid re-walking a stock prefab within one sweep and has no reader
-            // afterwards. Cleared however the sweep ended — finished, cancelled
-            // or thrown — because "we did not get to the end" is exactly when
-            // nobody is left to clear it.
-            TemplateFactsExtractor.ForgetStockSignatures();
-            CatalogueAudit.Progress = null;
+            ScheduleRoutine = scheduler;
+        }
+        return result ?? throw new InvalidOperationException("the sweep did not complete");
+    }
+
+    /// <summary>
+    /// Judge the whole catalogue, one name per frame, and hand the report to
+    /// <paramref name="onComplete"/> when every name has one — or null when
+    /// the sweep failed or was cancelled, in which case nothing is approved.
+    ///
+    /// <para>Called by <c>LocationDB.RegisterAll</c> before it registers
+    /// anything, and by a resweep. Nothing here consults the registered set,
+    /// which is the point: a template has to be openable without first being
+    /// approved, or the audit can only ever confirm what it already
+    /// approves.</para>
+    ///
+    /// <para><b>The barrier.</b> From this call until the report is committed,
+    /// <see cref="State"/> is <see cref="SweepState.Auditing"/>: registration
+    /// waits for the report, and the engine holds the world's location
+    /// generation on <see cref="HoldsGeneration"/>. A wait here is a scheduling
+    /// wait; it touches no site's readiness budget because no site exists
+    /// yet.</para>
+    /// </summary>
+    /// <returns>False when a sweep is already running; nothing was started.</returns>
+    public static bool BeginAudit(Action<CatalogueReport?> onComplete)
+    {
+        if (onComplete == null) throw new ArgumentNullException(nameof(onComplete));
+        if (State == SweepState.Auditing)
+            return false;
+
+        s_run = CatalogueAudit.Begin(
+            Subjects(),
+            FactsOf,
+            VerificationData.StockPrefabs,
+            VerificationData.ApprovedSelection,
+            ServerOnlyAllowlist.ExcludedPacks);
+        State = SweepState.Auditing;
+        int token = ++s_generation;
+        CatalogueAudit.Progress = line => Log.LogInfo(line);
+        Observe(() => SweepStarted?.Invoke());
+
+        IEnumerator routine = AuditRoutine(s_run, token, onComplete);
+        if (ScheduleRoutine == null || !ScheduleRoutine(routine))
+        {
+            // No frames to spread it over: the old synchronous sweep.
+            while (routine.MoveNext())
+            {
+            }
+        }
+        return true;
+    }
+
+    private static IEnumerator AuditRoutine(
+        CatalogueAudit.CatalogueAuditRun run, int token, Action<CatalogueReport?> onComplete)
+    {
+        while (!run.Done)
+        {
+            if (token != s_generation)
+            {
+                Conclude(SweepState.Cancelled, null, onComplete, "the world went away before the sweep finished");
+                yield break;
+            }
+
+            bool opens = run.NextOpensATemplate;
+            string name = run.Next!.Value.Name;
+
+            // 1. Load ahead, off the main thread, and give it a bounded moment.
+            ITemplatePreload? preload = opens ? SafePreload(name) : null;
+            if (preload != null)
+            {
+                float deadline = UnityEngine.Time.realtimeSinceStartup + PreloadTimeoutSeconds;
+                while (!preload.Loaded && UnityEngine.Time.realtimeSinceStartup < deadline)
+                    yield return null;
+                if (token != s_generation)
+                {
+                    preload.Dispose();
+                    Conclude(SweepState.Cancelled, null, onComplete, "the world went away before the sweep finished");
+                    yield break;
+                }
+            }
+
+            // 2. Judge one name: open, read, release, in this frame.
+            Exception? fault = TryJudge(run);
+            preload?.Dispose();
+            if (fault != null)
+            {
+                Conclude(SweepState.Failed, null, onComplete,
+                    $"judging '{name}' threw {fault.GetType().Name}: {fault.Message}");
+                yield break;
+            }
+
+            // 3. Let the release land before the next template is opened: the
+            //    deferred destruction and the bundle unload run between frames,
+            //    and a sweep that never yielded piled every template's wreckage
+            //    into one frame. Bounded, because a bundle somebody else holds
+            //    is not ours to wait for.
+            if (opens)
+            {
+                float deadline = UnityEngine.Time.realtimeSinceStartup + SettleTimeoutSeconds;
+                int frames = 0;
+                do
+                {
+                    yield return null;
+                    frames++;
+                }
+                while (!TemplateAssets.Settled(name) && frames < SettleTimeoutFrames
+                       && UnityEngine.Time.realtimeSinceStartup < deadline);
+            }
+            else
+            {
+                yield return null;
+            }
         }
 
-        // Said before registration rather than after, so that a world that comes
-        // up wrong has its explanation above the symptom in the log.
-        Announce(report);
-        Observe(() => SweepFinished?.Invoke());
-        return report;
+        if (token != s_generation)
+        {
+            Conclude(SweepState.Cancelled, null, onComplete, "the world went away before the sweep finished");
+            yield break;
+        }
+
+        CatalogueReport? report = TryFinish(run, out Exception? finishFault);
+        if (report == null)
+        {
+            Conclude(SweepState.Failed, null, onComplete,
+                $"the report could not be assembled: {finishFault?.GetType().Name}: {finishFault?.Message}");
+            yield break;
+        }
+        Conclude(SweepState.Done, report, onComplete, null);
+    }
+
+    private static ITemplatePreload? SafePreload(string name)
+    {
+        try
+        {
+            return TemplateAssets.Preload(name);
+        }
+        catch (Exception ex)
+        {
+            // Not a verdict: the synchronous open still happens, and the read
+            // decides. A preload that fails only costs the frame the disk.
+            Log.LogWarning($"preloading '{name}' threw {ex.GetType().Name}: {ex.Message}; it will be opened synchronously");
+            return null;
+        }
+    }
+
+    private static Exception? TryJudge(CatalogueAudit.CatalogueAuditRun run)
+    {
+        try
+        {
+            run.JudgeNext();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
+
+    private static CatalogueReport? TryFinish(CatalogueAudit.CatalogueAuditRun run, out Exception? fault)
+    {
+        fault = null;
+        try
+        {
+            return run.Finish();
+        }
+        catch (Exception ex)
+        {
+            fault = ex;
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// End the sweep in one of its three ways, and let the world go on.
+    ///
+    /// The order matters: the report is announced before the caller registers
+    /// against it, so a world that comes up wrong has its explanation above
+    /// the symptom in the log; the caller registers before generation is
+    /// released, so generation sees the complete list.
+    /// </summary>
+    private static void Conclude(
+        SweepState state, CatalogueReport? report, Action<CatalogueReport?> onComplete, string? why)
+    {
+        // The signature cache is the AUDIT's, not the world's: it exists to
+        // avoid re-walking a stock prefab within one sweep and has no reader
+        // afterwards. Cleared however the sweep ended — finished, cancelled
+        // or thrown — because "we did not get to the end" is exactly when
+        // nobody is left to clear it.
+        if (state == SweepState.Cancelled)
+        {
+            // The world this sweep was judging is gone, and its successor may
+            // already be judging its own. Nothing of this one's is touched:
+            // not the state, not the caller, not the generation hold.
+            Log.LogWarning($"A server-only catalogue sweep was abandoned: {why}.");
+            return;
+        }
+
+        TemplateFactsExtractor.ForgetStockSignatures();
+        CatalogueAudit.Progress = null;
+        State = state;
+        s_run = null;
+
+        if (report != null)
+        {
+            Announce(report);
+            Observe(() => SweepFinished?.Invoke());
+        }
+        else
+        {
+            Log.LogError($"The server-only catalogue sweep did not complete ({state}): {why}. Nothing is approved by it.");
+        }
+
+        try
+        {
+            onComplete(report);
+        }
+        catch (Exception ex)
+        {
+            Log.LogError($"Completing the sweep failed: {ex}");
+        }
+
+        // Generation was held for a complete list; whatever the list is now,
+        // holding it longer serves nothing.
+        Observe(() => ReleaseGeneration?.Invoke());
     }
 
     /// <summary>
@@ -150,6 +415,7 @@ public static class CatalogueSweep
     /// allocator.
     /// </summary>
     public static string MemoryStatus() =>
+        $"sweep {State}{(State == SweepState.Auditing ? " " + Progress : "")}; " +
         $"leases held {TemplateAssets.OutstandingLeases} (peak {TemplateAssets.PeakLeases}); " +
         $"signatures {TemplateFactsExtractor.StockSignatureBytes / 1024} KiB in " +
         $"{TemplateFactsExtractor.StockSignatureEntries} entr(ies) of " +
@@ -170,12 +436,11 @@ public static class CatalogueSweep
     /// at all without a way to ask for another — and restarting between sweeps
     /// is exactly what would hide an owner that grows.</para>
     /// </summary>
-    public static CatalogueReport Resweep()
+    public static bool Resweep() => BeginAudit(report =>
     {
-        CatalogueReport report = Audit();
-        Enforce();
-        return report;
-    }
+        if (report != null)
+            Enforce();
+    });
 
     /// <summary>
     /// Every name a report has to account for: the catalogue's known names and
