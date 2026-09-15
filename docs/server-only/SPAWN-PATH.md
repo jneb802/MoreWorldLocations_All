@@ -112,8 +112,11 @@ pinned by tests in `MoreWorldLocations.Tests/TerrainConversionTests.cs`:
   live modifiers to the heights and *then* adds the compiler's deltas on top
   (`TerrainComp.ApplyToHeightmap`). A stock client has no live instance and gets
   the shaping once. A client running the same build builds the proxy half, gets
-  the instance, and gets both. Whether a modded client is supported on a
-  server-only world is therefore an open decision, not a detail.
+  the instance, and gets both. **Decided: server-only mode is for stock clients
+  only.** A peer that reports MWL is refused whatever version it reports, and
+  told to disable the mod for this server. Supporting mixed clients needs
+  explicit suppression of the duplicate local shaping and its own acceptance
+  evidence; neither exists, so the mode does not claim it.
 * **The conversion is not idempotent, and must not be.** The level delta is the
   difference between the target and the height the client generates for itself,
   which does not change between passes; vanilla's hoe escapes this only because

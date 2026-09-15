@@ -26,6 +26,7 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/PeerAdmission.cs" Link="ModSrc/PeerAdmission.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyMode.cs" Link="ModSrc/ServerOnlyMode.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyAllowlist.cs" Link="ModSrc/ServerOnlyAllowlist.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyHandshake.cs" Link="ModSrc/ServerOnlyHandshake.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainOperation.cs" Link="ModSrc/LocationTerrainOperation.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainConversion.cs" Link="ModSrc/TerrainConversion.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/SiteTerrainLedger.cs" Link="ModSrc/SiteTerrainLedger.cs"/>

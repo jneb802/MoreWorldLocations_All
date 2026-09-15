@@ -24,9 +24,10 @@ public class BepinexConfigs
         // environment variable because it is an operating mode an operator sets
         // once, not a validation switch.
         ServerOnly = PortInit.plugin.Config.BindConfig("0 - Server Only", "Enable Server Only Mode", PortInit.Toggle.Off,
-            "If On, this server serves an audited subset of MWL locations to players who have no mod installed: " +
-            "peers that do not answer MWL's version check are admitted, and only approved templates are registered. " +
-            "Ports, traders, trainers and dungeons are never registered in this mode.", synced: false);
+            "If On, this server serves an audited subset of MWL locations to players who have NO mod installed. " +
+            "Clients that report More World Locations are refused, including ones on this exact version: they would " +
+            "build each site a second time locally. Only approved templates are registered; ports, traders, trainers " +
+            "and dungeons never are.", synced: false);
 
         EnableShrines = PortInit.plugin.Config.BindConfig("0 - Features", "Enable Shrines", PortInit.Toggle.On,
             "If Off, shrine ward objects will be destroyed on load", synced: true);
