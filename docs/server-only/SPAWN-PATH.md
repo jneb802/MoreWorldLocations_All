@@ -102,9 +102,24 @@ stands on unshaped terrain under a structure that was placed for shaped terrain.
 The persistent half, `TerrainComp`, is the supported route — the same one
 ProceduralRoads writes its roads through. Converting a template's modifiers into
 a `TerrainComp` operation on the server is therefore the conversion the first
-milestone needs, and it is a small one: the sampled templates carry one to four
-modifiers, each a level/smooth/paint of 2–4 m radius with
-`m_useTerrainCompiler = false`.
+milestone needs, and across all 193 templates it is 220 modifiers, every one of
+them `m_useTerrainCompiler = false` (see [`COMPATIBILITY.md`](COMPATIBILITY.md)).
+
+Two consequences of that conversion, both read from the same source and both
+pinned by tests in `MoreWorldLocations.Tests/TerrainConversionTests.cs`:
+
+* **A client that has the mod is displaced twice.** `ApplyModifiers` applies the
+  live modifiers to the heights and *then* adds the compiler's deltas on top
+  (`TerrainComp.ApplyToHeightmap`). A stock client has no live instance and gets
+  the shaping once. A client running the same build builds the proxy half, gets
+  the instance, and gets both. Whether a modded client is supported on a
+  server-only world is therefore an open decision, not a detail.
+* **The conversion is not idempotent, and must not be.** The level delta is the
+  difference between the target and the height the client generates for itself,
+  which does not change between passes; vanilla's hoe escapes this only because
+  the heightmap is rebuilt between operations. A bake has no such rebuild, so
+  writing one site's terrain twice sinks it twice. `TerrainConversion.ApplyOnce`
+  records the operation's identity and refuses the repeat.
 
 ## Clearing comes for free
 

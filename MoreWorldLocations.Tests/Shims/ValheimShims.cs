@@ -114,7 +114,14 @@ public class Heightmap
     // per vertex, centred on transform.position. Tests build one per zone
     // with a TerrainComp whose arrays start zeroed, exactly like a fresh
     // _TerrainCompiler in the game.
+    // The mask colours are the game's own values, copied from Heightmap in
+    // assembly_valheim: the conversion lerps towards exactly these.
+    public static UnityEngine.Color m_paintMaskDirt = new(1f, 0f, 0f, 1f);
+    public static UnityEngine.Color m_paintMaskCultivated = new(0f, 1f, 0f, 1f);
     public static UnityEngine.Color m_paintMaskPaved = new(0f, 0f, 1f, 1f);
+    public static UnityEngine.Color m_paintMaskNothing = new(0f, 0f, 0f, 1f);
+    public static UnityEngine.Color m_paintMaskClearVegetation = new(0f, 0f, 0f, 0f);
+    public static UnityEngine.Color m_paintMaskDeepSnow = new(1f, 1f, 1f, 1f);
     public static Heightmap? Registered;
 
     public Transform transform = new();
@@ -459,4 +466,24 @@ public class ZoneSystem
 
     public static UnityEngine.Vector3 GetZonePos(Vector2s id) =>
         new(id.x * ZoneSize, 0f, id.y * ZoneSize);
+}
+
+
+/// <summary>
+/// Shim for Valheim's TerrainModifier. Only the paint types are read: the
+/// conversion takes a modifier's settings as a value rather than reading the
+/// component, so nothing else of it is needed headlessly. The order matters --
+/// it is what the serialised m_paintType integer in a location bundle means.
+/// </summary>
+public class TerrainModifier
+{
+    public enum PaintType
+    {
+        Dirt,
+        Cultivate,
+        Paved,
+        Reset,
+        ClearVegetation,
+        DeepSnow,
+    }
 }
