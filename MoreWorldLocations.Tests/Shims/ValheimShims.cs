@@ -629,13 +629,43 @@ public class HeightmapBuilder
     public readonly System.Collections.Generic.Dictionary<Vector2s, HMBuildData> Built = new();
     public int SyncRequests;
 
-    public bool IsTerrainReady(UnityEngine.Vector3 centre, int width, float scale, bool distantLod, WorldGenerator gen) =>
-        Built.ContainsKey(ZoneSystem.GetZone(centre));
+    /// <summary>
+    /// Like the game: true only while the entry is in the ready list. A consumed
+    /// entry goes back to the build queue, so the NEXT question is false and the
+    /// one after that is true again -- which is what makes a double read inside
+    /// one pass fail here as it failed in game, without making the harness
+    /// brittle for work that comes back later.
+    /// </summary>
+    public bool IsTerrainReady(UnityEngine.Vector3 centre, int width, float scale, bool distantLod, WorldGenerator gen)
+    {
+        var zone = ZoneSystem.GetZone(centre);
+        if (Built.ContainsKey(zone))
+            return true;
+        if (Rebuilding.Remove(zone) && Recipes.TryGetValue(zone, out var gen2))
+            Build(zone, gen2);          // the builder finished between questions
+        return false;
+    }
 
+    /// <summary>Zones whose data was consumed and is being built again.</summary>
+    public readonly System.Collections.Generic.HashSet<Vector2s> Rebuilding = new();
+    /// <summary>The generator each zone was built from, so it can be built again.</summary>
+    public readonly System.Collections.Generic.Dictionary<Vector2s, WorldGenerator> Recipes = new();
+
+    /// <summary>
+    /// Like the game: handing an entry out REMOVES it from the ready list
+    /// (RequestTerrain does m_ready.RemoveAt), so asking twice does not answer
+    /// twice. Modelling that is what makes a "can I?" call followed by a "do it"
+    /// call fail here as it failed in game.
+    /// </summary>
     public HMBuildData? RequestTerrainSync(UnityEngine.Vector3 centre, int width, float scale, bool distantLod, WorldGenerator gen)
     {
         SyncRequests++;
-        return Built.TryGetValue(ZoneSystem.GetZone(centre), out var d) ? d : null;
+        var zone = ZoneSystem.GetZone(centre);
+        if (!Built.TryGetValue(zone, out var d))
+            return null;
+        Built.Remove(zone);
+        Rebuilding.Add(zone);
+        return d;
     }
 
     /// <summary>Build a zone's heights from a generator, the way the game's builder does.</summary>
@@ -649,6 +679,8 @@ public class HeightmapBuilder
                 data.m_baseHeights.Add(gen.GetHeight(
                     centre.x + (x - width / 2) * scale, centre.z + (y - width / 2) * scale));
         Built[zone] = data;
+        Recipes[zone] = gen;
+        Rebuilding.Remove(zone);
         return data;
     }
 }

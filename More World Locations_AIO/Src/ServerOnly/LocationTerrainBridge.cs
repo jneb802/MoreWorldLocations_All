@@ -367,23 +367,52 @@ public static class LocationTerrainBridge
     /// </exception>
     public static TerrainConversion.VertexHeight GeneratedHeightAt(TerrainZoneDeltas zone, Heightmap heightmap)
     {
+        if (!TryGeneratedHeightAt(zone, heightmap, out TerrainConversion.VertexHeight height, out string reason))
+            throw new InvalidOperationException(reason);
+        return height;
+    }
+
+    /// <summary>
+    /// The generated heights, fetched ONCE.
+    ///
+    /// Asking twice is a defect, not a repeated read: <c>HeightmapBuilder</c>'s
+    /// ready list hands an entry out and REMOVES it
+    /// (<c>RequestTerrain</c>: <c>m_ready.RemoveAt(i)</c>), so a "can I?" call
+    /// followed by a "do it" call consumes the data in the first and finds
+    /// nothing in the second. In game that threw on every retry, the exception
+    /// was caught per zone, the attempt was never counted, and the site stayed
+    /// outstanding for ever at attempt 11.
+    /// </summary>
+    public static bool TryGeneratedHeightAt(
+        TerrainZoneDeltas zone, Heightmap heightmap,
+        out TerrainConversion.VertexHeight height, out string reason)
+    {
         if (zone == null) throw new ArgumentNullException(nameof(zone));
+        height = null;
+        reason = null;
 
         List<float> baseHeights = BaseHeights(zone, heightmap, out float originY);
         if (baseHeights == null)
-            throw new InvalidOperationException(
+        {
+            reason = 
                 $"no generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0}: " +
                 "neither its heightmap nor the builder has them, and converting against zero " +
-                "would write the site into ground nobody generates");
+                "would write the site into ground nobody generates";
+            return false;
+        }
 
         int pitch = zone.Pitch;
         if (baseHeights.Count < pitch * pitch)
-            throw new InvalidOperationException(
+        {
+            reason =
                 $"the generated heights for the zone at {zone.Origin.x:0},{zone.Origin.z:0} are " +
                 $"{baseHeights.Count} long, not {pitch * pitch}: the builder was asked for a " +
-                "different width than the compiler holds");
+                "different width than the compiler holds";
+            return false;
+        }
 
-        return (x, y) => baseHeights[y * pitch + x] + originY;
+        height = (x, y) => baseHeights[y * pitch + x] + originY;
+        return true;
     }
 
     /// <summary>
@@ -416,11 +445,6 @@ public static class LocationTerrainBridge
         return data?.m_baseHeights;
     }
 
-    /// <summary>
-    /// Whether the zone's generated heights can be had right now, without
-    /// building them. A caller that cannot proceed should leave the zone pending
-    /// rather than convert against something else.
-    /// </summary>
-    public static bool HeightsReady(TerrainZoneDeltas zone, Heightmap heightmap) =>
-        BaseHeights(zone, heightmap, out _) != null;
+    // HeightsReady is deliberately gone. It looked like a harmless question and
+    // was a destructive one -- see TryGeneratedHeightAt.
 }

@@ -70,7 +70,7 @@ public static class LocationTerrainWriter
     {
         if (sites == null || sites.Count == 0)
         {
-            RetryWaiting();
+            RetryWaiting("zone generation");
             return;
         }
         foreach (LocationTerrainPlan.PlacedSite site in sites)
@@ -98,7 +98,7 @@ public static class LocationTerrainWriter
 
         // 3. Anything still waiting gets another attempt while a zone is being
         //    generated, which is when compilers come alive and heights get built.
-        RetryWaiting();
+        RetryWaiting("zone generation");
     }
 
     private static bool IsGenerated(Vector2s zone) =>
@@ -116,22 +116,24 @@ public static class LocationTerrainWriter
     {
         if (s_faultZone == null)
         {
-            s_faultZone = ValidationSwitches.FaultZoneOnce(out int fx, out int fz)
+            s_faultZone = ValidationSwitches.FaultZoneOnce(out int fx, out int fz, out s_faultTimes)
                 ? new Vector2s(fx, fz)
                 : (Vector2s?)default;
             if (s_faultZone.HasValue)
                 Log.LogWarning(
-                    $"{ValidationSwitches.FaultZoneOnceVariable} is set: the first terrain write " +
-                    $"for zone {s_faultZone.Value.x},{s_faultZone.Value.y} will be failed on purpose, once.");
+                    $"{ValidationSwitches.FaultZoneOnceVariable} is set: the first {s_faultTimes} " +
+                    $"terrain write(s) for zone {s_faultZone.Value.x},{s_faultZone.Value.y} will be " +
+                    "failed on purpose.");
         }
-        if (!s_faultZone.HasValue || s_faultZone.Value != zone || s_faultFired)
+        if (!s_faultZone.HasValue || s_faultZone.Value != zone || s_faultFired >= s_faultTimes)
             return false;
-        s_faultFired = true;
+        s_faultFired++;
         return true;
     }
 
     private static Vector2s? s_faultZone;
-    private static bool s_faultFired;
+    private static int s_faultTimes = 1;
+    private static int s_faultFired;
 
     /// <summary>Convert into a zone whose heightmap is in hand.</summary>
     private static void Apply(Vector2s zoneID, Heightmap hmap, List<LocationTerrainWork> work)
@@ -150,14 +152,13 @@ public static class LocationTerrainWriter
         }
 
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(compiler);
-        if (!LocationTerrainBridge.HeightsReady(zone, hmap))
+        if (!LocationTerrainBridge.TryGeneratedHeightAt(
+                zone, hmap, out TerrainConversion.VertexHeight baseHeight, out string why))
         {
             foreach (LocationTerrainWork item in work)
-                Wait(item, "the zone's generated heights are not built yet");
+                Wait(item, why);
             return;
         }
-
-        TerrainConversion.VertexHeight baseHeight = LocationTerrainBridge.GeneratedHeightAt(zone, hmap);
         List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
         if (converted.Count == 0)
             return;
@@ -203,14 +204,13 @@ public static class LocationTerrainWriter
                 Fail(item, "its saved terrain could not be read: " + problem);
             return;
         }
-        if (!LocationTerrainBridge.HeightsReady(zone, null))
+        if (!LocationTerrainBridge.TryGeneratedHeightAt(
+                zone, null, out TerrainConversion.VertexHeight baseHeight, out string why))
         {
             foreach (LocationTerrainWork item in work)
-                Wait(item, "its generated heights are not built yet");
+                Wait(item, why);
             return;
         }
-
-        TerrainConversion.VertexHeight baseHeight = LocationTerrainBridge.GeneratedHeightAt(zone, null);
         List<LocationTerrainWork> converted = Convert(zoneID, zone, baseHeight, work);
         if (converted.Count == 0)
             return;
@@ -314,11 +314,11 @@ public static class LocationTerrainWriter
             return false;
         if (now < s_nextTick)
             return false;
-        s_nextTick = now + TickSeconds;
+        s_nextTick = now + ValidationSwitches.TickSeconds(TickSeconds);
 
         if (LocationTerrainLedger.Waiting().Count == 0)
             return false;
-        RetryWaiting();
+        RetryWaiting("the clock");
         return true;
     }
 
@@ -397,9 +397,10 @@ public static class LocationTerrainWriter
     /// pass cannot spend the frame, and each attempt is counted, so a wait that
     /// will never resolve becomes a reported failure rather than silence.
     /// </summary>
-    private static void RetryWaiting()
+    private static void RetryWaiting(string driver)
     {
         IReadOnlyList<LocationTerrainLedger.Entry> waiting = LocationTerrainLedger.Waiting();
+        int before = LocationTerrainLedger.All().Count(e => e.State == LocationTerrainLedger.State.Done);
         int budget = Math.Min(waiting.Count, RetriesPerZone);
         for (int i = 0; i < budget; i++)
         {
@@ -412,6 +413,13 @@ public static class LocationTerrainWriter
             else if (IsGenerated(entry.Zone))
                 Reconcile(entry.Zone, new List<LocationTerrainWork> { item });
         }
+
+        // Which driver finished something is the difference between "recovery
+        // happens" and "recovery happens when a player moves". Only said when a
+        // retry actually completed work.
+        int after = LocationTerrainLedger.All().Count(e => e.State == LocationTerrainLedger.State.Done);
+        if (after > before)
+            Log.LogInfo($"[RETRY] {after - before} outstanding terrain conversion(s) completed, driven by {driver}.");
     }
 
     /// <summary>

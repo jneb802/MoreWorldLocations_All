@@ -228,6 +228,33 @@ public class ServerOnlySelectionTests
     }
 
     [Fact]
+    public void TheClockIntervalCanBeLengthenedForOneRun()
+    {
+        // At five seconds a deliberate failure recovers before the ledger can be
+        // read, which leaves it ambiguous whether the clock or a neighbouring
+        // zone's generation did it. One run lengthens it to tell them apart.
+        string? saved = Environment.GetEnvironmentVariable(ValidationSwitches.TickSecondsVariable);
+        try
+        {
+            Assert.Equal(5f, ValidationSwitches.TickSeconds(5f));
+
+            Environment.SetEnvironmentVariable(ValidationSwitches.TickSecondsVariable, "120");
+            Assert.Equal(120f, ValidationSwitches.TickSeconds(5f));
+
+            // Nonsense and non-positive values leave the shipped interval alone.
+            foreach (string bad in new[] { "soon", "0", "-3", "" })
+            {
+                Environment.SetEnvironmentVariable(ValidationSwitches.TickSecondsVariable, bad);
+                Assert.Equal(5f, ValidationSwitches.TickSeconds(5f));
+            }
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(ValidationSwitches.TickSecondsVariable, saved);
+        }
+    }
+
+    [Fact]
     public void TheFaultSwitchLivesInTheEnvironmentToo()
     {
         Assert.Equal("MOREWORLDLOCATIONS_FAULT_ZONE_ONCE", ValidationSwitches.FaultZoneOnceVariable);
@@ -236,11 +263,25 @@ public class ServerOnlySelectionTests
         try
         {
             Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, "21,-45");
-            Assert.True(ValidationSwitches.FaultZoneOnce(out int x, out int z));
+            Assert.True(ValidationSwitches.FaultZoneOnce(out int x, out int z, out int times));
             Assert.Equal((21, -45), (x, z));
+            Assert.Equal(1, times);
+
+            // "x,z:n" fails n times. One failure is repaired before a ledger can
+            // be read, because zone generation retries constantly while a player
+            // moves; more than one is what lets a run SEE the outstanding state.
+            Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, "21,-45:6");
+            Assert.True(ValidationSwitches.FaultZoneOnce(out x, out z, out times));
+            Assert.Equal((21, -45), (x, z));
+            Assert.Equal(6, times);
+
+            // A count that is not a positive number leaves it at one.
+            Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, "21,-45:soon");
+            Assert.True(ValidationSwitches.FaultZoneOnce(out _, out _, out times));
+            Assert.Equal(1, times);
 
             Environment.SetEnvironmentVariable(ValidationSwitches.FaultZoneOnceVariable, null);
-            Assert.False(ValidationSwitches.FaultZoneOnce(out _, out _));
+            Assert.False(ValidationSwitches.FaultZoneOnce(out _, out _, out _));
         }
         finally
         {

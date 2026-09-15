@@ -265,7 +265,8 @@ public class LocationTerrainBridgeTests : IDisposable
         _builder.Built.Clear();
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
 
-        Assert.False(LocationTerrainBridge.HeightsReady(zone, hm));
+        Assert.False(LocationTerrainBridge.TryGeneratedHeightAt(zone, hm, out _, out string why));
+        Assert.Contains("nobody generates", why);
         Assert.Throws<InvalidOperationException>(() => LocationTerrainBridge.GeneratedHeightAt(zone, hm));
     }
 
@@ -279,6 +280,25 @@ public class LocationTerrainBridgeTests : IDisposable
         var heightAt = LocationTerrainBridge.GeneratedHeightAt(zone, null);
         Assert.Equal(hm.m_buildData!.m_baseHeights[0], heightAt(0, 0));
         Assert.True(_builder.SyncRequests > 0);
+    }
+
+    [Fact]
+    public void TheGeneratedHeightsAreFetchedOnceBecauseAskingConsumesThem()
+    {
+        // Found in game, not by a test. HeightmapBuilder hands a ready entry out
+        // and REMOVES it (RequestTerrain: m_ready.RemoveAt), so a "can I?" call
+        // followed by a "do it" call consumes the data in the first and finds
+        // nothing in the second. On the server that threw on every retry, the
+        // exception was caught per zone, the attempt was never counted, and the
+        // site sat outstanding at attempt 11 for ever.
+        Heightmap hm = Zone();
+        hm.m_buildData = null;                  // force the builder path
+        TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp!);
+
+        Assert.True(LocationTerrainBridge.TryGeneratedHeightAt(
+            zone, null, out TerrainConversion.VertexHeight height, out _));
+        Assert.Equal(1, _builder.SyncRequests);
+        Assert.False(float.IsNaN(height(0, 0)));
     }
 
     [Fact]

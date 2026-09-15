@@ -36,6 +36,29 @@ public static class ValidationSwitches
     public static IReadOnlyCollection<string> ApprovedForValidation() =>
         ParseNames(Environment.GetEnvironmentVariable(ApproveVariable));
 
+    /// <summary>How often the outstanding-work clock may run, in seconds.</summary>
+    public const string TickSecondsVariable = Prefix + "TICK_SECONDS";
+
+    /// <summary>
+    /// The retry clock's interval, for a run that needs to SEE the waiting state.
+    ///
+    /// At the shipped five seconds a deliberate failure recovers before anyone
+    /// can read the ledger, which makes the recovery real but leaves it
+    /// ambiguous whether the clock or a neighbouring zone's generation did it.
+    /// Lengthening it for one run separates them. Unset means the shipped value;
+    /// a value that is not a positive number is reported and ignored.
+    /// </summary>
+    public static float TickSeconds(float fallback)
+    {
+        string? value = Environment.GetEnvironmentVariable(TickSecondsVariable);
+        if (string.IsNullOrWhiteSpace(value))
+            return fallback;
+        return float.TryParse(value.Trim(), System.Globalization.NumberStyles.Float,
+                   System.Globalization.CultureInfo.InvariantCulture, out float parsed) && parsed > 0f
+            ? parsed
+            : fallback;
+    }
+
     /// <summary>The environment variable naming a zone whose first write must fail.</summary>
     public const string FaultZoneOnceVariable = Prefix + "FAULT_ZONE_ONCE";
 
@@ -47,8 +70,28 @@ public static class ValidationSwitches
     /// vanishing, and that the next attempt completes it. Unset by default, so
     /// an unset environment behaves exactly as the shipped build.
     /// </summary>
-    public static bool FaultZoneOnce(out int x, out int z) =>
-        TryParseZone(Environment.GetEnvironmentVariable(FaultZoneOnceVariable), out x, out z);
+    public static bool FaultZoneOnce(out int x, out int z, out int times)
+    {
+        times = 1;
+        string? value = Environment.GetEnvironmentVariable(FaultZoneOnceVariable);
+        if (string.IsNullOrWhiteSpace(value))
+            return TryParseZone(null, out x, out z);
+
+        // "x,z" or "x,z:n" -- n failures rather than one. More than one is what
+        // lets a run watch the outstanding state instead of catching up with a
+        // recovery that already happened: zone generation retries constantly
+        // while a player moves, so a single failure is repaired before a ledger
+        // can be read.
+        string zonePart = value;
+        int colon = value.IndexOf(':');
+        if (colon >= 0)
+        {
+            zonePart = value.Substring(0, colon);
+            if (int.TryParse(value.Substring(colon + 1).Trim(), out int parsed) && parsed > 0)
+                times = parsed;
+        }
+        return TryParseZone(zonePart, out x, out z);
+    }
 
     /// <summary>
     /// "x,z" as zone indices. Anything else names no zone rather than a wrong
