@@ -42,6 +42,30 @@ public readonly struct Scale3
 }
 
 /// <summary>
+/// Three numbers of a transform: a position, or a set of Euler angles.
+///
+/// Separate from <see cref="Scale3"/> because the two are compared differently:
+/// a scale of one is the authored default and worth a tolerance, a position of
+/// zero is just the origin.
+/// </summary>
+public readonly struct Triple3
+{
+    public Triple3(float x, float y, float z)
+    {
+        X = x;
+        Y = y;
+        Z = z;
+    }
+
+    public float X { get; }
+    public float Y { get; }
+    public float Z { get; }
+
+    public override string ToString() =>
+        string.Format(System.Globalization.CultureInfo.InvariantCulture, "({0}, {1}, {2})", X, Y, Z);
+}
+
+/// <summary>
 /// One object in a resolved template, as the facts the policy needs.
 ///
 /// <para><b>Emitted versus proxy-only.</b> A dedicated server places a location
@@ -73,7 +97,12 @@ public sealed class ChildFact
         bool hasCollider = false,
         IReadOnlyList<string>? components = null,
         IReadOnlyList<string>? foreignComponents = null,
-        IReadOnlyList<string>? referencedPrefabs = null)
+        IReadOnlyList<string>? referencedPrefabs = null,
+        Triple3 relativePosition = default,
+        Triple3 eulerAngles = default,
+        string authoredSignature = "",
+        string? stockSignature = null,
+        bool isRoot = false)
     {
         Path = path ?? "";
         PrefabName = prefabName ?? "";
@@ -88,6 +117,11 @@ public sealed class ChildFact
         Components = components ?? System.Array.Empty<string>();
         ForeignComponents = foreignComponents ?? System.Array.Empty<string>();
         ReferencedPrefabs = referencedPrefabs ?? System.Array.Empty<string>();
+        RelativePosition = relativePosition;
+        EulerAngles = eulerAngles;
+        AuthoredSignature = authoredSignature ?? "";
+        StockSignature = stockSignature;
+        IsRoot = isRoot;
     }
 
     /// <summary>Where in the template this object is, from the root down. The reason code alone is not actionable; this is.</summary>
@@ -139,6 +173,49 @@ public sealed class ChildFact
     public IReadOnlyList<string> ForeignComponents { get; }
 
     /// <summary>
+    /// Where this object sits, in the template's own space.
+    ///
+    /// Not read by any rule, and in the fingerprint all the same: the
+    /// fingerprint binds an approval to the template that was ACCEPTED in game,
+    /// and a wall moved twenty metres is not that template however well it
+    /// still passes every rule.
+    /// </summary>
+    public Triple3 RelativePosition { get; }
+
+    /// <summary>How it is turned. Same reasoning as <see cref="RelativePosition"/>.</summary>
+    public Triple3 EulerAngles { get; }
+
+    /// <summary>
+    /// This object and everything under it, as one comparable string.
+    ///
+    /// <para>For a networked object this is the thing the client is supposed to
+    /// build, and it is compared against <see cref="StockSignature"/>. Network
+    /// ancestry alone proves nothing: a client instantiates the STOCK prefab,
+    /// not whatever the template's author hung underneath an object with a
+    /// familiar name.</para>
+    /// </summary>
+    public string AuthoredSignature { get; }
+
+    /// <summary>
+    /// The same signature taken from the stock prefab of this name, or null when
+    /// no baseline could be read.
+    ///
+    /// Null is not permission. A descendant is exempt only when a baseline shows
+    /// it is inherited unchanged, so an absent baseline leaves the template
+    /// unresolved rather than approved.
+    /// </summary>
+    public string? StockSignature { get; }
+
+    /// <summary>
+    /// The template root itself.
+    ///
+    /// It gets a row because it was silently skipped before: a walk that starts
+    /// at the children never reads the root's own components, and a custom
+    /// behaviour put there was invisible to every rule.
+    /// </summary>
+    public bool IsRoot { get; }
+
+    /// <summary>
     /// Prefab names this object can put into the world later — a spawner's
     /// creature, a container's default items, a pickable's drop.
     ///
@@ -168,7 +245,18 @@ public sealed class TerrainFact
         bool level = false,
         bool smooth = false,
         bool paint = false,
-        string paintType = "")
+        string paintType = "",
+        int sortOrder = 0,
+        float levelRadius = 0f,
+        float levelOffset = 0f,
+        bool square = false,
+        float smoothRadius = 0f,
+        float smoothPower = 0f,
+        float paintRadius = 0f,
+        float paintStrength = 0f,
+        bool paintHeightCheck = false,
+        bool playerModification = false,
+        Triple3 relativePosition = default)
     {
         Path = path ?? "";
         Enabled = enabled;
@@ -179,6 +267,17 @@ public sealed class TerrainFact
         Smooth = smooth;
         Paint = paint;
         PaintType = paintType ?? "";
+        SortOrder = sortOrder;
+        LevelRadius = levelRadius;
+        LevelOffset = levelOffset;
+        Square = square;
+        SmoothRadius = smoothRadius;
+        SmoothPower = smoothPower;
+        PaintRadius = paintRadius;
+        PaintStrength = paintStrength;
+        PaintHeightCheck = paintHeightCheck;
+        PlayerModification = playerModification;
+        RelativePosition = relativePosition;
     }
 
     public string Path { get; }
@@ -199,10 +298,40 @@ public sealed class TerrainFact
     /// </summary>
     public float Reach { get; }
 
+    // Every field LocationTerrainReader.Operation copies onto an operation.
+    // Anything less would be a fingerprint that calls two different pieces of
+    // ground the same template: -2 m and -12 m of level offset are the same
+    // flags, the same paint type and the same reach.
+
     public bool Level { get; }
     public bool Smooth { get; }
     public bool Paint { get; }
     public string PaintType { get; }
+
+    /// <summary>
+    /// Vanilla's application order, ascending, ties broken by the order the
+    /// modifiers appear in the template.
+    ///
+    /// It decides the ground, not just the bookkeeping: each modifier reads what
+    /// the one before it left, so two modifiers whose order is swapped draw
+    /// different ground from the same numbers.
+    /// </summary>
+    public int SortOrder { get; }
+
+    public float LevelRadius { get; }
+    public float LevelOffset { get; }
+    public bool Square { get; }
+    public float SmoothRadius { get; }
+    public float SmoothPower { get; }
+    public float PaintRadius { get; }
+    public float PaintStrength { get; }
+    public bool PaintHeightCheck { get; }
+
+    /// <summary>Vanilla's first sort key, before <see cref="SortOrder"/>.</summary>
+    public bool PlayerModification { get; }
+
+    /// <summary>Where the modifier sits in the template's own space.</summary>
+    public Triple3 RelativePosition { get; }
 }
 
 /// <summary>

@@ -78,9 +78,13 @@ namespace More_World_Locations_AIO
             ServerOnlyMode.Set(BepinexConfigs.ServerOnly.Value == PortInit.Toggle.On);
             if (ServerOnlyMode.Enabled)
             {
+                // Before RegisterAll runs, because the audit it performs has to
+                // be able to open a template that is not registered -- which is
+                // every template it has not yet approved.
+                More_World_Locations_AIO.ServerOnly.Verification.GameTemplateAssets.Install();
                 More_World_Locations_AIOLogger.LogInfo(
                     "Server-only mode: clients without More World Locations are admitted, " +
-                    "and only approved locations are registered.");
+                    "and only locations this run's audit approves are registered.");
             }
             
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);

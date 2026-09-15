@@ -160,16 +160,31 @@ public class Heightmap
     }
 }
 
-/// <summary>Shim for UnityEngine.Transform: only the position is read.</summary>
-public class Transform
+/// <summary>
+/// Shim for UnityEngine.Transform. The road code reads only the position; the
+/// template walk reads the hierarchy and the local transform, which are in
+/// VerificationShims.cs.
+/// </summary>
+public partial class Transform
 {
     public UnityEngine.Vector3 position;
 }
 
-/// <summary>Shim for ZNetView: one ZDO behind it, ours unless a test says otherwise.</summary>
-public class ZNetView
+/// <summary>
+/// Shim for ZNetView: one ZDO behind it for the road code, and the network
+/// settings the template walk reads.
+///
+/// A component, because the walk finds it with GetComponent. Its own `enabled`
+/// rather than Behaviour's, so the road code's construction is untouched.
+/// </summary>
+public class ZNetView : UnityEngine.Component
 {
-    public ZDO Zdo;
+    public ZDO? Zdo;
+    public bool enabled = true;
+    public bool m_persistent = true;
+    public bool m_syncInitialScale;
+
+    public ZNetView() { }
     public ZNetView(ZDO zdo) { Zdo = zdo; }
     public bool IsValid() => Zdo != null;
     public bool IsOwner() => Zdo.IsOwner();
@@ -464,6 +479,23 @@ public class ZoneSystem
         }
     }
 
+    /// <summary>
+    /// The game's own "the location list is now complete" moment, and where
+    /// Jotunn adds MWL's. Named here only so the hook can point at it: what
+    /// these doubles cannot establish is WHEN Harmony runs the hook, which is
+    /// the bounded in-game check.
+    /// </summary>
+    public void SetupLocations() { }
+
+    /// <summary>A new world. Named for the same reason as SetupLocations.</summary>
+    public void Awake() { }
+
+    /// <summary>The world's own location list, which is what actually places buildings.</summary>
+    public System.Collections.Generic.List<ZoneLocation> m_locations = new();
+
+    /// <summary>The same list by prefab hash, which is how a proxy finds its template.</summary>
+    public System.Collections.Generic.Dictionary<int, ZoneLocation> m_locationsByHash = new();
+
     public struct LocationInstance
     {
         public ZoneLocation m_location;
@@ -540,7 +572,7 @@ public class ZoneSystem
 /// component, so nothing else of it is needed headlessly. The order matters --
 /// it is what the serialised m_paintType integer in a location bundle means.
 /// </summary>
-public class TerrainModifier
+public class TerrainModifier : UnityEngine.Component
 {
     public enum PaintType
     {

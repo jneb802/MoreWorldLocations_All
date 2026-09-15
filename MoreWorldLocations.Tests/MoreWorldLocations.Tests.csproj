@@ -30,6 +30,7 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/ValidationSwitches.cs" Link="ModSrc/ValidationSwitches.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyHandshake.cs" Link="ModSrc/ServerOnlyHandshake.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainOperation.cs" Link="ModSrc/LocationTerrainOperation.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainModifierOrder.cs" Link="ModSrc/TerrainModifierOrder.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainConversion.cs" Link="ModSrc/TerrainConversion.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainReader.cs" Link="ModSrc/LocationTerrainReader.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainBridge.cs" Link="ModSrc/LocationTerrainBridge.cs"/>
@@ -48,6 +49,16 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/VerificationData.cs" Link="ModSrc/Verification/VerificationData.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueReport.cs" Link="ModSrc/Verification/CatalogueReport.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueAudit.cs" Link="ModSrc/Verification/CatalogueAudit.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueNames.cs" Link="ModSrc/Verification/CatalogueNames.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateAssets.cs" Link="ModSrc/Verification/TemplateAssets.cs"/>
+        <!--
+          The engine-facing halves. They need an object hierarchy, which is what
+          the Unity doubles in Shims/VerificationShims.cs are for; everything
+          they decide still lives in the pure files above.
+        -->
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFactsExtractor.cs" Link="ModSrc/Verification/TemplateFactsExtractor.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueSweep.cs" Link="ModSrc/Verification/CatalogueSweep.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/Locations/LocationDB.cs" Link="ModSrc/LocationDB.cs"/>
     </ItemGroup>
 
     <!--
@@ -58,6 +69,11 @@
     <ItemGroup>
         <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/StockPrefabs.tsv" LogicalName="MoreWorldLocations.ServerOnly.StockPrefabs.tsv"/>
         <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/ApprovedSelection.tsv" LogicalName="MoreWorldLocations.ServerOnly.ApprovedSelection.tsv"/>
+        <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueNames.tsv" LogicalName="MoreWorldLocations.ServerOnly.CatalogueNames.tsv"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../MoreWorldLocations.Doubles/MoreWorldLocations.Doubles.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

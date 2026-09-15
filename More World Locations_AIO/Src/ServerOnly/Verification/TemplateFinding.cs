@@ -10,6 +10,17 @@ public enum FindingSeverity
 
     /// <summary>This template cannot be served to a client without the mod.</summary>
     Blocking,
+
+    /// <summary>
+    /// Not enough was established to say either way.
+    ///
+    /// Separate from <see cref="Blocking"/> because the two need different work:
+    /// a block is a fact about the template and an unresolved is a gap in what
+    /// this run could see. Folding them together would let a missing baseline be
+    /// reported as the author's defect — and, far worse, would invite somebody to
+    /// "fix" it by removing the check.
+    /// </summary>
+    Unresolving,
 }
 
 /// <summary>
@@ -74,6 +85,12 @@ public static class FindingCodes
 
     /// <summary>The template's terrain can reach further than the conversion can see from one zone. A placement risk, not a template defect.</summary>
     public const string TerrainReachBeyondRing = "terrain_reach_beyond_ring";
+
+    /// <summary>An object the client receives is not the stock prefab of that name: something was added, removed or changed beneath it.</summary>
+    public const string ModifiedStockSubtree = "modified_stock_subtree";
+
+    /// <summary>No stock prefab was available to compare an object against, so nothing can be said about what the client would build.</summary>
+    public const string StockBaselineUnavailable = "stock_baseline_unavailable";
 }
 
 /// <summary>

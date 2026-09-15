@@ -35,8 +35,19 @@ public static class TemplateFactsExtractor
     /// <param name="name">The exact location name, as declared. Never folded.</param>
     /// <param name="pack">The pack the definition came from.</param>
     /// <param name="resolved">The template after mock resolution, or null when it would not load.</param>
+    /// <param name="stockPrefabOf">
+    /// The stock prefab of a given name, or null when none is available.
+    ///
+    /// This is what makes an object the client receives checkable at all. The
+    /// client instantiates the stock prefab — its components, its children, its
+    /// fields — so the only way to know whether the author changed something is
+    /// to hold the two side by side. Injected rather than reached for directly,
+    /// because where a baseline comes from is the caller's business and the
+    /// walk's correctness should not depend on a running ZNetScene.
+    /// </param>
     public static TemplateFacts Extract(
-        string name, string pack, GameObject? resolved, string interiorPrefabName = "", string dungeonTheme = "")
+        string name, string pack, GameObject? resolved, string interiorPrefabName = "", string dungeonTheme = "",
+        Func<string, GameObject?>? stockPrefabOf = null)
     {
         if (resolved == null)
             return TemplateFacts.Unreadable(name, pack, "the soft-referenced template resolved to null");
@@ -47,7 +58,16 @@ public static class TemplateFactsExtractor
 
         try
         {
-            Walk(resolved.transform, resolved.transform, name, resolved.activeSelf, false, children, terrain, errors);
+            // The root itself, first. A walk that starts at the children never
+            // reads it, and a behaviour attached there drives the whole site.
+            children.Add(FactOf(resolved, resolved.transform, resolved.transform, name,
+                enabled: resolved.activeSelf, underNetworked: false, isRoot: true, stockPrefabOf, errors));
+            TerrainModifier rootModifier = resolved.GetComponent<TerrainModifier>();
+            if (rootModifier != null)
+                terrain.Add(TerrainFactOf(rootModifier, resolved.transform, resolved.transform, name, resolved.activeSelf));
+
+            Walk(resolved.transform, resolved.transform, name, resolved.activeSelf,
+                resolved.GetComponent<ZNetView>() != null, children, terrain, errors, stockPrefabOf);
         }
         catch (Exception ex)
         {
@@ -79,7 +99,8 @@ public static class TemplateFactsExtractor
     private static void Walk(
         Transform node, Transform root, string rootName,
         bool enabledSoFar, bool underNetworked,
-        List<ChildFact> children, List<TerrainFact> terrain, List<string> errors)
+        List<ChildFact> children, List<TerrainFact> terrain, List<string> errors,
+        Func<string, GameObject?>? stockPrefabOf)
     {
         for (int i = 0; i < node.childCount; i++)
         {
@@ -93,28 +114,145 @@ public static class TemplateFactsExtractor
             // game would not spawn a ZDO for it either.
             bool networked = view != null && view.enabled;
 
-            children.Add(new ChildFact(
-                path: PathOf(child, root, rootName),
-                prefabName: go.name,
-                networked: networked,
-                underNetworkedAncestor: underNetworked,
-                enabledInHierarchy: enabled,
-                persistent: view == null || view.m_persistent,
-                syncInitialScale: view != null && view.m_syncInitialScale,
-                scale: new Scale3(child.localScale.x, child.localScale.y, child.localScale.z),
-                hasRenderer: go.GetComponent<Renderer>() != null,
-                hasCollider: go.GetComponent<Collider>() != null,
-                components: ComponentNames(go, errors),
-                foreignComponents: ForeignComponentNames(go, errors),
-                referencedPrefabs: ReferencedPrefabs(go, errors)));
+            children.Add(FactOf(go, child, root, rootName, enabled, underNetworked, false, stockPrefabOf, errors));
 
             TerrainModifier modifier = go.GetComponent<TerrainModifier>();
             if (modifier != null)
                 terrain.Add(TerrainFactOf(modifier, child, root, rootName, enabled));
 
-            Walk(child, root, rootName, enabled, underNetworked || networked, children, terrain, errors);
+            Walk(child, root, rootName, enabled, underNetworked || networked, children, terrain, errors, stockPrefabOf);
         }
     }
+
+    /// <summary>One object as facts, whether it is the root or a child.</summary>
+    private static ChildFact FactOf(
+        GameObject go, Transform node, Transform root, string rootName,
+        bool enabled, bool underNetworked, bool isRoot,
+        Func<string, GameObject?>? stockPrefabOf, List<string> errors)
+    {
+        ZNetView view = go.GetComponent<ZNetView>();
+        bool networked = view != null && view.enabled;
+
+        // Only an object the client actually receives has a stock counterpart to
+        // be compared against. For anything else the comparison is meaningless:
+        // nothing is instantiated from a name.
+        string authored = networked ? Signature(go, node, errors) : "";
+        string? stock = null;
+        if (networked && stockPrefabOf != null && authored.Length > 0)
+        {
+            GameObject? reference = Reference(stockPrefabOf, go.name, errors);
+            if (reference != null)
+                stock = Signature(reference, reference.transform, errors);
+        }
+
+        Vector3 local = root.InverseTransformPoint(node.position);
+        return new ChildFact(
+            path: PathOf(node, root, rootName),
+            prefabName: go.name,
+            networked: networked,
+            underNetworkedAncestor: underNetworked,
+            enabledInHierarchy: enabled,
+            persistent: view == null || view.m_persistent,
+            syncInitialScale: view != null && view.m_syncInitialScale,
+            scale: new Scale3(node.localScale.x, node.localScale.y, node.localScale.z),
+            hasRenderer: go.GetComponent<Renderer>() != null,
+            hasCollider: go.GetComponent<Collider>() != null,
+            components: ComponentNames(go, errors),
+            foreignComponents: ForeignComponentNames(go, errors),
+            referencedPrefabs: ReferencedPrefabs(go, errors),
+            relativePosition: new Triple3(local.x, local.y, local.z),
+            eulerAngles: new Triple3(node.eulerAngles.x, node.eulerAngles.y, node.eulerAngles.z),
+            authoredSignature: authored,
+            stockSignature: stock,
+            isRoot: isRoot);
+    }
+
+    private static GameObject? Reference(Func<string, GameObject?> stockPrefabOf, string name, List<string> errors)
+    {
+        try
+        {
+            return stockPrefabOf(name);
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"the stock prefab for '{name}' could not be looked up: {ex.GetType().Name}: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Everything about one object that decides what a client ends up holding,
+    /// as one comparable string: its own extra components, and every descendant
+    /// with the same.
+    ///
+    /// <para>The network view itself is left out. It is what makes the object
+    /// reach the client at all and its settings are judged on their own — and a
+    /// template's copy and the stock prefab's copy differ in ways that say
+    /// nothing about what is built.</para>
+    ///
+    /// <para>Empty means there is nothing to prove: an object with no extra
+    /// components and no children of its own is fully described by its name, and
+    /// the client's stock prefab of that name is the whole answer.</para>
+    /// </summary>
+    private static string Signature(GameObject go, Transform node, List<string> errors)
+    {
+        var text = new System.Text.StringBuilder();
+        AppendSignature(go, node, "", text, errors, depth: 0);
+        string signature = text.ToString();
+        return signature == "\n" ? "" : signature;
+    }
+
+    /// <summary>How deep a subtree is walked before the comparison gives up and says so.</summary>
+    private const int MaxSignatureDepth = 12;
+
+    private static void AppendSignature(
+        GameObject go, Transform node, string path, System.Text.StringBuilder text, List<string> errors, int depth)
+    {
+        if (depth > MaxSignatureDepth)
+        {
+            errors.Add($"'{go.name}' is nested deeper than {MaxSignatureDepth} levels; its subtree was not compared in full");
+            return;
+        }
+
+        var parts = new List<string>();
+        foreach (Component component in go.GetComponents<Component>())
+        {
+            if (component == null)
+            {
+                parts.Add("(missing script)");
+                continue;
+            }
+            Type type = component.GetType();
+            // The transform is the geometry, recorded separately; the network
+            // view is the boundary, judged separately.
+            if (type.Name == "Transform" || type.Name == "ZNetView")
+                continue;
+            parts.Add(type.Name);
+        }
+        parts.Sort(StringComparer.Ordinal);
+
+        foreach (string referenced in ReferencedPrefabs(go, errors))
+            parts.Add("->" + referenced);
+
+        if (depth > 0 || parts.Count > 0)
+        {
+            text.Append(path).Append('|')
+                .Append(Fixed(node.localScale.x)).Append(',')
+                .Append(Fixed(node.localScale.y)).Append(',')
+                .Append(Fixed(node.localScale.z)).Append('|')
+                .Append(string.Join(",", parts.ToArray()))
+                .Append('\n');
+        }
+
+        for (int i = 0; i < node.childCount; i++)
+        {
+            Transform child = node.GetChild(i);
+            AppendSignature(child.gameObject, child, path + "/" + child.gameObject.name, text, errors, depth + 1);
+        }
+    }
+
+    private static string Fixed(float value) =>
+        (value == 0f ? 0f : value).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
 
     /// <summary>
     /// A modifier's reach: how far its effect extends from the location's own
@@ -144,7 +282,24 @@ public static class TemplateFactsExtractor
             level: modifier.m_level,
             smooth: modifier.m_smooth,
             paint: modifier.m_paintCleared,
-            paintType: modifier.m_paintCleared ? modifier.m_paintType.ToString() : "");
+            // Recorded whatever the flag says. m_paintType is what the ground
+            // ends up painted with if the flag is ever turned on, and a
+            // fingerprint that dropped it would call two different templates
+            // the same one.
+            paintType: modifier.m_paintType.ToString(),
+            // Every value LocationTerrainReader.Operation copies. A digest built
+            // from the flags alone cannot tell -2 m of level offset from -12 m.
+            sortOrder: modifier.m_sortOrder,
+            levelRadius: modifier.m_levelRadius,
+            levelOffset: modifier.m_levelOffset,
+            square: modifier.m_square,
+            smoothRadius: modifier.m_smoothRadius,
+            smoothPower: modifier.m_smoothPower,
+            paintRadius: modifier.m_paintRadius,
+            paintStrength: modifier.m_paintStrength,
+            paintHeightCheck: modifier.m_paintHeightCheck,
+            playerModification: modifier.m_playerModifiction,
+            relativePosition: new Triple3(local.x, local.y, local.z));
     }
 
     /// <summary>The path from the template root, which is what makes a finding actionable.</summary>

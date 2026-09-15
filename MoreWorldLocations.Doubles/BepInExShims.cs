@@ -10,8 +10,25 @@ namespace BepInEx.Logging
         /// </summary>
         public static System.Collections.Generic.List<string>? Captured;
 
+        /// <summary>
+        /// Make the next info line throw, once.
+        ///
+        /// It exists for one fixture: reporting must not be able to decide
+        /// whether a rejected location stays registered. A sink that fails is
+        /// the cheapest way to prove the two are not the same step.
+        /// </summary>
+        public static bool ThrowOnNextInfo;
+
         public void LogDebug(object data) => Write("DEBUG", data);
-        public void LogInfo(object data) => Write("INFO ", data);
+        public void LogInfo(object data)
+        {
+            if (ThrowOnNextInfo)
+            {
+                ThrowOnNextInfo = false;
+                throw new System.InvalidOperationException("injected report sink failure");
+            }
+            Write("INFO ", data);
+        }
         public void LogWarning(object data) => Write("WARN ", data);
         public void LogError(object data) => Write("ERROR", data);
 

@@ -29,8 +29,12 @@ public static class VerificationData
     /// <summary>The resource name of the generated selection.</summary>
     public const string ApprovedSelectionResource = "MoreWorldLocations.ServerOnly.ApprovedSelection.tsv";
 
+    /// <summary>The resource name of the catalogue the report is reconciled against.</summary>
+    public const string CatalogueNamesResource = "MoreWorldLocations.ServerOnly.CatalogueNames.tsv";
+
     private static StockPrefabRegistry? _stockPrefabs;
     private static ApprovedSelection? _approvedSelection;
+    private static CatalogueNames? _catalogueNames;
     private static readonly List<string> _loadProblems = new List<string>();
 
     /// <summary>Every networked prefab a client without the mod can build.</summary>
@@ -44,6 +48,10 @@ public static class VerificationData
         _approvedSelection ??= Load(ApprovedSelectionResource,
             ApprovedSelection.Parse,
             ApprovedSelection.Empty);
+
+    /// <summary>Every name a runtime report has to account for.</summary>
+    public static CatalogueNames CatalogueNames =>
+        _catalogueNames ??= Load(CatalogueNamesResource, CatalogueNames.Parse, CatalogueNames.Empty);
 
     /// <summary>
     /// What went wrong reading either file, so a run can say "the world is
@@ -59,6 +67,7 @@ public static class VerificationData
             // for the data would otherwise be told there were none.
             _ = StockPrefabs;
             _ = ApprovedSelection;
+            _ = CatalogueNames;
             return _loadProblems;
         }
     }

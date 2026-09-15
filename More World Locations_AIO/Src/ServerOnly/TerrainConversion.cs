@@ -278,13 +278,17 @@ public static class TerrainConversion
     }
 
     /// <summary>
-    /// Vanilla's order: <c>m_sortOrder</c> ascending, ties left exactly as the
-    /// caller gave them. LINQ's OrderBy is documented stable, so a tie keeps the
-    /// template's own order rather than letting the sort pick.
+    /// Vanilla's order, from the one place that knows it.
+    ///
+    /// <see cref="TerrainModifierOrder"/> holds the rule
+    /// because the content fingerprint needs the same answer: two orderings of
+    /// one set of modifiers draw different ground and must not look like the
+    /// same template. An operation carries no player modification — these come
+    /// from a location's template, not a hoe — so that key is constant here.
     /// </summary>
     private static IEnumerable<LocationTerrainOperation> InVanillaOrder(
         IReadOnlyList<LocationTerrainOperation> operations) =>
-        operations.OrderBy(op => op.SortOrder);
+        TerrainModifierOrder.Apply(operations, _ => false, op => op.SortOrder);
 
     /// <summary>
     /// <c>Heightmap.LevelTerrain</c> for a non-player modifier: sets the height,

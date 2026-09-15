@@ -3,6 +3,7 @@ using System.Linq;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using More_World_Locations_AIO.ServerOnly;
+using More_World_Locations_AIO.ServerOnly.Verification;
 
 namespace More_World_Locations_AIO;
 
@@ -17,6 +18,13 @@ public static class LocationDB
 
     /// <summary>The names actually registered, so the run can say so and name what it did not.</summary>
     private static readonly HashSet<string> _registered = new HashSet<string>();
+
+    /// <summary>
+    /// What the audit will let this world register. Null when the audit did not
+    /// complete, which registers nothing rather than falling back to a list
+    /// nobody checked this run.
+    /// </summary>
+    private static HashSet<string>? _auditApproved;
 
     static LocationDB()
     {
@@ -44,10 +52,21 @@ public static class LocationDB
         _approved = ServerOnlySelection.Compose(
             ServerOnlyAllowlist.Approved, requested, ServerOnlyMode.Enabled);
         _registered.Clear();
+        _auditApproved = null;
 
         string? notice = ServerOnlySelection.ValidationNotice(requested);
         if (notice != null)
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(notice);
+
+        // The audit runs BEFORE anything is registered, and opens every template
+        // whether or not it is a candidate. That order is the whole point: while
+        // the audit found its templates through the registered list, a template
+        // had to be approved before it could be inspected, so the tool could
+        // only ever confirm what it already approved. Iterating the catalogue
+        // changed the number of rows in the report and not the set of templates
+        // actually opened.
+        if (ServerOnlyMode.Enabled)
+            _auditApproved = AuditBeforeRegistering(requested);
 
         Register("Meadows", LocationDefinitions.Meadows);
         Register("BlackForest", LocationDefinitions.BlackForest);
@@ -85,6 +104,37 @@ public static class LocationDB
         ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
     }
 
+    /// <summary>
+    /// Judge the catalogue and return the names that may be registered, or null
+    /// when the audit could not be completed.
+    ///
+    /// <para>Null is not "register the shipped selection". It is the case where
+    /// the check did not happen, and <see cref="Register"/> registers nothing at
+    /// all: an empty world with a loud reason is the right direction for a
+    /// verification failure to fail. A validation run's requested names are the
+    /// one exception, because somebody is deliberately about to watch them.</para>
+    /// </summary>
+    private static HashSet<string>? AuditBeforeRegistering(IReadOnlyCollection<string> requested)
+    {
+        try
+        {
+            CatalogueReport report = CatalogueSweep.Audit();
+            var approved = new HashSet<string>(requested);
+            foreach (CatalogueEntry entry in report.Entries)
+            {
+                if (entry.Registered)
+                    approved.Add(entry.Name);
+            }
+            return approved;
+        }
+        catch (System.Exception ex)
+        {
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError(
+                $"The server-only catalogue audit failed, so nothing is registered: {ex}");
+            return null;
+        }
+    }
+
     public static MWLLocation GetLocation(string name)
     {
         return _byName.TryGetValue(name, out var loc) ? loc : null;
@@ -110,12 +160,18 @@ public static class LocationDB
 
     private static void Register(string packName, MWLLocation[] pack)
     {
-        // Server-only mode registers the audited subset and nothing else. The
-        // filter runs here, before Register, because turning features off
-        // afterwards does not describe a vanilla subset: this method registers
-        // the Dungeons pack whatever the port and trader toggles say.
+        // Server-only mode registers what THIS RUN's audit approved, and nothing
+        // else. The filter runs here, before Register, because turning features
+        // off afterwards does not describe a vanilla subset: this method
+        // registers the Dungeons pack whatever the port and trader toggles say.
+        //
+        // _auditApproved rather than _approved: the shipped selection records
+        // that an audit passed once, and this run's audit is what decides now.
+        // Null means the audit did not complete, and nothing is registered.
         IEnumerable<MWLLocation> registering = ServerOnlyMode.Enabled
-            ? ServerOnlyAllowlist.Filter(packName, pack, _approved)
+            ? (_auditApproved == null
+                ? new MWLLocation[0]
+                : ServerOnlyAllowlist.Filter(packName, pack, _auditApproved))
             : pack;
 
         foreach (MWLLocation loc in registering)

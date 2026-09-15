@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -104,17 +105,29 @@ public static class TemplatePolicy
         EvaluateEmission(facts, findings);
         EvaluateTerrain(facts, findings);
 
-        bool blocked = false;
+        return new TemplateEvaluation(facts.Name, facts.Pack, VerdictOf(findings), findings);
+    }
+
+    /// <summary>
+    /// Blocked beats unresolved, and both beat compatible.
+    ///
+    /// A template with a definite defect AND something this run could not see is
+    /// reported as blocked, because that is the actionable half: it is excluded
+    /// either way and "blocked, here is the object" sends somebody somewhere.
+    /// The direction that must never happen is the other one — unknown reading
+    /// as compatible — and no ordering here can produce it.
+    /// </summary>
+    private static TemplateVerdict VerdictOf(IReadOnlyList<TemplateFinding> findings)
+    {
+        bool unresolved = false;
         foreach (TemplateFinding finding in findings)
         {
             if (finding.Severity == FindingSeverity.Blocking)
-            {
-                blocked = true;
-                break;
-            }
+                return TemplateVerdict.Blocked;
+            if (finding.Severity == FindingSeverity.Unresolving)
+                unresolved = true;
         }
-        return new TemplateEvaluation(facts.Name, facts.Pack,
-            blocked ? TemplateVerdict.Blocked : TemplateVerdict.Compatible, findings);
+        return unresolved ? TemplateVerdict.Unresolved : TemplateVerdict.Compatible;
     }
 
     private static void EvaluateTemplate(TemplateFacts facts, List<TemplateFinding> findings)
@@ -154,22 +167,95 @@ public static class TemplatePolicy
             return;
         }
 
+        // Behaviour is asked of EVERY object, networked or not, and of the root
+        // as well. A custom script is client-dependent behaviour wherever it
+        // sits: on an object the client receives it will not run, and on one it
+        // never builds it will not run either, so in both cases the site does
+        // something for the author that it does not do for the player. The root
+        // in particular used to be invisible -- the walk started at the children
+        // -- which is exactly where a script driving the whole site would go.
+        EvaluateBehaviour(child, components, findings);
+
         if (child.Networked)
         {
             EvaluateIdentity(child, registry, findings);
-            EvaluateBehaviour(child, components, findings);
             EvaluatePersistence(child, findings);
             EvaluateScale(child, findings);
             EvaluateSpawnReferences(child, registry, findings);
+            EvaluateSubtree(child, findings);
             return;
         }
 
-        // A non-networked child of a networked object is not lost: the client
-        // instantiates the whole stock prefab, its own children included. Only
-        // an object with no networked ancestor exists solely in the half of the
-        // template that a client without the mod never builds.
+        // Under a networked object, the question is not about this object at
+        // all: it is whether the whole subtree matches the stock prefab, and
+        // that is answered once, at the networked ancestor, by EvaluateSubtree.
+        //
+        // This used to accept such an object outright, on the reasoning that a
+        // client instantiating a stock prefab gets that prefab's own children.
+        // True, and it is not what network ancestry proves: a template's author
+        // can hang anything at all under an object with a familiar name, and
+        // the client -- which builds the stock prefab and nothing else -- will
+        // not have it.
         if (!child.UnderNetworkedAncestor)
             EvaluateProxyOnly(child, findings);
+    }
+
+    /// <summary>
+    /// Whether the object the client receives is the stock prefab of that name,
+    /// or something the template's author changed.
+    ///
+    /// <para>The client looks up a hash and instantiates the STOCK prefab: its
+    /// components, its children, its fields. Everything the author did to the
+    /// server's copy beyond placing it — a collider added under a floor, a
+    /// behaviour attached to a chest, a drop table pointed somewhere else —
+    /// exists on the server and nowhere else. The only way to know is to compare
+    /// against the stock prefab, and that is what a baseline is.</para>
+    ///
+    /// <para>No baseline is not permission. It leaves the template unresolved,
+    /// because "we could not check" and "we checked and it was fine" are the two
+    /// answers a gate exists to keep apart.</para>
+    /// </summary>
+    private static void EvaluateSubtree(ChildFact child, List<TemplateFinding> findings)
+    {
+        if (child.StockSignature == null)
+        {
+            // Nothing beneath it and nothing on it but the network view: there
+            // is no claim to prove, so a missing baseline costs nothing.
+            if (child.AuthoredSignature.Length == 0)
+                return;
+
+            findings.Add(new TemplateFinding(FindingCodes.StockBaselineUnavailable, FindingSeverity.Unresolving, child.Path,
+                $"'{child.PrefabName}' carries objects or components of its own and no stock prefab was available to " +
+                "compare them against. A client without the mod builds the stock prefab, so whether it would build " +
+                "THIS cannot be answered from the template alone.", child.PrefabName));
+            return;
+        }
+
+        if (string.Equals(child.StockSignature, child.AuthoredSignature, StringComparison.Ordinal))
+            return;
+
+        findings.Add(new TemplateFinding(FindingCodes.ModifiedStockSubtree, FindingSeverity.Blocking, child.Path,
+            $"'{child.PrefabName}' is not the stock prefab of that name: {Difference(child)}. " +
+            "The client looks up the hash and builds the stock prefab, so whatever was added, removed or changed here " +
+            "exists on the server and nowhere else.", child.PrefabName));
+    }
+
+    /// <summary>
+    /// The first line on which the two signatures part, so a reader is told
+    /// WHICH object differs rather than that something does.
+    /// </summary>
+    private static string Difference(ChildFact child)
+    {
+        string[] authored = child.AuthoredSignature.Split('\n');
+        string[] stock = (child.StockSignature ?? "").Split('\n');
+        for (int i = 0; i < authored.Length || i < stock.Length; i++)
+        {
+            string mine = i < authored.Length ? authored[i] : "(nothing)";
+            string theirs = i < stock.Length ? stock[i] : "(nothing)";
+            if (!string.Equals(mine, theirs, StringComparison.Ordinal))
+                return $"the template has '{mine}' where the stock prefab has '{theirs}'";
+        }
+        return "the two differ";
     }
 
     private static void EvaluateUnresolvedMock(ChildFact child, List<TemplateFinding> findings)
@@ -219,7 +305,8 @@ public static class TemplatePolicy
                 continue;
             findings.Add(new TemplateFinding(FindingCodes.CustomComponent, FindingSeverity.Blocking, child.Path,
                 $"'{component}' is not a type the stock client has. Whatever this object does, the client cannot " +
-                "reconstruct it from ordinary saved data, so its behaviour exists only where the mod is installed.",
+                "reconstruct it from ordinary saved data, so its behaviour exists only where the mod is installed." +
+                (child.IsRoot ? " This one is on the template root, where a script driving the whole site would sit." : ""),
                 component));
         }
     }
