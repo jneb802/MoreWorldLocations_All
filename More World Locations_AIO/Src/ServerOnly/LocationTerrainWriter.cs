@@ -52,6 +52,7 @@ public static class LocationTerrainWriter
         // A new world generates different ground, so heights kept from the
         // builder for the last one describe nowhere.
         LocationTerrainBridge.ForgetGeneratedHeights();
+        Verification.TemplateFactsExtractor.ForgetStockSignatures();
         s_pendingWork.Clear();
         s_nextTick = 0f;
         LocationTerrainLedger.Reset();

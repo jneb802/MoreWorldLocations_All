@@ -28,6 +28,29 @@ public static class CatalogueAudit
     /// <summary>What the last sweep found, for the console commands. Null until one has run.</summary>
     public static CatalogueReport? Report { get; private set; }
 
+    /// <summary>Where a long sweep says how far it has got. Set by the caller that has a log.</summary>
+    public static Action<string>? Progress { get; set; }
+
+    /// <summary>
+    /// Say how far the sweep has got, and never let saying it change anything.
+    ///
+    /// The guard is not defensive habit: adding this progress line was enough to
+    /// reintroduce the exact defect R4 was about. A log sink that throws aborted
+    /// the audit, the audit's failure registered nothing, and a caller that only
+    /// wanted a message had decided what the world contains.
+    /// </summary>
+    private static void Say(string line)
+    {
+        try
+        {
+            Progress?.Invoke(line);
+        }
+        catch
+        {
+            // Nothing to report it to: the thing that reports is what failed.
+        }
+    }
+
     /// <summary>A new world sweeps again: the templates are reloaded and may resolve differently.</summary>
     internal static void Forget() => Report = null;
 
@@ -65,8 +88,15 @@ public static class CatalogueAudit
         string policyFingerprint = TemplateFingerprint.OfPolicy(registry, components, excludedPacks);
         var entries = new List<CatalogueEntry>();
 
+        int judged = 0;
         foreach (CatalogueSubject subject in definitions)
         {
+            // A sweep over the whole catalogue opens 190-odd templates and takes
+            // minutes. Without this it is indistinguishable from a hang, which
+            // is what a station run first took it for.
+            if (++judged % 25 == 0)
+                Say($"catalogue audit: {judged} name(s) judged");
+
             TemplateFacts facts;
             if (!subject.SourceDeclared)
             {

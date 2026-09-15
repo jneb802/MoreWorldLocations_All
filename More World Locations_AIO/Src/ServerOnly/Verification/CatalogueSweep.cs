@@ -28,13 +28,7 @@ public static class CatalogueSweep
     private static BepInEx.Logging.ManualLogSource Log =>
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
 
-    private static bool s_enforced;
-
-    internal static void Forget()
-    {
-        s_enforced = false;
-        CatalogueAudit.Forget();
-    }
+    internal static void Forget() => CatalogueAudit.Forget();
 
     /// <summary>
     /// Judge the whole catalogue, and answer which names may be registered.
@@ -46,6 +40,7 @@ public static class CatalogueSweep
     /// </summary>
     public static CatalogueReport Audit()
     {
+        CatalogueAudit.Progress = line => Log.LogInfo(line);
         CatalogueReport report = CatalogueAudit.Run(
             Subjects(),
             FactsOf,
@@ -86,17 +81,23 @@ public static class CatalogueSweep
     /// </summary>
     public static bool Enforce()
     {
-        if (s_enforced || ZoneSystem.instance == null)
-            return s_enforced;
+        // No "already done" flag. It existed to avoid repeating the work, and
+        // the work is a dictionary lookup per location; what it actually bought
+        // was a second pass that silently did nothing, so a location added after
+        // registration would never be looked at again. Running twice is free and
+        // catching a late addition is not.
+        if (ZoneSystem.instance == null)
+            return false;
 
         CatalogueReport? report = CatalogueAudit.Report;
         if (report == null)
         {
-            // Nothing judged this world. Not an invitation to trust the shipped
-            // selection: it is the case where the check did not happen.
-            WithdrawAll("the catalogue was never audited in this world");
-            s_enforced = true;
-            return true;
+            // Nothing judged this world yet. Withdraw whatever is actually
+            // there, which is the honest action, and do NOT mark enforcement
+            // done: registration may still be to come. A station run measured
+            // this hook firing at the main menu, before RegisterAll had run at
+            // all, where "the audit never happened" was true and meant nothing.
+            return WithdrawAll("no audit has judged this world yet") == 0;
         }
 
         var approved = new HashSet<string>(StringComparer.Ordinal);
@@ -121,7 +122,6 @@ public static class CatalogueSweep
             }
         }
 
-        s_enforced = true;
         return true;
     }
 
@@ -249,7 +249,7 @@ public static class CatalogueSweep
     /// very set of unverified names the guard exists to check. An empty world
     /// with a loud reason is the right way for a verification failure to fail.
     /// </summary>
-    private static void WithdrawAll(string why)
+    private static int WithdrawAll(string why)
     {
         int withdrawn = 0;
         foreach (MWLLocation location in LocationDB.All)
@@ -257,9 +257,16 @@ public static class CatalogueSweep
             if (Withdraw(location.Name))
                 withdrawn++;
         }
-        Log.LogError(
-            $"Server-only mode withdrew {withdrawn} location(s) from this world: {why}. " +
-            "Nothing MWL registers is placed until a sweep has judged it.");
+        // Loud only when something was actually taken out. Nothing registered is
+        // not a failure; it is the ordinary state before registration runs, and
+        // an error there teaches an operator to ignore the one that matters.
+        if (withdrawn > 0)
+        {
+            Log.LogError(
+                $"Server-only mode withdrew {withdrawn} location(s) from this world: {why}. " +
+                "Nothing MWL registers is placed until a sweep has judged it.");
+        }
+        return withdrawn;
     }
 
     private static void Announce(CatalogueReport report)

@@ -330,6 +330,51 @@ public class ReviewRegressionTests
     }
 
     [Fact]
+    public void R4_EnforcementRunsAtTheEndOfRegistrationAndAgainLater()
+    {
+        // Measured on the station: the ZoneSystem.SetupLocations hook fires at
+        // the MAIN MENU, before RegisterAll has been called at all. So the
+        // transaction closes at the end of registration, where both halves have
+        // provably happened, and the later hook is a second pass that catches
+        // anything added since -- which means it must not be a no-op once the
+        // first pass has run.
+        using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+
+        LocationDB.RegisterAll();
+        Assert.True(world.IsInWorld("MWL_Ruins1"));
+        Assert.False(world.IsInWorld("Review_NewBuild"));
+
+        new MWLLocation { Name = "Review_NewBuild" }.Register();
+        TemplateWorld.RunEnforcementHook();
+
+        Assert.False(world.IsInWorld("Review_NewBuild"));
+        Assert.True(world.IsInWorld("MWL_Ruins1"));
+    }
+
+    [Fact]
+    public void R4_AProgressMessageThatThrowsDoesNotAbortTheAudit()
+    {
+        // Adding a progress line to a long sweep was enough to reintroduce R4:
+        // a log sink that throws aborted the audit, the failed audit registered
+        // nothing, and a caller that only wanted a message had decided what the
+        // world contains.
+        using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        CatalogueAudit.Progress = _ => throw new System.InvalidOperationException("the sink is on fire");
+
+        try
+        {
+            LocationDB.RegisterAll();
+        }
+        finally
+        {
+            CatalogueAudit.Progress = null;
+        }
+
+        Assert.NotNull(CatalogueAudit.Report);
+        Assert.True(world.IsInWorld("MWL_Ruins1"));
+    }
+
+    [Fact]
     public void R4_AnAuditThatNeverRanRegistersNothingRatherThanTheShippedSelection()
     {
         // The fallback that used to be "keep the shipped selection" is the very

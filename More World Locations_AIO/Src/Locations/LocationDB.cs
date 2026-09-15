@@ -99,6 +99,15 @@ public static class LocationDB
                 logger.LogWarning(
                     $"Approved template '{name}' matched no location: it is either misspelled " +
                     "or in a pack server-only mode excludes. Nothing was registered for it.");
+
+            // Enforcement closes the transaction HERE, where both halves have
+            // provably happened. It used to sit on a ZoneSystem.SetupLocations
+            // postfix, and a station run measured that hook running at the main
+            // menu, before this method had been called at all -- so it found no
+            // audit, withdrew the nothing that was registered, and reported a
+            // failure that had not happened. A guard whose ordering is a guess
+            // is a guard that reports on a world it has not seen.
+            CatalogueSweep.Enforce();
         }
 
         ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;

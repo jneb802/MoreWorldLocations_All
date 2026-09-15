@@ -146,9 +146,18 @@ public static class TemplateFactsExtractor
         string? stock = null;
         if (networked && stockPrefabOf != null && authored.Length > 0)
         {
-            GameObject? reference = Reference(stockPrefabOf, go.name, errors);
-            if (reference != null)
-                stock = Signature(reference, reference.transform, errors, uncompared);
+            stock = StockSignature(go.name, stockPrefabOf, errors, uncompared);
+            // The two match for almost every object in the catalogue, and
+            // keeping two identical copies of a big subtree's text for each of
+            // seventy thousand children is how an audit runs a server out of
+            // memory. Equal collapses to one short digest, which compares the
+            // same; unequal is kept in full, because that is the case where
+            // somebody has to be told WHICH line differs.
+            if (stock != null && string.Equals(stock, authored, StringComparison.Ordinal))
+            {
+                authored = TemplateFingerprint.Digest(authored);
+                stock = authored;
+            }
         }
 
         Vector3 local = root.InverseTransformPoint(node.position);
@@ -171,6 +180,36 @@ public static class TemplateFactsExtractor
             authoredSignature: authored,
             stockSignature: stock,
             isRoot: isRoot);
+    }
+
+    /// <summary>
+    /// A stock prefab's signature, computed once per name.
+    ///
+    /// <para>Measured on the station, not guessed: without this the audit walked
+    /// the stock prefab's whole subtree again for every child that used it, so a
+    /// template with three thousand walls did three thousand identical walks.
+    /// The server climbed past five gigabytes in the first few templates and had
+    /// to be stopped. A stock prefab does not change while the process runs, so
+    /// the second walk can only ever produce what the first one did.</para>
+    ///
+    /// <para>Cleared when a world is, beside the other per-world state.</para>
+    /// </summary>
+    private static readonly Dictionary<string, string?> s_stockSignatures =
+        new Dictionary<string, string?>(StringComparer.Ordinal);
+
+    /// <summary>A new world reloads its prefabs; see LocationTerrainWriter.Reset.</summary>
+    internal static void ForgetStockSignatures() => s_stockSignatures.Clear();
+
+    private static string? StockSignature(
+        string name, Func<string, GameObject?> stockPrefabOf, List<string> errors, ISet<string> uncompared)
+    {
+        if (s_stockSignatures.TryGetValue(name, out string? cached))
+            return cached;
+
+        GameObject? reference = Reference(stockPrefabOf, name, errors);
+        string? signature = reference == null ? null : Signature(reference, reference.transform, errors, uncompared);
+        s_stockSignatures[name] = signature;
+        return signature;
     }
 
     private static GameObject? Reference(Func<string, GameObject?> stockPrefabOf, string name, List<string> errors)
