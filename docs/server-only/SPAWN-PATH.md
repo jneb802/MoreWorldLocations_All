@@ -138,7 +138,10 @@ Three consequences, all pinned by tests in
   stock client has no live instance and gets the shaping once; a client running
   the same build builds the proxy half and gets both. **Decided: server-only mode
   is for stock clients only.** A peer that reports MWL is refused whatever
-  version it reports, and told to disable the mod for this server. Mixed clients
+  version it reports. A client carrying this build is also told to disable the
+  mod for this server; an older one has no handler for that and sees the generic
+  version-mismatch text, so the refusal is guaranteed and the wording is not.
+  Mixed clients
   need explicit suppression of the duplicate local shaping and their own
   acceptance evidence; neither exists, so the mode does not claim them.
 * **All of a site's modifiers in one zone are one conversion.** They have to be

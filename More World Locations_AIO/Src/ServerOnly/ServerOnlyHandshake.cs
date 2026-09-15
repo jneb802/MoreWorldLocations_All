@@ -16,6 +16,11 @@ namespace More_World_Locations_AIO.ServerOnly;
 /// the marker lets it replace the generic "installed X, needed Y" with the one
 /// thing the player can actually do.
 ///
+/// <b>Only a client carrying this build reads the marker.</b> An older MWL
+/// client has no handler for it: it sees a version string it does not recognise,
+/// shows the generic mismatch text, and is refused by the server either way. The
+/// refusal is what the mode guarantees; the wording is not.
+///
 /// The marker is only in what the server ANNOUNCES. What a peer sends is
 /// compared against the plain version as before, so a genuine version mismatch
 /// is still a version mismatch and this changes nothing in full mode.

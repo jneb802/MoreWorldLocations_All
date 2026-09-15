@@ -474,11 +474,25 @@ public static class TerrainConversion
     /// </param>
     /// <remarks>
     /// All of it or none of it. The conversion runs on a copy of the zone and the
-    /// copy is published only once it has returned, so a height read that throws
-    /// part of the way through leaves the caller's terrain, paint and completion
-    /// record exactly as they were and the site can be retried. Recording
-    /// completion first — which this did — turns one failed read into a site that
-    /// is marked done, is not done, and has some of its vertices moved.
+    /// copy is published only once it has returned AND the result is servable, so
+    /// neither a height read that throws nor ground the compiler cannot hold
+    /// leaves the caller's terrain, paint or completion record touched.
+    ///
+    /// <para>False means two different things and the caller has to tell them
+    /// apart, because one is finished work and the other is a template to
+    /// exclude:</para>
+    /// <list type="bullet">
+    /// <item>false with <c>result.Representable</c> true — already written here,
+    /// nothing to do.</item>
+    /// <item>false with <c>result.Representable</c> false — refused.
+    /// <c>result.BeyondCompilerRange</c> names the vertices. Nothing was written
+    /// and nothing was recorded, so a retry would be refused again: the site
+    /// needs a decision, not another attempt.</item>
+    /// </list>
+    ///
+    /// <para>Writing it anyway is how a 20 m cut becomes an 8 m cut that is
+    /// recorded as done: the ruin sits twelve metres in the air, the ledger says
+    /// the site is finished, and nothing ever looks at it again.</para>
     /// </remarks>
     public static bool ApplyOnce(
         string operationId, IReadOnlyList<LocationTerrainOperation> operations,
@@ -498,12 +512,18 @@ public static class TerrainConversion
         TerrainZoneDeltas scratch = zone.Clone();
         result = Convert(operations, scratch, baseHeightAt);
 
+        if (!result.Representable)
+            return false;
+
         zone.AdoptTerrainFrom(scratch);
         zone.RecordApplied(operationId);
         return true;
     }
 
-    /// <summary>One modifier, for callers that do not need the report.</summary>
+    /// <summary>
+    /// One modifier. Still reports, because the bare bool cannot say whether the
+    /// site was already there or was refused.
+    /// </summary>
     public static bool ApplyOnce(
         string operationId, LocationTerrainOperation operation,
         TerrainZoneDeltas zone, VertexHeight baseHeightAt) =>

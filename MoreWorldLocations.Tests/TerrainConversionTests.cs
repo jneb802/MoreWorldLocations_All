@@ -531,6 +531,79 @@ public class TerrainConversionTests
     }
 
     [Fact]
+    public void ASiteTheCompilerCannotHoldIsRefusedRatherThanCutShort()
+    {
+        // The reviewer's finding on f034a3f. Convert clamps each vertex to what a
+        // compiler delta can carry, so a 20 m cut silently became an 8 m one --
+        // and the old ApplyOnce published it and recorded the site as done. The
+        // ruin would sit twelve metres in the air with the ledger saying it was
+        // finished. Their regression is kept as ReviewUnrepresentableTerrainTests;
+        // this is the control beside it, on a zone that already carries terrain.
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Flat(50f);
+
+        Assert.True(TerrainConversion.ApplyOnce("neighbour@0,0",
+            One(new LocationTerrainOperation(At(-10f, 48f, 0f), level: true, levelRadius: 2f, square: true)),
+            zone, ground, out _));
+        float[] beforeTheRefusal = (float[])zone.LevelDelta.Clone();
+
+        bool written = TerrainConversion.ApplyOnce("deepsite@0,0",
+            One(new LocationTerrainOperation(At(0f, 30f, 0f), level: true, levelRadius: 3f, square: true)),
+            zone, ground, out TerrainConversionResult result);
+
+        Assert.False(written);
+        Assert.False(result.Representable);
+        Assert.NotEmpty(result.BeyondCompilerRange);
+        Assert.False(zone.HasApplied("deepsite@0,0"));
+        Assert.Equal(beforeTheRefusal, zone.LevelDelta);
+        Assert.True(zone.HasApplied("neighbour@0,0"), "the refusal must not disturb work already done here");
+    }
+
+    [Fact]
+    public void ARefusalAndAnAlreadyWrittenSiteAreToldApartByTheResult()
+    {
+        // ApplyOnce returns false for both, and they are opposite facts: one is
+        // finished work, the other is a template to exclude. A caller that reads
+        // only the bool would retry the refusal forever, or count the refusal as
+        // done. Representable is what separates them.
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Flat(50f);
+        LocationTerrainOperation shallow = new(At(0f, 48f, 0f), level: true, levelRadius: 3f, square: true);
+        LocationTerrainOperation deep = new(At(6f, 30f, 0f), level: true, levelRadius: 2f, square: true);
+
+        Assert.True(TerrainConversion.ApplyOnce("site@0,0", One(shallow), zone, ground, out _));
+
+        Assert.False(TerrainConversion.ApplyOnce("site@0,0", One(shallow), zone, ground,
+            out TerrainConversionResult again));
+        Assert.True(again.Representable);
+
+        Assert.False(TerrainConversion.ApplyOnce("deep@0,0", One(deep), zone, ground,
+            out TerrainConversionResult refused));
+        Assert.False(refused.Representable);
+    }
+
+    [Fact]
+    public void ARefusedSiteStaysRefusedOnARetry()
+    {
+        // Nothing was recorded, so a retry runs the conversion again and reaches
+        // the same answer. That is the point: the site needs a decision, not
+        // another attempt, and it must not creep in on the second try.
+        TerrainZoneDeltas zone = Zone();
+        TerrainConversion.VertexHeight ground = Flat(50f);
+        LocationTerrainOperation deep = new(At(0f, 30f, 0f), level: true, levelRadius: 3f, square: true);
+
+        for (int attempt = 0; attempt < 3; attempt++)
+        {
+            Assert.False(TerrainConversion.ApplyOnce("deep@0,0", One(deep), zone, ground,
+                out TerrainConversionResult result));
+            Assert.False(result.Representable);
+        }
+
+        Assert.All(zone.ModifiedHeight, Assert.False);
+        Assert.Empty(zone.AppliedOperations);
+    }
+
+    [Fact]
     public void ApplyOnceRefusesAConversionWithNoIdentity()
     {
         Assert.Throws<ArgumentException>(() =>
