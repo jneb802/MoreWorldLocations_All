@@ -104,6 +104,16 @@ public class GateAndSubtreeTests
                 new TerrainZoneDeltas(ZoneSystem.GetZonePos(zone), TerrainZoneDeltas.ZoneWidth, TerrainZoneDeltas.ZoneScale),
                 null, out _, out string reason),
             reason);
+
+        // And the first one is still there. This is what the grid belongs in the
+        // key FOR: the builder hands an answer over once and the two grids are
+        // two answers, so one must not evict the other. The builder has nothing
+        // left to give at 32 — it was consumed, and rebuilt at 64 — so this can
+        // only come from the kept entry.
+        Assert.True(
+            LocationTerrainBridge.TryGeneratedHeightAt(
+                new TerrainZoneDeltas(ZoneSystem.GetZonePos(zone), 32, 1f), null, out _, out string narrow),
+            narrow);
     }
 
     [Fact]
