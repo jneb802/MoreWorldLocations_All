@@ -61,14 +61,14 @@ public static class ServerOnlyCommands
                 return true;
             });
 
-        new Terminal.ConsoleCommand("mwl_memory", "Server-only mode: what the audit and the terrain caches are holding. 'mwl_memory resweep' judges the catalogue again in this process, which is how a second sweep can be compared with the first",
+        new Terminal.ConsoleCommand("mwl_memory", "Server-only mode: audit and cache status. 'mwl_memory resweep' retries failed initial registration, or runs a diagnostic audit without changing an already-registered world",
             (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
             {
                 if (args.Length > 1 && args[1] == "resweep")
                 {
                     args.Context.AddString("before: " + CatalogueSweep.MemoryStatus());
                     args.Context.AddString(CatalogueSweep.Resweep()
-                        ? "resweep started; it judges one name per frame and enforces when it concludes. mwl_memory shows its progress."
+                        ? "sweep requested; initial registration failures are retried, while diagnostic sweeps preserve an existing registration. mwl_memory shows progress and failures."
                         : "a sweep is already running; nothing started.");
                 }
                 args.Context.AddString(CatalogueSweep.MemoryStatus());

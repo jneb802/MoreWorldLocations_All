@@ -32,6 +32,7 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainOperation.cs" Link="ModSrc/LocationTerrainOperation.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainModifierOrder.cs" Link="ModSrc/TerrainModifierOrder.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/ByteBudgetCache.cs" Link="ModSrc/ByteBudgetCache.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/WorldLoadGate.cs" Link="ModSrc/WorldLoadGate.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainTemplate.cs" Link="ModSrc/TerrainTemplate.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/SitePreflight.cs" Link="ModSrc/SitePreflight.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationSpawnGate.cs" Link="ModSrc/LocationSpawnGate.cs"/>

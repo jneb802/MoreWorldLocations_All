@@ -46,6 +46,25 @@ public static class LocationDB
 
     public static void RegisterAll()
     {
+        if (ServerOnlyMode.Enabled)
+        {
+            if (CatalogueSweep.State == CatalogueSweep.SweepState.Auditing || CatalogueSweep.RegistrationReady)
+                return;
+            // A failed attempt may have inserted only part of the list. The
+            // world has not loaded yet; remove those definitions before retrying.
+            if (ZoneSystem.instance != null)
+            {
+                foreach (string name in _registered)
+                {
+                    if (ZoneSystem.instance.m_locationsByHash.TryGetValue(name.GetStableHashCode(), out var prior)
+                        && prior.m_prefab.Name == name)
+                    {
+                        ZoneSystem.instance.m_locationsByHash.Remove(name.GetStableHashCode());
+                        ZoneSystem.instance.m_locations.Remove(prior);
+                    }
+                }
+            }
+        }
         IReadOnlyCollection<string> requested = ServerOnlyMode.Enabled
             ? ValidationSwitches.ApprovedForValidation()
             : new HashSet<string>();
@@ -94,19 +113,10 @@ public static class LocationDB
 
     private static void RegisterWhatTheAuditApproved(CatalogueReport? report, IReadOnlyCollection<string> requested)
     {
-        // Null is not "register the shipped selection". It is the case where
-        // the check did not happen, and Register registers nothing at all: an
-        // empty world with a loud reason is the right direction for a
-        // verification failure to fail. A validation run's requested names are
-        // the one exception, because somebody is deliberately about to watch
-        // them.
+        if (report == null)
+            throw new System.InvalidOperationException("No complete catalogue report is available for registration.");
         _auditApproved = ApprovedBy(report, requested);
         RegisterPacks();
-
-        // The runtime has to be able to tell an MWL location from a vanilla
-        // one: the terrain conversion applies to ours and must not touch
-        // theirs, which a stock client builds for itself.
-        ServerOnlySelection.SetRegistered(_registered);
 
         var logger = More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
         logger.LogInfo(ServerOnlySelection.RegisteredNotice(_registered));
@@ -127,7 +137,7 @@ public static class LocationDB
                 }
                 catch (System.Exception ex)
                 {
-                    logger.LogError($"'{name}' was approved and could not be put into the world: {ex}");
+                    throw new System.InvalidOperationException($"'{name}' was approved and could not be put into the world", ex);
                 }
             }
         }
@@ -139,7 +149,16 @@ public static class LocationDB
         // audit, withdrew the nothing that was registered, and reported a
         // failure that had not happened. A guard whose ordering is a guess
         // is a guard that reports on a world it has not seen.
-        CatalogueSweep.Enforce();
+        if (!CatalogueSweep.Enforce(report))
+            throw new System.InvalidOperationException("The catalogue could not be enforced in the world's location map.");
+        foreach (string name in _registered)
+        {
+            if (!ZoneSystem.instance.m_locationsByHash.TryGetValue(name.GetStableHashCode(), out var location)
+                || location.m_prefab.Name != name
+                || !ZoneSystem.instance.m_locations.Contains(location))
+                throw new System.InvalidOperationException($"'{name}' was approved but is missing from the world's location map.");
+        }
+        ServerOnlySelection.SetRegistered(_registered);
     }
 
     private static void RegisterPacks()

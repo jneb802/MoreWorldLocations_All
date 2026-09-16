@@ -39,6 +39,9 @@ public static class CatalogueSweep
         s_generation++;
         s_run = null;
         State = SweepState.Idle;
+        RegistrationReady = false;
+        s_registeredReport = null;
+        FailureReason = "";
         Observe(() => NewWorld?.Invoke());
     }
 
@@ -62,14 +65,21 @@ public static class CatalogueSweep
 
     public static SweepState State { get; private set; }
 
+    /// <summary>A complete report has been registered into this world's location map.</summary>
+    public static bool RegistrationReady { get; private set; }
+    public static string FailureReason { get; private set; } = "";
+    public static Func<string>? WorldLoadStatus { get; set; }
+    private static CatalogueReport? s_registeredReport;
+    private static bool s_diagnostic;
+
     /// <summary>"judged/total" while a sweep runs, for the status line.</summary>
     public static string Progress => s_run == null ? "" : $"{s_run.Judged}/{s_run.Total}";
 
     /// <summary>
-    /// Whether the world's location generation must wait: server-only mode,
-    /// with a sweep still judging. No partial approval may leak into placement.
+    /// Initial generation waits until registration commits. Failed initial
+    /// audits remain held; diagnostic resweeps preserve the committed world.
     /// </summary>
-    public static bool HoldsGeneration => ServerOnlyMode.Enabled && State == SweepState.Auditing;
+    public static bool HoldsGeneration => ServerOnlyMode.Enabled && !RegistrationReady;
 
     /// <summary>
     /// How a sweep's frames are driven. The engine hands the routine to a
@@ -78,7 +88,7 @@ public static class CatalogueSweep
     /// </summary>
     public static Func<IEnumerator, bool>? ScheduleRoutine { get; set; }
 
-    /// <summary>Let generation proceed once the sweep has concluded. Installed by the engine.</summary>
+    /// <summary>Let initial loading/generation proceed after registration succeeds.</summary>
     public static Action? ReleaseGeneration { get; set; }
 
     /// <summary>The longest one template's preload may take before it is opened synchronously anyway.</summary>
@@ -110,7 +120,7 @@ public static class CatalogueSweep
         ScheduleRoutine = null;
         try
         {
-            if (!BeginAudit(report => result = report))
+            if (!BeginAudit(report => result = report, diagnostic: true))
                 throw new InvalidOperationException("a sweep is already running");
         }
         finally
@@ -139,7 +149,7 @@ public static class CatalogueSweep
     /// yet.</para>
     /// </summary>
     /// <returns>False when a sweep is already running; nothing was started.</returns>
-    public static bool BeginAudit(Action<CatalogueReport?> onComplete)
+    public static bool BeginAudit(Action<CatalogueReport?> onComplete, bool diagnostic = false)
     {
         if (onComplete == null) throw new ArgumentNullException(nameof(onComplete));
         if (State == SweepState.Auditing)
@@ -152,6 +162,8 @@ public static class CatalogueSweep
             VerificationData.ApprovedSelection,
             ServerOnlyAllowlist.ExcludedPacks);
         State = SweepState.Auditing;
+        FailureReason = "";
+        s_diagnostic = diagnostic;
         int token = ++s_generation;
         s_longestMs = 0;
         s_longestName = "";
@@ -325,21 +337,24 @@ public static class CatalogueSweep
 
         TemplateFactsExtractor.ForgetStockSignatures();
         CatalogueAudit.Progress = null;
-        State = state;
         s_run = null;
         LongestJudgeMilliseconds = s_longestMs;
         LongestJudged = s_longestName;
 
-        if (report != null)
+        if (state != SweepState.Done || report == null)
         {
-            Log.LogInfo($"catalogue sweep: longest single frame judging one name was {s_longestMs:0} ms on {s_longestName}");
-            Announce(report);
-            Observe(() => SweepFinished?.Invoke());
+            Fail(why ?? "the audit did not produce a complete report");
+            return;
         }
-        else
-        {
-            Log.LogError($"The server-only catalogue sweep did not complete ({state}): {why}. Nothing is approved by it.");
-        }
+
+        int token = s_generation;
+
+        Observe(() => Log.LogInfo($"catalogue sweep: longest single frame judging one name was {s_longestMs:0} ms on {s_longestName}"));
+        Announce(report);
+        Observe(() => SweepFinished?.Invoke());
+
+        if (token != s_generation)
+            return;
 
         try
         {
@@ -347,12 +362,32 @@ public static class CatalogueSweep
         }
         catch (Exception ex)
         {
-            Log.LogError($"Completing the sweep failed: {ex}");
+            if (token == s_generation)
+                Fail($"registration/completion failed: {ex.Message}");
+            return;
         }
 
-        // Generation was held for a complete list; whatever the list is now,
-        // holding it longer serves nothing.
-        Observe(() => ReleaseGeneration?.Invoke());
+        if (token != s_generation)
+            return;
+        State = SweepState.Done;
+        if (!s_diagnostic)
+        {
+            s_registeredReport = report;
+            RegistrationReady = true;
+            // A diagnostic resweep never reloads the world or changes the
+            // committed registration, even if its result differs or it fails.
+            Observe(() => ReleaseGeneration?.Invoke());
+        }
+    }
+
+    private static void Fail(string reason)
+    {
+        State = SweepState.Failed;
+        FailureReason = reason;
+        Observe(() => Log.LogError(
+            $"Catalogue sweep failed: {reason}. " + (RegistrationReady
+                ? "The existing world's registration is unchanged."
+                : "World loading and saving remain blocked. Fix the cause, then run mwl_memory resweep to retry registration.")));
     }
 
     /// <summary>
@@ -381,6 +416,9 @@ public static class CatalogueSweep
     /// where they were.</para>
     /// </summary>
     public static bool Enforce()
+        => Enforce(s_registeredReport ?? CatalogueAudit.Report);
+
+    internal static bool Enforce(CatalogueReport? report)
     {
         // No "already done" flag. It existed to avoid repeating the work, and
         // the work is a dictionary lookup per location; what it actually bought
@@ -390,7 +428,6 @@ public static class CatalogueSweep
         if (ZoneSystem.instance == null)
             return false;
 
-        CatalogueReport? report = CatalogueAudit.Report;
         if (report == null)
         {
             // Nothing judged this world yet. Withdraw whatever is actually
@@ -443,6 +480,9 @@ public static class CatalogueSweep
     /// </summary>
     public static string MemoryStatus() =>
         $"sweep {State}{(State == SweepState.Auditing ? " " + Progress : "")}" +
+        $"; registration {(RegistrationReady ? "ready" : "not ready")}" +
+        (FailureReason.Length == 0 ? "" : $"; failure: {FailureReason}") +
+        (WorldLoadStatus == null ? "" : $"; {WorldLoadStatus()}") +
         $"{(LongestJudged.Length > 0 ? $" (longest frame {LongestJudgeMilliseconds:0} ms on {LongestJudged})" : "")}; " +
         $"leases held {TemplateAssets.OutstandingLeases} (peak {TemplateAssets.PeakLeases}); " +
         $"signatures {TemplateFactsExtractor.StockSignatureBytes / 1024} KiB in " +
@@ -464,11 +504,19 @@ public static class CatalogueSweep
     /// at all without a way to ask for another — and restarting between sweeps
     /// is exactly what would hide an owner that grows.</para>
     /// </summary>
-    public static bool Resweep() => BeginAudit(report =>
+    public static bool Resweep()
     {
-        if (report != null)
-            Enforce();
-    });
+        if (State == SweepState.Auditing)
+            return false;
+        if (!RegistrationReady)
+        {
+            // A failed initial registration must repeat the real registration
+            // callback, not merely produce a fresh diagnostic report.
+            LocationDB.RegisterAll();
+            return true;
+        }
+        return BeginAudit(_ => { }, diagnostic: true);
+    }
 
     /// <summary>
     /// Every name a report has to account for: the catalogue's known names and
