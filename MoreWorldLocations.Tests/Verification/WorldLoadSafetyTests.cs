@@ -203,10 +203,30 @@ public class WorldLoadSafetyTests
         Assert.False(gate.CanSave);
         Assert.False(gate.TryBegin(true, out _)); // partial world is not safe to reload
         Assert.NotEmpty(gate.Failure);
-        gate.Reset();
+        gate = new WorldLoadGate(); // a process restart, not a scene reset
         Assert.True(gate.TryBegin(true, out int fresh));
         gate.Complete(fresh, false, null);
         Assert.True(gate.CanSave);
+    }
+
+    [Theory]
+    [InlineData(true, null)]
+    [InlineData(false, "load threw")]
+    public void SceneResetCannotClearATerminalLoadFailure(bool gameError, string? exception)
+    {
+        var gate = new WorldLoadGate();
+        Assert.True(gate.TryBegin(true, out int ticket));
+        gate.Complete(ticket, gameError, exception);
+        string reason = gate.Failure;
+        gate.Reset();
+        gate.Reset();
+        Assert.Equal(WorldLoadGate.LoadState.Failed, gate.State);
+        Assert.Equal(reason, gate.Failure);
+        Assert.False(gate.CanSave);
+        Assert.False(gate.TryBegin(true, out _));
+        gate.Complete(ticket, false, null); // late success cannot erase the failure
+        Assert.False(gate.CanSave);
+        Assert.Equal(reason, gate.Failure);
     }
 
     [Fact]

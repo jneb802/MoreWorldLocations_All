@@ -39,13 +39,20 @@ No player connection or character changes are needed.
    verify the same site identities again.
 2. **Thrown load failure.** Fresh disposable copy, `load-throw`. Require one
    fault, an ERROR naming the failure, `world load Failed`, refused explicit
-   saving and unchanged world files. Run `mwl_memory resweep`; require the load
-   to remain Failed with no second load release and saving still refused. Stop
+   saving and unchanged world files. Run `mwl_memory resweep`; require an
+   explicit restart-required refusal, no new audit or second load release,
+   and saving still refused. Stop
    without waiting for a successful save. Restart with the switch unset and
    verify the original site's identities and normal saving.
 3. **Returned game-load error.** Repeat step 2 on another fresh copy with
-   `load-error`. Require the same blocked-save and no-retry behaviour. Keep its
-   evidence separate from the exception arm.
+   `load-error`. If the game returns to the menu and creates a new ZoneSystem
+   in the same process, require the original failure and restart-required
+   status to survive that scene change. `mwl_memory resweep` must refuse,
+   without starting another audit, re-registering, or releasing a second load.
+   Confirm no new successful save and byte-identical saved files throughout
+   the blocked phase. Restart the process without the fault and verify the
+   saved site identities and normal saving. Keep this arm's evidence separate
+   from the exception arm. Do not call a scene change a process restart.
 
 A printed registration count can precede the fault. Use `registration ready`
 and world-load state as the committed outcome, not that count alone. A save

@@ -10,7 +10,9 @@ server keeps the world unloaded and reports the cause. Correct that cause and
 run `mwl_memory resweep` to retry verification and registration.
 
 If world loading itself fails, saving remains blocked. Correct the cause and
-restart the server. A resweep cannot retry a partially loaded world.
+restart the server process. Returning to the menu, changing scenes, or running
+`mwl_memory resweep` cannot clear that failure. The original reason remains in
+`mwl_memory`; loading, generation and saving stay blocked until restart.
 
 Once registration has succeeded, `mwl_memory resweep` is diagnostic: it reports
 a fresh audit without changing the current registration or loading the world

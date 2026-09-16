@@ -1,9 +1,9 @@
 namespace More_World_Locations_AIO.ServerOnly;
 
 /// <summary>
-/// Owns the lifetime of one world's initial load. Registration may be retried
-/// before loading starts; a failed load needs a new world session because it
-/// may already have changed the game's in-memory world.
+/// Tracks initial loads for one process. Scene resets may start another healthy
+/// load, but a failed load is terminal until the process restarts: the game may
+/// already have changed its in-memory world and can return to the menu on error.
 /// </summary>
 public sealed class WorldLoadGate
 {
@@ -16,9 +16,12 @@ public sealed class WorldLoadGate
     public bool Deferred => Requested && State != LoadState.Loaded;
     public string Failure { get; private set; } = "";
 
+    /// <summary>Forget scene state, never a process-terminal load failure.</summary>
     public void Reset()
     {
         _ticket++;
+        if (State == LoadState.Failed)
+            return;
         State = LoadState.Waiting;
         Requested = false;
         Failure = "";

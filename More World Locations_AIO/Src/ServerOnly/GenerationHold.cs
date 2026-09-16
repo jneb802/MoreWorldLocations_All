@@ -35,15 +35,29 @@ public static class GenerationHold
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
 
     private static bool s_generationHeld;
-    private static readonly WorldLoadGate s_load = new WorldLoadGate();
+    // One gate for the process. Only tests replace it to model a new process;
+    // scene callbacks must call Reset on the existing instance.
+    internal static WorldLoadGate LoadGate { get; set; } = new WorldLoadGate();
+
+    public static bool RestartRequired =>
+        ServerOnlyMode.Enabled && LoadGate.State == WorldLoadGate.LoadState.Failed;
+
+    public static string LoadStatus =>
+        $"world load {LoadGate.State}" + (LoadGate.Failure.Length == 0 ? "" : $": {LoadGate.Failure}; restart required");
+
+    internal static bool RefuseFailedProcess()
+    {
+        if (!RestartRequired) return false;
+        SayError($"{LoadStatus}. This process cannot load, generate or save another world. Restart after fixing the cause.");
+        return true;
+    }
 
     /// <summary>Wire the sweep to the hold. Called once, at startup, in server-only mode.</summary>
     public static void Install()
     {
         CatalogueSweep.ReleaseGeneration = Release;
         CatalogueSweep.NewWorld = Forget;
-        CatalogueSweep.WorldLoadStatus = () =>
-            $"world load {s_load.State}" + (s_load.Failure.Length == 0 ? "" : $": {s_load.Failure}; restart required");
+        CatalogueSweep.WorldLoadStatus = () => LoadStatus;
         CatalogueSweep.ScheduleRoutine = routine =>
         {
             MonoBehaviour? host = ZoneSystem.instance != null ? ZoneSystem.instance : (MonoBehaviour?)ZNet.instance;
@@ -55,7 +69,7 @@ public static class GenerationHold
     }
 
     /// <summary>Whether the game's world load was turned away and is owed a call.</summary>
-    public static bool LoadDeferred => s_load.Deferred;
+    public static bool LoadDeferred => LoadGate.Deferred;
 
     /// <summary>Whether the game's generation pass was turned away and is owed a call.</summary>
     public static bool Held => s_generationHeld;
@@ -63,16 +77,17 @@ public static class GenerationHold
     internal static void Forget()
     {
         s_generationHeld = false;
-        s_load.Reset();
+        LoadGate.Reset();
+        RefuseFailedProcess(); // a menu bounce must remain a loud, terminal stop
     }
 
     private static void Release()
     {
-        if (!CatalogueSweep.RegistrationReady)
+        if (RefuseFailedProcess() || !CatalogueSweep.RegistrationReady)
             return;
-        if (s_load.Deferred)
+        if (LoadGate.Deferred)
         {
-            if (s_load.State != WorldLoadGate.LoadState.Waiting || ZNet.instance == null)
+            if (LoadGate.State != WorldLoadGate.LoadState.Waiting || ZNet.instance == null)
                 return;
             s_generationHeld = false;
             Say("The catalogue is registered; loading the world now.");
@@ -98,8 +113,10 @@ public static class GenerationHold
             __state = -1;
             if (!ServerOnlyMode.Enabled)
                 return true;
-            bool requested = s_load.Requested;
-            if (s_load.TryBegin(CatalogueSweep.RegistrationReady, out __state))
+            if (RefuseFailedProcess())
+                return false;
+            bool requested = LoadGate.Requested;
+            if (LoadGate.TryBegin(CatalogueSweep.RegistrationReady, out __state))
                 return StartupFaults.Current.BeforeLoad(() => ZNet.m_loadError = true, SayWarning);
             if (!requested)
             {
@@ -124,9 +141,9 @@ public static class GenerationHold
             {
                 // A normal return can still mean a failed load: vanilla catches
                 // file/decoder errors and sets this flag instead of throwing.
-                s_load.Complete(__state, ZNet.m_loadError, __exception?.Message);
-                if (s_load.State == WorldLoadGate.LoadState.Failed)
-                    SayError($"World loading failed: {s_load.Failure}. Saving remains blocked; restart after fixing the cause.");
+                LoadGate.Complete(__state, ZNet.m_loadError, __exception?.Message);
+                if (LoadGate.State == WorldLoadGate.LoadState.Failed)
+                    SayError($"World loading failed: {LoadGate.Failure}. Saving remains blocked; restart after fixing the cause.");
             }
             return __exception;
         }
@@ -137,7 +154,7 @@ public static class GenerationHold
     {
         private static bool Prefix(ZNet __instance)
         {
-            if (!ServerOnlyMode.Enabled || !__instance.IsServer() || s_load.CanSave)
+            if (!ServerOnlyMode.Enabled || !__instance.IsServer() || LoadGate.CanSave)
                 return true;
 
             // No need to touch Game.m_saveTimer here: Game.UpdateSaving calls
@@ -145,9 +162,8 @@ public static class GenerationHold
             // the timer, so refusing the save still leaves the game asking at
             // its own interval. Measured on the station at -saveinterval 5:
             // 26 refusals in 144 s, one per interval, not one per frame.
-            string why = CatalogueSweep.FailureReason.Length > 0
-                ? CatalogueSweep.FailureReason
-                : $"world load {s_load.State}";
+            string why = RestartRequired ? LoadStatus
+                : CatalogueSweep.FailureReason.Length > 0 ? CatalogueSweep.FailureReason : LoadStatus;
             SayWarning($"A save was refused: this world's initial load has not succeeded ({why}).");
             return false;
         }
@@ -160,6 +176,8 @@ public static class GenerationHold
     {
         private static bool Prefix()
         {
+            if (RefuseFailedProcess())
+                return false;
             if (!CatalogueSweep.HoldsGeneration)
                 return true;
             if (!s_generationHeld)

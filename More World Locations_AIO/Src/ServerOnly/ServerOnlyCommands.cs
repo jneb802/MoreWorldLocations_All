@@ -69,7 +69,9 @@ public static class ServerOnlyCommands
                     args.Context.AddString("before: " + CatalogueSweep.MemoryStatus());
                     args.Context.AddString(CatalogueSweep.Resweep()
                         ? "sweep requested; initial registration failures are retried, while diagnostic sweeps preserve an existing registration. mwl_memory shows progress and failures."
-                        : "a sweep is already running; nothing started.");
+                        : GenerationHold.RestartRequired
+                            ? "resweep refused: " + GenerationHold.LoadStatus
+                            : "a sweep is already running; nothing started.");
                 }
                 args.Context.AddString(CatalogueSweep.MemoryStatus());
                 return true;

@@ -10,6 +10,7 @@ namespace More_World_Locations_AIO.Tests.Verification;
 public sealed class StartupFaultTests : IDisposable
 {
     private readonly StartupFaults _prior = StartupFaults.Current;
+    private readonly WorldLoadGate _priorGate = GenerationHold.LoadGate;
     private delegate bool LoadPrefix(out int ticket);
     private static MethodInfo Hook(string patch, string method) => typeof(GenerationHold)
         .GetNestedType(patch, BindingFlags.NonPublic)!
@@ -25,12 +26,14 @@ public sealed class StartupFaultTests : IDisposable
     public StartupFaultTests()
     {
         StartupFaults.Current = new StartupFaults(null);
+        GenerationHold.LoadGate = new WorldLoadGate();
         GenerationHold.Forget();
         ZNet.m_loadError = false;
     }
     public void Dispose()
     {
         StartupFaults.Current = _prior;
+        GenerationHold.LoadGate = _priorGate;
         GenerationHold.Forget();
         ZNet.m_loadError = false;
     }
@@ -127,16 +130,52 @@ public sealed class StartupFaultTests : IDisposable
         else { Assert.Null(error); Assert.True(ZNet.m_loadError); }
         Assert.Equal(0, loads);
         Assert.False(Save(new ZNet()));
-        Assert.True(CatalogueSweep.Resweep());
+        Assert.False(CatalogueSweep.Resweep());
         Assert.Null(Load(() => loads++));
         Assert.False(Save(new ZNet()));
         Assert.Equal(0, loads);
-        GenerationHold.Forget(); // new server session, not the diagnostic resweep
+        GenerationHold.LoadGate = new WorldLoadGate(); // a new process, not a scene reset
+        GenerationHold.Forget();
         ZNet.m_loadError = false;
         StartupFaults.Current = new StartupFaults(null);
         Assert.Null(Load(() => { Assert.False(Save(new ZNet())); loads++; }));
         Assert.Equal(1, loads);
         Assert.True(Save(new ZNet()));
+    }
+
+    [Theory]
+    [InlineData("load-throw")]
+    [InlineData("load-error")]
+    public void SceneBounceCannotResweepOrReloadAfterTerminalFailure(string mode)
+    {
+        using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        Action? previous = CatalogueSweep.NewWorld;
+        CatalogueSweep.NewWorld = GenerationHold.Forget;
+        try
+        {
+            LocationDB.RegisterAll();
+            StartupFaults.Current = new StartupFaults(mode);
+            int loads = 0;
+            Load(() => loads++);
+            int opened = world.Opened.Count;
+            ZoneSystem.instance = new ZoneSystem();
+            CatalogueSweep.Forget(); // real scene-reset callback chain
+            ZNet.m_loadError = false; // even if vanilla clears its own error
+            string reason = GenerationHold.LoadGate.Failure;
+            Assert.True(GenerationHold.RestartRequired);
+            Assert.Contains("restart required", GenerationHold.LoadStatus);
+            Assert.False(CatalogueSweep.Resweep());
+            Assert.False(CatalogueSweep.BeginAudit(_ => throw new Exception("must not register")));
+            LocationDB.RegisterAll(); // direct registration cannot bypass the stop either
+            Assert.True(CatalogueSweep.HoldsGeneration);
+            Assert.Equal(reason, GenerationHold.LoadGate.Failure);
+            Assert.Equal(opened, world.Opened.Count);
+            Assert.Null(Load(() => loads++));
+            Assert.False(Save(new ZNet()));
+            Assert.False(CatalogueSweep.RegistrationReady);
+            Assert.Equal(0, loads);
+        }
+        finally { CatalogueSweep.NewWorld = previous; }
     }
 
     [Fact]

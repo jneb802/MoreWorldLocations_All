@@ -48,6 +48,8 @@ public static class LocationDB
     {
         if (ServerOnlyMode.Enabled)
         {
+            if (GenerationHold.RefuseFailedProcess())
+                return;
             if (CatalogueSweep.State == CatalogueSweep.SweepState.Auditing || CatalogueSweep.RegistrationReady)
                 return;
             // A failed attempt may have inserted only part of the list. The

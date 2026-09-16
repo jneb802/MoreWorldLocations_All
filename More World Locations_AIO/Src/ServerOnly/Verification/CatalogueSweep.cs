@@ -79,7 +79,7 @@ public static class CatalogueSweep
     /// Initial generation waits until registration commits. Failed initial
     /// audits remain held; diagnostic resweeps preserve the committed world.
     /// </summary>
-    public static bool HoldsGeneration => ServerOnlyMode.Enabled && !RegistrationReady;
+    public static bool HoldsGeneration => ServerOnlyMode.Enabled && (!RegistrationReady || GenerationHold.RestartRequired);
 
     /// <summary>
     /// How a sweep's frames are driven. The engine hands the routine to a
@@ -152,6 +152,8 @@ public static class CatalogueSweep
     public static bool BeginAudit(Action<CatalogueReport?> onComplete, bool diagnostic = false)
     {
         if (onComplete == null) throw new ArgumentNullException(nameof(onComplete));
+        if (GenerationHold.RefuseFailedProcess())
+            return false;
         if (State == SweepState.Auditing)
             return false;
 
@@ -506,6 +508,8 @@ public static class CatalogueSweep
     /// </summary>
     public static bool Resweep()
     {
+        if (GenerationHold.RefuseFailedProcess())
+            return false;
         if (State == SweepState.Auditing)
             return false;
         if (!RegistrationReady)
