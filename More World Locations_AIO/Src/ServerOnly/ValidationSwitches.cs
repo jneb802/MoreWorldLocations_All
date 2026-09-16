@@ -101,6 +101,33 @@ public static class ValidationSwitches
         return names.Count > 0 || probed.Count > 0;
     }
 
+    /// <summary>The environment variable that records selection, emission and destruction per site.</summary>
+    public const string EmissionTraceVariable = Prefix + "EMISSION_TRACE";
+
+    /// <summary>
+    /// Which templates get an emission trace: a comma-separated list of exact
+    /// names, or <c>*</c> for every template. Unset means no observers and no
+    /// rows, which is the shipped behaviour.
+    /// </summary>
+    public static bool EmissionTraceRequested(out IReadOnlyCollection<string> names, out bool all) =>
+        ParseEmissionTrace(Environment.GetEnvironmentVariable(EmissionTraceVariable), out names, out all);
+
+    public static bool ParseEmissionTrace(string? value, out IReadOnlyCollection<string> names, out bool all)
+    {
+        all = false;
+        names = Array.Empty<string>();
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+        string trimmed = value!.Trim();
+        if (trimmed == "*")
+        {
+            all = true;
+            return true;
+        }
+        names = ParseNames(trimmed);
+        return names.Count > 0;
+    }
+
     /// <summary>The environment variable narrowing the generated-height budget for one run.</summary>
     public const string HeightBudgetVariable = Prefix + "HEIGHT_BUDGET_BYTES";
 

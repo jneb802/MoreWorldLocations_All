@@ -28,6 +28,7 @@ public static class GameTemplateAssets
         TemplateAssets.BaselineProvenance = Provenance();
         // A validation switch, off in a shipped run: the lifecycle trace.
         LifecycleTrace.Install();
+        EmissionTracePatches.Install();
     }
 
     /// <summary>

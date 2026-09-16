@@ -186,6 +186,24 @@ public class DropTable
     }
 }
 
+/// <summary>Vanilla's chance-gated branch. Only the shape the trace reads.</summary>
+public class RandomSpawn : UnityEngine.Component
+{
+    public UnityEngine.GameObject? m_OffObject;
+    public float m_chanceToSpawn = 50f;
+}
+
+/// <summary>Vanilla's weighted pick among alternatives. Only the shape the trace reads.</summary>
+public class RandomObject : UnityEngine.Component
+{
+    public class ObjectEntry
+    {
+        public UnityEngine.GameObject? m_object;
+        public float m_weight = 1f;
+    }
+    public System.Collections.Generic.List<ObjectEntry> m_objects = new();
+}
+
 public class Container : UnityEngine.Component
 {
     public DropTable m_defaultItems = new();
