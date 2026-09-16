@@ -14,6 +14,7 @@ public class BepinexConfigs
     public static ConfigEntry<PortInit.Toggle> UseCustomTraderConfigs = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomLocationYAML = null!;
     public static ConfigEntry<PortInit.Toggle> UseCustomLocalization = null!;
+    public static ConfigEntry<PortInit.Toggle> EnableProceduralRoadsIntegration = null!;
 
     public static void BindFeatureConfigs()
     {
@@ -31,5 +32,7 @@ public class BepinexConfigs
             "If On, location spawn quantities will be loaded from warpalicious.More_World_Locations_LocationConfigs.yml in BepInEx config folder. Auto-extracts defaults if missing.", synced: true);
         UseCustomLocalization = PortInit.plugin.Config.BindConfig("0 - Features", "Use Custom Localization", PortInit.Toggle.Off,
             "If On, loads localization YAML files from BepInEx config folder. Place warpalicious.More_World_Locations_Localization.{Language}.yml in config folder. Auto-extracts English template if missing.", synced: false);
+        EnableProceduralRoadsIntegration = PortInit.plugin.Config.BindConfig("0 - Features", "Enable Procedural Roads Integration", PortInit.Toggle.On,
+            "If On, More World Locations registers suitable landmarks with Procedural Roads when that mod is installed.", synced: true);
     }
 }
