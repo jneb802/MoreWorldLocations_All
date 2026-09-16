@@ -127,18 +127,18 @@ public static class LocationDB
 
         // Jötunn injected its list when the sweep started, which was empty;
         // what was registered since has to be put into the world by hand.
-        if (LateRegistration != null)
+        foreach (string name in _registered)
         {
-            foreach (string name in _registered)
+            try
             {
-                try
-                {
-                    LateRegistration(name);
-                }
-                catch (System.Exception ex)
-                {
-                    throw new System.InvalidOperationException($"'{name}' was approved and could not be put into the world", ex);
-                }
+                LateRegistration?.Invoke(name);
+                // In production the named definition is now in the world map;
+                // fail here to exercise cleanup of partially registered worlds.
+                StartupFaults.Current.AfterRegistration(name, message => logger.LogWarning(message));
+            }
+            catch (System.Exception ex)
+            {
+                throw new System.InvalidOperationException($"'{name}' was approved and could not be put into the world: {ex.Message}", ex);
             }
         }
 

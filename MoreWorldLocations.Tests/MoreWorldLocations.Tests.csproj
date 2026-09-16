@@ -19,8 +19,8 @@
     <!--
       Compile the real mod sources against the shims in Shims/ rather than
       against the Unity/Valheim/BepInEx assemblies, so the tests exercise the
-      shipped code and not a copy of it. Only pure-logic files can be listed
-      here; anything that is a Harmony patch or touches the engine cannot.
+      shipped code and not a copy of it. Selected engine hooks are called
+      directly against doubles; real Harmony timing still needs station tests.
     -->
     <ItemGroup>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/PeerAdmission.cs" Link="ModSrc/PeerAdmission.cs"/>
@@ -33,6 +33,8 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainModifierOrder.cs" Link="ModSrc/TerrainModifierOrder.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/ByteBudgetCache.cs" Link="ModSrc/ByteBudgetCache.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/WorldLoadGate.cs" Link="ModSrc/WorldLoadGate.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/StartupFaults.cs" Link="ModSrc/StartupFaults.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/GenerationHold.cs" Link="ModSrc/GenerationHold.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainTemplate.cs" Link="ModSrc/TerrainTemplate.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/SitePreflight.cs" Link="ModSrc/SitePreflight.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationSpawnGate.cs" Link="ModSrc/LocationSpawnGate.cs"/>

@@ -100,7 +100,7 @@ public static class GenerationHold
                 return true;
             bool requested = s_load.Requested;
             if (s_load.TryBegin(CatalogueSweep.RegistrationReady, out __state))
-                return true;
+                return StartupFaults.Current.BeforeLoad(() => ZNet.m_loadError = true, SayWarning);
             if (!requested)
             {
                 // An empty Progress is not a cosmetic gap: it means no sweep is

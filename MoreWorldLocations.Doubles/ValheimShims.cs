@@ -455,8 +455,9 @@ public class WorldGenerator
 /// Shim for Valheim's ZoneSystem exposing only the members the road code
 /// references. GetLocationList returns an empty list unless a test fills it.
 /// </summary>
-public class ZoneSystem
+public class ZoneSystem : UnityEngine.MonoBehaviour
 {
+    public void GenerateLocationsIfNeeded() { }
     public const float ZoneSize = 64f;
 
     /// <summary>Valheim 1.0's index of a zone within the sector tables.</summary>
@@ -789,11 +790,15 @@ public class HeightmapBuilder
 
 
 /// <summary>
-/// Shim for ZNet: only the question "is this session id a peer that is here
-/// now", which is what tells a stale saved owner from a live one.
+/// ZNet members needed by ownership decisions and direct startup/save hook
+/// tests. This double does not load worlds or apply Harmony patches.
 /// </summary>
-public class ZNet
+public class ZNet : UnityEngine.MonoBehaviour
 {
+    public static bool m_loadError;
+    public bool Server = true;
+    public bool IsServer() => Server;
+    public void Save() { }
     public static ZNet? instance;
     public readonly System.Collections.Generic.HashSet<long> ConnectedPeers = new();
     public object? GetPeer(long uid) => ConnectedPeers.Contains(uid) ? (object)uid : null;
