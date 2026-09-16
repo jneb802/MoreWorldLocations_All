@@ -7,7 +7,7 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// <summary>
 /// Keep Jötunn's mock resolution from moving objects between prefabs.
 ///
-/// <para><b>What was measured (15 Sep 2026, station run MwlLife02).</b> Jötunn
+/// <para><b>What was measured (15 Sep 2026, on a dedicated test server).</b> Jötunn
 /// resolves a template's mocks with a reflective walk over every field and
 /// property of every component it visits, base types included, five levels
 /// deep, and it SETS any settable Unity-object member whose current value is
