@@ -92,44 +92,10 @@ public class ApprovedSelectionTests
     // ---- the transitional entries ------------------------------------------
 
     [Fact]
-    public void AnApprovalFromBeforeFingerprintsRegistersAndSaysItIsNotBound()
+    public void WildcardApprovalsAreRejectedRatherThanGrandfathered()
     {
-        // The four templates watched end to end on a stock client were approved
-        // before this build could compute a fingerprint. Throwing that evidence
-        // away to make the file uniform would be the wrong trade; pretending the
-        // approval is bound to content would be worse. So it registers, and says
-        // so every time.
-        ApprovedSelection selection = Selection(("MWL_Example1", ApprovedSelection.UnboundMarker));
-
-        SelectionDecision decision = selection.Decide("MWL_Example1", Passing(), "content-whatever", "policy-anything");
-
-        Assert.Equal(SelectionOutcome.Registered, decision.Outcome);
-        Assert.Contains("NOT bound", decision.Reason);
+        Assert.Throws<FormatException>(() => ApprovedSelection.Parse("#policy p\nMWL_A\t*\n"));
     }
-
-    [Fact]
-    public void AnUnboundApprovalStillLosesIfThisRunsOwnEvaluationFails()
-    {
-        // Unbound means the fingerprint is missing, not that the rules are.
-        ApprovedSelection selection = Selection(("MWL_Example1", ApprovedSelection.UnboundMarker));
-
-        SelectionDecision decision = selection.Decide("MWL_Example1", Failing(), "content-1", "policy-1");
-
-        Assert.Equal(SelectionOutcome.RuntimeDisagrees, decision.Outcome);
-    }
-
-    [Fact]
-    public void UnboundEntriesAreListedSoTheyCanBeCountedDownToZero()
-    {
-        ApprovedSelection selection = Selection(
-            ("MWL_A", ApprovedSelection.UnboundMarker),
-            ("MWL_B", "content-1"),
-            ("MWL_C", ApprovedSelection.UnboundMarker));
-
-        Assert.Equal(new[] { "MWL_A", "MWL_C" }, selection.Unbound);
-    }
-
-    // ---- the file itself ---------------------------------------------------
 
     [Fact]
     public void RenderAndParseRoundTrip()
@@ -178,31 +144,10 @@ public class ApprovedSelectionTests
             ApprovedSelection.Empty.Decide("MWL_Example1", Passing(), "c", "p").Outcome);
     }
 
-    // ---- one authority ------------------------------------------------------
-
     [Fact]
-    public void TheShippedSelectionIsTheOnlyThingTheAllowlistReads()
+    public void NoEmbeddedApprovalListCanOverrideTheRuntimeValidator()
     {
-        // The rule the whole type exists for. If these two could disagree there
-        // would be two answers to "what does this build serve", and the world
-        // would follow the one the code happened to read.
-        Assert.Equal(
-            VerificationData.ApprovedSelection.Names.OrderBy(n => n, StringComparer.Ordinal),
-            ServerOnlyAllowlist.Approved.OrderBy(n => n, StringComparer.Ordinal));
-    }
-
-    [Fact]
-    public void TheShippedSelectionIsTheFourTemplatesWatchedInGameAndAllAreStillUnbound()
-    {
-        // Pinned so that the sweep's result is a deliberate change to this file
-        // and not a silent one. When the resolved-runtime sweep lands, Unbound
-        // goes to empty and this test is updated with it.
-        ApprovedSelection selection = VerificationData.ApprovedSelection;
-
-        Assert.Equal(
-            new[] { "MWL_MeadowsTomb4", "MWL_Ruins1", "MWL_RuinsWell1", "MWL_WoodTower2" },
-            selection.Names.OrderBy(n => n, StringComparer.Ordinal));
-        Assert.Equal(4, selection.Unbound.Count);
-        Assert.DoesNotContain("MWL_FulingRock1", selection.Names);
+        Assert.Null(VerificationData.ReadResource("MoreWorldLocations.ServerOnly.ApprovedSelection.tsv"));
+        Assert.Empty(VerificationData.LoadProblems);
     }
 }

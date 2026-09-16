@@ -60,11 +60,8 @@ public class SchedulerTests
             new CatalogueSubject("MWL_Port", "Ports"),
         };
         Func<CatalogueSubject, TemplateFacts> factsOf = s => Fixtures.Compatible(s.Name, s.Pack);
-        ApprovedSelection selection = ApprovedSelection.Parse(ApprovedSelection.Render(
-            Array.Empty<KeyValuePair<string, string>>(), policyFingerprint: "", generatedFrom: "a test"));
-
-        CatalogueReport looped = CatalogueAudit.Run(subjects, factsOf, Fixtures.Stock, selection, Fixtures.ExcludedPacks);
-        CatalogueAudit.CatalogueAuditRun run = CatalogueAudit.Begin(subjects, factsOf, Fixtures.Stock, selection, Fixtures.ExcludedPacks);
+        CatalogueReport looped = CatalogueAudit.Run(subjects, factsOf, Fixtures.Stock, Fixtures.ExcludedPacks);
+        CatalogueAudit.CatalogueAuditRun run = CatalogueAudit.Begin(subjects, factsOf, Fixtures.Stock, Fixtures.ExcludedPacks);
         var opened = new List<bool>();
         while (!run.Done)
         {
@@ -114,7 +111,7 @@ public class SchedulerTests
         Assert.True(released);
         Assert.NotNull(CatalogueAudit.Report);
         Assert.True(world.IsInWorld("MWL_Ruins1"));
-        Assert.False(world.IsInWorld("Review_NewBuild"));
+        Assert.True(world.IsInWorld("Review_NewBuild"));
         // Ownership is the lease tests' business; here only that nothing is
         // left open. (The doubles' handle does not count itself, and the
         // global peak is whatever an earlier test left it at.)

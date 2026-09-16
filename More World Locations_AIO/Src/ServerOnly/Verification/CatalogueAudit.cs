@@ -16,12 +16,9 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// makes this repeatable: a build added next month is judged by the same code,
 /// in the same place, without anybody checking it by hand first.</para>
 ///
-/// <para><b>What it does with a disagreement.</b> A registered template this
-/// run judges incompatible is removed before locations are generated, and named
-/// in the log. The shipped selection records that an audit passed; it is not a
-/// licence to skip one, and the case it is guarding against — content that
-/// changed under an approval — is exactly the case where the file is wrong and
-/// the run is right.</para>
+/// <para>The current resolved-template verdict is the registration authority.
+/// There is no shipped name whitelist or inherited approval. Every decision
+/// carries its measured content and policy fingerprints for the evidence.</para>
 /// </summary>
 public static class CatalogueAudit
 {
@@ -74,14 +71,14 @@ public static class CatalogueAudit
         IEnumerable<CatalogueSubject> definitions,
         Func<CatalogueSubject, TemplateFacts> factsOf,
         StockPrefabRegistry registry,
-        ApprovedSelection selection,
         IReadOnlyCollection<string> excludedPacks,
-        ComponentPolicy? components = null)
+        ComponentPolicy? components = null,
+        IReadOnlyCollection<string>? only = null)
     {
         // The loop form of the stepper below: same order, same judgement, same
         // report. It exists for callers that have no frames to spread the work
         // over — a test, or a synchronous resweep.
-        CatalogueAuditRun run = Begin(definitions, factsOf, registry, selection, excludedPacks, components);
+        CatalogueAuditRun run = Begin(definitions, factsOf, registry, excludedPacks, components, only);
         while (!run.Done)
             run.JudgeNext();
         return run.Finish();
@@ -102,19 +99,18 @@ public static class CatalogueAudit
         IEnumerable<CatalogueSubject> definitions,
         Func<CatalogueSubject, TemplateFacts> factsOf,
         StockPrefabRegistry registry,
-        ApprovedSelection selection,
         IReadOnlyCollection<string> excludedPacks,
-        ComponentPolicy? components = null)
+        ComponentPolicy? components = null,
+        IReadOnlyCollection<string>? only = null)
     {
         if (definitions == null) throw new ArgumentNullException(nameof(definitions));
         if (factsOf == null) throw new ArgumentNullException(nameof(factsOf));
         if (registry == null) throw new ArgumentNullException(nameof(registry));
-        if (selection == null) throw new ArgumentNullException(nameof(selection));
         if (excludedPacks == null) throw new ArgumentNullException(nameof(excludedPacks));
 
         return new CatalogueAuditRun(
-            new List<CatalogueSubject>(definitions), factsOf, registry, selection, excludedPacks,
-            components ?? ComponentPolicy.Default);
+            new List<CatalogueSubject>(definitions), factsOf, registry, excludedPacks,
+            components ?? ComponentPolicy.Default, only ?? Array.Empty<string>());
     }
 
     /// <summary>
@@ -126,7 +122,7 @@ public static class CatalogueAudit
         private readonly List<CatalogueSubject> _subjects;
         private readonly Func<CatalogueSubject, TemplateFacts> _factsOf;
         private readonly StockPrefabRegistry _registry;
-        private readonly ApprovedSelection _selection;
+        private readonly IReadOnlyCollection<string> _only;
         private readonly IReadOnlyCollection<string> _excludedPacks;
         private readonly ComponentPolicy _components;
         private readonly string _policyFingerprint;
@@ -135,13 +131,13 @@ public static class CatalogueAudit
 
         internal CatalogueAuditRun(
             List<CatalogueSubject> subjects, Func<CatalogueSubject, TemplateFacts> factsOf,
-            StockPrefabRegistry registry, ApprovedSelection selection,
-            IReadOnlyCollection<string> excludedPacks, ComponentPolicy components)
+            StockPrefabRegistry registry,
+            IReadOnlyCollection<string> excludedPacks, ComponentPolicy components, IReadOnlyCollection<string> only)
         {
             _subjects = subjects;
             _factsOf = factsOf;
             _registry = registry;
-            _selection = selection;
+            _only = new HashSet<string>(only, StringComparer.Ordinal);
             _excludedPacks = excludedPacks;
             _components = components;
             _policyFingerprint = TemplateFingerprint.OfPolicy(registry, components, excludedPacks);
@@ -201,7 +197,12 @@ public static class CatalogueAudit
 
             TemplateEvaluation evaluation = TemplatePolicy.Evaluate(facts, _registry, _excludedPacks, _components);
             string fingerprint = TemplateFingerprint.Of(facts);
-            SelectionDecision decision = _selection.Decide(subject.Name, evaluation, fingerprint, _policyFingerprint);
+            bool selected = ServerOnlySelection.AllowsValidated(subject.Name, evaluation.Approved, _only);
+            SelectionDecision decision = new SelectionDecision(subject.Name,
+                selected ? SelectionOutcome.Registered : SelectionOutcome.NotSelected,
+                selected ? "approved by the current resolved-template validator"
+                    : evaluation.Approved ? "compatible, but outside this run's validation subset"
+                    : $"current validator: {evaluation.Verdict}; " + string.Join(", ", evaluation.Codes));
             _entries.Add(new CatalogueEntry(evaluation, decision, fingerprint));
         }
 

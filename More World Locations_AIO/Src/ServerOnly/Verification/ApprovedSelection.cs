@@ -10,7 +10,7 @@ public enum SelectionOutcome
     /// <summary>In the selection, unchanged since it was approved, and the runtime agrees.</summary>
     Registered,
 
-    /// <summary>Not in the selection at all. The catalogue report says why it was never approved.</summary>
+    /// <summary>Not selected by the current validator/subset, or absent from an offline snapshot.</summary>
     NotSelected,
 
     /// <summary>Approved, but the template is not the one that was approved.</summary>
@@ -40,22 +40,8 @@ public sealed class SelectionDecision
 }
 
 /// <summary>
-/// The one place that says which templates server-only mode registers.
-///
-/// <para><b>Why generated, and why only one.</b> The first release's evidence
-/// was four names, and four names fit in a list somebody maintains by hand. A
-/// catalogue does not: the same set would end up written out in the auditor, in
-/// the registration code and in the documentation, and the three would drift
-/// apart quietly, with the world following whichever one the code happened to
-/// read. So the audit writes the selection, the registration reads it, and the
-/// documentation is generated from it.</para>
-///
-/// <para><b>Why an approval expires.</b> Each name carries the fingerprint of
-/// the template it was granted for, and the file carries the fingerprint of the
-/// rules that granted it. Content that has changed since, or a build whose
-/// rules have changed, is re-audited rather than inherited — and the run says
-/// which, because "this location is missing" and "this location changed and is
-/// waiting to be re-checked" are different problems.</para>
+/// An exported audit snapshot for evidence and offline comparison. Runtime
+/// registration does not read it; every startup validates resolved templates.
 /// </summary>
 public sealed class ApprovedSelection
 {
@@ -74,48 +60,22 @@ public sealed class ApprovedSelection
     /// <summary>What produced this file — the audit run's identity, for the report.</summary>
     public string GeneratedFrom { get; }
 
-    /// <summary>The approved names. Registration reads this and nothing else.</summary>
+    /// <summary>The names captured in this audit snapshot.</summary>
     public IReadOnlyCollection<string> Names => _fingerprintByName.Keys;
 
     public int Count => _fingerprintByName.Count;
 
-    /// <summary>Nothing approved. What a build with no completed audit should register.</summary>
+    /// <summary>An empty audit snapshot.</summary>
     public static ApprovedSelection Empty { get; } =
         new ApprovedSelection("", "none", new Dictionary<string, string>(StringComparer.Ordinal));
-
-    /// <summary>
-    /// The fingerprint of an approval that predates fingerprinting.
-    ///
-    /// It exists because the first four templates were watched on a stock
-    /// client before this build could compute a fingerprint, and throwing that
-    /// evidence away to make the file uniform would be the wrong trade. It is a
-    /// transitional value, it is reported every time it is used, and the audit
-    /// sweep replaces it with a measured one.
-    /// </summary>
-    public const string UnboundMarker = "*";
-
-    /// <summary>Names whose approval is not bound to content. Reported at registration, not left to be noticed.</summary>
-    public IReadOnlyList<string> Unbound
-    {
-        get
-        {
-            var names = new List<string>();
-            foreach (KeyValuePair<string, string> entry in _fingerprintByName)
-            {
-                if (entry.Value == UnboundMarker)
-                    names.Add(entry.Key);
-            }
-            names.Sort(StringComparer.Ordinal);
-            return names;
-        }
-    }
 
     /// <summary>The fingerprint this name was approved with, or null when it was never approved.</summary>
     public string? FingerprintOf(string name) =>
         name != null && _fingerprintByName.TryGetValue(name, out string fingerprint) ? fingerprint : null;
 
     /// <summary>
-    /// Whether to register this template, given what this run measured.
+    /// Compare a recorded approval against newer content and rules, offline.
+    /// Runtime registration does not consult this snapshot.
     ///
     /// Three different things have to agree: the file says the name was
     /// approved, the template is still the one that was approved, and this run's
@@ -132,24 +92,6 @@ public sealed class ApprovedSelection
         {
             return new SelectionDecision(name, SelectionOutcome.NotSelected,
                 "not in the approved selection. The catalogue report carries the reason it was never approved.");
-        }
-
-        if (approvedWith == UnboundMarker)
-        {
-            // Not a match -- an absence of one. Said plainly at every
-            // registration so that "the file approves it" is never mistaken for
-            // "the file approves this version of it".
-            if (!evaluation.Approved)
-            {
-                return new SelectionDecision(name, SelectionOutcome.RuntimeDisagrees,
-                    $"approved in game before fingerprints existed, and this run evaluates it as " +
-                    $"{evaluation.Verdict.ToString().ToLowerInvariant()}: " +
-                    string.Join(", ", new List<string>(evaluation.Codes).ToArray()) + ".");
-            }
-            return new SelectionDecision(name, SelectionOutcome.Registered,
-                "approved in game before fingerprints existed, so the approval is NOT bound to the template's content. " +
-                "This run's own evaluation passes, which is the only check standing behind it until the audit sweep " +
-                "writes a measured fingerprint.");
         }
 
         if (!string.Equals(PolicyFingerprint, policyFingerprint, StringComparison.Ordinal))
@@ -178,7 +120,7 @@ public sealed class ApprovedSelection
     }
 
     /// <summary>
-    /// Parse the shipped selection.
+    /// Parse an exported audit snapshot.
     ///
     /// <c>#policy</c> and <c>#generated</c> headers, then <c>name TAB
     /// fingerprint</c>. Flat text for the same reason the prefab snapshot is:
@@ -216,6 +158,8 @@ public sealed class ApprovedSelection
 
             string name = line.Substring(0, tab);
             string fingerprint = line.Substring(tab + 1).Trim();
+            if (fingerprint == "*")
+                throw new FormatException($"approved selection line {lineNumber}: wildcard approvals are not supported");
             if (fingerprint.Length == 0)
                 throw new FormatException($"approved selection line {lineNumber}: '{name}' has no fingerprint");
             if (byName.ContainsKey(name))
@@ -228,8 +172,7 @@ public sealed class ApprovedSelection
     }
 
     /// <summary>
-    /// Write a selection out. This is the generator side: an audit run hands in
-    /// what it approved and the result is the file the next build ships.
+    /// Export an audit snapshot for evidence. This is not a registration input.
     ///
     /// Names are sorted, so that two runs over the same catalogue produce byte
     /// identical files and a diff means the selection actually changed.
@@ -242,9 +185,8 @@ public sealed class ApprovedSelection
         names.Sort((a, b) => string.CompareOrdinal(a.Key, b.Key));
 
         var text = new StringBuilder();
-        text.Append("# Generated by the server-only catalogue audit. Do not edit by hand:\n");
-        text.Append("# the audit is what grants an approval, and a name added here without one\n");
-        text.Append("# is a template nobody checked being served to players who cannot see it break.\n");
+        text.Append("# Snapshot exported by the server-only catalogue audit.\n");
+        text.Append("# Evidence only; registration uses the current resolved-template validator.\n");
         text.Append("#policy ").Append(policyFingerprint ?? "").Append('\n');
         text.Append("#generated ").Append(generatedFrom ?? "").Append('\n');
         foreach (KeyValuePair<string, string> entry in names)

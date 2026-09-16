@@ -181,7 +181,7 @@ public class CatalogueReportTests
 
         Assert.Equal(new[] { "MWL_Good1" }, generated.Names);
         Assert.Equal(TemplateFingerprint.Of(good), generated.FingerprintOf("MWL_Good1"));
-        Assert.Empty(generated.Unbound);
+        Assert.All(generated.Names, name => Assert.NotEqual("*", generated.FingerprintOf(name)));
         Assert.Equal("abcdef1234567890", generated.PolicyFingerprint);
     }
 

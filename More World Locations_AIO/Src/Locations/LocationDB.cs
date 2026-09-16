@@ -70,8 +70,7 @@ public static class LocationDB
         IReadOnlyCollection<string> requested = ServerOnlyMode.Enabled
             ? ValidationSwitches.ApprovedForValidation()
             : new HashSet<string>();
-        _approved = ServerOnlySelection.Compose(
-            ServerOnlyAllowlist.Approved, requested, ServerOnlyMode.Enabled);
+        _approved = new HashSet<string>();
         _registered.Clear();
         _auditApproved = null;
 
@@ -117,7 +116,8 @@ public static class LocationDB
     {
         if (report == null)
             throw new System.InvalidOperationException("No complete catalogue report is available for registration.");
-        _auditApproved = ApprovedBy(report, requested);
+        _auditApproved = ApprovedBy(report);
+        _approved = new HashSet<string>(_auditApproved!);
         RegisterPacks();
 
         var logger = More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
@@ -126,6 +126,9 @@ public static class LocationDB
             logger.LogWarning(
                 $"Approved template '{name}' matched no location: it is either misspelled " +
                 "or in a pack server-only mode excludes. Nothing was registered for it.");
+
+        foreach (string name in ServerOnlySelection.Unmatched(requested, _registered))
+            logger.LogWarning($"Requested validation template '{name}' was not registered; mwl_location reports its validator result.");
 
         // Jötunn injected its list when the sweep started, which was empty;
         // what was registered since has to be put into the world by hand.
@@ -185,11 +188,11 @@ public static class LocationDB
     }
 
     /// <summary>The names a report lets this world register, or null when there is no report.</summary>
-    private static HashSet<string>? ApprovedBy(CatalogueReport? report, IReadOnlyCollection<string> requested)
+    private static HashSet<string>? ApprovedBy(CatalogueReport? report)
     {
         if (report == null)
             return null;
-        var approved = new HashSet<string>(requested);
+        var approved = new HashSet<string>();
         foreach (CatalogueEntry entry in report.Entries)
         {
             if (entry.Registered)

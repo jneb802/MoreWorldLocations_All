@@ -6,64 +6,32 @@ using Xunit;
 
 namespace More_World_Locations_AIO.Tests;
 
-/// <summary>
-/// Which templates a process registers, and what it says about the choice.
-///
-/// The rule this protects is <c>ServerOnlyAllowlist.Approved</c> stays empty
-/// until a template has been watched on a stock client. A validation run has
-/// to be able to register one template anyway, and the danger is that the
-/// mechanism for doing so quietly becomes the mechanism for shipping one — so
-/// the shipped set is never written to, and a run that used the switch says so
-/// in the log.
-/// </summary>
+/// <summary>The optional validation subset can restrict, never grant, compatibility.</summary>
 public class ServerOnlySelectionTests
 {
     private static readonly IReadOnlyCollection<string> Nothing = new HashSet<string>();
 
     [Fact]
-    public void WithNoSwitchTheApprovedSetIsTheShippedOne()
+    public void WithNoSubsetEveryPassingTemplateIsSelected()
     {
-        HashSet<string> approved = ServerOnlySelection.Compose(
-            new HashSet<string> { "MWL_Audited" }, Nothing, serverOnly: true);
-
-        Assert.Equal(new[] { "MWL_Audited" }, approved);
+        Assert.True(ServerOnlySelection.AllowsValidated("MWL_A", true, Nothing));
+        Assert.False(ServerOnlySelection.AllowsValidated("MWL_A", false, Nothing));
     }
 
     [Fact]
-    public void AValidationRunAddsToTheApprovedSet()
+    public void ASubsetCannotMakeAnIncompatibleTemplatePass()
     {
-        HashSet<string> approved = ServerOnlySelection.Compose(
-            Nothing, new HashSet<string> { "MWL_WoodTower2" }, serverOnly: true);
-
-        Assert.Equal(new[] { "MWL_WoodTower2" }, approved);
+        Assert.False(ServerOnlySelection.AllowsValidated("MWL_A", false, new[] { "MWL_A" }));
     }
 
     [Fact]
-    public void ComposingDoesNotWriteToTheShippedSet()
+    public void SubsetMembershipIsExactAndDoesNotChangeTheInput()
     {
-        // The whole point of the switch being per-process: the shipped
-        // allowlist is a commit, not something a run can reach.
-        var shipped = new HashSet<string>();
-        ServerOnlySelection.Compose(shipped, new HashSet<string> { "MWL_WoodTower2" }, serverOnly: true);
-
-        Assert.Empty(shipped);
-        // And the shipped allowlist itself is untouched: composing hands back a
-        // copy, so a validation run can never add to what ships.
-        Assert.DoesNotContain("MWL_WoodTower2", new HashSet<string>(ServerOnlyAllowlist.Approved)
-            .Except(new[] { "MWL_MeadowsTomb4", "MWL_Ruins1", "MWL_RuinsWell1", "MWL_WoodTower2" }));
-        Assert.Equal(4, ServerOnlyAllowlist.Approved.Count);
-    }
-
-    [Fact]
-    public void OutsideServerOnlyModeAValidationRequestIsIgnored()
-    {
-        // Every location registers anyway, so there is nothing to approve. It
-        // is ignored rather than remembered, so a later switch to server-only
-        // mode does not inherit a set nobody meant.
-        HashSet<string> approved = ServerOnlySelection.Compose(
-            Nothing, new HashSet<string> { "MWL_WoodTower2" }, serverOnly: false);
-
-        Assert.Empty(approved);
+        var only = new HashSet<string> { "MWL_A" };
+        Assert.True(ServerOnlySelection.AllowsValidated("MWL_A", true, only));
+        Assert.False(ServerOnlySelection.AllowsValidated("mwl_a", true, only));
+        Assert.False(ServerOnlySelection.AllowsValidated("MWL_B", true, only));
+        Assert.Equal(new[] { "MWL_A" }, only);
     }
 
     [Fact]

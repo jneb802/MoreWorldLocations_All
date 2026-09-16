@@ -20,16 +20,10 @@ public class CatalogueAuditTests
 {
     private static readonly IReadOnlyCollection<string> Excluded = Fixtures.ExcludedPacks;
 
-    private static ApprovedSelection SelectionOf(params string[] names) =>
-        ApprovedSelection.Parse(ApprovedSelection.Render(
-            names.Select(n => new KeyValuePair<string, string>(n, ApprovedSelection.UnboundMarker)),
-            policyFingerprint: "", generatedFrom: "a test"));
-
     private static CatalogueReport Run(
         IEnumerable<CatalogueSubject> subjects,
-        Func<CatalogueSubject, TemplateFacts> factsOf,
-        ApprovedSelection? selection = null) =>
-        CatalogueAudit.Run(subjects, factsOf, Fixtures.Stock, selection ?? SelectionOf(), Excluded);
+        Func<CatalogueSubject, TemplateFacts> factsOf) =>
+        CatalogueAudit.Run(subjects, factsOf, Fixtures.Stock, Excluded);
 
     [Fact]
     public void EveryNameGetsExactlyOneRowInTheOrderItWasDeclared()
@@ -157,20 +151,19 @@ public class CatalogueAuditTests
     }
 
     [Fact]
-    public void TheSelectionIsConsultedAndTheRunCanOverruleIt()
+    public void TheCurrentValidatorRejectsUnsupportedContent()
     {
-        // The whole point of the runtime guard: the shipped file records that an
-        // audit passed; it does not replace one.
+        // Unsupported content is rejected on current facts, not on a stored name list.
         CatalogueReport report = Run(
             new[] { new CatalogueSubject("MWL_Changed1", "Meadows") },
             s => Fixtures.Compatible(s.Name, s.Pack,
-                children: new[] { Fixtures.Networked("MWL_Shrine", "Root/Shrine") }),
-            SelectionOf("MWL_Changed1"));
+                children: new[] { Fixtures.Networked("MWL_Shrine", "Root/Shrine") }));
 
         CatalogueEntry entry = report.Find("MWL_Changed1")!;
-        Assert.Equal(SelectionOutcome.RuntimeDisagrees, entry.Decision.Outcome);
+        Assert.Equal(SelectionOutcome.NotSelected, entry.Decision.Outcome);
         Assert.False(entry.Registered);
-        Assert.Contains("MWL_Changed1", report.ApprovedButNotRegistered());
+        Assert.Empty(report.ApprovedButNotRegistered());
+        Assert.DoesNotContain("approved and NOT registered", report.Summary());
     }
 
     [Fact]
@@ -178,24 +171,21 @@ public class CatalogueAuditTests
     {
         CatalogueReport report = Run(
             new[] { new CatalogueSubject("MWL_Good1", "Meadows") },
-            s => Fixtures.Compatible(s.Name, s.Pack),
-            SelectionOf("MWL_Good1"));
+            s => Fixtures.Compatible(s.Name, s.Pack));
 
         Assert.True(report.Find("MWL_Good1")!.Registered);
         Assert.Equal(1, report.RegisteredCount);
     }
 
     [Fact]
-    public void ACompatibleTemplateTheSelectionDoesNotCarryIsNotRegistered()
+    public void ACompatibleTemplateNeedsNoPriorApprovalFile()
     {
-        // Compatible is the audit's verdict. What ships is the selection's, and
-        // the sweep does not promote a name on its own.
+        // The current verdict is sufficient; no historical name list is consulted.
         CatalogueReport report = Run(
             new[] { new CatalogueSubject("MWL_Good1", "Meadows") },
-            s => Fixtures.Compatible(s.Name, s.Pack),
-            SelectionOf());
+            s => Fixtures.Compatible(s.Name, s.Pack));
 
-        Assert.False(report.Find("MWL_Good1")!.Registered);
+        Assert.True(report.Find("MWL_Good1")!.Registered);
         Assert.Equal(TemplateVerdict.Compatible, report.Find("MWL_Good1")!.Evaluation.Verdict);
     }
 

@@ -4,6 +4,19 @@ The server verifies its location catalogue before loading a world. Loading
 starts only after the approved locations have been registered successfully.
 World saves are blocked until that initial load succeeds.
 
+Every defined template in the supported packs is evaluated after its assets
+are resolved. All templates that pass the current validator are eligible;
+there is no four-location whitelist or grandfathered approval. Blocked,
+unresolved and excluded templates remain out, with their reasons available
+through `mwl_catalogue` and `mwl_location <name>`. A compatible verdict is a
+capability check, not a claim that every location has been play-tested.
+
+For station testing, the legacy `MOREWORLDLOCATIONS_APPROVE` environment
+variable is now only a comma-separated subset filter. It cannot override a
+failed verdict. Leave it unset to include all compatible templates. Use a
+subset only on disposable test worlds, and keep that subset unchanged when
+reloading a test save; omitted definitions cannot resolve saved locations.
+
 Use `mwl_memory` in the server console to see audit progress, registration
 readiness, and world-load status. If verification or registration fails, the
 server keeps the world unloaded and reports the cause. Correct that cause and

@@ -75,12 +75,11 @@
 
     <!--
       The same two data files the mod embeds, under the same logical names, so
-      the tests check the shipped snapshot and the shipped selection rather than
+      the tests check the stock snapshot and catalogue names rather than
       fixtures that agree with themselves.
     -->
     <ItemGroup>
         <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/StockPrefabs.tsv" LogicalName="MoreWorldLocations.ServerOnly.StockPrefabs.tsv"/>
-        <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/ApprovedSelection.tsv" LogicalName="MoreWorldLocations.ServerOnly.ApprovedSelection.tsv"/>
         <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueNames.tsv" LogicalName="MoreWorldLocations.ServerOnly.CatalogueNames.tsv"/>
     </ItemGroup>
 

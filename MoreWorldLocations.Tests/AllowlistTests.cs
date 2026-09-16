@@ -22,30 +22,16 @@ public class AllowlistTests
     [Fact]
     public void AnUnauditedTemplateIsBlocked()
     {
-        Assert.False(ServerOnlyAllowlist.Allows("Meadows", "MWL_NeverAudited"));
+        Assert.False(ServerOnlyAllowlist.Allows("Meadows", "MWL_NeverAudited", System.Array.Empty<string>()));
     }
 
     [Fact]
-    public void OnlyTemplatesWatchedEndToEndAreApproved()
+    public void NewNamesAreAllowedOnlyWhenPresentInTheCurrentValidatedSet()
     {
-        // The rule this replaces was "empty until the audit passes something".
-        // The audit is screening; what ships is what has been watched on a
-        // client without the mod. These four have that evidence and nothing
-        // else does -- MWL_FulingRock1 in particular proved how the terrain
-        // writer behaves at a zone boundary and under a failure, and proved
-        // nothing about its 87 objects.
-        Assert.Equal(
-            new[] { "MWL_MeadowsTomb4", "MWL_Ruins1", "MWL_RuinsWell1", "MWL_WoodTower2" },
-            ServerOnlyAllowlist.Approved.OrderBy(n => n));
-        Assert.DoesNotContain("MWL_FulingRock1", ServerOnlyAllowlist.Approved);
-    }
-
-    [Fact]
-    public void AnApprovedTemplateInAnExcludedPackIsStillRefused()
-    {
-        // Membership in Approved is not a way past the pack exclusions.
-        Assert.False(ServerOnlyAllowlist.Allows("Dungeons", "MWL_Ruins1"));
-        Assert.True(ServerOnlyAllowlist.Allows("Meadows", "MWL_Ruins1"));
+        var validated = new[] { "Review_NewBuild" };
+        Assert.True(ServerOnlyAllowlist.Allows("Meadows", "Review_NewBuild", validated));
+        Assert.False(ServerOnlyAllowlist.Allows("Meadows", "MWL_Ruins1", validated));
+        Assert.False(ServerOnlyAllowlist.Allows("Dungeons", "Review_NewBuild", validated));
     }
 
     [Theory]
@@ -102,18 +88,19 @@ public class AllowlistTests
     }
 
     [Fact]
-    public void FilterOnTheRealAllowlistDropsEverythingUnapproved()
+    public void FilterOnTheValidatorResultDropsEverythingUnapproved()
     {
         MWLLocation[] pack = Pack("MWL_Ruins1", "MWL_RuinsWell1", "MWL_NeverAudited");
-        List<MWLLocation> kept = ServerOnlyAllowlist.Filter("Meadows", pack).ToList();
+        var validated = new[] { "MWL_Ruins1", "MWL_RuinsWell1" };
+        List<MWLLocation> kept = ServerOnlyAllowlist.Filter("Meadows", pack, validated).ToList();
 
-        Assert.All(kept, l => Assert.Contains(l.Name, ServerOnlyAllowlist.Approved));
+        Assert.All(kept, l => Assert.Contains(l.Name, validated));
         Assert.DoesNotContain(kept, l => l.Name == "MWL_NeverAudited");
     }
 
     [Fact]
     public void FilterOnAnExcludedPackKeepsNothing()
     {
-        Assert.Empty(ServerOnlyAllowlist.Filter("Dungeons", Pack("MWL_Ruins1", "MWL_Anything")));
+        Assert.Empty(ServerOnlyAllowlist.Filter("Dungeons", Pack("MWL_Ruins1", "MWL_Anything"), new[] { "MWL_Ruins1" }));
     }
 }

@@ -161,8 +161,8 @@ public static class CatalogueSweep
             Subjects(),
             FactsOf,
             VerificationData.StockPrefabs,
-            VerificationData.ApprovedSelection,
-            ServerOnlyAllowlist.ExcludedPacks);
+            ServerOnlyAllowlist.ExcludedPacks,
+            only: ValidationSwitches.ApprovedForValidation());
         State = SweepState.Auditing;
         FailureReason = "";
         s_diagnostic = diagnostic;
@@ -446,13 +446,6 @@ public static class CatalogueSweep
             if (entry.Registered)
                 approved.Add(entry.Name);
         }
-        // A validation run's requested names are registered for this process
-        // on purpose — somebody is about to watch them — and the run says so
-        // loudly at registration. Enforcement withdrawing them again made the
-        // switch register a location and then take it back before anything
-        // was placed. They are still judged and still in the report.
-        foreach (string requested in ValidationSwitches.ApprovedForValidation())
-            approved.Add(requested);
 
         foreach (MWLLocation location in LocationDB.All)
         {
@@ -728,16 +721,6 @@ public static class CatalogueSweep
                 // The one case nothing else in a run would mention: the shipped
                 // file says this location is in the world and it is not.
                 Log.LogWarning($"{name} is approved and was NOT registered: {report.Find(name)!.Decision.Reason}");
-            }
-
-            IReadOnlyList<string> unbound = VerificationData.ApprovedSelection.Unbound;
-            if (unbound.Count > 0)
-            {
-                Log.LogWarning(
-                    $"{unbound.Count} approval(s) are not bound to the template they were granted for — " +
-                    string.Join(", ", new List<string>(unbound).ToArray()) +
-                    ". They were watched in game before this build could fingerprint a template; " +
-                    "this run's own evaluation is the only check standing behind them.");
             }
 
             foreach (string problem in VerificationData.LoadProblems)

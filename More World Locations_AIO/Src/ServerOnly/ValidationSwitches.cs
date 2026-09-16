@@ -25,13 +25,9 @@ public static class ValidationSwitches
     public const string ApproveVariable = Prefix + "APPROVE";
 
     /// <summary>
-    /// Templates to add to <see cref="ServerOnlyAllowlist.Approved"/> for this
-    /// process only, comma separated.
-    ///
-    /// <para>The shipped <c>Approved</c> set stays empty until a template has
-    /// passed in game — that is the rule this switch exists to serve, not to
-    /// get around. A name here is a template someone is about to watch on a
-    /// stock client, and it lives for one process.</para>
+    /// Optional station subset, comma separated. The legacy APPROVE name is
+    /// retained for station scripts, but it can only narrow passing validator
+    /// results. It never grants approval. Unset means all compatible templates.
     /// </summary>
     public static IReadOnlyCollection<string> ApprovedForValidation() =>
         ParseNames(Environment.GetEnvironmentVariable(ApproveVariable));

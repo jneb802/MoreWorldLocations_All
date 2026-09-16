@@ -65,9 +65,10 @@ public class ReviewRegressionTests
 
         LocationDB.RegisterAll();
 
-        // Registration correctly leaves it out -- it is not in the selection.
-        Assert.False(world.IsInWorld("Review_NewBuild"));
-        // And it was nevertheless opened and judged on its merits.
+        // The current validator opened it before registration and approved it;
+        // no historical four-name list may now keep it out.
+        Assert.True(world.IsInWorld("Review_NewBuild"));
+        // It was opened and judged on its merits.
         Assert.Contains("Review_NewBuild", world.Opened);
         Assert.Equal(TemplateVerdict.Compatible,
             CatalogueAudit.Report!.Find("Review_NewBuild")!.Evaluation.Verdict);
@@ -115,14 +116,14 @@ public class ReviewRegressionTests
     }
 
     [Fact]
-    public void Control_TheApprovedFourStillRegister()
+    public void Control_AllFiveCompatibleDefinitionsRegisterWithoutSpecialCases()
     {
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
 
         LocationDB.RegisterAll();
 
         Assert.True(CatalogueAudit.Report!.Find("MWL_Ruins1")!.Evaluation.Approved);
-        Assert.Equal(4, CatalogueAudit.Report.RegisteredCount);
+        Assert.Equal(5, CatalogueAudit.Report.RegisteredCount);
         Assert.True(world.IsInWorld("MWL_Ruins1"));
     }
 
@@ -340,6 +341,8 @@ public class ReviewRegressionTests
         // anything added since -- which means it must not be a no-op once the
         // first pass has run.
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        // Make this definition fail the validator; an unfamiliar name alone is no longer a rejection.
+        world.Asset("Review_NewBuild").AddComponent<TestOnlyClientBehaviour>();
 
         LocationDB.RegisterAll();
         Assert.True(world.IsInWorld("MWL_Ruins1"));
@@ -425,6 +428,8 @@ public class ReviewRegressionTests
         // the second one places buildings. Something else putting a location
         // there must not survive the sweep.
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        // Make this definition fail the validator; an unfamiliar name alone is no longer a rejection.
+        world.Asset("Review_NewBuild").AddComponent<TestOnlyClientBehaviour>();
         LocationDB.RegisterAll();
 
         new MWLLocation { Name = "Review_NewBuild" }.Register();
@@ -440,6 +445,8 @@ public class ReviewRegressionTests
     public void R4_AWithdrawnLocationStopsBeingOneOfOurs()
     {
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        // Make this definition fail the validator; an unfamiliar name alone is no longer a rejection.
+        world.Asset("Review_NewBuild").AddComponent<TestOnlyClientBehaviour>();
         LocationDB.RegisterAll();
         new MWLLocation { Name = "Review_NewBuild" }.Register();
         ServerOnlySelection.SetRegistered(new[] { "MWL_Ruins1", "Review_NewBuild" });
