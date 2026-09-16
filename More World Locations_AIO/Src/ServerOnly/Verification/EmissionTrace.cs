@@ -30,7 +30,7 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// <list type="bullet">
 /// <item><c>S</c> definition, site, seed, mode, template fingerprint, netviews considered</item>
 /// <item><c>R</c> definition, site, seed, component, randomiser path, spawned 0/1</item>
-/// <item><c>C</c> definition, site, seed, randomiser path, member path, prefab, active 0/1</item>
+/// <item><c>C</c> definition, site, seed, randomiser path, member path, prefab, active 0/1, position relative to the root</item>
 /// <item><c>E</c> definition, site, seed, member path or ?, prefab, ZDO id, world position</item>
 /// <item><c>Z</c> definition, site, seed, emitted count</item>
 /// <item><c>X</c> definition, site, seed, member path, prefab, ZDO id, by</item>
@@ -159,12 +159,18 @@ public static class EmissionTrace
             return;
         string path = PathOf(randomiser.transform, site.Asset.transform, site.Definition);
         Emit("R", site.Key, component, path, spawned ? "1" : "0");
+        Transform root = site.Asset.transform;
+        Quaternion unroot = Conjugate(root.rotation);
         foreach (GameObject member in members)
         {
             if (member == null)
                 continue;
-            Emit("C", site.Key, path, PathOf(member.transform, site.Asset.transform, site.Definition),
-                member.name, member.activeSelf ? "1" : "0");
+            // A template repeats names (seven GuckSack under one path), so a
+            // member's identity is its path AND its position relative to the
+            // root, the same frame the plan's positions are in.
+            Vector3 local = unroot * (member.transform.position - root.position);
+            Emit("C", site.Key, path, PathOf(member.transform, root, site.Definition),
+                member.name, member.activeSelf ? "1" : "0", V(local));
         }
     }
 

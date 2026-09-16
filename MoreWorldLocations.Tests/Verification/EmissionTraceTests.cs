@@ -129,6 +129,8 @@ public sealed class EmissionTraceTests : IDisposable
         Assert.Equal("MWL_Traced/Blueprint/Random1/piece_chest_wood", c[4]);
         Assert.Equal("piece_chest_wood", c[5]);
         Assert.Equal("0", c[6]);
+        // Its position relative to the root, so members sharing a path are told apart.
+        Assert.Equal("2,0,3", c[7]);
         // The wall is not under the randomiser and is not a member of it.
         Assert.DoesNotContain(Rows("C"), row => row[4].EndsWith("stone_wall_2x1", StringComparison.Ordinal));
         _ = wall;
