@@ -85,6 +85,27 @@ public static class TemplatePlan
             lines.Add("path\tprefab\tnetworked\tenabled\tpos_x\tpos_y\tpos_z\teuler_x\teuler_y\teuler_z\t" +
                       "quat_x\tquat_y\tquat_z\tquat_w\tscale_x\tscale_y\tscale_z\tpersistent\tsync\tstock_sync\tcomponents");
 
+            // The template's own terrain operations, on every page: a client
+            // observation samples the ground where the template says it
+            // shaped it, and needs the operation's centre, radius and
+            // height rather than the writer's word that it finished. Few
+            // rows, so they ride ahead of the paged children as comments
+            // that the row parser already skips.
+            foreach (TerrainFact op in facts.Terrain)
+            {
+                lines.Add(string.Join("\t", new[]
+                {
+                    "# terrain",
+                    op.Path,
+                    N(op.RelativePosition.X), N(op.RelativePosition.Y), N(op.RelativePosition.Z),
+                    "level=" + (op.Level ? "1" : "0"), N(op.LevelRadius), N(op.LevelOffset), op.Square ? "1" : "0",
+                    "smooth=" + (op.Smooth ? "1" : "0"), N(op.SmoothRadius), N(op.SmoothPower),
+                    "paint=" + (op.Paint ? "1" : "0"), N(op.PaintRadius), N(op.PaintStrength), op.PaintType,
+                    op.PaintHeightCheck ? "1" : "0",
+                    "enabled=" + (op.Enabled ? "1" : "0"),
+                }));
+            }
+
             int index = 0;
             int shown = 0;
             foreach (ChildFact child in facts.Children)
