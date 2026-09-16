@@ -32,7 +32,7 @@ namespace More_World_Locations_AIO.ServerOnly;
 /// rotation.</para>
 ///
 /// <para><b>Bounded.</b> A zone held for ever is a world that never finishes
-/// generating, so after <see cref="MaxHolds"/> attempts the placement is given
+/// generating, so after <see cref="MaxHolds"/> spaced checks the placement is given
 /// up: refused by identity and never published, and the zone generates without
 /// it.</para>
 /// </summary>
@@ -44,14 +44,17 @@ public static class ZoneReadinessBarrier
     /// <summary>
     /// How many times one zone may be held before its location is given up.
     ///
-    /// Generous, because each hold costs one frame's attempt at one zone and the
-    /// thing being waited for -- a neighbour's terrain -- is queued by the
-    /// asking. Small enough that a zone whose ground is never going to be
-    /// readable does not stall the world.
+    /// Calls can arrive every frame or more often. Only one unavailable-ground
+    /// observation per second spends this budget, so a busy frame cannot delete
+    /// a location before the asynchronous builder has had time to answer.
+    /// Readiness itself is still checked on every call, allowing immediate
+    /// recovery. Memory-budget waits spend no observation.
     /// </summary>
     public const int MaxHolds = 30;
+    public const float HoldIntervalSeconds = 1f;
 
     private static readonly Dictionary<Vector2s, int> s_holds = new();
+    private static readonly Dictionary<Vector2s, float> s_nextCountAt = new();
 
     /// <summary>Zones waiting on the height budget rather than on the ground. Never counted.</summary>
     private static readonly HashSet<Vector2s> s_deferred = new();
@@ -59,6 +62,7 @@ public static class ZoneReadinessBarrier
     internal static void Forget()
     {
         s_holds.Clear();
+        s_nextCountAt.Clear();
         s_deferred.Clear();
     }
 
@@ -101,6 +105,7 @@ public static class ZoneReadinessBarrier
         if (Readable(location, name, instance.m_position, out string why, out bool deferred))
         {
             s_holds.Remove(zoneID);
+            s_nextCountAt.Remove(zoneID);
             s_deferred.Remove(zoneID);
             return true;
         }
@@ -115,6 +120,11 @@ public static class ZoneReadinessBarrier
             return false;
         }
 
+        s_deferred.Remove(zoneID);
+        float now = Time.realtimeSinceStartup;
+        if (s_nextCountAt.TryGetValue(zoneID, out float nextCountAt) && now < nextCountAt)
+            return false;
+        s_nextCountAt[zoneID] = now + HoldIntervalSeconds;
         s_holds.TryGetValue(zoneID, out int held);
         held++;
         s_holds[zoneID] = held;
@@ -127,8 +137,10 @@ public static class ZoneReadinessBarrier
         }
 
         s_holds.Remove(zoneID);
+        s_nextCountAt.Remove(zoneID);
         var decision = new SiteDecision(SiteVerdict.Refuse, SiteRefusalCodes.NeverReadable,
-            $"held {MaxHolds} times and the ground never became readable — {why} " +
+            $"held {MaxHolds} spaced checks (at most one per {HoldIntervalSeconds:0.#} s) " +
+            $"and the ground never became readable — {why} " +
             "The placement is given up rather than held for ever, and nothing of it is placed.");
         LocationSpawnGate.GiveUp(siteId, decision);
         Log.LogWarning($"{name} at {instance.m_position.x:0},{instance.m_position.z:0}: {decision.Reason}");

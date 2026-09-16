@@ -230,6 +230,23 @@ public class GateAndSubtreeTests
     }
 
     [Fact]
+    public void FastReadinessPollingDoesNotDeleteALocationBeforeTheBuilderAnswers()
+    {
+        using var world = new TerrainWorld();
+        world.PlaceInstance("ReviewSite", new Vector2s(0, 0), atX: 0f, levelTo: 29f);
+        for (int i = 0; i < 120; i++)
+        {
+            Time.realtimeSinceStartup += 0.001f;
+            Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        }
+        Assert.Equal(1, ZoneReadinessBarrier.Holds[new Vector2s(0, 0)]);
+        world.GroundEverywhere(30f);
+        Assert.True(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        Assert.True(LocationSpawnGate.MayPublish(
+            world.Instance("ReviewSite").m_location, Vector3.zero, Quaternion.identity));
+    }
+
+    [Fact]
     public void AZoneIsNotHeldForEver()
     {
         // A world that never finishes generating is worse than a missing
@@ -239,7 +256,10 @@ public class GateAndSubtreeTests
         world.PlaceInstance("ReviewSite", new Vector2s(0, 0), atX: 0f, levelTo: 29f);
 
         for (int attempt = 0; attempt < ZoneReadinessBarrier.MaxHolds - 1; attempt++)
+        {
             Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+            Time.realtimeSinceStartup += ZoneReadinessBarrier.HoldIntervalSeconds;
+        }
 
         // The last attempt gives up and lets the zone through...
         Assert.True(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
@@ -248,6 +268,42 @@ public class GateAndSubtreeTests
         Assert.False(LocationSpawnGate.MayPublish(
             world.Instance("ReviewSite").m_location, Vector3.zero, Quaternion.identity));
         Assert.Contains(SiteRefusalCodes.NeverReadable, LocationSpawnGate.Status());
+    }
+
+    [Fact]
+    public void ForgetRemovesThePreviousWorldsReadinessSchedule()
+    {
+        using var world = new TerrainWorld();
+        world.PlaceInstance("ReviewSite", new Vector2s(0, 0), atX: 0f, levelTo: 29f);
+        Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        ZoneReadinessBarrier.Forget();
+        Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        Assert.Equal(1, ZoneReadinessBarrier.Holds[new Vector2s(0, 0)]);
+    }
+
+    [Fact]
+    public void MemoryPressureDoesNotAccumulateReadinessAttempts()
+    {
+        using var world = new TerrainWorld();
+        world.PlaceInstance("ReviewSite", new Vector2s(0, 0), atX: 0f, levelTo: 29f);
+        Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        world.GroundEverywhere(30f);
+        LocationTerrainBridge.UseGeneratedHeightBudgetForTest(1);
+        try
+        {
+            for (int i = 0; i < ZoneReadinessBarrier.MaxHolds + 5; i++)
+            {
+                Time.realtimeSinceStartup += ZoneReadinessBarrier.HoldIntervalSeconds;
+                Assert.False(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+            }
+            Assert.Equal(1, ZoneReadinessBarrier.Holds[new Vector2s(0, 0)]);
+        }
+        finally
+        {
+            LocationTerrainBridge.UseGeneratedHeightBudgetForTest(LocationTerrainBridge.DefaultGeneratedHeightBudgetBytes);
+        }
+        Assert.True(ZoneReadinessBarrier.MayGenerate(new Vector2s(0, 0), ZoneSystem.SpawnMode.Ghost));
+        Assert.Empty(ZoneReadinessBarrier.Holds);
     }
 
     [Fact]
