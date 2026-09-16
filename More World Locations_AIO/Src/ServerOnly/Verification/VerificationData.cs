@@ -8,7 +8,7 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// <summary>
 /// Embedded stock-prefab and catalogue-name snapshots. Neither grants location
 /// approval: the current validator does that. Missing data is reported and
-/// falls back to an empty snapshot, never a grandfathered location list.
+/// falls back to an empty snapshot, never an implicit location list.
 /// </summary>
 public static class VerificationData
 {

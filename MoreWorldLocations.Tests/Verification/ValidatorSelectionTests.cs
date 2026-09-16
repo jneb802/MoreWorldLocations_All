@@ -9,7 +9,7 @@ namespace More_World_Locations_AIO.Tests.Verification;
 public sealed class ValidatorSelectionTests
 {
     [Fact]
-    public void APassingTemplateNeedsNoGrandfatheredNameOrShippedApproval()
+    public void APassingTemplateNeedsNoShippedApproval()
     {
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
         LocationDB.RegisterAll();

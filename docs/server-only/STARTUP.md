@@ -6,7 +6,7 @@ World saves are blocked until that initial load succeeds.
 
 Every defined template in the supported packs is evaluated after its assets
 are resolved. All templates that pass the current validator are eligible;
-there is no four-location whitelist or grandfathered approval. Blocked,
+there is no separate approval list. Blocked,
 unresolved and excluded templates remain out, with their reasons available
 through `mwl_catalogue` and `mwl_location <name>`. A compatible verdict is a
 capability check, not a claim that every location has been play-tested.

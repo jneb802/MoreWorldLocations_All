@@ -17,7 +17,7 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// in the same place, without anybody checking it by hand first.</para>
 ///
 /// <para>The current resolved-template verdict is the registration authority.
-/// There is no shipped name whitelist or inherited approval. Every decision
+/// There is no shipped name list beside it. Every decision
 /// carries its measured content and policy fingerprints for the evidence.</para>
 /// </summary>
 public static class CatalogueAudit

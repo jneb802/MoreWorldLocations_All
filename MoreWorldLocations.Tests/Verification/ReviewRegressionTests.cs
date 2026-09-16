@@ -14,7 +14,7 @@ namespace More_World_Locations_AIO.Tests.Verification;
 ///
 /// <para>Each one is the same failure wearing a different hat: the gate looked
 /// like it was working. It reported on every name in the catalogue while only
-/// ever opening four templates. It accepted whatever an author hung under an
+/// ever opening a handful of templates. It accepted whatever an author hung under an
 /// object with a familiar name. It bound approvals to a digest that could not
 /// see a wall move twenty metres or the ground drop ten. And it treated a
 /// failure to write the report as a reason to leave a rejected build in the
@@ -66,7 +66,7 @@ public class ReviewRegressionTests
         LocationDB.RegisterAll();
 
         // The current validator opened it before registration and approved it;
-        // no historical four-name list may now keep it out.
+        // no other list may keep it out.
         Assert.True(world.IsInWorld("Review_NewBuild"));
         // It was opened and judged on its merits.
         Assert.Contains("Review_NewBuild", world.Opened);

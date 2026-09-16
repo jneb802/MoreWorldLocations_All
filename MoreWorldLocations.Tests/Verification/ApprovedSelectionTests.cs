@@ -92,7 +92,7 @@ public class ApprovedSelectionTests
     // ---- the transitional entries ------------------------------------------
 
     [Fact]
-    public void WildcardApprovalsAreRejectedRatherThanGrandfathered()
+    public void WildcardApprovalsAreRejected()
     {
         Assert.Throws<FormatException>(() => ApprovedSelection.Parse("#policy p\nMWL_A\t*\n"));
     }
