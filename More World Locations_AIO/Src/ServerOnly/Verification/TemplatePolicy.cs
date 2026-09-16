@@ -181,7 +181,7 @@ public static class TemplatePolicy
         {
             EvaluateIdentity(child, registry, findings);
             EvaluatePersistence(child, findings);
-            EvaluateScale(child, findings);
+            EvaluateScale(child, registry, findings);
             EvaluateSpawnReferences(child, registry, findings);
             EvaluateSubtree(child, findings);
             return;
@@ -322,15 +322,73 @@ public static class TemplatePolicy
             "object is gone.", child.PrefabName));
     }
 
-    private static void EvaluateScale(ChildFact child, List<TemplateFinding> findings)
+    /// <summary>
+    /// Whether the client ends up with the size the author built, which takes
+    /// both halves of the transfer and neither of them on its own.
+    ///
+    /// <para>The rule used to read the sender only: a scale that is not one and
+    /// a template <c>ZNetView</c> that does not send it. That approved a scale
+    /// nobody applies. <c>ZNetView.Awake</c> reads the ZDO's scale inside its
+    /// OWN <c>if (m_syncInitialScale)</c>, and on a client without the mod that
+    /// object is the stock prefab. Turning the flag on in the template moves the
+    /// sender and leaves the receiver exactly where it was.</para>
+    ///
+    /// <para>The comparison is against the stock prefab's own scale, not against
+    /// one: a stock prefab authored at some other size and a template using that
+    /// same size agree with nothing sent at all.</para>
+    /// </summary>
+    private static void EvaluateScale(ChildFact child, StockPrefabRegistry registry, List<TemplateFinding> findings)
     {
-        if (child.Scale.IsUnit || child.SyncInitialScale)
+        // A name the client cannot resolve is already blocked by identity, and
+        // "its scale would be wrong too" adds nothing to that.
+        if (!registry.Has(child.PrefabName))
             return;
-        findings.Add(new TemplateFinding(FindingCodes.ScaleNotSynced, FindingSeverity.Blocking, child.Path,
-            $"'{child.PrefabName}' is authored at scale {child.Scale} and its ZNetView does not send the initial scale, " +
-            "so the client builds it at 1. The server and the client would disagree about the size of a solid object.",
-            child.Scale.ToString()));
+
+        if (child.StockScale.HasValue)
+        {
+            if (Same(child.Scale, child.StockScale.Value))
+                return;
+        }
+        else if (child.Scale.IsUnit)
+        {
+            // No baseline, and the template asks for the default. The one case
+            // where the historical assumption holds without evidence.
+            return;
+        }
+        else
+        {
+            findings.Add(new TemplateFinding(FindingCodes.StockBaselineUnavailable, FindingSeverity.Unresolving, child.Path,
+                $"'{child.PrefabName}' is authored at scale {child.Scale} and no stock prefab was available to say " +
+                "what the client would build it at, or whether it reads a scale at all. Nothing is claimed either way.",
+                child.Scale.ToString()));
+            return;
+        }
+
+        if (child.StockSyncInitialScale != true)
+        {
+            findings.Add(new TemplateFinding(FindingCodes.ScaleNotReceived, FindingSeverity.Blocking, child.Path,
+                $"'{child.PrefabName}' is authored at scale {child.Scale} and the stock prefab of that name builds at " +
+                $"{child.StockScale} and does not read a scale from its ZDO. ZNetView.Awake reads it inside the " +
+                "receiving object's own m_syncInitialScale, so the client ignores the scale however the server sends " +
+                "it: the server and the client disagree about the size of a solid object, and no setting on our side " +
+                "changes that.", child.Scale.ToString()));
+            return;
+        }
+
+        if (!child.SyncInitialScale)
+        {
+            findings.Add(new TemplateFinding(FindingCodes.ScaleNotSynced, FindingSeverity.Blocking, child.Path,
+                $"'{child.PrefabName}' is authored at scale {child.Scale} and its ZNetView does not send the initial " +
+                "scale, so the client builds it at " + child.StockScale + ". The stock prefab would read a sent scale, " +
+                "so this one is ours to send.", child.Scale.ToString()));
+        }
     }
+
+    /// <summary>Two scales the same within the tolerance a float round-trip leaves.</summary>
+    private static bool Same(Scale3 a, Scale3 b) =>
+        System.Math.Abs(a.X - b.X) < 1e-4f &&
+        System.Math.Abs(a.Y - b.Y) < 1e-4f &&
+        System.Math.Abs(a.Z - b.Z) < 1e-4f;
 
     private static void EvaluateSpawnReferences(ChildFact child, StockPrefabRegistry registry, List<TemplateFinding> findings)
     {

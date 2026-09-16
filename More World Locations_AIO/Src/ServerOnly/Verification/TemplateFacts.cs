@@ -42,6 +42,29 @@ public readonly struct Scale3
 }
 
 /// <summary>
+/// A rotation as the four numbers the engine actually holds.
+///
+/// <para>Euler angles are several spellings of one rotation, and a gate that
+/// compares them compares spellings. The acceptance gate refuses to judge a
+/// rotation unless both sides carry a quaternion, so the facts carry one. It is
+/// deliberately NOT part of the content fingerprint: the euler triple already
+/// binds the same rotation there, and two spellings of one fact in a digest is
+/// a digest that moves when nothing has.</para>
+/// </summary>
+public readonly struct Quat4
+{
+    public Quat4(float x, float y, float z, float w)
+    {
+        X = x; Y = y; Z = z; W = w;
+    }
+
+    public float X { get; }
+    public float Y { get; }
+    public float Z { get; }
+    public float W { get; }
+}
+
+/// <summary>
 /// Three numbers of a transform: a position, or a set of Euler angles.
 ///
 /// Separate from <see cref="Scale3"/> because the two are compared differently:
@@ -102,7 +125,10 @@ public sealed class ChildFact
         Triple3 eulerAngles = default,
         string authoredSignature = "",
         string? stockSignature = null,
-        bool isRoot = false)
+        bool isRoot = false,
+        bool? stockSyncInitialScale = null,
+        Scale3? stockScale = null,
+        Quat4 rotation = default)
     {
         Path = path ?? "";
         PrefabName = prefabName ?? "";
@@ -111,6 +137,9 @@ public sealed class ChildFact
         EnabledInHierarchy = enabledInHierarchy;
         Persistent = persistent;
         SyncInitialScale = syncInitialScale;
+        StockSyncInitialScale = stockSyncInitialScale;
+        StockScale = stockScale;
+        Rotation = rotation;
         Scale = scale.X == 0f && scale.Y == 0f && scale.Z == 0f ? Scale3.One : scale;
         HasRenderer = hasRenderer;
         HasCollider = hasCollider;
@@ -152,6 +181,33 @@ public sealed class ChildFact
 
     /// <summary><c>ZNetView.m_syncInitialScale</c>: whether the authored scale reaches the client at all.</summary>
     public bool SyncInitialScale { get; }
+
+    /// <summary>
+    /// The same flag on the STOCK prefab of this name — the object a client
+    /// without the mod actually builds.
+    ///
+    /// <para>Sending is half of it. <c>ZNetView.Awake</c> reads the ZDO's scale
+    /// inside its own <c>if (m_syncInitialScale)</c>, and that <c>this</c> is
+    /// the client's instance of the stock prefab, not the server's template. A
+    /// stock prefab with the flag off ignores a scale however loudly the server
+    /// sends it.</para>
+    ///
+    /// <para>Null when no stock prefab was available to read, which is a thing
+    /// not known rather than a capability absent.</para>
+    /// </summary>
+    public bool? StockSyncInitialScale { get; }
+
+    /// <summary>
+    /// The stock prefab's own scale: what the client builds at when it does not
+    /// read one from the ZDO. Null when there was no baseline to read.
+    ///
+    /// <para>Not assumed to be one. A stock prefab authored at some other scale
+    /// and a template using that same scale agree without anything being sent.</para>
+    /// </summary>
+    public Scale3? StockScale { get; }
+
+    /// <summary>The same rotation as <see cref="EulerAngles"/>, as a quaternion.</summary>
+    public Quat4 Rotation { get; }
 
     /// <summary>The authored local scale, which Jötunn copies from the mock onto the real prefab.</summary>
     public Scale3 Scale { get; }

@@ -116,5 +116,21 @@ public static class ServerOnlyCommands
                     args.Context.AddString(line);
                 return true;
             });
+
+        new Terminal.ConsoleCommand("mwl_plan",
+            "Server-only mode: the RESOLVED emission plan of one template, as the server holds it after Jotunn's mock resolution — 'mwl_plan <exact name> [skip] [take]'",
+            (Terminal.ConsoleEventFailable)delegate(Terminal.ConsoleEventArgs args)
+            {
+                if (args.Length < 2)
+                {
+                    args.Context.AddString("mwl_plan <exact name> [skip] [take]");
+                    return true;
+                }
+                int skip = args.Length > 2 && int.TryParse(args[2], out int s) ? s : 0;
+                int take = args.Length > 3 && int.TryParse(args[3], out int t) ? t : int.MaxValue;
+                foreach (string line in TemplatePlan.Render(args[1], skip, take))
+                    args.Context.AddString(line);
+                return true;
+            });
     }
 }

@@ -80,7 +80,10 @@ public static class TemplateFingerprint
     /// re-audited the whole catalogue over a typo would teach everyone to
     /// ignore the drift report.
     /// </summary>
-    public const int PolicyVersion = 1;
+    // 2: the scale rule asks whether the STOCK prefab reads a sent scale, not
+    // only whether the template sends one. Approvals granted under version 1
+    // were granted by a rule that looked at the sender alone.
+    public const int PolicyVersion = 2;
 
     /// <summary>
     /// The facts as one canonical string. Exposed because a fingerprint that

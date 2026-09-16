@@ -74,6 +74,9 @@ public static class FindingCodes
     /// <summary>A networked child is scaled and its prefab does not send the scale, so the client builds it at 1.</summary>
     public const string ScaleNotSynced = "scale_not_synced";
 
+    /// <summary>A networked child is scaled and the STOCK prefab the client builds ignores a sent scale.</summary>
+    public const string ScaleNotReceived = "scale_not_received";
+
     /// <summary>A networked child's ZDO is not persistent, so the object is gone after a save.</summary>
     public const string NotPersistent = "not_persistent";
 

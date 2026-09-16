@@ -46,7 +46,13 @@ public static class Fixtures
         bool syncInitialScale = false,
         Scale3 scale = default,
         IReadOnlyList<string>? foreignComponents = null,
-        IReadOnlyList<string>? referencedPrefabs = null) =>
+        IReadOnlyList<string>? referencedPrefabs = null,
+        // The stock prefab this name stands for. The default describes an
+        // ordinary one: it builds at one and its ZNetView reads a sent scale, so
+        // a fixture that says nothing is asking about the SENDER. A test about a
+        // stock prefab that ignores scale passes stockSyncInitialScale: false.
+        bool? stockSyncInitialScale = true,
+        Scale3? stockScale = null) =>
         new ChildFact(
             path ?? ("Root/" + prefabName),
             prefabName,
@@ -60,7 +66,9 @@ public static class Fixtures
             hasCollider: true,
             components: new[] { "ZNetView", "WearNTear" },
             foreignComponents: foreignComponents,
-            referencedPrefabs: referencedPrefabs);
+            referencedPrefabs: referencedPrefabs,
+            stockSyncInitialScale: stockSyncInitialScale,
+            stockScale: stockScale ?? Scale3.One);
 
     /// <summary>An object with no ZNetView and no networked ancestor: only a client with the template builds it.</summary>
     public static ChildFact ProxyOnly(

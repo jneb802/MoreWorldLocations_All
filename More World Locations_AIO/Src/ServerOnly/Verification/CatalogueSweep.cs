@@ -580,6 +580,12 @@ public static class CatalogueSweep
                     "differ only in capitalisation are two names, and one of them places nothing.");
             }
 
+            // Judge what will be placed, not what came off the disk: the
+            // registration path applies this same conversion to the asset the
+            // location is built from, so a scale the author set is transmitted.
+            // Doing it here and not there would approve a scale nobody sends.
+            ScaleSyncConversion.Apply(handle.Asset, TemplateAssets.StockPrefabs);
+
             facts = TemplateFactsExtractor.Extract(
                 subject.Name, subject.Pack, handle.Asset,
                 subject.InteriorPrefabName, subject.DungeonTheme,

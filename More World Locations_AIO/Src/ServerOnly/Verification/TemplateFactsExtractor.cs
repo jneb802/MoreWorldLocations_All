@@ -143,6 +143,33 @@ public static class TemplateFactsExtractor
         // be compared against. For anything else the comparison is meaningless:
         // nothing is instantiated from a name.
         string authored = networked ? Signature(go, node, errors, uncompared) : "";
+
+        // What a client without the mod would build for this name: whether its
+        // ZNetView reads a scale out of the ZDO at all, and the scale it starts
+        // at. Both are facts about the stock prefab, not about the template, and
+        // the scale rule cannot be answered without them.
+        bool? stockSyncsScale = null;
+        Scale3? stockScale = null;
+        if (networked && stockPrefabOf != null)
+        {
+            GameObject? stockPrefab = null;
+            try
+            {
+                stockPrefab = stockPrefabOf(go.name);
+            }
+            catch (Exception ex)
+            {
+                errors.Add($"the stock prefab '{go.name}' could not be read ({ex.GetType().Name}: {ex.Message})");
+            }
+            if (stockPrefab != null)
+            {
+                ZNetView stockView = stockPrefab.GetComponent<ZNetView>();
+                stockSyncsScale = stockView != null && stockView.m_syncInitialScale;
+                Vector3 s = stockPrefab.transform.localScale;
+                stockScale = new Scale3(s.x, s.y, s.z);
+            }
+        }
+
         string? stock = null;
         if (networked && stockPrefabOf != null && authored.Length > 0)
         {
@@ -177,9 +204,12 @@ public static class TemplateFactsExtractor
             referencedPrefabs: ReferencedPrefabs(go, errors),
             relativePosition: new Triple3(local.x, local.y, local.z),
             eulerAngles: new Triple3(node.eulerAngles.x, node.eulerAngles.y, node.eulerAngles.z),
+            rotation: new Quat4(node.rotation.x, node.rotation.y, node.rotation.z, node.rotation.w),
             authoredSignature: authored,
             stockSignature: stock,
-            isRoot: isRoot);
+            isRoot: isRoot,
+            stockSyncInitialScale: stockSyncsScale,
+            stockScale: stockScale);
     }
 
     /// <summary>

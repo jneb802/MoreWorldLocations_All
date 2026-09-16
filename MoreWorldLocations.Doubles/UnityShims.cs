@@ -228,6 +228,17 @@ public struct Quaternion
     public Vector3 eulerAngles =>
         new(0f, 2f * (float)System.Math.Atan2(y, w) * 180f / Mathf.PI, 0f);
 
+    /// <summary>
+    /// Composing two rotations, to the same yaw-only fidelity as the rest of
+    /// this double: enough for a transform walk that asks a child for its world
+    /// rotation, and not a general quaternion product.
+    /// </summary>
+    public static Quaternion operator *(Quaternion a, Quaternion b)
+    {
+        float yaw = 2f * (float)System.Math.Atan2(a.y, a.w) + 2f * (float)System.Math.Atan2(b.y, b.w);
+        return new Quaternion(0f, (float)System.Math.Sin(yaw / 2f), 0f, (float)System.Math.Cos(yaw / 2f));
+    }
+
     /// <summary>Rotating a point about the y axis, which is all a placement does.</summary>
     public static Vector3 operator *(Quaternion rotation, Vector3 point)
     {

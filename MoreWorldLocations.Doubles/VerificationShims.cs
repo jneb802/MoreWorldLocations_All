@@ -157,6 +157,13 @@ public partial class Transform : UnityEngine.Component
 
     public UnityEngine.Quaternion localRotation = UnityEngine.Quaternion.identity;
 
+    /// <summary>
+    /// The world rotation, the way Unity derives it: the parent's and then this
+    /// one's. Yaw only, like the rest of this double.
+    /// </summary>
+    public UnityEngine.Quaternion rotation =>
+        parent == null ? localRotation : parent.rotation * localRotation;
+
     public new string name => gameObject.name;
     public int childCount => children.Count;
     public Transform GetChild(int index) => children[index];

@@ -272,6 +272,14 @@ public class GateAndSubtreeTests
 
     private static readonly string[] Excluded = { "Ports", "Traders", "Trainers", "Dungeons" };
 
+    /// <summary>
+    /// The extractor caches stock signatures by bare prefab name for the life of
+    /// the process — right for one sweep, wrong for a class where several tests
+    /// inject their own 'wood_floor' tree. Cleared between tests so the order
+    /// they happen to run in cannot decide the answer.
+    /// </summary>
+    public GateAndSubtreeTests() => TemplateFactsExtractor.ForgetStockSignatures();
+
     private static (GameObject Root, GameObject Stock, GameObject Emitted) Trees()
     {
         var root = new GameObject("ReviewSite");
@@ -351,10 +359,28 @@ public class GateAndSubtreeTests
     [Fact]
     public void AnUnsyncedRootScaleIsStillRefused()
     {
-        // The other half of the same rule: when the prefab does not send the
-        // scale, the client builds at one and the two disagree about the size of
-        // a solid object.
+        // The other half of the same rule, and it is the RECEIVER's half here:
+        // this stock prefab does not read a scale out of its ZDO, so the client
+        // builds at one whatever the server sends, and the two disagree about
+        // the size of a solid object. Nothing on our side changes that, which is
+        // why the reason names the stock prefab rather than our template.
         (GameObject root, GameObject stock, GameObject emitted) = Trees();
+        emitted.transform.localScale = new Vector3(2f, 2f, 2f);
+
+        TemplateEvaluation evaluation = Judge(root, stock);
+
+        Assert.False(evaluation.Approved);
+        Assert.Contains(evaluation.Findings, f => f.Code == FindingCodes.ScaleNotReceived);
+    }
+
+    [Fact]
+    public void AScaleTheStockPrefabWouldReadButOursDoesNotSendIsRefused()
+    {
+        // The sender's half, which is the one we can do something about: the
+        // stock prefab reads a sent scale and our template does not send it.
+        (GameObject root, GameObject stock, GameObject emitted) = Trees();
+        stock.GetComponent<ZNetView>()!.m_syncInitialScale = true;
+        emitted.GetComponent<ZNetView>()!.m_syncInitialScale = false;
         emitted.transform.localScale = new Vector3(2f, 2f, 2f);
 
         TemplateEvaluation evaluation = Judge(root, stock);
