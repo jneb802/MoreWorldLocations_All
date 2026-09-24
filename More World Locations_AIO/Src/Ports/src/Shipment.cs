@@ -291,6 +291,8 @@ public class ShipmentItem
         if (item == null) return false;
         item.m_durability = Durability;
         item.m_customData = CustomData;
+        // AddItem saves before these fields are restored. Save the complete item too.
+        container.GetInventory().m_onChanged?.Invoke();
         return true;
     }
     /// <summary>
