@@ -41,7 +41,9 @@ public sealed class SelectionDecision
 
 /// <summary>
 /// An exported audit snapshot for evidence and offline comparison. Runtime
-/// registration does not read it; every startup validates resolved templates.
+/// registration does not read it; every startup validates resolved templates,
+/// or reuses the verdicts of a previous startup whose inputs were provably
+/// identical (<see cref="AuditCache"/>).
 /// </summary>
 public sealed class ApprovedSelection
 {

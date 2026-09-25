@@ -42,6 +42,7 @@ public static class CatalogueSweep
         RegistrationReady = false;
         s_registeredReport = null;
         FailureReason = "";
+        AuditCache.Recording = null;
         Observe(() => NewWorld?.Invoke());
     }
 
@@ -71,6 +72,7 @@ public static class CatalogueSweep
     public static Func<string>? WorldLoadStatus { get; set; }
     private static CatalogueReport? s_registeredReport;
     private static bool s_diagnostic;
+    private static bool s_resweeping;
 
     /// <summary>"judged/total" while a sweep runs, for the status line.</summary>
     public static string Progress => s_run == null ? "" : $"{s_run.Judged}/{s_run.Total}";
@@ -172,7 +174,12 @@ public static class CatalogueSweep
         CatalogueAudit.Progress = line => Log.LogInfo(line);
         Observe(() => SweepStarted?.Invoke());
 
-        IEnumerator routine = AuditRoutine(s_run, token, onComplete);
+        // Only the registration sweep may reuse stored verdicts. A diagnostic
+        // sweep, or a resweep retrying a failed registration, was asked for so
+        // that the templates would be looked at again; see AuditCache.
+        IEnumerator routine = diagnostic || s_resweeping || !AuditCache.Installed
+            ? AuditRoutine(s_run, token, onComplete, null)
+            : CachedRoutine(s_run, token, onComplete);
         if (ScheduleRoutine == null || !ScheduleRoutine(routine))
         {
             // No frames to spread it over: the old synchronous sweep.
@@ -183,9 +190,63 @@ public static class CatalogueSweep
         return true;
     }
 
-    private static IEnumerator AuditRoutine(
+    /// <summary>
+    /// The registration sweep with the verdict cache in front of it: reuse what
+    /// a previous start concluded when every input is provably the same, and
+    /// otherwise the audit, unchanged.
+    /// </summary>
+    private static IEnumerator CachedRoutine(
         CatalogueAudit.CatalogueAuditRun run, int token, Action<CatalogueReport?> onComplete)
     {
+        // One frame first, as the audit always takes. Registration has to land
+        // where an audited registration lands: after Jötunn has injected its
+        // list into the world. Concluding inside this call would register while
+        // that injection is still ahead of us, and it would then visit every
+        // location we had just put in the world a second time.
+        yield return null;
+        if (token != s_generation)
+        {
+            Conclude(SweepState.Cancelled, null, onComplete, "the world went away before the sweep finished");
+            yield break;
+        }
+
+        AuditCache.Attempt? attempt = TryCache(run);
+        if (attempt?.Reused != null)
+        {
+            // Nothing is opened: the stored report is what this run's audit
+            // would produce, and it concludes exactly as that audit would.
+            CatalogueAudit.Adopt(attempt.Reused);
+            Conclude(SweepState.Done, attempt.Reused, onComplete, null);
+            yield break;
+        }
+
+        IEnumerator audit = AuditRoutine(run, token, onComplete, attempt);
+        while (audit.MoveNext())
+            yield return audit.Current;
+    }
+
+    /// <summary>The cache's answer, with any failure of its own turned into "audit".</summary>
+    private static AuditCache.Attempt? TryCache(CatalogueAudit.CatalogueAuditRun run)
+    {
+        try
+        {
+            return AuditCache.Try(run);
+        }
+        catch (Exception ex)
+        {
+            Observe(() => Log.LogWarning(
+                $"catalogue audit: the verdict cache failed ({ex.GetType().Name}: {ex.Message}); auditing every template"));
+            return null;
+        }
+    }
+
+    private static IEnumerator AuditRoutine(
+        CatalogueAudit.CatalogueAuditRun run, int token, Action<CatalogueReport?> onComplete, AuditCache.Attempt? attempt)
+    {
+        // What this audit reads of the live game is recorded while it reads
+        // it, so that the verdicts can be stored with the baseline they were
+        // reached against. Only when there is somewhere to store them.
+        AuditCache.Recording = attempt?.Record;
         while (!run.Done)
         {
             if (token != s_generation)
@@ -267,7 +328,16 @@ public static class CatalogueSweep
                 $"the report could not be assembled: {finishFault?.GetType().Name}: {finishFault?.Message}");
             yield break;
         }
+
+        // Checked and rendered here, at the end of the sweep and before
+        // registration releases the world: the baseline is re-signed in the
+        // state the verdicts were reached in, not after a world has loaded on
+        // top of it. Written only once the report has actually registered.
+        AuditCache.Recording = null;
+        string? stored = attempt == null ? null : AuditCache.Prepare(attempt, report);
         Conclude(SweepState.Done, report, onComplete, null);
+        if (stored != null && token == s_generation && State == SweepState.Done)
+            AuditCache.Write(attempt!, report, stored);
     }
 
     private static ITemplatePreload? SafePreload(string name)
@@ -339,6 +409,7 @@ public static class CatalogueSweep
 
         TemplateFactsExtractor.ForgetStockSignatures();
         CatalogueAudit.Progress = null;
+        AuditCache.Recording = null;
         s_run = null;
         LongestJudgeMilliseconds = s_longestMs;
         LongestJudged = s_longestName;
@@ -351,7 +422,9 @@ public static class CatalogueSweep
 
         int token = s_generation;
 
-        Observe(() => Log.LogInfo($"catalogue sweep: longest single frame judging one name was {s_longestMs:0} ms on {s_longestName}"));
+        // A reused report judged nothing, and "0 ms on" nothing is noise.
+        if (s_longestName.Length > 0)
+            Observe(() => Log.LogInfo($"catalogue sweep: longest single frame judging one name was {s_longestMs:0} ms on {s_longestName}"));
         Announce(report);
         Observe(() => SweepFinished?.Invoke());
 
@@ -508,8 +581,18 @@ public static class CatalogueSweep
         if (!RegistrationReady)
         {
             // A failed initial registration must repeat the real registration
-            // callback, not merely produce a fresh diagnostic report.
-            LocationDB.RegisterAll();
+            // callback, not merely produce a fresh diagnostic report. It audits
+            // afresh rather than reusing stored verdicts: a resweep is somebody
+            // asking for the templates to be looked at again.
+            s_resweeping = true;
+            try
+            {
+                LocationDB.RegisterAll();
+            }
+            finally
+            {
+                s_resweeping = false;
+            }
             return true;
         }
         return BeginAudit(_ => { }, diagnostic: true);
@@ -580,20 +663,39 @@ public static class CatalogueSweep
                     "differ only in capitalisation are two names, and one of them places nothing.");
             }
 
+            // Every stock lookup goes through the record when the verdicts are
+            // to be stored: those are the live prefabs this verdict depends on,
+            // and the next start checks each of them before reusing it.
+            StockRecord? record = AuditCache.Recording;
+            Func<string, GameObject?>? stockPrefabs = Recorded(TemplateAssets.StockPrefabs, record);
+
             // Judge what will be placed, not what came off the disk: the
             // registration path applies this same conversion to the asset the
             // location is built from, so a scale the author set is transmitted.
             // Doing it here and not there would approve a scale nobody sends.
-            ScaleSyncConversion.Apply(handle.Asset, TemplateAssets.StockPrefabs);
+            ScaleSyncConversion.Apply(handle.Asset, stockPrefabs);
 
             facts = TemplateFactsExtractor.Extract(
                 subject.Name, subject.Pack, handle.Asset,
                 subject.InteriorPrefabName, subject.DungeonTheme,
-                TemplateAssets.StockPrefabs, TemplateAssets.BaselineProvenance);
+                stockPrefabs, TemplateAssets.BaselineProvenance);
+            record?.Read(facts);
             Observe(() => TemplateRead?.Invoke(subject.Name, handle.Asset));
         }
         Observe(() => TemplateReleased?.Invoke(subject.Name));
         return facts;
+    }
+
+    /// <summary>The stock lookup, noting each name it is asked for in <paramref name="record"/>.</summary>
+    private static Func<string, GameObject?>? Recorded(Func<string, GameObject?>? lookup, StockRecord? record)
+    {
+        if (lookup == null || record == null)
+            return lookup;
+        return name =>
+        {
+            record.Consulted(name);
+            return lookup(name);
+        };
     }
 
     /// <summary>

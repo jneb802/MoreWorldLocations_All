@@ -52,6 +52,16 @@ public static class CatalogueAudit
     internal static void Forget() => Report = null;
 
     /// <summary>
+    /// Publish a report this process did not judge: verdicts a previous start
+    /// reached over inputs <see cref="AuditCache"/> has shown to be identical.
+    /// The same place <see cref="CatalogueAuditRun.Finish"/> publishes to, so
+    /// the console commands cannot tell the two apart — they answer the same
+    /// questions either way.
+    /// </summary>
+    internal static void Adopt(CatalogueReport report) =>
+        Report = report ?? throw new ArgumentNullException(nameof(report));
+
+    /// <summary>
     /// Judge every location in <paramref name="definitions"/> and return the
     /// names to keep.
     /// </summary>
@@ -145,6 +155,18 @@ public static class CatalogueAudit
 
         /// <summary>How many names the sweep has to judge.</summary>
         public int Total => _subjects.Count;
+
+        /// <summary>The names, in the order they are judged. Exposed for the verdict cache's key.</summary>
+        public IReadOnlyList<CatalogueSubject> Subjects => _subjects;
+
+        /// <summary>The rules' digest this run's report will carry.</summary>
+        public string PolicyFingerprint => _policyFingerprint;
+
+        /// <summary>The stock snapshot's build this run checks names against.</summary>
+        public string StockBuildId => _registry.GameBuildId;
+
+        /// <summary>The validation subset, as given.</summary>
+        public IReadOnlyCollection<string> Only => _only;
 
         /// <summary>How many it has judged.</summary>
         public int Judged => _next;

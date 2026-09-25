@@ -99,6 +99,10 @@ namespace More_World_Locations_AIO
                 // template in the catalogue, and an unguarded resolution of one
                 // with an unresolvable mock moves objects into vanilla prefabs.
                 More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuardPatch.Install(_harmony);
+                // The audit's verdict cache: reuses a previous start's verdicts
+                // only when every input, the live stock prefabs included, is
+                // provably unchanged.
+                More_World_Locations_AIO.ServerOnly.Verification.AuditCacheInstallation.Install(_harmony);
                 GenerationHold.Install();
                 // Jötunn injects its list into the world when the sweep starts;
                 // what the sweep approves is put into the world through Jötunn's

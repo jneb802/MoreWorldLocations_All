@@ -32,6 +32,54 @@ public static class ValidationSwitches
     public static IReadOnlyCollection<string> ApprovedForValidation() =>
         ParseNames(Environment.GetEnvironmentVariable(ApproveVariable));
 
+    /// <summary>
+    /// <c>off</c> (or <c>0</c>, <c>false</c>) stops the catalogue audit's
+    /// verdict cache from being read or written: every start audits every
+    /// template, as it did before the cache existed. Unset means on.
+    /// </summary>
+    public const string AuditCacheVariable = Prefix + "AUDIT_CACHE";
+
+    /// <summary>Where the verdict cache is kept, instead of BepInEx's cache folder.</summary>
+    public const string AuditCachePathVariable = Prefix + "AUDIT_CACHE_PATH";
+
+    /// <summary>Whether the verdict cache is switched off.</summary>
+    public static bool AuditCacheOff(out bool recognised) =>
+        ParseAuditCacheOff(Environment.GetEnvironmentVariable(AuditCacheVariable), out recognised);
+
+    /// <summary>
+    /// The parse, apart from the environment. <c>off</c>, <c>0</c> and
+    /// <c>false</c> switch it off; unset, <c>on</c>, <c>1</c> and <c>true</c>
+    /// leave it on.
+    ///
+    /// Anything else is off and not recognised. Somebody who set the variable
+    /// wanted something other than the default, and the one direction that is
+    /// always safe is the full audit.
+    /// </summary>
+    public static bool ParseAuditCacheOff(string? value, out bool recognised)
+    {
+        recognised = true;
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+        string trimmed = value!.Trim();
+        if (string.Equals(trimmed, "off", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(trimmed, "false", StringComparison.OrdinalIgnoreCase)
+            || trimmed == "0")
+            return true;
+        if (string.Equals(trimmed, "on", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(trimmed, "true", StringComparison.OrdinalIgnoreCase)
+            || trimmed == "1")
+            return false;
+        recognised = false;
+        return true;
+    }
+
+    /// <summary>The cache path the environment names, or null for the default.</summary>
+    public static string? AuditCachePath()
+    {
+        string? value = Environment.GetEnvironmentVariable(AuditCachePathVariable);
+        return string.IsNullOrWhiteSpace(value) ? null : value!.Trim();
+    }
+
     /// <summary>How often the outstanding-work clock may run, in seconds.</summary>
     public const string TickSecondsVariable = Prefix + "TICK_SECONDS";
 

@@ -279,6 +279,77 @@ public static class TemplateFactsExtractor
         return signature;
     }
 
+    /// <summary>
+    /// Everything a verdict can read off one live prefab, as text: what the
+    /// verdict cache records at audit time and compares at the next start.
+    ///
+    /// <para>It starts from <see cref="Signature"/>, the comparison's own
+    /// routine, so a prefab the comparison would call different is different
+    /// here. That routine leaves out what the comparison judges separately, and
+    /// a stored verdict depends on those too, so they are added: the root's
+    /// scale and activeness (the scale rule's baseline), every ZNetView's
+    /// settings (whether an object is networked, persistent, and reads a sent
+    /// scale — including on a mock's copy, where they decide the template's own
+    /// facts), every behaviour's enabled flag (a terrain modifier's among them),
+    /// and each component's assembly (the foreign-component rule reads it; the
+    /// signature records type names only). A prefab whose subtree is too deep
+    /// to walk says so in the text, which is also what the audit reports.</para>
+    /// </summary>
+    public static string LiveSignature(GameObject prefab)
+    {
+        if (prefab == null) throw new ArgumentNullException(nameof(prefab));
+
+        List<string> errors = new List<string>();
+        SortedSet<string> uncompared = new SortedSet<string>(StringComparer.Ordinal);
+        System.Text.StringBuilder text = new System.Text.StringBuilder();
+        text.Append("signature\n").Append(Signature(prefab, prefab.transform, errors, uncompared));
+        text.Append("root|").Append(prefab.activeSelf ? "on" : "off")
+            .Append('|').Append(Triple(prefab.transform.localScale)).Append('\n');
+        AppendIdentity(prefab, prefab.transform, prefab.name, text, depth: 0);
+        foreach (string error in errors)
+            text.Append("error|").Append(error).Append('\n');
+        foreach (string type in uncompared)
+            text.Append("uncompared|").Append(type).Append('\n');
+        return text.ToString();
+    }
+
+    private static void AppendIdentity(GameObject go, Transform node, string path, System.Text.StringBuilder text, int depth)
+    {
+        if (depth > MaxSignatureDepth)
+        {
+            text.Append("deeper|").Append(path).Append('\n');
+            return;
+        }
+
+        text.Append("node|").Append(path);
+        foreach (Component component in go.GetComponents<Component>())
+        {
+            if (component == null)
+            {
+                text.Append("|(missing script)");
+                continue;
+            }
+            Type type = component.GetType();
+            text.Append('|').Append(type.FullName).Append('@').Append(type.Assembly.GetName().Name);
+            // ZNetView and TerrainModifier by name first: they are what the
+            // facts read, and in the test doubles neither derives from
+            // Behaviour.
+            if (component is ZNetView view)
+                text.Append("(enabled=").Append(view.enabled ? '1' : '0').Append(',').Append(FieldValues(view, type)).Append(')');
+            else if (component is TerrainModifier modifier)
+                text.Append("(enabled=").Append(modifier.enabled ? '1' : '0').Append(')');
+            else if (component is Behaviour behaviour)
+                text.Append("(enabled=").Append(behaviour.enabled ? '1' : '0').Append(')');
+        }
+        text.Append('\n');
+
+        for (int i = 0; i < node.childCount; i++)
+        {
+            Transform child = node.GetChild(i);
+            AppendIdentity(child.gameObject, child, path + "/" + child.gameObject.name, text, depth + 1);
+        }
+    }
+
     private static GameObject? Reference(Func<string, GameObject?> stockPrefabOf, string name, List<string> errors)
     {
         try
