@@ -1,0 +1,98 @@
+using System;
+using System.Collections;
+using System.Linq;
+using BepInEx;
+using HarmonyLib;
+using UnityEngine;
+
+[BepInPlugin("local.peacefulproof", "PeacefulProof", "1.0.0")]
+public sealed class PeacefulProof : BaseUnityPlugin
+{
+    internal static PeacefulProof Instance;
+    internal static WearNTear Target;
+    internal static int Hits;
+    private void Awake()
+    {
+        Instance = this;
+        new Harmony("local.peacefulproof").PatchAll();
+        new Terminal.ConsoleCommand("pp_diag", "Read effect collider state", args => {
+            foreach (EffectArea a in FindObjectsOfType<EffectArea>().Where(a=>a.m_statusEffect=="MWL_SE_Peaceful")) {
+                Collider c=a.GetComponent<Collider>();
+                Say($"DIAG layer={a.gameObject.layer}/{LayerMask.LayerToName(a.gameObject.layer)} enabled={a.enabled} collider={c.enabled} bounds={c.bounds} hash={AccessTools.Field(typeof(EffectArea),"m_statusEffectHash")?.GetValue(a)} collisions={AccessTools.Field(typeof(EffectArea),"m_collisions")?.GetValue(a)} registered={EffectArea.Instances.Contains(a)} statusRegistered={ObjectDB.instance.GetStatusEffect("MWL_SE_Peaceful".GetStableHashCode())!=null}");
+                foreach(Collider pc in Player.m_localPlayer.GetComponentsInChildren<Collider>()) Say($"COLLIDER name={pc.name} layer={LayerMask.LayerToName(pc.gameObject.layer)} character={pc.GetComponent<Character>()!=null} ignored={Physics.GetIgnoreLayerCollision(a.gameObject.layer,pc.gameObject.layer)}");
+            }
+        });
+        new Terminal.ConsoleCommand("pp_layer", "Set nearby Peaceful collider layer for diagnosis", args => {
+            foreach(EffectArea a in FindObjectsOfType<EffectArea>().Where(a=>a.m_statusEffect=="MWL_SE_Peaceful")) a.gameObject.layer=LayerMask.NameToLayer(args[1]);
+        });
+        new Terminal.ConsoleCommand("pp_moveactor", "Stage creature position and freeze AI", args => {
+            Character c=Character.GetAllCharacters().First(c=>c.name.StartsWith(args[1]));
+            c.GetComponent<ZNetView>().ClaimOwnership(); c.GetComponent<BaseAI>().enabled=false;
+            Vector3 p=new Vector3(float.Parse(args[2]),float.Parse(args[3]),float.Parse(args[4]));
+            c.transform.position=p; c.GetComponent<Rigidbody>().position=p;
+            Say($"MOVED {c.name} {p}");
+        });
+        new Terminal.ConsoleCommand("pp_logout", "Save test character and disconnect", args => Game.instance.Logout());
+        new Terminal.ConsoleCommand("pp_repair", "Repair selected test piece", args => { Target.Repair(); Snapshot(); });
+        new Terminal.ConsoleCommand("pp_cleanup", "Remove staged greydwarfs near test port", args => {
+            foreach(Character c in Character.GetAllCharacters().Where(c=>c.name.StartsWith("Greydwarf") && Vector3.Distance(c.transform.position,new Vector3(651,34,-1203))<20).ToArray()) {
+                c.GetComponent<ZNetView>().ClaimOwnership(); ZNetScene.instance.Destroy(c.gameObject);
+            }
+        });
+        new Terminal.ConsoleCommand("pp_goto", "Teleport development character", args => {
+            Player.m_localPlayer.TeleportTo(new Vector3(float.Parse(args[1]),float.Parse(args[2]),float.Parse(args[3])),Player.m_localPlayer.transform.rotation,true);
+        });
+        new Terminal.ConsoleCommand("pp_spawn", "Spawn test creature at coordinates", args => {
+            GameObject o=Instantiate(ZNetScene.instance.GetPrefab(args[1]),new Vector3(float.Parse(args[2]),float.Parse(args[3]),float.Parse(args[4])),Quaternion.identity);
+            Say($"SPAWN name={o.name} pos={o.transform.position}");
+        });
+        new Terminal.ConsoleCommand("pp_area", "Enable/disable nearby Peaceful areas for control test", args => {
+            foreach (EffectArea a in Resources.FindObjectsOfTypeAll<EffectArea>().Where(a=>a.m_statusEffect=="MWL_SE_Peaceful" && Vector3.Distance(a.transform.position,Player.m_localPlayer.transform.position)<100))
+                a.gameObject.SetActive(bool.Parse(args[1]));
+            Say("AREA enabled="+args[1]);
+        });
+        new Terminal.ConsoleCommand("pp_status", "Inspect Peaceful areas and actors", args => {
+            foreach (EffectArea a in FindObjectsOfType<EffectArea>().Where(a => a.m_statusEffect == "MWL_SE_Peaceful"))
+                Say($"AREA pos={a.transform.position} radius={a.GetRadius()} playerOnly={a.m_playerOnly}");
+            foreach (Character c in Character.GetAllCharacters().Where(c => Vector3.Distance(c.transform.position, Player.m_localPlayer.transform.position)<100))
+                Say($"ACTOR name={c.name} pos={c.transform.position} owner={c.IsOwner()} peaceful={c.GetSEMan().HaveStatusEffect("MWL_SE_Peaceful".GetStableHashCode())}");
+        });
+        new Terminal.ConsoleCommand("pp_pieces", "List nearby pieces", args => {
+            foreach (WearNTear w in FindObjectsOfType<WearNTear>().OrderBy(w => Vector3.Distance(w.transform.position, Player.m_localPlayer.transform.position)).Take(30))
+                Say($"PIECE id={w.GetInstanceID()} name={w.name} pos={w.transform.position} health={Health(w)}");
+        });
+        new Terminal.ConsoleCommand("pp_target", "Watch piece by instance ID", args => {
+            Target=FindObjectsOfType<WearNTear>().Single(w => w.GetInstanceID()==int.Parse(args[1])); Hits=0; Snapshot();
+        });
+        new Terminal.ConsoleCommand("pp_snapshot", "Read selected piece health", args => Snapshot());
+        new Terminal.ConsoleCommand("pp_attack", "Stage creature normal melee attack toward selected piece", args => {
+            Humanoid c=Character.GetAllCharacters().OfType<Humanoid>().Where(c=>!c.IsPlayer() && c.name.StartsWith(args[1])).OrderBy(c=>Vector3.Distance(c.transform.position,Target.transform.position)).First();
+            c.GetComponent<ZNetView>().ClaimOwnership();
+            BaseAI ai=c.GetComponent<BaseAI>(); if(ai!=null) ai.enabled=false;
+            Vector3 d=Target.transform.position-c.transform.position; d.y=0;
+            c.transform.rotation=Quaternion.LookRotation(d.normalized);
+            c.SetLookDir(d.normalized);
+            Say($"ATTACK actor={c.name} weapon={c.GetCurrentWeapon()?.m_shared.m_name} peaceful={c.GetSEMan().HaveStatusEffect("MWL_SE_Peaceful".GetStableHashCode())} started={c.StartAttack(null,false)}");
+        });
+    }
+    internal static float Health(WearNTear w) => w.GetComponent<ZNetView>().GetZDO().GetFloat(ZDOVars.s_health,w.m_health);
+    internal static void Say(string s) { Instance.Logger.LogInfo("PP "+s); Console.instance?.Print("PP "+s); }
+    private static void Snapshot() => Say(Target == null ? "TARGET missing" : $"SNAPSHOT name={Target.name} pos={Target.transform.position} health={Health(Target)} hits={Hits}");
+    internal IEnumerator After(WearNTear w, float before)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Say(w == null ? "AFTER destroyed" : $"AFTER name={w.name} before={before} after={Health(w)}");
+    }
+    [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Damage))]
+    private static class ObserveHit
+    {
+        private static void Prefix(WearNTear __instance, HitData hit)
+        {
+            if (Target == null || Vector3.Distance(__instance.transform.position, Target.transform.position)>15) return;
+            Character attacker=hit.GetAttacker();
+            Hits++;
+            Say($"HIT piece={__instance.name} pos={__instance.transform.position} attacker={attacker?.name} peaceful={attacker?.GetSEMan().HaveStatusEffect("MWL_SE_Peaceful".GetStableHashCode())} damage={hit.GetTotalDamage()} before={Health(__instance)}");
+            Instance.StartCoroutine(Instance.After(__instance, Health(__instance)));
+        }
+    }
+}
