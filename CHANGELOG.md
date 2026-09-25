@@ -1,5 +1,7 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 5.1.4     | - Removed unintended chest and network components from the Ashlands port's container placement markers (`MWL_Port5`). |
+|           | - Removed the guardstone from the Mistlands port (`MWL_Port3`). |
 | 5.1.3     | - Apply Peaceful to players and creatures inside ports, traders, and trainers. The effect suppresses attack damage inside each location's exterior radius and replaces the previous piece-health patch. |
 |           | - Fixed Peaceful status-effect registration so protection works on the first join. |
 |           | - Allow multiple players to view the same port UI. Shipment actions retain shared-chest safeguards and remain blocked while a port chest is open. |
