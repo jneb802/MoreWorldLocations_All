@@ -546,6 +546,14 @@ public class AuditCacheTests
     }
 
     [Fact]
+    public void IlRepacksMergeListIsABuildRecordNotData()
+    {
+        Assert.True(AuditCacheCode.IsBuildRecord("ILRepack.List"));
+        Assert.False(AuditCacheCode.IsBuildRecord("MoreWorldLocations.ServerOnly.StockPrefabs.tsv"));
+        Assert.False(AuditCacheCode.IsBuildRecord("More_World_Locations_AIO.assets.mockplaceholders"));
+    }
+
+    [Fact]
     public void TheServerOnlyScopeIsTheFeaturesNamespaceAndNoOther()
     {
         Assert.True(AuditCacheCode.InServerOnly(typeof(AuditCache)));

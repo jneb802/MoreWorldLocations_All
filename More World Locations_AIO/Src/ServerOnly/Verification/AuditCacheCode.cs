@@ -85,12 +85,22 @@ public static class AuditCacheCode
         resources.Sort(StringComparer.Ordinal);
         foreach (string resource in resources)
         {
+            if (IsBuildRecord(resource))
+                continue;
             using Stream? stream = assembly.GetManifestResourceStream(resource);
             text.Append("resource\t").Append(AuditCacheCanonical.Escape(resource)).Append('\t')
                 .Append(stream == null ? "unreadable" : Sha256(stream)).Append('\n');
         }
         return text.ToString();
     }
+
+    /// <summary>
+    /// A resource the build writes about itself, not data anything reads:
+    /// ILRepack's list of the assemblies it merged, which names MWL's own
+    /// version. Hashing it made a release that changed only the version string
+    /// re-audit every template (station, 25 Sep 2026).
+    /// </summary>
+    public static bool IsBuildRecord(string resource) => string.Equals(resource, "ILRepack.List", StringComparison.Ordinal);
 
     private static void AppendType(StringBuilder text, Type type)
     {
