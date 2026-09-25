@@ -179,6 +179,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     
     private TabOption m_currentTab = TabOption.Ports;
     private float m_portPinTimer;
+    private int m_session;
 
     private Action<float>? OnUpdate;
     private Action? OnSentShipment;
@@ -275,6 +276,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     public void Hide()
     {
+        m_session++;
         gameObject.SetActive(false);
         OnUpdate = null;
         OnSentShipment = null;
@@ -342,6 +344,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void Show(Port port)
     {
         if (ShipmentManager.instance == null) return;
+        m_session++;
         m_currentPort = port;
         gameObject.SetActive(true);
         PortTab.SetSelected(true);
@@ -479,7 +482,30 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     public void OnMainButton()
     {
-        if (m_currentPort == null) return;
+        if (m_currentPort == null || !Player.m_localPlayer) return;
+        bool changesContainers = (m_currentTab == TabOption.Ports && m_selectedDestination != null) ||
+                                 m_currentTab == TabOption.Delivery || m_currentTab == TabOption.Manifest;
+        if (!changesContainers)
+        {
+            ExecuteMainButton();
+            return;
+        }
+
+        Port port = m_currentPort;
+        int session = m_session;
+        TabOption tab = m_currentTab;
+        Port.PortInfo? destination = m_selectedDestination;
+        Shipment? delivery = m_selectedDelivery;
+        Manifest? manifest = m_selectedManifest;
+        port.RunContainerAction(Player.m_localPlayer,
+            () => IsVisible() && m_session == session && m_currentPort == port && m_currentTab == tab &&
+                  m_selectedDestination == destination && m_selectedDelivery == delivery && m_selectedManifest == manifest,
+            ExecuteMainButton);
+    }
+
+    private void ExecuteMainButton()
+    {
+        if (m_currentPort == null || !Player.m_localPlayer) return;
         switch (m_currentTab)
         {
             case TabOption.Ports:
