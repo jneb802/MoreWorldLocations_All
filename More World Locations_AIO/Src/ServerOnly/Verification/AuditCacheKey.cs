@@ -32,6 +32,17 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// instead would re-audit on every unrelated update and teach an operator to
 /// switch the cache off.</para>
 ///
+/// <para><b>Global, and per template.</b> This key is the part every verdict
+/// shares: a change to any of it re-audits the whole catalogue. What belongs to
+/// one template alone — its definition, its manifest entry, its bundle — is
+/// that template's input (<see cref="AuditCacheCanonical.TemplateInput"/>),
+/// stored beside its verdict, so an MWL update that changes four bundles
+/// re-audits four templates. MWL's DLL is not hashed as a file: every release
+/// changes it. What of it can reach a verdict is in the key as
+/// <c>mwl-code</c> (the server-only code, by its resolved IL, and the data the
+/// DLL embeds, <see cref="AuditCacheCode"/>) and <see cref="AuditCacheCanonical.MwlCacheVersion"/>,
+/// which a maintainer bumps for an MWL change the rest cannot see.</para>
+///
 /// <para><b>Why each part keeps its own digest.</b> "The key changed" sends an
 /// operator looking at everything. The stored per-part digests let a miss name
 /// the part that moved — config, not the game — so a boot that audited when it
@@ -51,7 +62,7 @@ public sealed class AuditCacheKey
     /// </summary>
     public static readonly IReadOnlyList<string> ComponentNames = new[]
     {
-        "format", "policy", "subjects", "mwl-files", "mwl-config", "game", "loader", "provenance", "env",
+        "format", "policy", "mwl-code", "mwl-shared", "mwl-config", "game", "loader", "provenance", "env",
     };
 
     private readonly List<KeyValuePair<string, string>> _components;
@@ -158,9 +169,19 @@ public sealed class AuditCacheKey
 /// </summary>
 public static class AuditCacheCanonical
 {
-    /// <summary>The cache format, the content fingerprint's inputs and the rules' version.</summary>
-    public static string Format(int cacheFormatVersion) =>
+    /// <summary>
+    /// MWL's own cache version. Bump it for any MWL change that can alter what a
+    /// template resolves to, or how it is judged, that the rest of the key cannot
+    /// see: code outside <c>ServerOnly/</c> that edits templates before the audit
+    /// opens them, a new way of loading bundles, a change in what a definition
+    /// means. Every stored verdict is then re-audited on the next start.
+    /// </summary>
+    public const int MwlCacheVersion = 1;
+
+    /// <summary>The cache format, MWL's cache version, the content fingerprint's inputs and the rules' version.</summary>
+    public static string Format(int cacheFormatVersion, int mwlCacheVersion = MwlCacheVersion) =>
         "cache=" + cacheFormatVersion.ToString(CultureInfo.InvariantCulture) + "\n" +
+        "mwl-cache=" + mwlCacheVersion.ToString(CultureInfo.InvariantCulture) + "\n" +
         "content=" + TemplateFingerprint.ContentVersion.ToString(CultureInfo.InvariantCulture) + "\n" +
         "policy=" + TemplateFingerprint.PolicyVersion.ToString(CultureInfo.InvariantCulture) + "\n";
 
@@ -182,25 +203,26 @@ public static class AuditCacheCanonical
     }
 
     /// <summary>
-    /// The names to judge, in the order the run judges them. Not sorted: the
-    /// report is in this order and registration walks it, so two orders are two
-    /// different runs.
+    /// What the catalogue declares about one name, as one line: the part of its
+    /// definition the audit reads. Placement settings (biome, quantity, altitude)
+    /// are not here: they decide where a template goes, not what it contains.
     /// </summary>
-    public static string Subjects(IEnumerable<CatalogueSubject> subjects)
-    {
-        if (subjects == null) throw new ArgumentNullException(nameof(subjects));
-        StringBuilder text = new StringBuilder();
-        foreach (CatalogueSubject subject in subjects)
-        {
-            text.Append("subject\t").Append(Escape(subject.Name))
-                .Append('\t').Append(Escape(subject.Pack))
-                .Append('\t').Append(subject.SourceDeclared ? '1' : '0')
-                .Append('\t').Append(Escape(subject.InteriorPrefabName))
-                .Append('\t').Append(Escape(subject.DungeonTheme))
-                .Append('\n');
-        }
-        return text.ToString();
-    }
+    public static string SubjectLine(CatalogueSubject subject) =>
+        "subject\t" + Escape(subject.Name) +
+        "\t" + Escape(subject.Pack) +
+        "\t" + (subject.SourceDeclared ? '1' : '0') +
+        "\t" + Escape(subject.InteriorPrefabName) +
+        "\t" + Escape(subject.DungeonTheme) +
+        "\n";
+
+    /// <summary>
+    /// One template's own input: its definition line and the canonical text of
+    /// its manifest entries and bundle (<see cref="MwlFiles"/>), or "none" when
+    /// no manifest entry names it. Stored beside its verdict; a different digest
+    /// re-audits that template alone.
+    /// </summary>
+    public static string TemplateInput(CatalogueSubject subject, string? files) =>
+        Sha256Hex(SubjectLine(subject) + (files ?? "files\tnone\n"));
 
     /// <summary>A directory's files as relative path and hash, one per line, under a label.</summary>
     public static string Tree(string label, FileTree tree)
@@ -275,29 +297,30 @@ public static class AuditCacheCanonical
         "provenance=" + Escape(baselineProvenance ?? "") + "\n";
 
     /// <summary>
-    /// The four parts only an installation can supply, from where its files
-    /// are. Separate from finding those places so that what is read, and what
-    /// is deliberately not, is exercised against real folders in a test.
+    /// The parts only an installation can supply, and each template's own files,
+    /// from where its files are. Separate from finding those places so that what
+    /// is read, and what is deliberately not, is exercised against real folders
+    /// in a test.
     /// </summary>
-    /// <param name="manifestDirectory">
-    /// Where the bundle manifest the templates are loaded through was found.
-    /// MWL looks for it beside its DLL and falls back to a fixed plugin folder,
-    /// so the bundles actually read need not be under <paramref name="mwlDirectory"/>;
-    /// when they are elsewhere, that folder is hashed as well.
+    /// <param name="manifestPath">
+    /// The bundle manifest the templates are loaded through. MWL looks for it
+    /// beside its DLL and falls back to a fixed plugin folder, so the bundles
+    /// actually read need not be under <paramref name="mwlDirectory"/>; when they
+    /// are elsewhere, that folder is hashed as shared input and no template has
+    /// inputs of its own.
     /// </param>
+    /// <param name="mwlAssemblyPath">MWL's DLL: not hashed as a file (see <paramref name="mwlCode"/>).</param>
+    /// <param name="templateNames">The names the run judges; a manifest asset of one of these names is that template's.</param>
+    /// <param name="mwlCode">The canonical text of MWL's code that can reach a verdict (<see cref="AuditCacheCode"/>).</param>
     /// <param name="exclude">Full paths never to read; the cache file itself.</param>
     /// <exception cref="InvalidOperationException">MWL's own folder is missing or empty: there is nothing to vouch for.</exception>
-    public static Dictionary<string, string> Installation(
-        string mwlDirectory, string? manifestDirectory, string configDirectory, string pluginGuid,
+    public static InstalledInputs Installation(
+        string mwlDirectory, string? manifestPath, string mwlAssemblyPath, IReadOnlyCollection<string> templateNames,
+        string configDirectory, string pluginGuid,
         string gameAssemblyPath, string versionString, string networkVersion, bool headless,
-        string jotunnPath, string coreDirectory, Func<string, bool>? exclude)
+        string jotunnPath, string coreDirectory, string mwlCode, Func<string, bool>? exclude)
     {
-        FileTree mwl = HashTree(mwlDirectory, null, exclude);
-        if (!mwl.Exists || mwl.Files.Count == 0)
-            throw new InvalidOperationException($"MWL's own folder {mwlDirectory} holds nothing");
-        string mwlText = Tree("mwl", mwl);
-        if (!string.IsNullOrEmpty(manifestDirectory) && !IsWithin(manifestDirectory!, mwlDirectory))
-            mwlText += Tree("manifest", HashTree(manifestDirectory!, null, exclude));
+        MwlFileInputs mwl = MwlFiles(mwlDirectory, manifestPath, mwlAssemblyPath, templateNames, exclude);
         // Only MWL's own settings: other plugins' files reach a verdict through
         // the stock prefabs alone, and those are checked prefab by prefab.
         // A .cfg is read by its settings, not its bytes: BepInEx rewrites the
@@ -309,13 +332,183 @@ public static class AuditCacheCanonical
                 ? Sha256OfCfgSettings(absolute)
                 : Sha256OfFile(absolute));
 
-        return new Dictionary<string, string>(StringComparer.Ordinal)
+        Dictionary<string, string> parts = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            ["mwl-files"] = mwlText,
+            ["mwl-code"] = mwlCode ?? throw new ArgumentNullException(nameof(mwlCode)),
+            ["mwl-shared"] = mwl.Shared,
             ["mwl-config"] = Tree("config", config),
             ["game"] = Game(Sha256OfFile(gameAssemblyPath), versionString, networkVersion, headless),
             ["loader"] = Loader(Sha256OfFile(jotunnPath), HashTree(coreDirectory, null, exclude)),
         };
+        return new InstalledInputs(parts, mwl.Templates);
+    }
+
+    /// <summary>
+    /// MWL's folder split into what one template alone reads and what every
+    /// template shares.
+    ///
+    /// <para>A manifest asset whose file name (without <c>.prefab</c>) is a name
+    /// the run judges is that template's asset, and the bundle it lives in is
+    /// that template's bundle: its manifest line and the bundle's digest are the
+    /// template's files. Everything else — MWL's other bundles (dungeon rooms,
+    /// prefabs), other files, the manifest's header, dependencies and other
+    /// assets — is shared, and a change to it re-audits everything. MWL's DLL and
+    /// its symbols are left out: <c>mwl-code</c> stands for them.</para>
+    ///
+    /// <para>Anything the split cannot be sure of makes everything shared,
+    /// which is the key as it was before templates had inputs of their own: a
+    /// manifest outside MWL's folder, one that does not parse, a bundle
+    /// directory outside the folder.</para>
+    /// </summary>
+    public static MwlFileInputs MwlFiles(
+        string mwlDirectory, string? manifestPath, string mwlAssemblyPath, IReadOnlyCollection<string> templateNames,
+        Func<string, bool>? exclude)
+    {
+        if (templateNames == null) throw new ArgumentNullException(nameof(templateNames));
+        FileTree tree = HashTree(mwlDirectory, null, exclude);
+        if (!tree.Exists || tree.Files.Count == 0)
+            throw new InvalidOperationException($"MWL's own folder {mwlDirectory} holds nothing");
+
+        string? dll = RelativeWithin(mwlAssemblyPath, mwlDirectory);
+        bool IsCode(string relative) => dll != null && (string.Equals(relative, dll, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(relative, Path.ChangeExtension(dll, ".pdb"), StringComparison.OrdinalIgnoreCase)
+            || string.Equals(relative, dll + ".mdb", StringComparison.OrdinalIgnoreCase));
+
+        string? manifest = string.IsNullOrEmpty(manifestPath) ? null : RelativeWithin(manifestPath!, mwlDirectory);
+        string why = manifest == null
+            ? (string.IsNullOrEmpty(manifestPath) ? "no manifest" : "the manifest is outside MWL's folder")
+            : "";
+        SoftRefManifest? parsed = null;
+        if (manifest != null)
+        {
+            string? manifestText = null;
+            try
+            {
+                manifestText = ReadManifest(mwlDirectory, manifest);
+            }
+            catch (Exception ex)
+            {
+                why = $"the manifest could not be read ({ex.GetType().Name})";
+            }
+            if (manifestText != null && !SoftRefManifest.TryParse(manifestText, out parsed, out string parseError))
+                why = "the manifest did not parse: " + parseError;
+        }
+        string? bundleDirectory = null;
+        if (parsed != null)
+        {
+            string manifestDirectory = manifest!.Contains("/") ? manifest.Substring(0, manifest.LastIndexOf('/')) : "";
+            bundleDirectory = NormalizeRelative(manifestDirectory, parsed.BundlesDirectory);
+            if (bundleDirectory == null)
+                why = "the manifest's bundle directory is outside MWL's folder";
+        }
+
+        if (why.Length > 0)
+        {
+            // Everything shared: a change anywhere re-audits everything.
+            StringBuilder all = new StringBuilder();
+            all.Append("split\tnone\t").Append(Escape(why)).Append('\n');
+            all.Append(Tree("mwl", Without(tree, relative => IsCode(relative))));
+            if (!string.IsNullOrEmpty(manifestPath) && manifest == null)
+            {
+                string? outside = Path.GetDirectoryName(manifestPath);
+                if (!string.IsNullOrEmpty(outside))
+                    all.Append(Tree("manifest", HashTree(outside!, null, exclude)));
+            }
+            return new MwlFileInputs(all.ToString(), new Dictionary<string, string>(StringComparer.Ordinal));
+        }
+
+        HashSet<string> names = new HashSet<string>(templateNames, StringComparer.Ordinal);
+        Dictionary<string, string> digests = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (KeyValuePair<string, string> file in tree.Files)
+            digests[file.Key] = file.Value;
+
+        Dictionary<string, List<string>> perTemplate = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        HashSet<string> claimed = new HashSet<string>(StringComparer.Ordinal);
+        List<string> sharedAssets = new List<string>();
+        foreach (SoftRefManifest.Asset asset in parsed!.Assets)
+        {
+            string line = "asset\t" + Escape(asset.Id) + "\t" + Escape(asset.Bundle) + "\t" + Escape(asset.PathInBundle) + "\n";
+            string file = asset.PathInBundle.Replace('\\', '/');
+            string stem = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf('/') + 1));
+            if (!names.Contains(stem))
+            {
+                sharedAssets.Add(line);
+                continue;
+            }
+            string bundle = (bundleDirectory!.Length == 0 ? "" : bundleDirectory + "/") + asset.Bundle;
+            claimed.Add(bundle);
+            if (!perTemplate.TryGetValue(stem, out List<string>? lines))
+                perTemplate[stem] = lines = new List<string>();
+            lines.Add(line);
+            lines.Add("bundle\t" + Escape(bundle) + "\t" + (digests.TryGetValue(bundle, out string? digest) ? digest : "absent") + "\n");
+        }
+
+        StringBuilder shared = new StringBuilder();
+        shared.Append("split\tmanifest\t").Append(Escape(manifest!)).Append('\n');
+        shared.Append("manifest-version\t").Append(Escape(parsed.Version)).Append('\n');
+        shared.Append("bundles-directory\t").Append(Escape(bundleDirectory!)).Append('\n');
+        foreach (string dependency in parsed.Dependencies)
+            shared.Append("dependency\t").Append(Escape(dependency)).Append('\n');
+        sharedAssets.Sort(StringComparer.Ordinal);
+        foreach (string line in sharedAssets)
+            shared.Append(line);
+        shared.Append(Tree("mwl", Without(tree, relative =>
+            IsCode(relative) || string.Equals(relative, manifest, StringComparison.OrdinalIgnoreCase) || claimed.Contains(relative))));
+
+        Dictionary<string, string> templates = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (KeyValuePair<string, List<string>> template in perTemplate)
+        {
+            template.Value.Sort(StringComparer.Ordinal);
+            templates[template.Key] = string.Concat(template.Value.ToArray());
+        }
+        return new MwlFileInputs(shared.ToString(), templates);
+    }
+
+    private static string ReadManifest(string mwlDirectory, string relative) =>
+        File.ReadAllText(Path.Combine(mwlDirectory, relative.Replace('/', Path.DirectorySeparatorChar)), new UTF8Encoding(false));
+
+    private static FileTree Without(FileTree tree, Func<string, bool> drop)
+    {
+        List<KeyValuePair<string, string>> kept = new List<KeyValuePair<string, string>>();
+        foreach (KeyValuePair<string, string> file in tree.Files)
+        {
+            if (!drop(file.Key))
+                kept.Add(file);
+        }
+        return new FileTree(tree.Exists, kept);
+    }
+
+    /// <summary>A path relative to <paramref name="directory"/> with '/' separators, or null when it is not inside it.</summary>
+    private static string? RelativeWithin(string path, string directory)
+    {
+        if (string.IsNullOrEmpty(path) || !IsWithin(path, directory))
+            return null;
+        string full = Path.GetFullPath(path);
+        string root = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        return full.Length <= root.Length ? null : full.Substring(root.Length + 1).Replace('\\', '/');
+    }
+
+    /// <summary>
+    /// <paramref name="relative"/> ("./Bundles") resolved against a folder inside
+    /// MWL's, as a '/'-separated path inside MWL's folder; null when it leaves it.
+    /// </summary>
+    internal static string? NormalizeRelative(string baseDirectory, string relative)
+    {
+        List<string> parts = new List<string>();
+        foreach (string part in (baseDirectory + "/" + (relative ?? "")).Replace('\\', '/').Split('/'))
+        {
+            if (part.Length == 0 || part == ".")
+                continue;
+            if (part == "..")
+            {
+                if (parts.Count == 0)
+                    return null;
+                parts.RemoveAt(parts.Count - 1);
+                continue;
+            }
+            parts.Add(part);
+        }
+        return string.Join("/", parts.ToArray());
     }
 
     private static bool IsWithin(string path, string directory)
@@ -512,4 +705,144 @@ public sealed class FileTree
 
     public bool Exists { get; }
     public IReadOnlyList<KeyValuePair<string, string>> Files { get; }
+}
+
+/// <summary>What an installation supplies: the key parts it computes, and each template's own files by name.</summary>
+public sealed class InstalledInputs
+{
+    public InstalledInputs(IReadOnlyDictionary<string, string> parts, IReadOnlyDictionary<string, string> templates)
+    {
+        Parts = parts ?? throw new ArgumentNullException(nameof(parts));
+        Templates = templates ?? throw new ArgumentNullException(nameof(templates));
+    }
+
+    public IReadOnlyDictionary<string, string> Parts { get; }
+
+    /// <summary>
+    /// Each template's own files as canonical text, by name. A name missing here
+    /// has no files of its own: its bundle, if any, is shared input.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> Templates { get; }
+}
+
+/// <summary>MWL's folder as shared input and per-template files.</summary>
+public sealed class MwlFileInputs
+{
+    public MwlFileInputs(string shared, IReadOnlyDictionary<string, string> templates)
+    {
+        Shared = shared;
+        Templates = templates;
+    }
+
+    public string Shared { get; }
+    public IReadOnlyDictionary<string, string> Templates { get; }
+}
+
+/// <summary>
+/// The text form of a SoftReferenceableAssets manifest (version 2), read
+/// strictly: a line this reader does not know is a manifest it does not
+/// understand, and the caller then treats every bundle as shared input.
+/// </summary>
+public sealed class SoftRefManifest
+{
+    public sealed class Asset
+    {
+        public Asset(string id, string bundle, string pathInBundle)
+        {
+            Id = id;
+            Bundle = bundle;
+            PathInBundle = pathInBundle;
+        }
+
+        public string Id { get; }
+        public string Bundle { get; }
+        public string PathInBundle { get; }
+    }
+
+    private SoftRefManifest(string version, string bundlesDirectory, List<string> dependencies, List<Asset> assets)
+    {
+        Version = version;
+        BundlesDirectory = bundlesDirectory;
+        Dependencies = dependencies;
+        Assets = assets;
+    }
+
+    public string Version { get; }
+    public string BundlesDirectory { get; }
+
+    /// <summary>The dependency section's lines as written; there is no need to understand them to know they changed.</summary>
+    public IReadOnlyList<string> Dependencies { get; }
+    public IReadOnlyList<Asset> Assets { get; }
+
+    public static bool TryParse(string text, out SoftRefManifest? manifest, out string error)
+    {
+        manifest = null;
+        error = "";
+        if (text == null)
+        {
+            error = "no text";
+            return false;
+        }
+        string[] lines = text.Replace("\r\n", "\n").Split('\n');
+        int at = 0;
+        string Next() => at < lines.Length ? lines[at++] : "";
+
+        if (Next() != "SoftRef manifest - Text")
+        {
+            error = "not a text SoftRef manifest";
+            return false;
+        }
+        string version = Next();
+        if (version != "version: 2")
+        {
+            error = $"'{version}' is not version 2";
+            return false;
+        }
+        string bundles = Next();
+        if (!bundles.StartsWith("bundles directory: ", StringComparison.Ordinal))
+        {
+            error = "no bundles directory";
+            return false;
+        }
+        if (Next() != "bundle dependencies:")
+        {
+            error = "no bundle dependencies section";
+            return false;
+        }
+        List<string> dependencies = new List<string>();
+        while (at < lines.Length && lines[at] != "asset locations:")
+        {
+            if (lines[at].Length > 0)
+                dependencies.Add(lines[at]);
+            at++;
+        }
+        if (Next() != "asset locations:")
+        {
+            error = "no asset locations section";
+            return false;
+        }
+        List<Asset> assets = new List<Asset>();
+        while (at < lines.Length)
+        {
+            string first = lines[at];
+            if (first.Length == 0)
+            {
+                at++;
+                continue;
+            }
+            if (!first.StartsWith("- asset ID: ", StringComparison.Ordinal) || at + 2 >= lines.Length
+                || !lines[at + 1].StartsWith("  bundle: ", StringComparison.Ordinal)
+                || !lines[at + 2].StartsWith("  path in bundle: ", StringComparison.Ordinal))
+            {
+                error = $"line {at + 1} is not an asset location";
+                return false;
+            }
+            assets.Add(new Asset(first.Substring("- asset ID: ".Length), lines[at + 1].Substring("  bundle: ".Length),
+                lines[at + 2].Substring("  path in bundle: ".Length)));
+            at += 3;
+        }
+        manifest = new SoftRefManifest(version.Substring("version: ".Length), bundles.Substring("bundles directory: ".Length),
+            dependencies, assets);
+        return true;
+    }
 }

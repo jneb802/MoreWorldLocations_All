@@ -63,6 +63,19 @@ public class AuditCacheTests
         new KeyValuePair<string, string>("wood\tfloor", "ab12"),
     };
 
+    /// <summary>The report as stored verdicts: each with an input of its own, the first using every sample stock name.</summary>
+    private static List<StoredVerdict> Verdicts(CatalogueReport report, IReadOnlyList<KeyValuePair<string, string>>? stock = null)
+    {
+        List<string> all = (stock ?? SampleStock).Select(p => p.Key).OrderBy(n => n, StringComparer.Ordinal).ToList();
+        return report.Entries.Select((e, i) => new StoredVerdict(e, "input-" + e.Name, i == 0 ? all : new List<string>())).ToList();
+    }
+
+    private static string Render(AuditCacheKey key, CatalogueReport report, IReadOnlyList<KeyValuePair<string, string>> stock) =>
+        AuditCacheFile.Render(key, report.StockBuildId, report.PolicyFingerprint, Verdicts(report, stock), stock);
+
+    private static CatalogueReport ReportOf(AuditCacheContents contents) =>
+        new CatalogueReport(contents.Verdicts.Select(v => v.Entry), contents.StockBuildId, contents.PolicyFingerprint);
+
     private static void AssertSameReport(CatalogueReport expected, CatalogueReport actual)
     {
         Assert.Equal(expected.StockBuildId, actual.StockBuildId);
@@ -112,15 +125,18 @@ public class AuditCacheTests
     {
         CatalogueReport report = SampleReport();
         AuditCacheKey key = Key();
-        string text = AuditCacheFile.Render(key, report, SampleStock);
+        string text = Render(key, report, SampleStock);
 
         AuditCacheLookup lookup = AuditCacheFile.Parse(text, key);
 
         Assert.True(lookup.Hit, lookup.Reason);
-        AssertSameReport(report, lookup.Contents!.Report);
-        Assert.Equal(SampleStock, lookup.Contents.Stock);
+        AssertSameReport(report, ReportOf(lookup.Contents!));
+        Assert.Equal(SampleStock, lookup.Contents!.Stock);
+        Assert.Equal(report.Entries.Select(e => "input-" + e.Name), lookup.Contents.Verdicts.Select(v => v.Input));
+        Assert.Equal(SampleStock.Select(p => p.Key).OrderBy(n => n, StringComparer.Ordinal), lookup.Contents.Verdicts[0].Uses);
+        Assert.All(lookup.Contents.Verdicts.Skip(1), v => Assert.Empty(v.Uses));
         // One record per line: nothing in a free-text field made a line of its own.
-        Assert.Equal(1 + 1 + key.Components.Count + 1 + SampleStock.Count + report.Entries.Count
+        Assert.Equal(1 + 1 + key.Components.Count + 1 + SampleStock.Count + report.Entries.Count + SampleStock.Count
                      + report.Entries.Sum(e => e.Evaluation.Findings.Count) + 1,
             text.Split('\n').Length - 1);
     }
@@ -128,8 +144,8 @@ public class AuditCacheTests
     [Fact]
     public void RenderingIsDeterministic()
     {
-        Assert.Equal(AuditCacheFile.Render(Key(), SampleReport(), SampleStock),
-            AuditCacheFile.Render(Key(), SampleReport(), SampleStock));
+        Assert.Equal(Render(Key(), SampleReport(), SampleStock),
+            Render(Key(), SampleReport(), SampleStock));
     }
 
     [Theory]
@@ -162,7 +178,7 @@ public class AuditCacheTests
     public void EveryPartChangesTheKeyAndAMissNamesThatPartAlone()
     {
         AuditCacheKey baseline = Key();
-        string stored = AuditCacheFile.Render(baseline, SampleReport(), SampleStock);
+        string stored = Render(baseline, SampleReport(), SampleStock);
 
         foreach (string part in AuditCacheKey.ComponentNames)
         {
@@ -181,7 +197,7 @@ public class AuditCacheTests
     [Fact]
     public void TwoPartsChangedAreBothNamed()
     {
-        string stored = AuditCacheFile.Render(Key(), SampleReport(), SampleStock);
+        string stored = Render(Key(), SampleReport(), SampleStock);
         Dictionary<string, string> changed = Parts();
         changed["game"] += "x";
         changed["env"] += "x";
@@ -195,7 +211,7 @@ public class AuditCacheTests
     public void AKeyWithAPartMissingOrUnknownIsRefused()
     {
         Dictionary<string, string> missing = Parts();
-        missing.Remove("mwl-files");
+        missing.Remove("mwl-shared");
         Assert.Throws<ArgumentException>(() => AuditCacheKey.FromCanonical(missing));
 
         Dictionary<string, string> extra = Parts();
@@ -224,16 +240,33 @@ public class AuditCacheTests
     }
 
     [Fact]
-    public void ThePolicyPartSortsTheSubsetAndTheSubjectsPartKeepsOrder()
+    public void ThePolicyPartSortsTheSubset()
     {
         Assert.Equal(AuditCacheCanonical.Policy("p", new[] { "B", "A" }), AuditCacheCanonical.Policy("p", new[] { "A", "B" }));
         Assert.NotEqual(AuditCacheCanonical.Policy("p", new[] { "A" }), AuditCacheCanonical.Policy("p", new[] { "A", "B" }));
+    }
 
-        CatalogueSubject a = new CatalogueSubject("MWL_A", "Meadows");
-        CatalogueSubject b = new CatalogueSubject("MWL_B", "Swamp", interiorPrefabName: "Crypt");
-        Assert.NotEqual(AuditCacheCanonical.Subjects(new[] { a, b }), AuditCacheCanonical.Subjects(new[] { b, a }));
-        Assert.NotEqual(AuditCacheCanonical.Subjects(new[] { a, b }),
-            AuditCacheCanonical.Subjects(new[] { a, new CatalogueSubject("MWL_B", "Swamp") }));
+    [Fact]
+    public void ATemplatesInputIsItsDefinitionAndItsOwnFiles()
+    {
+        CatalogueSubject plain = new CatalogueSubject("MWL_B", "Swamp");
+        string input = AuditCacheCanonical.TemplateInput(plain, "bundle\tBundles/mwl_b\taa\n");
+
+        Assert.Equal(input, AuditCacheCanonical.TemplateInput(new CatalogueSubject("MWL_B", "Swamp"), "bundle\tBundles/mwl_b\taa\n"));
+        // Each field the audit reads, and the files, change it.
+        Assert.NotEqual(input, AuditCacheCanonical.TemplateInput(new CatalogueSubject("MWL_B", "Plains"), "bundle\tBundles/mwl_b\taa\n"));
+        Assert.NotEqual(input, AuditCacheCanonical.TemplateInput(new CatalogueSubject("MWL_B", "Swamp", interiorPrefabName: "Crypt"), "bundle\tBundles/mwl_b\taa\n"));
+        Assert.NotEqual(input, AuditCacheCanonical.TemplateInput(new CatalogueSubject("MWL_B", "Swamp", dungeonTheme: "Cave"), "bundle\tBundles/mwl_b\taa\n"));
+        Assert.NotEqual(input, AuditCacheCanonical.TemplateInput(new CatalogueSubject("MWL_B", "Swamp", sourceDeclared: false), "bundle\tBundles/mwl_b\taa\n"));
+        Assert.NotEqual(input, AuditCacheCanonical.TemplateInput(plain, "bundle\tBundles/mwl_b\tbb\n"));
+        Assert.NotEqual(input, AuditCacheCanonical.TemplateInput(plain, null));
+    }
+
+    [Fact]
+    public void MwlsCacheVersionIsPartOfTheFormatPart()
+    {
+        Assert.Contains("mwl-cache=" + AuditCacheCanonical.MwlCacheVersion + "\n", AuditCacheCanonical.Format(AuditCacheFile.FormatVersion));
+        Assert.NotEqual(AuditCacheCanonical.Format(3, 1), AuditCacheCanonical.Format(3, 2));
     }
 
     [Theory]
@@ -251,19 +284,32 @@ public class AuditCacheTests
         Assert.Equal(mine, AuditCacheCanonical.IsMwlConfigFile(relative, "warpalicious.More_World_Locations_AIO"));
     }
 
+    private const string Manifest =
+        "SoftRef manifest - Text\nversion: 2\nbundles directory: ./Bundles\nbundle dependencies:\nasset locations:\n" +
+        "- asset ID: 01\n  bundle: mwl_ruins1\n  path in bundle: Assets/MWL/Meadows/MWL_Ruins1.prefab\n" +
+        "- asset ID: 02\n  bundle: mwl_tower1\n  path in bundle: Assets/MWL/Swamp/MWL_Tower1.prefab\n" +
+        "- asset ID: 03\n  bundle: cd_room1\n  path in bundle: Assets/MWL/Rooms/CD_Room1.prefab\n";
+
     /// <summary>A BepInEx installation on disk, as the engine half reads it.</summary>
     private sealed class Installation : IDisposable
     {
         public readonly string Root = Path.Combine(Path.GetTempPath(), "mwl-install-" + Guid.NewGuid().ToString("N"));
 
         /// <summary>Beside the DLL, as in an ordinary install, unless a test moves it.</summary>
-        public string? ManifestDirectory;
+        public string? ManifestPath;
+
+        public string Code = "code\n";
+
+        public readonly string[] Names = { "MWL_Ruins1", "MWL_Tower1", "MWL_Unbundled" };
 
         public Installation()
         {
             Write("plugins/MWL/More_World_Locations_AIO.dll", "mwl dll");
-            Write("plugins/MWL/Bundles/mwl_ruins1", "bundle");
-            Write("plugins/MWL/assetBundleManifest_full", "manifest");
+            Write("plugins/MWL/More_World_Locations_AIO.pdb", "mwl symbols");
+            Write("plugins/MWL/Bundles/mwl_ruins1", "ruins bundle");
+            Write("plugins/MWL/Bundles/mwl_tower1", "tower bundle");
+            Write("plugins/MWL/Bundles/cd_room1", "a dungeon room every dungeon shares");
+            Write("plugins/MWL/assetBundleManifest_full", Manifest);
             Write("plugins/Other/Other.dll", "other dll");
             Write("plugins/Jotunn/Jotunn.dll", "jotunn");
             Write("core/BepInEx.dll", "bepinex");
@@ -273,6 +319,7 @@ public class AuditCacheTests
             Write("config/other.plugin.cfg", "other settings");
             Write("config/other.plugin.output.json", "per boot");
             Write("patchers/Patcher.dll", "patcher");
+            ManifestPath = Path.Combine(Root, "plugins/MWL/assetBundleManifest_full");
         }
 
         public void Write(string relative, string content)
@@ -282,17 +329,21 @@ public class AuditCacheTests
             File.WriteAllText(path, content);
         }
 
+        public InstalledInputs Inputs() => AuditCacheCanonical.Installation(
+            Path.Combine(Root, "plugins/MWL"), ManifestPath, Path.Combine(Root, "plugins/MWL/More_World_Locations_AIO.dll"),
+            Names, Path.Combine(Root, "config"), "warpalicious.More_World_Locations_AIO",
+            Path.Combine(Root, "Managed/assembly_valheim.dll"), "1.0.15", "40", true,
+            Path.Combine(Root, "plugins/Jotunn/Jotunn.dll"), Path.Combine(Root, "core"), Code, null);
+
         public AuditCacheKey Key()
         {
             Dictionary<string, string> parts = Parts();
-            foreach (KeyValuePair<string, string> part in AuditCacheCanonical.Installation(
-                         Path.Combine(Root, "plugins/MWL"), ManifestDirectory, Path.Combine(Root, "config"),
-                         "warpalicious.More_World_Locations_AIO",
-                         Path.Combine(Root, "Managed/assembly_valheim.dll"), "1.0.15", "40", headless: true,
-                         Path.Combine(Root, "plugins/Jotunn/Jotunn.dll"), Path.Combine(Root, "core"), null))
+            foreach (KeyValuePair<string, string> part in Inputs().Parts)
                 parts[part.Key] = part.Value;
             return AuditCacheKey.FromCanonical(parts);
         }
+
+        public string? Files(string name) => Inputs().Templates.TryGetValue(name, out string? files) ? files : null;
 
         public void Dispose()
         {
@@ -316,20 +367,20 @@ public class AuditCacheTests
     }
 
     [Theory]
-    [InlineData("plugins/MWL/Bundles/mwl_ruins1", "mwl-files")]
-    [InlineData("plugins/MWL/Bundles/new_bundle", "mwl-files")]
-    [InlineData("plugins/MWL/More_World_Locations_AIO.dll", "mwl-files")]
+    [InlineData("plugins/MWL/Bundles/cd_room1", "mwl-shared")]
+    [InlineData("plugins/MWL/Bundles/new_bundle", "mwl-shared")]
+    [InlineData("plugins/MWL/readme.txt", "mwl-shared")]
     [InlineData("config/warpalicious.More_World_Locations_AIO.cfg", "mwl-config")]
     [InlineData("config/warpalicious.More_World_Locations_LootLists.yml", "mwl-config")]
     [InlineData("plugins/Jotunn/Jotunn.dll", "loader")]
     [InlineData("core/BepInEx.dll", "loader")]
     [InlineData("core/0Harmony.dll", "loader")]
     [InlineData("Managed/assembly_valheim.dll", "game")]
-    public void MwlItsSettingsTheLoaderAndTheGameDoChangeIt(string file, string part)
+    public void SharedMwlFilesItsSettingsTheLoaderAndTheGameDoChangeIt(string file, string part)
     {
         using Installation install = new Installation();
         AuditCacheKey before = install.Key();
-        string stored = AuditCacheFile.Render(before, SampleReport(), SampleStock);
+        string stored = Render(before, SampleReport(), SampleStock);
 
         install.Write(file, "changed");
 
@@ -339,50 +390,108 @@ public class AuditCacheTests
     }
 
     [Fact]
-    public void ARewrittenCfgCommentIsNotAChangeButAValueIs()
+    public void ATemplatesOwnBundleChangesOnlyThatTemplatesInput()
     {
-        // As BepInEx writes MWL's settings every start: the analytics id's
-        // DEFAULT is a fresh random value each time, while its value stays.
-        const string cfg = "warpalicious.More_World_Locations_AIO.cfg";
         using Installation install = new Installation();
-        install.Write("config/" + cfg,
-            "## Settings file was created by plugin More_World_Locations_AIO\n\n[Analytics]\n\n" +
-            "## Random anonymous ID. Change or delete to reset.\n# Setting type: String\n" +
-            "# Default value: 30ee238c-4f80-4da6-89a7-df331feaa7c3\nInstanceID = 4e5ad3bc\n");
         AuditCacheKey before = install.Key();
-        string stored = AuditCacheFile.Render(before, SampleReport(), SampleStock);
+        string? ruins = install.Files("MWL_Ruins1");
+        string? tower = install.Files("MWL_Tower1");
+        Assert.NotNull(ruins);
+        Assert.Contains("bundle\tBundles/mwl_ruins1\t", ruins);
+        // A name no manifest asset carries has no files of its own.
+        Assert.Null(install.Files("MWL_Unbundled"));
 
-        install.Write("config/" + cfg,
-            "## Settings file was created by plugin More_World_Locations_AIO\r\n\r\n[Analytics]\r\n\r\n" +
-            "## Random anonymous ID. Change or delete to reset.\r\n# Setting type: String\r\n" +
-            "# Default value: cbe17a60-757f-47f2-b41c-e7fd8091bbba\r\nInstanceID = 4e5ad3bc\r\n");
+        install.Write("plugins/MWL/Bundles/mwl_ruins1", "ruins bundle, rebuilt");
+
         Assert.Equal(before.Digest, install.Key().Digest);
-
-        install.Write("config/" + cfg, "[Analytics]\nInstanceID = something else\n");
-        AuditCacheLookup lookup = AuditCacheFile.Parse(stored, install.Key());
-        Assert.Equal(AuditCacheMiss.KeyChanged, lookup.Miss);
-        Assert.Equal(new[] { "mwl-config" }, lookup.Changed);
+        Assert.NotEqual(ruins, install.Files("MWL_Ruins1"));
+        Assert.Equal(tower, install.Files("MWL_Tower1"));
     }
 
     [Fact]
-    public void BundlesFoundOutsideMwlsFolderAreHashedToo()
+    public void ATemplatesManifestEntryIsItsInputAndEveryOtherAssetIsShared()
     {
         using Installation install = new Installation();
-        install.Write("plugins/warpalicious-More_World_Locations_AIO/assetBundleManifest_full", "manifest");
+        AuditCacheKey before = install.Key();
+        string? ruins = install.Files("MWL_Ruins1");
+
+        install.Write("plugins/MWL/assetBundleManifest_full", Manifest.Replace("Meadows/MWL_Ruins1", "Plains/MWL_Ruins1"));
+        Assert.Equal(before.Digest, install.Key().Digest);
+        Assert.NotEqual(ruins, install.Files("MWL_Ruins1"));
+
+        install.Write("plugins/MWL/assetBundleManifest_full", Manifest.Replace("Rooms/CD_Room1", "Rooms/CD_Room1b"));
+        Assert.Equal(new[] { "mwl-shared" }, install.Key().Differences(before.Components));
+    }
+
+    [Fact]
+    public void MwlsDllIsNotHashedAsAFileButItsCodeIs()
+    {
+        using Installation install = new Installation();
+        AuditCacheKey before = install.Key();
+
+        // A release: new DLL bytes, new symbols, same server-only code.
+        install.Write("plugins/MWL/More_World_Locations_AIO.dll", "mwl dll 5.1.3");
+        install.Write("plugins/MWL/More_World_Locations_AIO.pdb", "mwl symbols 5.1.3");
+        Assert.Equal(before.Digest, install.Key().Digest);
+
+        install.Code = "code, changed\n";
+        Assert.Equal(new[] { "mwl-code" }, install.Key().Differences(before.Components));
+    }
+
+    [Theory]
+    [InlineData("not a manifest at all")]
+    [InlineData("SoftRef manifest - Text\nversion: 3\nbundles directory: ./Bundles\nbundle dependencies:\nasset locations:\n")]
+    [InlineData("SoftRef manifest - Text\nversion: 2\nbundles directory: ./Bundles\nbundle dependencies:\nasset locations:\n- asset ID: 01\n  bundle: mwl_ruins1\n")]
+    [InlineData("SoftRef manifest - Text\nversion: 2\nbundles directory: ./Bundles\nasset locations:\n")]
+    [InlineData("SoftRef manifest - Text\nversion: 2\nbundles directory: ../elsewhere\nbundle dependencies:\nasset locations:\n")]
+    public void AManifestTheSplitCannotBeSureOfMakesEveryBundleShared(string manifest)
+    {
+        using Installation install = new Installation();
+        install.Write("plugins/MWL/assetBundleManifest_full", manifest);
+        AuditCacheKey before = install.Key();
+
+        Assert.Empty(install.Inputs().Templates);
+        Assert.Contains("split\tnone\t", install.Inputs().Parts["mwl-shared"]);
+        install.Write("plugins/MWL/Bundles/mwl_ruins1", "ruins bundle, rebuilt");
+        Assert.Equal(new[] { "mwl-shared" }, install.Key().Differences(before.Components));
+    }
+
+    [Fact]
+    public void ManifestDependenciesAreShared()
+    {
+        using Installation install = new Installation();
+        AuditCacheKey before = install.Key();
+        install.Write("plugins/MWL/assetBundleManifest_full",
+            Manifest.Replace("bundle dependencies:\n", "bundle dependencies:\n- mwl_ruins1: cd_room1\n"));
+        Assert.Equal(new[] { "mwl-shared" }, install.Key().Differences(before.Components));
+    }
+
+    [Fact]
+    public void AManifestReadsStrictly()
+    {
+        Assert.True(SoftRefManifest.TryParse(Manifest, out SoftRefManifest? manifest, out string error), error);
+        Assert.Equal("2", manifest!.Version);
+        Assert.Equal("./Bundles", manifest.BundlesDirectory);
+        Assert.Equal(new[] { "mwl_ruins1", "mwl_tower1", "cd_room1" }, manifest.Assets.Select(a => a.Bundle));
+        Assert.Equal("Assets/MWL/Meadows/MWL_Ruins1.prefab", manifest.Assets[0].PathInBundle);
+        Assert.True(SoftRefManifest.TryParse(Manifest.Replace("\n", "\r\n"), out _, out _));
+        Assert.False(SoftRefManifest.TryParse(Manifest + "stray line\n", out _, out string stray));
+        Assert.Contains("is not an asset location", stray);
+    }
+
+    [Fact]
+    public void BundlesFoundOutsideMwlsFolderAreSharedAndHashed()
+    {
+        using Installation install = new Installation();
+        install.Write("plugins/warpalicious-More_World_Locations_AIO/assetBundleManifest_full", Manifest);
         install.Write("plugins/warpalicious-More_World_Locations_AIO/Bundles/mwl_ruins1", "bundle");
-        install.ManifestDirectory = Path.Combine(install.Root, "plugins/warpalicious-More_World_Locations_AIO");
-        string stored = AuditCacheFile.Render(install.Key(), SampleReport(), SampleStock);
+        install.ManifestPath = Path.Combine(install.Root, "plugins/warpalicious-More_World_Locations_AIO/assetBundleManifest_full");
+        AuditCacheKey before = install.Key();
+        Assert.Empty(install.Inputs().Templates);
 
         install.Write("plugins/warpalicious-More_World_Locations_AIO/Bundles/mwl_ruins1", "bundle, changed");
 
-        Assert.Equal(new[] { "mwl-files" }, AuditCacheFile.Parse(stored, install.Key()).Changed);
-
-        // Beside the DLL it is already covered, and not counted twice.
-        install.ManifestDirectory = Path.Combine(install.Root, "plugins/MWL");
-        install.Write("plugins/warpalicious-More_World_Locations_AIO/Bundles/mwl_ruins1", "bundle, changed again");
-        AuditCacheKey beside = install.Key();
-        install.Write("plugins/warpalicious-More_World_Locations_AIO/Bundles/mwl_ruins1", "irrelevant now");
-        Assert.Equal(beside.Digest, install.Key().Digest);
+        Assert.Equal(new[] { "mwl-shared" }, install.Key().Differences(before.Components));
     }
 
     [Fact]
@@ -390,7 +499,8 @@ public class AuditCacheTests
     {
         using Installation install = new Installation();
         FileTree mwl = AuditCacheCanonical.HashTree(Path.Combine(install.Root, "plugins/MWL"));
-        Assert.Equal(new[] { "Bundles/mwl_ruins1", "More_World_Locations_AIO.dll", "assetBundleManifest_full" },
+        Assert.Equal(new[] { "Bundles/cd_room1", "Bundles/mwl_ruins1", "Bundles/mwl_tower1", "More_World_Locations_AIO.dll",
+                "More_World_Locations_AIO.pdb", "assetBundleManifest_full" },
             mwl.Files.Select(f => f.Key));
 
         Directory.CreateDirectory(Path.Combine(install.Root, "empty"));
@@ -405,9 +515,50 @@ public class AuditCacheTests
         using Installation install = new Installation();
         Directory.CreateDirectory(Path.Combine(install.Root, "empty"));
         Assert.Throws<InvalidOperationException>(() => AuditCacheCanonical.Installation(
-            Path.Combine(install.Root, "empty"), null, Path.Combine(install.Root, "config"), "g",
+            Path.Combine(install.Root, "empty"), null, Path.Combine(install.Root, "empty/x.dll"), install.Names,
+            Path.Combine(install.Root, "config"), "g",
             Path.Combine(install.Root, "Managed/assembly_valheim.dll"), "v", "n", true,
-            Path.Combine(install.Root, "plugins/Jotunn/Jotunn.dll"), Path.Combine(install.Root, "core"), null));
+            Path.Combine(install.Root, "plugins/Jotunn/Jotunn.dll"), Path.Combine(install.Root, "core"), "code", null));
+    }
+
+    // ---------------------------------------------------------------- MWL's code
+
+    /// <summary>Something whose code the canonical text can be checked against.</summary>
+    private static class CodeSample
+    {
+        public const int Answer = 42;
+        public static int Pick(int a, int b) => Math.Max(a, b) + "sample".Length;
+    }
+
+    [Fact]
+    public void MwlsCodeIsReadByWhatItsTokensNameAndIsDeterministic()
+    {
+        System.Reflection.Assembly assembly = typeof(CodeSample).Assembly;
+        Func<Type, bool> sample = t => t == typeof(CodeSample);
+        string text = AuditCacheCode.Canonical(assembly, sample);
+
+        Assert.Equal(text, AuditCacheCode.Canonical(assembly, sample));
+        Assert.Contains("System.Math::Int32 Max(Int32, Int32)", text);
+        Assert.Contains("\"sample\"", text);
+        Assert.Contains("\tAnswer\tSystem.Int32\t", text);
+        Assert.DoesNotContain("token:", text);
+        Assert.Contains("method\tInt32 Pick(Int32, Int32)", text);
+    }
+
+    [Fact]
+    public void TheServerOnlyScopeIsTheFeaturesNamespaceAndNoOther()
+    {
+        Assert.True(AuditCacheCode.InServerOnly(typeof(AuditCache)));
+        Assert.True(AuditCacheCode.InServerOnly(typeof(ServerOnlyMode)));
+        Assert.True(AuditCacheCode.InServerOnly(typeof(AuditCache.Attempt)));
+        Assert.False(AuditCacheCode.InServerOnly(typeof(AuditCacheTests)));
+        Assert.False(AuditCacheCode.InServerOnly(typeof(string)));
+
+        // The feature's own code, in this build: resolves, and carries the cache version.
+        string code = AuditCacheCode.Canonical(typeof(AuditCache).Assembly, AuditCacheCode.InServerOnly);
+        Assert.Contains("type\tMore_World_Locations_AIO.ServerOnly.Verification.AuditCache\t", code);
+        Assert.Contains("\tMwlCacheVersion\tSystem.Int32\t", code);
+        Assert.DoesNotContain("type\tMore_World_Locations_AIO.Tests.", code);
     }
 
     // ---------------------------------------------------------------- failing closed
@@ -416,7 +567,7 @@ public class AuditCacheTests
     public void EverythingWrongWithTheFileIsAMissWithItsOwnReason()
     {
         AuditCacheKey key = Key();
-        string good = AuditCacheFile.Render(key, SampleReport(), SampleStock);
+        string good = Render(key, SampleReport(), SampleStock);
         string dir = Path.Combine(Path.GetTempPath(), "mwl-cache-" + Guid.NewGuid().ToString("N"));
         try
         {
@@ -462,7 +613,7 @@ public class AuditCacheTests
     public void AValueThisBuildDoesNotKnowIsAMissEvenWhenTheFileIsSealed(string from, string to, string what)
     {
         AuditCacheKey key = Key();
-        string text = Reseal(AuditCacheFile.Render(key, SampleReport(), SampleStock), body => ReplaceFirst(body, from, to));
+        string text = Reseal(Render(key, SampleReport(), SampleStock), body => ReplaceFirst(body, from, to));
 
         AuditCacheLookup lookup = AuditCacheFile.Parse(text, key);
 
@@ -474,7 +625,7 @@ public class AuditCacheTests
     public void AnEntryMissingOneOfItsFindingsIsAMiss()
     {
         AuditCacheKey key = Key();
-        string text = Reseal(AuditCacheFile.Render(key, SampleReport(), SampleStock), body =>
+        string text = Reseal(Render(key, SampleReport(), SampleStock), body =>
         {
             int finding = body.IndexOf("\nfinding\t", StringComparison.Ordinal);
             int end = body.IndexOf('\n', finding + 1);
@@ -488,7 +639,7 @@ public class AuditCacheTests
     public void AHeaderWhoseKeyDoesNotAddUpIsAMiss()
     {
         AuditCacheKey key = Key();
-        string text = Reseal(AuditCacheFile.Render(key, SampleReport(), SampleStock),
+        string text = Reseal(Render(key, SampleReport(), SampleStock),
             body => body.Replace("key\t" + key.Digest, "key\t" + new string('0', 64)));
 
         Assert.Equal(AuditCacheMiss.Malformed, AuditCacheFile.Parse(text, key).Miss);
@@ -653,8 +804,17 @@ public class AuditCacheTests
     private static CatalogueAudit.CatalogueAuditRun RunOf(params CatalogueSubject[] subjects) =>
         CatalogueAudit.Begin(subjects, s => Fixtures.Compatible(s.Name, s.Pack), Fixtures.Stock, Fixtures.ExcludedPacks);
 
+    private static readonly Dictionary<string, string> SameInputs =
+        new Dictionary<string, string>(StringComparer.Ordinal) { ["MWL_A"] = "in-A", ["MWL_B"] = "in-B" };
+
+    /// <summary>A stored file for <paramref name="report"/> whose verdicts use what <paramref name="record"/> noted for each.</summary>
+    private static string Stored(AuditCacheKey key, CatalogueReport report, StockRecord record, IReadOnlyDictionary<string, string>? inputs = null) =>
+        AuditCacheFile.Render(key, report.StockBuildId, report.PolicyFingerprint,
+            report.Entries.Select(e => new StoredVerdict(e, (inputs ?? SameInputs)[e.Name], record.UsesOf(e.Name))).ToList(),
+            record.Entries);
+
     [Fact]
-    public void AStockPrefabThatChangedVanishedOrAppearedIsAMissThatNamesIt()
+    public void AChangedStockPrefabMakesOnlyTheTemplatesThatUsedItStaleAndNamesIt()
     {
         CatalogueSubject[] subjects = { new CatalogueSubject("MWL_A", "Meadows"), new CatalogueSubject("MWL_B", "Swamp") };
         CatalogueReport report = CatalogueAudit.Run(subjects, s => Fixtures.Compatible(s.Name, s.Pack), Fixtures.Stock, Fixtures.ExcludedPacks);
@@ -667,39 +827,42 @@ public class AuditCacheTests
         };
         Func<string, string?> sign = name => live.TryGetValue(name, out string? s) ? s : null;
         StockRecord record = new StockRecord(sign, Fixtures.Stock);
-        foreach (string name in live.Keys.ToList())
-            record.Consulted(name);
+        record.Begin("MWL_A");
+        record.Consulted("stone_wall_2x1");
+        record.Consulted("wood_floor");
+        record.Begin("MWL_B");
+        record.Consulted("Skeleton");
+        record.Consulted("Vines");
         AuditCacheKey key = Key();
-        string text = AuditCacheFile.Render(key, report, record.Entries);
+        string text = Stored(key, report, record);
 
-        AuditCacheLookup Check() => AuditCache.Check(AuditCacheFile.Parse(text, key), RunOf(subjects), sign);
+        AuditCacheReuse Select() => AuditCache.Select(AuditCacheFile.Parse(text, key), RunOf(subjects), SameInputs, sign);
+        string[] Stale() => Select().Stale.Select(p => p.Key + ": " + p.Value).ToArray();
 
-        Assert.True(Check().Hit, Check().Reason);
+        Assert.Equal(new[] { "MWL_A", "MWL_B" }, Select().Reusable.Keys.OrderBy(k => k));
 
         // Not a stock name: whatever it resolves to now is not a reason to audit.
         live["Vines"] = "something else is loaded now";
-        Assert.True(Check().Hit, Check().Reason);
+        Assert.Empty(Select().Stale);
 
         live["stone_wall_2x1"] = "wall with a new child";
-        AuditCacheLookup changed = Check();
-        Assert.Equal(AuditCacheMiss.Stock, changed.Miss);
-        Assert.Equal(new[] { "stone_wall_2x1" }, changed.Changed);
-        Assert.Equal("stock prefabs changed: stone_wall_2x1", changed.Reason);
+        Assert.Equal(new[] { "MWL_A: stock prefab 'stone_wall_2x1' changed" }, Stale());
+        Assert.Equal(new[] { "MWL_B" }, Select().Reusable.Keys);
+        Assert.Equal(new[] { "stone_wall_2x1" }, Select().ChangedStock);
+        Assert.Equal("stock prefabs changed: stone_wall_2x1", Select().Reason);
 
         live["stone_wall_2x1"] = StockRecord.NotStockSignature;
-        Assert.Equal("stock prefabs changed: stone_wall_2x1", Check().Reason);
+        Assert.Equal("stock prefabs changed: stone_wall_2x1", Select().Reason);
         live["stone_wall_2x1"] = "wall";
 
         live["wood_floor"] = null;
-        AuditCacheLookup vanished = Check();
-        Assert.Equal(new[] { "wood_floor" }, vanished.Changed);
-        Assert.Equal("no longer resolve: wood_floor", vanished.Reason);
+        Assert.Equal(new[] { "MWL_A: 'wood_floor' no longer resolves" }, Stale());
+        Assert.Equal("no longer resolve: wood_floor", Select().Reason);
         live["wood_floor"] = "floor";
 
         live["Skeleton"] = "somebody registered it";
-        AuditCacheLookup appeared = Check();
-        Assert.Equal(new[] { "Skeleton" }, appeared.Changed);
-        Assert.Equal("now resolve: Skeleton", appeared.Reason);
+        Assert.Equal(new[] { "MWL_B: 'Skeleton' now resolves" }, Stale());
+        Assert.Equal("now resolve: Skeleton", Select().Reason);
     }
 
     [Fact]
@@ -712,17 +875,22 @@ public class AuditCacheTests
         Dictionary<string, string> live = names.ToDictionary(n => n, n => n);
         Func<string, string?> sign = name => live.TryGetValue(name, out string? s) ? s : null;
         StockRecord record = new StockRecord(sign, Fixtures.Stock);
+        record.Begin("MWL_A");
         foreach (string name in names)
             record.Consulted(name);
         AuditCacheKey key = Key();
-        string text = AuditCacheFile.Render(key, report, record.Entries);
+        string text = Stored(key, report, record);
         foreach (string name in names)
             live[name] += " edited";
 
-        AuditCacheLookup lookup = AuditCache.Check(AuditCacheFile.Parse(text, key), RunOf(subjects), sign);
+        AuditCacheReuse reuse = AuditCache.Select(AuditCacheFile.Parse(text, key), RunOf(subjects), SameInputs, sign);
+        Assert.Empty(reuse.Reusable);
         foreach (string name in names)
-            Assert.Contains(name, lookup.Reason);
-        Assert.DoesNotContain("more)", lookup.Reason);
+        {
+            Assert.Contains(name, reuse.Reason);
+            Assert.Contains(name, reuse.Stale.Single().Value);
+        }
+        Assert.DoesNotContain("more)", reuse.Reason);
 
         List<string> log = new List<string>();
         BepInEx.Logging.ManualLogSource.Captured = log;
@@ -747,18 +915,72 @@ public class AuditCacheTests
     }
 
     [Fact]
-    public void AStoredReportForOtherNamesOrAnotherOrderIsAMiss()
+    public void AStoredVerdictIsMatchedByNameAndInputInAnyOrder()
     {
         CatalogueSubject a = new CatalogueSubject("MWL_A", "Meadows");
         CatalogueSubject b = new CatalogueSubject("MWL_B", "Swamp");
+        CatalogueSubject c = new CatalogueSubject("MWL_C", "Plains");
         CatalogueReport report = CatalogueAudit.Run(new[] { a, b }, s => Fixtures.Compatible(s.Name, s.Pack), Fixtures.Stock, Fixtures.ExcludedPacks);
         AuditCacheKey key = Key();
-        AuditCacheLookup parsed = AuditCacheFile.Parse(AuditCacheFile.Render(key, report, SampleStock.Take(1).ToList()), key);
+        AuditCacheLookup parsed = AuditCacheFile.Parse(Stored(key, report, new StockRecord(_ => null, Fixtures.Stock)), key);
         Func<string, string?> sign = _ => null;
 
-        Assert.True(AuditCache.Check(parsed, RunOf(a, b), sign).Hit);
-        Assert.Equal(AuditCacheMiss.Subjects, AuditCache.Check(parsed, RunOf(b, a), sign).Miss);
-        Assert.Equal(AuditCacheMiss.Subjects, AuditCache.Check(parsed, RunOf(a), sign).Miss);
+        Assert.Equal(2, AuditCache.Select(parsed, RunOf(a, b), SameInputs, sign).Reusable.Count);
+        // Another order is the same verdicts; the report is rebuilt in the run's order.
+        Assert.Equal(2, AuditCache.Select(parsed, RunOf(b, a), SameInputs, sign).Reusable.Count);
+        // A name nothing was stored for is audited.
+        Dictionary<string, string> withC = new Dictionary<string, string>(SameInputs) { ["MWL_C"] = "in-C" };
+        AuditCacheReuse added = AuditCache.Select(parsed, RunOf(a, b, c), withC, sign);
+        Assert.Equal(new[] { "MWL_C: no stored verdict" }, added.Stale.Select(p => p.Key + ": " + p.Value));
+        // A changed input is audited, alone.
+        Dictionary<string, string> changed = new Dictionary<string, string>(SameInputs) { ["MWL_B"] = "in-B, rebuilt" };
+        AuditCacheReuse one = AuditCache.Select(parsed, RunOf(a, b), changed, sign);
+        Assert.Equal(new[] { "MWL_A" }, one.Reusable.Keys);
+        Assert.Equal(new[] { "MWL_B: its definition, manifest entry or bundle changed" }, one.Stale.Select(p => p.Key + ": " + p.Value));
+    }
+
+    [Fact]
+    public void AUseTheFileDoesNotSignIsMalformed()
+    {
+        CatalogueReport report = SampleReport();
+        AuditCacheKey key = Key();
+        string text = AuditCacheFile.Render(key, report.StockBuildId, report.PolicyFingerprint,
+            new List<StoredVerdict> { new StoredVerdict(report.Entries[0], "in", new[] { "Unsigned" }) }, SampleStock);
+        AuditCacheLookup lookup = AuditCacheFile.Parse(text, key);
+        Assert.Equal(AuditCacheMiss.Malformed, lookup.Miss);
+        Assert.Contains("does not sign", lookup.Reason);
+    }
+
+    [Fact]
+    public void ANameStoredTwiceIsMalformed()
+    {
+        CatalogueReport report = SampleReport();
+        AuditCacheKey key = Key();
+        string text = AuditCacheFile.Render(key, report.StockBuildId, report.PolicyFingerprint,
+            new List<StoredVerdict> { new StoredVerdict(report.Entries[0], "in", new string[0]), new StoredVerdict(report.Entries[0], "in", new string[0]) },
+            SampleStock);
+        Assert.Equal(AuditCacheMiss.Malformed, AuditCacheFile.Parse(text, key).Miss);
+    }
+
+    [Fact]
+    public void ATemplateIsCreditedWithWhatItAskedForAndAReusedOnesUsesAreSignedAgain()
+    {
+        Dictionary<string, string> live = new Dictionary<string, string> { ["stone_wall_2x1"] = "wall", ["wood_floor"] = "floor" };
+        StockRecord record = new StockRecord(name => live.TryGetValue(name, out string? s) ? s : null, Fixtures.Stock);
+
+        record.Begin("MWL_A");
+        record.Consulted("stone_wall_2x1");
+        record.Begin("MWL_B");
+        record.Consulted("stone_wall_2x1");
+        record.Adopt("MWL_C", new[] { "wood_floor" });
+
+        Assert.Equal(new[] { "stone_wall_2x1" }, record.UsesOf("MWL_A"));
+        Assert.Equal(new[] { "stone_wall_2x1" }, record.UsesOf("MWL_B"));
+        Assert.Equal(new[] { "wood_floor" }, record.UsesOf("MWL_C"));
+        Assert.Equal(new[] { "stone_wall_2x1", "wood_floor" }, record.Entries.Select(e => e.Key));
+        // Adopting does not change whose template is current.
+        record.Consulted("Greydwarf");
+        Assert.Contains("Greydwarf", record.UsesOf("MWL_B"));
     }
 
     // ---------------------------------------------------------------- writing

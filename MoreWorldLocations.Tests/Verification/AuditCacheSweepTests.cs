@@ -33,11 +33,18 @@ public class AuditCacheSweepTests
         /// <summary>The installation's parts; a test changes one to change the key.</summary>
         public readonly Dictionary<string, string> Installation = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            ["mwl-files"] = "mwl\n",
+            ["mwl-code"] = "code\n",
+            ["mwl-shared"] = "shared\n",
             ["mwl-config"] = "config\n",
             ["game"] = "game\n",
             ["loader"] = "loader\n",
         };
+
+        /// <summary>A template's own files, where a test changes them; every other name has files of its own too.</summary>
+        public readonly Dictionary<string, string> TemplateFiles = new Dictionary<string, string>(StringComparer.Ordinal);
+
+        /// <summary>The names the installation was last asked about.</summary>
+        public IReadOnlyCollection<string> Asked = Array.Empty<string>();
 
         /// <summary>Live signatures that differ from the world's own; a null value is a prefab that no longer resolves.</summary>
         public readonly Dictionary<string, string?> StockOverride = new Dictionary<string, string?>(StringComparer.Ordinal);
@@ -51,7 +58,13 @@ public class AuditCacheSweepTests
             CachePath = Path.Combine(Directory, "nested", "server-only-audit.txt");
             Environment.SetEnvironmentVariable(ValidationSwitches.AuditCachePathVariable, CachePath);
             Environment.SetEnvironmentVariable(ValidationSwitches.AuditCacheVariable, null);
-            AuditCache.Installation = () => new Dictionary<string, string>(Installation, StringComparer.Ordinal);
+            AuditCache.Installation = names =>
+            {
+                Asked = names.ToList();
+                return new InstalledInputs(new Dictionary<string, string>(Installation, StringComparer.Ordinal),
+                    names.ToDictionary(n => n, n => TemplateFiles.TryGetValue(n, out string? files) ? files : "bundle\t" + n + "\n",
+                        StringComparer.Ordinal));
+            };
             AuditCache.LiveStock = name => StockOverride.TryGetValue(name, out string? signature)
                 ? signature
                 : AuditCache.SignStock(name, TemplateAssets.StockPrefabs);
@@ -123,7 +136,7 @@ public class AuditCacheSweepTests
         Assert.NotEmpty(cache.World.Opened);
         Assert.True(File.Exists(cache.CachePath));
         Assert.True(cache.Logged("not reusing stored verdicts (there is no cache file at"), string.Join("\n", cache.Log));
-        Assert.True(cache.Logged("catalogue audit: stored "), string.Join("\n", cache.Log));
+        Assert.True(cache.Logged("catalogue audit: stored the verdicts of "), string.Join("\n", cache.Log));
         Assert.True(CatalogueSweep.RegistrationReady);
         Assert.Equal(1, released);
 
@@ -173,12 +186,12 @@ public class AuditCacheSweepTests
         string firstKey = cache.StoredKey();
 
         cache.Restart();
-        cache.Installation["mwl-files"] = "mwl, a bundle changed\n";
+        cache.Installation["mwl-shared"] = "shared, a dungeon room bundle changed\n";
         int opened = cache.World.Opened.Count;
         cache.Sweep();
 
         Assert.True(cache.World.Opened.Count > opened);
-        Assert.True(cache.Logged("not reusing stored verdicts (inputs changed: mwl-files); auditing every template"),
+        Assert.True(cache.Logged("not reusing stored verdicts (inputs changed: mwl-shared); auditing every template"),
             string.Join("\n", cache.Log));
         Assert.NotEqual(firstKey, cache.StoredKey());
 
@@ -223,9 +236,10 @@ public class AuditCacheSweepTests
         int opened = cache.World.Opened.Count;
         cache.Sweep();
 
+        // Every template compared against it is audited again, and each says why; the rest are reused.
         Assert.True(cache.World.Opened.Count > opened);
-        Assert.True(cache.Logged("not reusing stored verdicts (stock prefabs changed: wood_floor); auditing every template"),
-            string.Join("\n", cache.Log));
+        foreach (string name in cache.World.Opened.Skip(opened).Distinct())
+            Assert.True(cache.Logged($"{name} (stock prefab 'wood_floor' changed)"), string.Join("\n", cache.Log));
     }
 
     [Fact]
@@ -240,7 +254,7 @@ public class AuditCacheSweepTests
         cache.Sweep();
 
         Assert.True(cache.World.Opened.Count > opened);
-        Assert.True(cache.Logged("(no longer resolve: wood_floor)"), string.Join("\n", cache.Log));
+        Assert.True(cache.Logged("('wood_floor' no longer resolves)"), string.Join("\n", cache.Log));
     }
 
     /// <summary>
@@ -267,7 +281,7 @@ public class AuditCacheSweepTests
 
         cache.Sweep();
 
-        Assert.True(cache.Logged("catalogue audit: stored "), string.Join("\n", cache.Log));
+        Assert.True(cache.Logged("catalogue audit: stored the verdicts of "), string.Join("\n", cache.Log));
         string stored = File.ReadAllText(cache.CachePath);
         Assert.Contains("stock\t$hud_snappoint_bottom 1\tnot-stock\n", stored);
         Assert.Contains("stock\twood_floor\tnot-stock\n", stored);
@@ -355,7 +369,7 @@ public class AuditCacheSweepTests
     public void AKeyThatCannotBeComputedAuditsAndStoresNothing()
     {
         using CacheWorld cache = new CacheWorld();
-        AuditCache.Installation = () => throw new IOException("a bundle could not be read");
+        AuditCache.Installation = _ => throw new IOException("a bundle could not be read");
 
         CatalogueReport report = cache.Sweep();
 
@@ -368,19 +382,86 @@ public class AuditCacheSweepTests
     }
 
     [Fact]
-    public void AnUnresolvedVerdictIsNotStored()
+    public void AnUnresolvedVerdictIsNotStoredAndOnlyThatTemplateIsJudgedAgain()
     {
         TemplateWorld world = new TemplateWorld();
         foreach (MWLLocation location in LocationDB.All.Skip(1))
             world.WithAsset(location.Name, Templates.Stock(location.Name));
         using CacheWorld cache = new CacheWorld(world);
+        string missing = LocationDB.All[0].Name;
 
         CatalogueReport report = cache.Sweep();
 
-        Assert.True(report.CountOf(TemplateVerdict.Unresolved) > 0);
+        Assert.Equal(TemplateVerdict.Unresolved, report.Find(missing)!.Evaluation.Verdict);
         Assert.True(CatalogueSweep.RegistrationReady);
-        Assert.False(File.Exists(cache.CachePath));
-        Assert.True(cache.Logged("verdicts not stored:"), string.Join("\n", cache.Log));
+        Assert.True(cache.Logged("verdict(s) not stored because they are unresolved"), string.Join("\n", cache.Log));
+        Assert.True(cache.Logged(missing), string.Join("\n", cache.Log));
+        string stored = File.ReadAllText(cache.CachePath);
+        Assert.DoesNotContain("entry\t" + missing + "\t", stored);
+
+        // Next start: the template now loads; only it is opened.
+        cache.World.WithAsset(missing, Templates.Stock(missing));
+        cache.Restart();
+        int opened = cache.World.Opened.Count;
+        CatalogueReport again = cache.Sweep();
+
+        Assert.Equal(new[] { missing }, cache.World.Opened.Skip(opened).Distinct().ToArray());
+        Assert.True(cache.Logged($"{missing} (no stored verdict)"), string.Join("\n", cache.Log));
+        Assert.Equal(TemplateVerdict.Compatible, again.Find(missing)!.Evaluation.Verdict);
+    }
+
+    [Fact]
+    public void OneTemplatesChangedFilesReauditThatTemplateAlone()
+    {
+        using CacheWorld cache = new CacheWorld();
+        CatalogueReport audited = cache.Sweep();
+        string changed = LocationDB.All[1].Name;
+        Assert.Contains(changed, cache.Asked);
+
+        // An MWL update that changes one bundle.
+        cache.TemplateFiles[changed] = "bundle\t" + changed + "\tnew bytes\n";
+        cache.Restart();
+        int opened = cache.World.Opened.Count;
+        CatalogueReport partial = cache.Sweep();
+
+        Assert.Equal(new[] { changed }, cache.World.Opened.Skip(opened).Distinct().ToArray());
+        Assert.True(cache.Logged($"reusing {audited.Entries.Count - 1} stored verdict(s)"), string.Join("\n", cache.Log));
+        Assert.True(cache.Logged($"{changed} (its definition, manifest entry or bundle changed)"), string.Join("\n", cache.Log));
+        // The same report, in the same order, as a full audit would give.
+        AssertSameReport(audited, partial);
+        Assert.True(CatalogueSweep.RegistrationReady);
+
+        // And what was stored after the partial audit is a full hit next time.
+        cache.Restart();
+        opened = cache.World.Opened.Count;
+        CatalogueReport reused = cache.Sweep();
+        Assert.Equal(opened, cache.World.Opened.Count);
+        Assert.True(cache.Logged($"reused {audited.Entries.Count} verdicts"), string.Join("\n", cache.Log));
+        AssertSameReport(audited, reused);
+    }
+
+    [Fact]
+    public void AStockPrefabOneTemplateConsultedReauditsThatTemplateAlone()
+    {
+        TemplateWorld world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        string walled = LocationDB.All[2].Name;
+        world.WithAsset(walled, Templates.Stock(walled, child: "stone_wall_2x1"));
+        GameObject wall = Templates.StockPrefab("stone_wall_2x1");
+        world.WithStock("stone_wall_2x1", wall);
+        using CacheWorld cache = new CacheWorld(world);
+        CatalogueReport audited = cache.Sweep();
+        string stored = File.ReadAllText(cache.CachePath);
+        Assert.Contains("stock\tstone_wall_2x1\t", stored);
+
+        // Another mod edits the one prefab only this template compares against.
+        wall.Child("added_by_another_mod");
+        cache.Restart();
+        int opened = cache.World.Opened.Count;
+        CatalogueReport partial = cache.Sweep();
+
+        Assert.Equal(new[] { walled }, cache.World.Opened.Skip(opened).Distinct().ToArray());
+        Assert.True(cache.Logged($"{walled} (stock prefab 'stone_wall_2x1' changed)"), string.Join("\n", cache.Log));
+        Assert.Equal(audited.Entries.Select(e => e.Name), partial.Entries.Select(e => e.Name));
     }
 
     [Fact]

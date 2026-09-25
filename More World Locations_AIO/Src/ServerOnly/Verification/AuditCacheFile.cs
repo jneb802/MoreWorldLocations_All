@@ -31,7 +31,7 @@ public enum AuditCacheMiss
     CountMismatch,
     /// <summary>One or more key parts differ from this start's.</summary>
     KeyChanged,
-    /// <summary>The stored report does not cover this run's names in this run's order.</summary>
+    /// <summary>The stored verdicts were reached under other rules or against another stock snapshot.</summary>
     Subjects,
     /// <summary>A stock prefab the verdicts were reached against is not what it was.</summary>
     Stock,
@@ -39,16 +39,45 @@ public enum AuditCacheMiss
     KeyFailed,
 }
 
+/// <summary>
+/// One stored verdict: the catalogue entry, the digest of the template's own
+/// input when it was reached (<see cref="AuditCacheCanonical.TemplateInput"/>),
+/// and the stock prefabs that template consulted.
+/// </summary>
+public sealed class StoredVerdict
+{
+    public StoredVerdict(CatalogueEntry entry, string input, IReadOnlyList<string> uses)
+    {
+        Entry = entry ?? throw new ArgumentNullException(nameof(entry));
+        Input = input ?? throw new ArgumentNullException(nameof(input));
+        Uses = uses ?? throw new ArgumentNullException(nameof(uses));
+    }
+
+    public CatalogueEntry Entry { get; }
+    public string Name => Entry.Name;
+    public string Input { get; }
+
+    /// <summary>Recorded stock names this template's verdict was reached against, sorted.</summary>
+    public IReadOnlyList<string> Uses { get; }
+}
+
 /// <summary>What a stored verdict file held, once every check on it passed.</summary>
 public sealed class AuditCacheContents
 {
-    public AuditCacheContents(CatalogueReport report, IReadOnlyList<KeyValuePair<string, string>> stock)
+    public AuditCacheContents(string stockBuildId, string policyFingerprint, IReadOnlyList<StoredVerdict> verdicts,
+        IReadOnlyList<KeyValuePair<string, string>> stock)
     {
-        Report = report;
+        StockBuildId = stockBuildId;
+        PolicyFingerprint = policyFingerprint;
+        Verdicts = verdicts;
         Stock = stock;
     }
 
-    public CatalogueReport Report { get; }
+    public string StockBuildId { get; }
+    public string PolicyFingerprint { get; }
+
+    /// <summary>The stored verdicts, in the order they were written; not necessarily every name a run judges.</summary>
+    public IReadOnlyList<StoredVerdict> Verdicts { get; }
 
     /// <summary>Each recorded stock prefab name and the digest of its live signature, or <see cref="StockRecord.Absent"/>.</summary>
     public IReadOnlyList<KeyValuePair<string, string>> Stock { get; }
@@ -91,15 +120,16 @@ public sealed class AuditCacheLookup
 /// backslash escapes, so a finding's detail can say anything and still be one
 /// field.</para>
 ///
-/// <para><b>Order is kept.</b> The entries are written in the report's order,
-/// which is the catalogue's and the one registration walks. A reused report in
-/// any other order would register the same names and announce them
-/// differently, and "the same report" means the same report.</para>
+/// <para><b>One record per template.</b> Each entry carries the digest of its
+/// template's own input and the stock names it consulted, so a later start
+/// reuses exactly the verdicts whose template is unchanged and judges the rest.
+/// The order entries are written in is not the order anything is registered
+/// in: a reused report is rebuilt in the run's order.</para>
 ///
 /// <para><b>Every check fails closed.</b> A file that is short, edited, from
 /// another format, carries a value this build does not know, or counts
-/// differently from what it holds is a miss with a reason — never a partial
-/// reuse. A digest over everything before the trailer catches the edits the
+/// differently from what it holds is a miss with a reason, and not one of its
+/// verdicts is reused. A digest over everything before the trailer catches the edits the
 /// parse itself would not: a verdict changed from blocked to compatible parses
 /// perfectly well.</para>
 /// </summary>
@@ -115,13 +145,17 @@ public static class AuditCacheFile
     /// </summary>
     // 2: every name outside the stock snapshot is stored as "not-stock", and a
     // stock name is signed from the comparison's own lookup alone.
-    public const int FormatVersion = 2;
+    // 3: verdicts are reused one template at a time: each entry carries its
+    // template's input digest and the stock names it consulted; the key is the
+    // part every verdict shares.
+    public const int FormatVersion = 3;
 
     /// <summary>Render the verdicts, the key they were reached under, and the stock prefabs they were reached against.</summary>
-    public static string Render(AuditCacheKey key, CatalogueReport report, IReadOnlyList<KeyValuePair<string, string>> stock)
+    public static string Render(AuditCacheKey key, string stockBuildId, string policyFingerprint,
+        IReadOnlyList<StoredVerdict> verdicts, IReadOnlyList<KeyValuePair<string, string>> stock)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
-        if (report == null) throw new ArgumentNullException(nameof(report));
+        if (verdicts == null) throw new ArgumentNullException(nameof(verdicts));
         if (stock == null) throw new ArgumentNullException(nameof(stock));
 
         StringBuilder text = new StringBuilder();
@@ -129,11 +163,12 @@ public static class AuditCacheFile
         text.Append("key\t").Append(key.Digest).Append('\n');
         foreach (KeyValuePair<string, string> part in key.Components)
             text.Append("component\t").Append(part.Key).Append('\t').Append(part.Value).Append('\n');
-        text.Append("report\t").Append(E(report.StockBuildId)).Append('\t').Append(E(report.PolicyFingerprint)).Append('\n');
+        text.Append("report\t").Append(E(stockBuildId ?? "")).Append('\t').Append(E(policyFingerprint ?? "")).Append('\n');
         foreach (KeyValuePair<string, string> prefab in stock)
             text.Append("stock\t").Append(E(prefab.Key)).Append('\t').Append(E(prefab.Value)).Append('\n');
-        foreach (CatalogueEntry entry in report.Entries)
+        foreach (StoredVerdict verdict in verdicts)
         {
+            CatalogueEntry entry = verdict.Entry;
             text.Append("entry\t").Append(E(entry.Evaluation.Name))
                 .Append('\t').Append(E(entry.Evaluation.Pack))
                 .Append('\t').Append(entry.Evaluation.Verdict.ToString())
@@ -142,7 +177,11 @@ public static class AuditCacheFile
                 .Append('\t').Append(E(entry.Decision.Reason))
                 .Append('\t').Append(E(entry.ContentFingerprint))
                 .Append('\t').Append(entry.Evaluation.Findings.Count.ToString(CultureInfo.InvariantCulture))
+                .Append('\t').Append(E(verdict.Input))
+                .Append('\t').Append(verdict.Uses.Count.ToString(CultureInfo.InvariantCulture))
                 .Append('\n');
+            foreach (string use in verdict.Uses)
+                text.Append("use\t").Append(E(use)).Append('\n');
             foreach (TemplateFinding finding in entry.Evaluation.Findings)
             {
                 text.Append("finding\t").Append(E(finding.Code))
@@ -155,7 +194,7 @@ public static class AuditCacheFile
         }
 
         string body = text.ToString();
-        return body + "end\t" + report.Entries.Count.ToString(CultureInfo.InvariantCulture)
+        return body + "end\t" + verdicts.Count.ToString(CultureInfo.InvariantCulture)
                + "\t" + stock.Count.ToString(CultureInfo.InvariantCulture)
                + "\t" + AuditCacheCanonical.Sha256Hex(body) + "\n";
     }
@@ -236,19 +275,38 @@ public static class AuditCacheFile
             at++;
         }
 
-        List<CatalogueEntry> entries = new List<CatalogueEntry>();
+        HashSet<string> stockNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (KeyValuePair<string, string> prefab in stock)
+            stockNames.Add(prefab.Key);
+
+        List<StoredVerdict> verdicts = new List<StoredVerdict>();
+        HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
         while (at < count)
         {
-            if (!TrySplit(lines[at], "entry", 9, out string[] e)
+            if (!TrySplit(lines[at], "entry", 11, out string[] e)
                 || !TryUnescape(e[1], out string evaluationName) || !TryUnescape(e[2], out string pack)
                 || !TryUnescape(e[4], out string decisionName) || !TryUnescape(e[6], out string reason)
-                || !TryUnescape(e[7], out string fingerprint) || !TryCount(e[8], out int findingCount))
+                || !TryUnescape(e[7], out string fingerprint) || !TryCount(e[8], out int findingCount)
+                || !TryUnescape(e[9], out string input) || !TryCount(e[10], out int useCount))
                 return Malformed(at, "expected an entry");
             if (!TryEnum(e[3], out TemplateVerdict verdict))
                 return Unknown(at, "verdict", e[3]);
             if (!TryEnum(e[5], out SelectionOutcome outcome))
                 return Unknown(at, "selection outcome", e[5]);
+            if (!seen.Add(evaluationName))
+                return Malformed(at, $"'{evaluationName}' is stored twice");
             at++;
+
+            List<string> uses = new List<string>(useCount);
+            for (int i = 0; i < useCount; i++, at++)
+            {
+                if (at >= count || !TrySplit(lines[at], "use", 2, out string[] u) || !TryUnescape(u[1], out string use))
+                    return Malformed(at, $"expected stock use {i + 1} of {useCount} for '{evaluationName}'");
+                // A use the stock section does not sign is a use nobody could check.
+                if (!stockNames.Contains(use))
+                    return Malformed(at, $"'{evaluationName}' uses '{use}', which the file does not sign");
+                uses.Add(use);
+            }
 
             List<TemplateFinding> findings = new List<TemplateFinding>(findingCount);
             for (int i = 0; i < findingCount; i++, at++)
@@ -262,28 +320,18 @@ public static class AuditCacheFile
                 findings.Add(new TemplateFinding(code, severity, path, detail, value));
             }
 
-            entries.Add(new CatalogueEntry(
+            verdicts.Add(new StoredVerdict(new CatalogueEntry(
                 new TemplateEvaluation(evaluationName, pack, verdict, findings),
                 new SelectionDecision(decisionName, outcome, reason),
-                fingerprint));
+                fingerprint), input, uses));
         }
 
-        if (entries.Count != entryCount || stock.Count != stockCount)
+        if (verdicts.Count != entryCount || stock.Count != stockCount)
         {
             return AuditCacheLookup.Missed(AuditCacheMiss.CountMismatch,
-                $"the trailer counts {entryCount} entries and {stockCount} stock prefabs and the file holds {entries.Count} and {stock.Count}");
+                $"the trailer counts {entryCount} entries and {stockCount} stock prefabs and the file holds {verdicts.Count} and {stock.Count}");
         }
-
-        CatalogueReport report;
-        try
-        {
-            report = new CatalogueReport(entries, stockBuildId, policyFingerprint);
-        }
-        catch (ArgumentException ex)
-        {
-            return AuditCacheLookup.Missed(AuditCacheMiss.Malformed, "the stored report is not a valid report: " + ex.Message);
-        }
-        return AuditCacheLookup.Found(new AuditCacheContents(report, stock));
+        return AuditCacheLookup.Found(new AuditCacheContents(stockBuildId, policyFingerprint, verdicts, stock));
     }
 
     /// <summary>Read and check the file at <paramref name="path"/>. Never throws for anything about the file.</summary>

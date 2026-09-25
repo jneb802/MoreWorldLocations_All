@@ -68,6 +68,7 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheKey.cs" Link="ModSrc/Verification/AuditCacheKey.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheFile.cs" Link="ModSrc/Verification/AuditCacheFile.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCache.cs" Link="ModSrc/Verification/AuditCache.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheCode.cs" Link="ModSrc/Verification/AuditCacheCode.cs"/>
         <!--
           The engine-facing halves. They need an object hierarchy, which is what
           the Unity doubles in Shims/VerificationShims.cs are for; everything

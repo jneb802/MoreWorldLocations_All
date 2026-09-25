@@ -137,6 +137,7 @@ public static class CatalogueAudit
         private readonly ComponentPolicy _components;
         private readonly string _policyFingerprint;
         private readonly List<CatalogueEntry> _entries = new List<CatalogueEntry>();
+        private readonly Dictionary<string, CatalogueEntry> _reused = new Dictionary<string, CatalogueEntry>(StringComparer.Ordinal);
         private int _next;
 
         internal CatalogueAuditRun(
@@ -185,7 +186,39 @@ public static class CatalogueAudit
         /// alone and loads nothing.
         /// </summary>
         public bool NextOpensATemplate =>
-            !Done && _subjects[_next].SourceDeclared && !IsExcluded(_excludedPacks, _subjects[_next].Pack);
+            !Done && !_reused.ContainsKey(_subjects[_next].Name)
+            && _subjects[_next].SourceDeclared && !IsExcluded(_excludedPacks, _subjects[_next].Pack);
+
+        /// <summary>
+        /// Verdicts to take instead of judging: each is what a previous start
+        /// concluded for that name over inputs <see cref="AuditCache"/> has
+        /// shown to be the same. Given before the first name is judged; a name
+        /// among them is settled without opening anything, in its place in the
+        /// order.
+        /// </summary>
+        public void Reuse(IEnumerable<CatalogueEntry> entries)
+        {
+            if (entries == null) throw new ArgumentNullException(nameof(entries));
+            if (_next > 0)
+                throw new InvalidOperationException("verdicts to reuse are given before the sweep starts");
+            foreach (CatalogueEntry entry in entries)
+                _reused[entry.Name] = entry;
+        }
+
+        /// <summary>How many names this run takes from a previous start rather than judging.</summary>
+        public int ReusedCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (CatalogueSubject subject in _subjects)
+                {
+                    if (_reused.ContainsKey(subject.Name))
+                        count++;
+                }
+                return count;
+            }
+        }
 
         /// <summary>Judge exactly one name. Opens at most one template.</summary>
         public void JudgeNext()
@@ -200,6 +233,12 @@ public static class CatalogueAudit
             // is what a station run first took it for.
             if (_next % 25 == 0)
                 Say($"catalogue audit: {_next} name(s) judged");
+
+            if (_reused.TryGetValue(subject.Name, out CatalogueEntry? reused))
+            {
+                _entries.Add(reused);
+                return;
+            }
 
             TemplateFacts facts;
             if (!subject.SourceDeclared)

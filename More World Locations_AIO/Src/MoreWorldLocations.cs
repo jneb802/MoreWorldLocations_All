@@ -26,6 +26,10 @@ namespace More_World_Locations_AIO
     {
         internal const string ModName = "More_World_Locations_AIO";
         internal const string ModVersion = "5.1.2";
+        // Server-only mode keeps the catalogue audit's verdicts between starts and re-audits only the templates
+        // whose own inputs changed. If a change here can alter what a template resolves to, or how it is judged,
+        // outside ServerOnly/ and outside the template's own bundle and definition, bump
+        // ServerOnly.Verification.AuditCacheCanonical.MwlCacheVersion so every stored verdict is audited again.
         internal const string Author = "warpalicious";
         internal const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";

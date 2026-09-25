@@ -18,17 +18,26 @@ namespace More_World_Locations_AIO.ServerOnly.Verification;
 /// <para><b>What makes that acceptable.</b> The objection to a shipped approval
 /// list was that it approved templates nobody inspected. A stored verdict is
 /// not approved by anybody: it is the audit's own output, and it is used only
-/// when two independent checks say the audit would reach it again —
-/// <see cref="AuditCacheKey"/> over every input that can be named before
-/// anything is opened, and <see cref="StockRecord"/> over every live stock
-/// prefab the verdicts were actually reached against, re-signed from the
-/// running game. Any doubt either way, including not being able to ask, is a
-/// miss, and a miss is exactly the audit that ran before this existed.</para>
+/// when every check says the audit would reach it again —
+/// <see cref="AuditCacheKey"/> over every input all verdicts share, the
+/// template's own input (<see cref="AuditCacheCanonical.TemplateInput"/>: its
+/// definition, its manifest entry, its bundle), and <see cref="StockRecord"/>
+/// over every live stock prefab that template's verdict was reached against,
+/// re-signed from the running game. Any doubt, including not being able to
+/// ask, is a miss, and a miss is exactly the audit that ran before this
+/// existed.</para>
+///
+/// <para><b>One template at a time.</b> A change to the shared key re-audits
+/// everything. A change to one template's input, or to a stock prefab one
+/// template consulted, re-audits that template alone: an MWL update that
+/// changes four bundles opens four templates, and the rest keep their verdicts.
+/// The report is rebuilt in the run's order from the reused and the fresh
+/// verdicts, and registration cannot tell the difference.</para>
 ///
 /// <para><b>What never uses it.</b> A diagnostic resweep, or a resweep retrying
 /// a failed registration: somebody asked for the templates to be looked at
 /// again, and answering from a file would not be looking. The first start after
-/// any change is also the full audit, by construction.</para>
+/// any change is also the audit of what changed, by construction.</para>
 ///
 /// <para>The engine-facing half — finding MWL's folder, the game, the loader,
 /// reading a live prefab — is <c>AuditCacheInstallation</c>, installed through
@@ -41,12 +50,14 @@ public static class AuditCache
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
 
     /// <summary>
-    /// The key parts only the engine can compute — <c>mwl-files</c>,
-    /// <c>mwl-config</c>, <c>game</c>, <c>loader</c> — as canonical text by part
-    /// name. The rest are computed here, from the run itself, so the key binds
-    /// exactly what the run was constructed with.
+    /// What only the engine can compute, given the names the run judges: the
+    /// key parts <c>mwl-code</c>, <c>mwl-shared</c>, <c>mwl-config</c>,
+    /// <c>game</c> and <c>loader</c> as canonical text, and each template's own
+    /// files (<see cref="AuditCacheCanonical.MwlFiles"/>). The rest are computed
+    /// here, from the run itself, so the key binds exactly what the run was
+    /// constructed with.
     /// </summary>
-    public static Func<IReadOnlyDictionary<string, string>>? Installation { get; set; }
+    public static Func<IReadOnlyCollection<string>, InstalledInputs>? Installation { get; set; }
 
     /// <summary>
     /// A stock prefab's live signature by name — <see cref="SignStock"/> over
@@ -91,15 +102,18 @@ public static class AuditCache
     /// </summary>
     public static StockRecord? Recording { get; internal set; }
 
-    /// <summary>One start's use of the cache: where, under which key, and the record to store with a fresh audit.</summary>
+    /// <summary>One start's use of the cache: where, under which key, what it may reuse, and the record to store with.</summary>
     public sealed class Attempt
     {
-        internal Attempt(string path, AuditCacheKey? key, CatalogueReport? reused, StockRecord? record)
+        internal Attempt(string path, AuditCacheKey? key, CatalogueReport? reused, StockRecord? record,
+            IReadOnlyDictionary<string, StoredVerdict>? reusable = null, IReadOnlyDictionary<string, string>? inputs = null)
         {
             Path = path;
             Key = key;
             Reused = reused;
             Record = record;
+            Reusable = reusable ?? new Dictionary<string, StoredVerdict>(StringComparer.Ordinal);
+            Inputs = inputs ?? new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
         public string Path { get; }
@@ -107,8 +121,14 @@ public static class AuditCache
         /// <summary>Null when the key could not be computed; nothing is stored then.</summary>
         public AuditCacheKey? Key { get; }
 
-        /// <summary>The stored report, when every check passed.</summary>
+        /// <summary>The whole report, when every name the run judges had a verdict to reuse; nothing is opened then.</summary>
         public CatalogueReport? Reused { get; }
+
+        /// <summary>The stored verdicts this run may reuse, by name; the rest are audited.</summary>
+        public IReadOnlyDictionary<string, StoredVerdict> Reusable { get; }
+
+        /// <summary>Each name's template input digest in this run, stored beside its verdict.</summary>
+        public IReadOnlyDictionary<string, string> Inputs { get; }
 
         /// <summary>What a fresh audit records, to be stored with its verdicts. Null when nothing may be stored.</summary>
         public StockRecord? Record { get; }
@@ -141,16 +161,17 @@ public static class AuditCache
         }
 
         string? path = CachePath();
-        Func<IReadOnlyDictionary<string, string>>? installation = Installation;
+        Func<IReadOnlyCollection<string>, InstalledInputs>? installation = Installation;
         Func<string, string?>? liveStock = LiveStock;
         if (path == null || installation == null || liveStock == null)
             return null;
 
         AuditCacheKey key;
+        IReadOnlyDictionary<string, string> inputs;
         Stopwatch clock = Stopwatch.StartNew();
         try
         {
-            key = ComputeKey(run, installation);
+            key = ComputeKey(run, installation, out inputs);
         }
         catch (Exception ex)
         {
@@ -162,111 +183,166 @@ public static class AuditCache
         Say($"catalogue audit: verdict cache key {key.Short} computed in {clock.Elapsed.TotalMilliseconds:0} ms");
 
         clock.Restart();
-        AuditCacheLookup lookup = Check(AuditCacheFile.Load(path, key), run, liveStock);
+        AuditCacheReuse reuse = Select(AuditCacheFile.Load(path, key), run, inputs, liveStock);
         clock.Stop();
-        if (!lookup.Hit)
+
+        if (reuse.Reusable.Count == 0)
         {
-            Say($"catalogue audit: not reusing stored verdicts ({lookup.Reason}); auditing every template");
-            return new Attempt(path, key, null, new StockRecord(liveStock, run.Registry));
+            Say($"catalogue audit: not reusing stored verdicts ({reuse.Reason}); auditing every template");
+            return new Attempt(path, key, null, new StockRecord(liveStock, run.Registry), null, inputs);
         }
 
-        CatalogueReport report = lookup.Contents!.Report;
-        Say($"catalogue audit: reused {report.Entries.Count} verdicts from {path} (key {key.Short}); " +
-            $"the audit was skipped because every input matched, {lookup.Contents.Stock.Count} stock prefab(s) included " +
+        if (reuse.Stale.Count == 0)
+        {
+            List<CatalogueEntry> entries = new List<CatalogueEntry>(run.Subjects.Count);
+            foreach (CatalogueSubject subject in run.Subjects)
+                entries.Add(reuse.Reusable[subject.Name].Entry);
+            CatalogueReport report = new CatalogueReport(entries, run.StockBuildId, run.PolicyFingerprint);
+            Say($"catalogue audit: reused {report.Entries.Count} verdicts from {path} (key {key.Short}); " +
+                $"the audit was skipped because every input matched, {reuse.StockChecked} stock prefab(s) included " +
+                $"(checked in {clock.Elapsed.TotalMilliseconds:0} ms)");
+            return new Attempt(path, key, report, null, reuse.Reusable, inputs);
+        }
+
+        // Some verdicts stand and some do not: the audit judges the rest, and
+        // the record starts with what the reused ones were reached against, so
+        // the file written afterwards still checks every one of them.
+        StockRecord record = new StockRecord(liveStock, run.Registry);
+        foreach (StoredVerdict verdict in reuse.Reusable.Values)
+            record.Adopt(verdict.Name, verdict.Uses);
+        Say($"catalogue audit: reusing {reuse.Reusable.Count} stored verdict(s) from {path} (key {key.Short}); " +
+            $"auditing {reuse.Stale.Count} template(s): {Names(reuse.StaleDescriptions())} " +
             $"(checked in {clock.Elapsed.TotalMilliseconds:0} ms)");
-        return new Attempt(path, key, report, null);
+        return new Attempt(path, key, null, record, reuse.Reusable, inputs);
     }
 
     /// <summary>
-    /// Everything the key-only check cannot see: that the stored report is this
-    /// run's names in this run's order under this run's rules, and that every
-    /// stock prefab it was reached against is still the same prefab.
+    /// Which stored verdicts this run may reuse. Everything the key cannot see:
+    /// that the stored verdicts were reached under this run's rules and stock
+    /// snapshot, that each name's own input is what it was, and that every stock
+    /// prefab a verdict was reached against is still the same prefab. A name
+    /// fails alone; only a file-level miss or other rules fail every name.
     /// </summary>
-    public static AuditCacheLookup Check(AuditCacheLookup lookup, CatalogueAudit.CatalogueAuditRun run, Func<string, string?> liveStock)
+    public static AuditCacheReuse Select(AuditCacheLookup lookup, CatalogueAudit.CatalogueAuditRun run,
+        IReadOnlyDictionary<string, string> inputs, Func<string, string?> liveStock)
     {
         if (lookup == null) throw new ArgumentNullException(nameof(lookup));
         if (run == null) throw new ArgumentNullException(nameof(run));
+        if (inputs == null) throw new ArgumentNullException(nameof(inputs));
         if (liveStock == null) throw new ArgumentNullException(nameof(liveStock));
         if (!lookup.Hit)
-            return lookup;
+            return AuditCacheReuse.None(lookup.Miss, lookup.Reason, lookup.Changed);
 
-        CatalogueReport report = lookup.Contents!.Report;
-        if (!string.Equals(report.PolicyFingerprint, run.PolicyFingerprint, StringComparison.Ordinal)
-            || !string.Equals(report.StockBuildId, run.StockBuildId, StringComparison.Ordinal))
+        AuditCacheContents contents = lookup.Contents!;
+        if (!string.Equals(contents.PolicyFingerprint, run.PolicyFingerprint, StringComparison.Ordinal)
+            || !string.Equals(contents.StockBuildId, run.StockBuildId, StringComparison.Ordinal))
         {
-            return AuditCacheLookup.Missed(AuditCacheMiss.Subjects,
-                "the stored report was reached under other rules or another stock snapshot");
-        }
-        if (report.Entries.Count != run.Subjects.Count)
-        {
-            return AuditCacheLookup.Missed(AuditCacheMiss.Subjects,
-                $"the stored report has {report.Entries.Count} names and this run judges {run.Subjects.Count}");
-        }
-        for (int i = 0; i < report.Entries.Count; i++)
-        {
-            // By name only: a name with no definition is judged without its
-            // catalogue pack, so an entry's pack need not be its subject's.
-            // The packs themselves are in the key's subjects part.
-            CatalogueEntry entry = report.Entries[i];
-            CatalogueSubject subject = run.Subjects[i];
-            if (!string.Equals(entry.Name, subject.Name, StringComparison.Ordinal))
-            {
-                return AuditCacheLookup.Missed(AuditCacheMiss.Subjects,
-                    $"the stored report's name {i + 1} is '{entry.Name}' and this run's is '{subject.Name}'");
-            }
+            return AuditCacheReuse.None(AuditCacheMiss.Subjects,
+                "the stored verdicts were reached under other rules or another stock snapshot", Array.Empty<string>());
         }
 
+        // Every stored stock prefab, signed once now.
+        Dictionary<string, string> moved = new Dictionary<string, string>(StringComparer.Ordinal);
         List<string> changed = new List<string>();
         List<string> vanished = new List<string>();
         List<string> appeared = new List<string>();
-        foreach (KeyValuePair<string, string> prefab in lookup.Contents.Stock)
+        foreach (KeyValuePair<string, string> prefab in contents.Stock)
         {
             string now = StockRecord.DigestOf(liveStock, run.Registry, prefab.Key, out string? fault);
             if (fault != null)
-                return AuditCacheLookup.Missed(AuditCacheMiss.Stock, $"stock prefab '{prefab.Key}' could not be read: {fault}", new[] { prefab.Key });
+            {
+                moved[prefab.Key] = $"stock prefab '{prefab.Key}' could not be read: {fault}";
+                changed.Add(prefab.Key);
+                continue;
+            }
             if (string.Equals(now, prefab.Value, StringComparison.Ordinal))
                 continue;
             if (now == StockRecord.Absent)
+            {
                 vanished.Add(prefab.Key);
+                moved[prefab.Key] = $"'{prefab.Key}' no longer resolves";
+            }
             else if (prefab.Value == StockRecord.Absent)
+            {
                 appeared.Add(prefab.Key);
+                moved[prefab.Key] = $"'{prefab.Key}' now resolves";
+            }
             else
+            {
                 changed.Add(prefab.Key);
+                moved[prefab.Key] = $"stock prefab '{prefab.Key}' changed";
+            }
         }
-        if (changed.Count + vanished.Count + appeared.Count > 0)
+
+        Dictionary<string, StoredVerdict> stored = new Dictionary<string, StoredVerdict>(StringComparer.Ordinal);
+        foreach (StoredVerdict verdict in contents.Verdicts)
+            stored[verdict.Name] = verdict;
+
+        Dictionary<string, StoredVerdict> reusable = new Dictionary<string, StoredVerdict>(StringComparer.Ordinal);
+        List<KeyValuePair<string, string>> stale = new List<KeyValuePair<string, string>>();
+        foreach (CatalogueSubject subject in run.Subjects)
         {
-            List<string> all = new List<string>();
-            all.AddRange(changed);
-            all.AddRange(vanished);
-            all.AddRange(appeared);
-            List<string> parts = new List<string>();
-            if (changed.Count > 0) parts.Add("stock prefabs changed: " + Names(changed));
-            if (vanished.Count > 0) parts.Add("no longer resolve: " + Names(vanished));
-            if (appeared.Count > 0) parts.Add("now resolve: " + Names(appeared));
-            return AuditCacheLookup.Missed(AuditCacheMiss.Stock, string.Join("; ", parts.ToArray()), all);
+            if (!stored.TryGetValue(subject.Name, out StoredVerdict? verdict))
+            {
+                stale.Add(new KeyValuePair<string, string>(subject.Name, "no stored verdict"));
+                continue;
+            }
+            if (!inputs.TryGetValue(subject.Name, out string? input) || !string.Equals(input, verdict.Input, StringComparison.Ordinal))
+            {
+                stale.Add(new KeyValuePair<string, string>(subject.Name, "its definition, manifest entry or bundle changed"));
+                continue;
+            }
+            List<string> why = new List<string>();
+            foreach (string use in verdict.Uses)
+            {
+                if (moved.TryGetValue(use, out string? reason))
+                    why.Add(reason);
+            }
+            if (why.Count > 0)
+            {
+                stale.Add(new KeyValuePair<string, string>(subject.Name, string.Join("; ", why.ToArray())));
+                continue;
+            }
+            reusable[subject.Name] = verdict;
         }
-        return lookup;
+
+        List<string> all = new List<string>();
+        all.AddRange(changed);
+        all.AddRange(vanished);
+        all.AddRange(appeared);
+        List<string> parts = new List<string>();
+        if (changed.Count > 0) parts.Add("stock prefabs changed: " + Names(changed));
+        if (vanished.Count > 0) parts.Add("no longer resolve: " + Names(vanished));
+        if (appeared.Count > 0) parts.Add("now resolve: " + Names(appeared));
+        string summary = parts.Count > 0 ? string.Join("; ", parts.ToArray())
+            : stale.Count > 0 ? $"{stale.Count} template(s) have no reusable verdict" : "";
+        return new AuditCacheReuse(reusable, stale, all, summary, contents.Stock.Count);
     }
 
     /// <summary>
-    /// The key for a run: the parts computed from the run and the process, and
-    /// the installation's.
+    /// The shared key for a run, from the parts computed from the run and the
+    /// process and the installation's, and each name's template input.
     /// </summary>
     /// <exception cref="ArgumentException">The installation left a part out or supplied one twice.</exception>
-    public static AuditCacheKey ComputeKey(CatalogueAudit.CatalogueAuditRun run, Func<IReadOnlyDictionary<string, string>> installation)
+    public static AuditCacheKey ComputeKey(CatalogueAudit.CatalogueAuditRun run,
+        Func<IReadOnlyCollection<string>, InstalledInputs> installation, out IReadOnlyDictionary<string, string> inputs)
     {
         if (run == null) throw new ArgumentNullException(nameof(run));
         if (installation == null) throw new ArgumentNullException(nameof(installation));
+
+        List<string> names = new List<string>(run.Subjects.Count);
+        foreach (CatalogueSubject subject in run.Subjects)
+            names.Add(subject.Name);
+        InstalledInputs installed = installation(names) ?? throw new ArgumentException("the installation supplied nothing");
 
         Dictionary<string, string> parts = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["format"] = AuditCacheCanonical.Format(AuditCacheFile.FormatVersion),
             ["policy"] = AuditCacheCanonical.Policy(run.PolicyFingerprint, run.Only),
-            ["subjects"] = AuditCacheCanonical.Subjects(run.Subjects),
             ["provenance"] = AuditCacheCanonical.Provenance(TemplateAssets.BaselineProvenance),
             ["env"] = AuditCacheCanonical.Environment(Environment.GetEnvironmentVariables()),
         };
-        foreach (KeyValuePair<string, string> part in installation())
+        foreach (KeyValuePair<string, string> part in installed.Parts)
         {
             // Supplying a part computed here would let an installation replace
             // the run's own policy or names with something else.
@@ -274,15 +350,23 @@ public static class AuditCache
                 throw new ArgumentException($"the installation supplied '{part.Key}', which is computed from the run");
             parts[part.Key] = part.Value;
         }
+
+        Dictionary<string, string> byName = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (CatalogueSubject subject in run.Subjects)
+        {
+            installed.Templates.TryGetValue(subject.Name, out string? files);
+            byName[subject.Name] = AuditCacheCanonical.TemplateInput(subject, files);
+        }
+        inputs = byName;
         return AuditCacheKey.FromCanonical(parts);
     }
 
     /// <summary>
-    /// Decide whether a fresh audit's verdicts may be stored, and render them if
-    /// so. Called at the end of the sweep, before registration, so the baseline
-    /// is re-signed in the state the verdicts were reached in. Null, with the
-    /// reason logged, when they may not. Never throws: the worst a failure here
-    /// does is make the next start audit again.
+    /// Decide which of a finished audit's verdicts may be stored, and render
+    /// them. Called at the end of the sweep, before registration, so the
+    /// baseline is re-signed in the state the verdicts were reached in. Null,
+    /// with the reason logged, when none may. Never throws: the worst a failure
+    /// here does is make the next start audit again.
     /// </summary>
     public static string? Prepare(Attempt attempt, CatalogueReport report)
     {
@@ -310,18 +394,6 @@ public static class AuditCache
             return null;
         }
 
-        // An unresolved verdict is a gap in what THIS run could see — a
-        // template that would not load, a walk that stopped — and the next
-        // start may see further. Storing it would make a passing failure
-        // permanent until something unrelated changed.
-        int unresolved = report.CountOf(TemplateVerdict.Unresolved);
-        if (unresolved > 0)
-        {
-            Say($"catalogue audit: verdicts not stored: {unresolved} template(s) are unresolved, " +
-                "and an unresolved verdict is a gap in what this run could see; the next start audits again");
-            return null;
-        }
-
         // A catalogue whose templates consulted no stock prefab at all is not
         // one this mod ships, and a file with an empty baseline would pass the
         // stock check by having nothing to check.
@@ -344,7 +416,46 @@ public static class AuditCache
             return null;
         }
 
-        return AuditCacheFile.Render(attempt.Key, report, record.Entries);
+        // An unresolved verdict is a gap in what THIS run could see — a
+        // template that would not load, a walk that stopped — and the next
+        // start may see further. It is left out, so that template alone is
+        // judged again; storing it would make a passing failure permanent.
+        List<StoredVerdict> verdicts = new List<StoredVerdict>();
+        List<string> unresolved = new List<string>();
+        HashSet<string> used = new HashSet<string>(StringComparer.Ordinal);
+        foreach (CatalogueEntry entry in report.Entries)
+        {
+            if (entry.Evaluation.Verdict == TemplateVerdict.Unresolved)
+            {
+                unresolved.Add(entry.Name);
+                continue;
+            }
+            if (!attempt.Inputs.TryGetValue(entry.Name, out string? input))
+            {
+                // A name the key was not computed for has no input to store.
+                unresolved.Add(entry.Name);
+                continue;
+            }
+            IReadOnlyList<string> uses = record.UsesOf(entry.Name);
+            foreach (string use in uses)
+                used.Add(use);
+            verdicts.Add(new StoredVerdict(entry, input, uses));
+        }
+        if (unresolved.Count > 0)
+        {
+            Say($"catalogue audit: {unresolved.Count} verdict(s) not stored because they are unresolved, a gap in what " +
+                $"this run could see; the next start judges them again: {Names(unresolved)}");
+        }
+        if (verdicts.Count == 0)
+            return null;
+
+        List<KeyValuePair<string, string>> stock = new List<KeyValuePair<string, string>>();
+        foreach (KeyValuePair<string, string> entry in record.Entries)
+        {
+            if (used.Contains(entry.Key))
+                stock.Add(entry);
+        }
+        return AuditCacheFile.Render(attempt.Key, report.StockBuildId, report.PolicyFingerprint, verdicts, stock);
     }
 
     /// <summary>
@@ -362,7 +473,8 @@ public static class AuditCache
                      "This start is unaffected; the next one audits again.");
                 return;
             }
-            Say($"catalogue audit: stored {report.Entries.Count} verdicts and {attempt.Record?.Entries.Count ?? 0} " +
+            Say($"catalogue audit: stored the verdicts of {report.Entries.Count} name(s) " +
+                $"({attempt.Reusable.Count} carried over, {report.Entries.Count - attempt.Reusable.Count} audited now) and {attempt.Record?.Entries.Count ?? 0} " +
                 $"stock prefab signature(s) in {attempt.Path} (key {attempt.Key?.Short}) for the next start");
         }
         catch (Exception ex)
@@ -419,7 +531,7 @@ public static class AuditCache
     }
 
     /// <summary>Every name, never a count of the rest: the list is what somebody diagnosing a miss needs.</summary>
-    private static string Names(IReadOnlyList<string> names)
+    internal static string Names(IReadOnlyList<string> names)
     {
         string[] all = new string[names.Count];
         for (int i = 0; i < names.Count; i++)
@@ -449,6 +561,51 @@ public static class AuditCache
         {
             // As above.
         }
+    }
+}
+
+/// <summary>Which stored verdicts a run may reuse, and why each of the others may not.</summary>
+public sealed class AuditCacheReuse
+{
+    internal AuditCacheReuse(IReadOnlyDictionary<string, StoredVerdict> reusable, IReadOnlyList<KeyValuePair<string, string>> stale,
+        IReadOnlyList<string> changedStock, string reason, int stockChecked, AuditCacheMiss miss = AuditCacheMiss.None)
+    {
+        Reusable = reusable;
+        Stale = stale;
+        ChangedStock = changedStock;
+        Reason = reason;
+        StockChecked = stockChecked;
+        Miss = miss;
+    }
+
+    internal static AuditCacheReuse None(AuditCacheMiss miss, string reason, IReadOnlyList<string> changed) =>
+        new AuditCacheReuse(new Dictionary<string, StoredVerdict>(StringComparer.Ordinal),
+            Array.Empty<KeyValuePair<string, string>>(), changed, reason, 0, miss);
+
+    /// <summary>The verdicts that stand, by name.</summary>
+    public IReadOnlyDictionary<string, StoredVerdict> Reusable { get; }
+
+    /// <summary>Each name that is audited again, in the run's order, with why.</summary>
+    public IReadOnlyList<KeyValuePair<string, string>> Stale { get; }
+
+    /// <summary>Stored stock prefabs whose live signature is no longer what was stored.</summary>
+    public IReadOnlyList<string> ChangedStock { get; }
+
+    /// <summary>Why nothing is reused (a file-level miss), or what changed.</summary>
+    public string Reason { get; }
+
+    /// <summary>For a file-level miss, which kind; <see cref="AuditCacheMiss.None"/> otherwise.</summary>
+    public AuditCacheMiss Miss { get; }
+
+    public int StockChecked { get; }
+
+    /// <summary>"name (why)" for every stale name.</summary>
+    public IReadOnlyList<string> StaleDescriptions()
+    {
+        List<string> all = new List<string>(Stale.Count);
+        foreach (KeyValuePair<string, string> name in Stale)
+            all.Add($"{name.Key} ({name.Value})");
+        return all;
     }
 }
 
@@ -499,6 +656,13 @@ public sealed class StockRecord
     private readonly StockPrefabRegistry _registry;
     private readonly Dictionary<string, string> _recorded = new Dictionary<string, string>(StringComparer.Ordinal);
 
+    // Which template asked for which names. A name asked for while no template
+    // is current (none in a sweep today) counts for every template: nobody can
+    // say whose verdict it reached.
+    private readonly Dictionary<string, SortedSet<string>> _uses = new Dictionary<string, SortedSet<string>>(StringComparer.Ordinal);
+    private readonly SortedSet<string> _shared = new SortedSet<string>(StringComparer.Ordinal);
+    private string? _current;
+
     public StockRecord(Func<string, string?> sign, StockPrefabRegistry registry)
     {
         _sign = sign ?? throw new ArgumentNullException(nameof(sign));
@@ -511,18 +675,64 @@ public sealed class StockRecord
     /// <summary>How many templates were actually read, so an empty record can be told from a broken one.</summary>
     public int TemplatesRead { get; private set; }
 
-    /// <summary>A name the audit asked the live game for. Recorded resolved or not.</summary>
+    /// <summary>
+    /// The template whose reading the names asked for from now on belong to.
+    /// The sweep sets it before it preloads a template, so a mock Jötunn
+    /// resolves while the bundle loads is that template's too.
+    /// </summary>
+    public void Begin(string template) => _current = string.IsNullOrEmpty(template) ? null : template;
+
+    /// <summary>A name the audit asked the live game for. Recorded resolved or not, and noted for the current template.</summary>
     public void Consulted(string name)
     {
-        if (Fault != null || string.IsNullOrEmpty(name) || _recorded.ContainsKey(name))
+        if (Fault != null || string.IsNullOrEmpty(name))
             return;
-        string digest = DigestOf(_sign, _registry, name, out string? fault);
-        if (fault != null)
+        if (!_recorded.ContainsKey(name))
         {
-            Fault = fault;
+            string digest = DigestOf(_sign, _registry, name, out string? fault);
+            if (fault != null)
+            {
+                Fault = fault;
+                return;
+            }
+            _recorded[name] = digest;
+        }
+        if (_current == null)
+        {
+            _shared.Add(name);
             return;
         }
-        _recorded[name] = digest;
+        if (!_uses.TryGetValue(_current, out SortedSet<string>? uses))
+            _uses[_current] = uses = new SortedSet<string>(StringComparer.Ordinal);
+        uses.Add(name);
+    }
+
+    /// <summary>
+    /// A reused verdict's names, signed now, so the file written after a
+    /// partial audit checks them again on the next start.
+    /// </summary>
+    public void Adopt(string template, IEnumerable<string> uses)
+    {
+        string? was = _current;
+        _current = template;
+        try
+        {
+            foreach (string use in uses)
+                Consulted(use);
+        }
+        finally
+        {
+            _current = was;
+        }
+    }
+
+    /// <summary>The names <paramref name="template"/>'s verdict was reached against, and every name nobody's in particular, sorted.</summary>
+    public IReadOnlyList<string> UsesOf(string template)
+    {
+        SortedSet<string> all = new SortedSet<string>(_shared, StringComparer.Ordinal);
+        if (_uses.TryGetValue(template, out SortedSet<string>? uses))
+            all.UnionWith(uses);
+        return new List<string>(all);
     }
 
     /// <summary>

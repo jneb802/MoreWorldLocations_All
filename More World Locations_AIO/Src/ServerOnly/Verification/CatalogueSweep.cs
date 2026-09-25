@@ -219,6 +219,15 @@ public static class CatalogueSweep
             Conclude(SweepState.Done, attempt.Reused, onComplete, null);
             yield break;
         }
+        if (attempt != null && attempt.Reusable.Count > 0)
+        {
+            // The verdicts that stand are taken in their place in the order;
+            // the audit opens only the templates whose inputs changed.
+            List<CatalogueEntry> reused = new List<CatalogueEntry>(attempt.Reusable.Count);
+            foreach (StoredVerdict verdict in attempt.Reusable.Values)
+                reused.Add(verdict.Entry);
+            run.Reuse(reused);
+        }
 
         IEnumerator audit = AuditRoutine(run, token, onComplete, attempt);
         while (audit.MoveNext())
@@ -257,6 +266,10 @@ public static class CatalogueSweep
 
             bool opens = run.NextOpensATemplate;
             string name = run.Next!.Value.Name;
+            // Whatever the live game is asked from here until the next name is
+            // this template's: its preload, its mocks, its comparison.
+            if (opens)
+                attempt?.Record?.Begin(name);
 
             // 1. Load ahead, off the main thread, and give it a bounded moment.
             ITemplatePreload? preload = opens ? SafePreload(name) : null;

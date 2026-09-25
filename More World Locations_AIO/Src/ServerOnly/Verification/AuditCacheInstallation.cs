@@ -61,11 +61,11 @@ public static class AuditCacheInstallation
     }
 
     /// <summary>
-    /// The installation's key parts. Throws on anything it cannot read: a part
+    /// The installation's key parts and each template's own files. Throws on anything it cannot read: a part
     /// it could not compute is a part it cannot vouch for, and the caller turns
     /// that into a miss that stores nothing.
     /// </summary>
-    private static IReadOnlyDictionary<string, string> Compute()
+    private static InstalledInputs Compute(IReadOnlyCollection<string> templateNames)
     {
         string? cache = AuditCache.CachePath();
         string cacheFull = cache == null ? "" : Path.GetFullPath(cache);
@@ -75,12 +75,14 @@ public static class AuditCacheInstallation
             cacheFull.Length > 0 && (string.Equals(path, cacheFull, StringComparison.OrdinalIgnoreCase)
                                      || path.StartsWith(cacheFull + ".", StringComparison.OrdinalIgnoreCase));
 
-        string mwlDirectory = Path.GetDirectoryName(PluginLocation(More_World_Locations_AIOPlugin.ModGUID,
-            typeof(More_World_Locations_AIOPlugin).Assembly)) ?? throw new InvalidOperationException("MWL's folder is unknown");
+        string mwlAssembly = PluginLocation(More_World_Locations_AIOPlugin.ModGUID, typeof(More_World_Locations_AIOPlugin).Assembly);
+        string mwlDirectory = Path.GetDirectoryName(mwlAssembly) ?? throw new InvalidOperationException("MWL's folder is unknown");
 
         return AuditCacheCanonical.Installation(
             mwlDirectory,
-            Path.GetDirectoryName(AssetBundles.manifestPath),
+            AssetBundles.manifestPath,
+            mwlAssembly,
+            templateNames,
             Paths.ConfigPath,
             More_World_Locations_AIOPlugin.ModGUID,
             Required(typeof(ZNet).Assembly.Location, "the game's assembly"),
@@ -89,8 +91,16 @@ public static class AuditCacheInstallation
             SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null,
             PluginLocation(JotunnGuid, typeof(Jotunn.Main).Assembly),
             Paths.BepInExAssemblyDirectory,
+            MwlCode(),
             isCache);
     }
+
+    // The code does not change while the process runs; the text is computed once.
+    private static string? s_mwlCode;
+
+    /// <summary>MWL's server-only code and embedded data, as the key's <c>mwl-code</c> part (<see cref="AuditCacheCode"/>).</summary>
+    private static string MwlCode() =>
+        s_mwlCode ??= AuditCacheCode.Canonical(typeof(More_World_Locations_AIOPlugin).Assembly, AuditCacheCode.InServerOnly);
 
     /// <summary>
     /// Read at run time, not compiled in: a constant from the publicized
