@@ -303,7 +303,13 @@ public static class AuditCacheCode
         }
     }
 
-    private static string Name(Type type) => type.FullName ?? type.ToString();
+    /// <summary>
+    /// A type's name without any assembly's: <c>FullName</c> spells a generic
+    /// type's arguments with their assembly names and versions, so every
+    /// <c>List&lt;SomeMwlType&gt;</c> carried MWL's own version and a release that
+    /// changed only that re-audited everything (station, 25 Sep 2026).
+    /// </summary>
+    private static string Name(Type type) => type.ToString();
 
     private static string Constant(FieldInfo field)
     {

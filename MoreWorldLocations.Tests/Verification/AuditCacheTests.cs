@@ -567,6 +567,9 @@ public class AuditCacheTests
         Assert.Contains("type\tMore_World_Locations_AIO.ServerOnly.Verification.AuditCache\t", code);
         Assert.Contains("\tMwlCacheVersion\tSystem.Int32\t", code);
         Assert.DoesNotContain("type\tMore_World_Locations_AIO.Tests.", code);
+        // No assembly's version: a generic's FullName names its arguments' assemblies, MWL's own included.
+        Assert.DoesNotContain("Version=", code);
+        Assert.DoesNotContain("PublicKeyToken", code);
     }
 
     // ---------------------------------------------------------------- failing closed
