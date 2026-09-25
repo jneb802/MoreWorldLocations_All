@@ -22,6 +22,15 @@ public class StatusEffectDB
             se.m_damageModifier = 0f;
             se.m_tooltip = "You cannot deal damage in this area.";
         });
+
+        // OnItemsRegistered runs after Jotunn's status-effect registration pass.
+        // Register Peaceful in this ObjectDB too, so areas work on the first join.
+        string peacefulName = ProtectedLocationPeacefulArea.StatusEffectName;
+        if (ObjectDB.instance.GetStatusEffect(peacefulName.GetStableHashCode()) == null &&
+            StatusEffects.TryGetValue(peacefulName, out CustomStatusEffect peacefulEffect))
+        {
+            ObjectDB.instance.m_StatusEffects.Add(peacefulEffect.StatusEffect);
+        }
         
         // CreateClonedStatusEffect("GP_Eikthyr", "MWL_GP_Eikthyr", 1800f);
         // CreateClonedStatusEffect("GP_TheElder", "MWL_GP_TheElder", 1800f);
