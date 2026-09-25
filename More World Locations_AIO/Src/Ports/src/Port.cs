@@ -18,27 +18,33 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public readonly ContainerPlacement m_containers = new();
     public Humanoid? m_currentHumanoid;
     private readonly TempItems m_tempItems = new();
-    private bool m_hasOpenDelivery;
     private bool m_initialized;
+    private bool m_openPending;
+    private bool m_migrationFailed;
     public void Awake()
     {
         m_view = GetComponent<ZNetView>();
         if (!m_view.IsValid()) return;
+        m_view.Register("MWL_RequestPortControl", RPC_RequestPortControl);
         
         m_name = m_view.GetZDO().GetString(PortVars.Name, NameGenerator.GenerateName());
         m_portID.GUID = m_view.GetZDO().GetString(PortVars.GUID, Guid.NewGuid().ToString());
         m_portID.Name = m_name;
-        m_view.GetZDO().Set(PortVars.GUID, m_portID.GUID);
-        m_view.GetZDO().Set(PortVars.Name, m_name);
         
         m_traderName = m_view.GetZDO().GetString(PortVars.TraderName, TraderNames.GetRandomName());
-        m_view.GetZDO().Set(PortVars.TraderName, m_traderName);
+        if (m_view.IsOwner())
+        {
+            m_view.GetZDO().Set(PortVars.GUID, m_portID.GUID);
+            m_view.GetZDO().Set(PortVars.Name, m_name);
+            m_view.GetZDO().Set(PortVars.TraderName, m_traderName);
+        }
     }
 
     public void Start()
     {
         if (!m_view.IsValid()) return;
         StartCoroutine(InitCoroutine());
+        InvokeRepeating(nameof(RefreshContainers), 1f, 1f);
     }
 
     private IEnumerator InitCoroutine()
@@ -55,59 +61,73 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         if (m_initialized) return;
 
-        var locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
+        LocationProxy? locationProxy = WorldUtils.GetLocationInRange(this.transform.position, 10);
         if (locationProxy == null) return;
 
         Transform locationRoot = locationProxy.transform;
         foreach (Transform child in locationRoot.FindAllRecursive("containerPosition"))
         {
-            TempContainer temp = new TempContainer(child);
+            TempContainer temp = new TempContainer(this, child, m_containers.Placements.Count);
             m_containers.Placements.Add(temp);
         }
 
         if (m_containers.Placements.Count == 0) return;
 
-        LoadSavedItems();
         m_initialized = true;
+        RefreshContainers();
     }
 
-    public void OnDestroy()
+    private void RefreshContainers()
     {
-        DestroyContainers();
-        // TODO: check multiplayer, if a player leaves, does it affect another player still interacting with port ??
-        Manifest.ResetPurchasedManifests();
-    }
-
-    public void SaveItems()
-    {
-        m_tempItems.Clear();
-        if (!m_view.IsValid())
+        if (!m_view.IsValid()) return;
+        if (!m_initialized) { EnsureInitialized(); return; }
+        foreach (TempContainer temp in m_containers.Placements) temp.Refresh();
+        // Only the network owner converts the old snapshot. Normal chests then own
+        // their inventory data; loading a port must never replay that snapshot.
+        if (m_view.IsOwner() && !m_migrationFailed && !m_view.GetZDO().GetBool(PortVars.PersistentContainers))
         {
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug("ZNETVIEW not valid when trying to save items");
-            return;
-        }
-        if (m_containers.HasItems())
-        {
-            m_tempItems.Add(m_containers.GetSpawnedContainers());
-            ZPackage pkg = new ZPackage();
-            pkg.Write(m_tempItems.Items.Count);
-            foreach (ShipmentItem? item in m_tempItems.Items)
+            try
             {
-                item.Write(pkg);
+                if (!LoadSavedItems()) throw new InvalidOperationException("Could not restore every saved shipping item.");
             }
-            m_view.GetZDO().Set(PortVars.Items, pkg.GetBase64());
-        }
-        else
-        {
+            catch (Exception exception)
+            {
+                DestroyContainers();
+                m_migrationFailed = true;
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError($"Port {m_name}: saved items were retained because migration failed: {exception}");
+                return;
+            }
+            m_view.GetZDO().Set(PortVars.PersistentContainers, true);
             m_view.GetZDO().Set(PortVars.Items, "");
         }
+        if (m_view.IsOwner() && m_view.GetZDO().GetBool(PortVars.HasOpenDelivery) && CanModifyContainers() && !m_containers.HasItems())
+        {
+            // A remote inventory may not have loaded yet. Check the saved native
+            // inventory as well before deleting an emptied delivery's chests.
+            foreach (Container container in m_containers.GetSpawnedContainers())
+            {
+                byte[]? data = container.m_nview.GetZDO().GetByteArray(ZDOVars.s_items);
+                if (data == null) return;
+                Inventory inventory = new Inventory("Port delivery check", null, container.m_width, container.m_height);
+                inventory.Load(new ZPackage(data));
+                if (inventory.HasItems()) return;
+            }
+            SetHasOpenDelivery(false);
+            DestroyContainers();
+        }
+    }
+
+    private void RefreshItems()
+    {
+        m_tempItems.Clear();
+        m_tempItems.Add(m_containers.GetSpawnedContainers());
     }
 
     private bool LoadSavedItems()
     {
         string? data = m_view.GetZDO().GetString(PortVars.Items);
-        if (string.IsNullOrWhiteSpace(data)) return false;
-        m_hasOpenDelivery = m_view.GetZDO().GetBool(PortVars.HasOpenDelivery, false);
+        if (string.IsNullOrWhiteSpace(data)) return true;
+        m_tempItems.Clear();
         ZPackage pkg = new ZPackage(data);
         int itemCount = pkg.ReadInt();
         for (int i = 0; i < itemCount; i++)
@@ -121,13 +141,14 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public Container? SpawnContainer(Manifest manifest)
     {
         EnsureInitialized();
+        if (!CanModifyContainers()) return null;
+        if (m_containers.GetManifests().Contains(manifest)) return null;
         foreach (TempContainer? temp in m_containers.Placements)
         {
             if (temp.IsSpawned) continue;
             temp.manifest = manifest;
             Container? container = temp.Spawn();
             if (container == null) return null;
-            container.GetInventory().m_onChanged = OnContainersChanged;
             return container;
         }
         return null;
@@ -140,28 +161,59 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             temp.Destroy();
         }
     }
-    public void OnContainersChanged()
-    {
-        if (ShipmentManager.instance == null) return;
-        SaveItems();
-        if (m_containers.HasItems() || !m_hasOpenDelivery) return;
-
-        SetHasOpenDelivery(false);
-        DestroyContainers();
-    }
-
     private void SetHasOpenDelivery(bool value)
     {
-        m_hasOpenDelivery = value;
         if (m_view.IsValid()) m_view.GetZDO().Set(PortVars.HasOpenDelivery, value);
+    }
+
+    private bool CanModifyContainers()
+    {
+        if (!m_initialized || !m_view.IsOwner() || !m_view.GetZDO().GetBool(PortVars.PersistentContainers)) return false;
+        foreach (TempContainer temp in m_containers.Placements)
+        {
+            temp.Refresh();
+            if (temp.IsSpawned && (temp.SpawnedContainer == null || temp.SpawnedContainer.IsInUse() ||
+                temp.SpawnedContainer.m_nview.GetZDO().GetInt(ZDOVars.s_inUse) == 1)) return false;
+        }
+        return true;
+    }
+
+    private void RPC_RequestPortControl(long sender)
+    {
+        if (!m_view.IsOwner() || (PortUI.IsVisible() && PortUI.instance?.m_currentPort == this)) return;
+        RefreshContainers();
+        if (!CanModifyContainers()) return;
+        m_view.GetZDO().SetOwner(sender);
+    }
+
+    private IEnumerator OpenWhenReady(Humanoid user)
+    {
+        m_openPending = true;
+        m_view.InvokeRPC("MWL_RequestPortControl");
+        for (int i = 0; i < 30; i++)
+        {
+            if (!user || !m_view.IsValid()) break;
+            RefreshContainers();
+            if (CanModifyContainers())
+            {
+                m_name = m_view.GetZDO().GetString(PortVars.Name, m_name);
+                m_portID = new ShipmentManager.PortID(m_view.GetZDO().GetString(PortVars.GUID), m_name);
+                ShipmentManager.RequestShipments();
+                PortUI.instance?.Show(this);
+                if (user is Player player) player.AddKnownPort(m_portID);
+                m_currentHumanoid = user;
+                m_openPending = false;
+                yield break;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (user) user.Message(MessageHud.MessageType.Center, "$msg_inuse");
+        m_openPending = false;
     }
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
-        if (PortUI.instance == null) return false;
-        ShipmentManager.RequestShipments();
-        PortUI.instance.Show(this);
-        if (user is Player player) player.AddKnownPort(m_portID);
-        m_currentHumanoid = user;
+        if (hold || PortUI.instance == null || m_openPending) return false;
+        StartCoroutine(OpenWhenReady(user));
         return false;
     }
 
@@ -177,11 +229,6 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     private bool LoadItems(List<ShipmentItem> items)
     {
-        // remove callback
-        foreach (Container container in m_containers.GetSpawnedContainers())
-        {
-            container.GetInventory().m_onChanged = null;
-        }
         // load items
         foreach (ShipmentItem item in items)
         {
@@ -189,26 +236,26 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             if (container == null)
             {
                 More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"Failed to create container: {item.ChestID}, max container spawned ??");
-                continue;
+                DestroyContainers();
+                return false;
             }
+            container.m_nview.ClaimOwnership();
             if (!item.AddItem(container))
             {
                 More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug("Failed to add item: " + item.ItemName);
+                DestroyContainers();
+                return false;
             }
         }
-        // reset callback
-        foreach (Container container in m_containers.GetSpawnedContainers())
-        {
-            container.GetInventory().m_onChanged = OnContainersChanged;
-        }
-        // save to ZDO and temp items
-        OnContainersChanged();
+        // Keep Container.OnContainerChanged attached: it saves and synchronizes
+        // every inventory change through the normal Valheim chest record.
         return true;
     }
 
     public bool LoadDelivery(Shipment delivery)
     {
         EnsureInitialized();
+        if (!CanModifyContainers()) return false;
         if (!delivery.CanAccess(Player.m_localPlayer))
         {
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.ShipmentNotOwned);
@@ -220,7 +267,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.FailedToLoadDelivery);
             return false;
         }
-        LoadItems(delivery.Items);
+        if (!LoadItems(delivery.Items)) return false;
         if (!m_containers.HasItems()) return false;
 
         // Once a delivery is opened, its contents live in the destination port chests.
@@ -233,6 +280,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     public bool SendShipment(PortInfo selectedPort)
     {
+        if (!CanModifyContainers()) return false;
         if (!m_containers.HasItems())
         {
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.FailedToSend);
@@ -261,6 +309,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public string GetTooltip()
     {
         if (!m_containers.HasItems()) return "";
+        RefreshItems();
         StringBuilder sb = new StringBuilder();
         sb.Append($"{LocalKeys.CurrentShipments}:");
         sb.Append($"\n{LocalKeys.Cost}: <color=orange>{ShipmentManager.CurrencyItem?.m_shared.m_name ?? "$item_coins"}</color> <color=yellow>x{m_containers.GetCost()}</color>");
@@ -368,52 +417,67 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         // to keep relevant information organized
         // and keep the Spawn function within its own scope
         private readonly Transform transform;
+        private readonly Port port;
+        private readonly string slotKey;
         public Manifest? manifest;
-        public bool IsSpawned => SpawnedContainer != null;
+        public bool IsSpawned => !string.IsNullOrEmpty(port.m_view.GetZDO().GetString(slotKey));
         public Container? SpawnedContainer;
 
-        public TempContainer(Transform transform)
+        public TempContainer(Port port, Transform transform, int slot)
         {
+            this.port = port;
             this.transform = transform;
+            slotKey = "MWL_PortChest_" + slot;
+        }
+
+        public void Refresh()
+        {
+            string token = port.m_view.GetZDO().GetString(slotKey);
+            if (string.IsNullOrEmpty(token))
+            {
+                SpawnedContainer = null;
+                manifest = null;
+                return;
+            }
+            SpawnedContainer = PortChest.Find(token);
+            if (Manifest.Manifests.TryGetValue(port.m_view.GetZDO().GetInt(slotKey + "_prefab"), out Manifest found)) manifest = found;
         }
 
         public Container? Spawn()
         {
-            if (manifest == null) return null;
+            if (manifest == null || !port.m_view.IsOwner() || IsSpawned) return null;
             int hash = manifest.ChestStableHashCode;
             // had to create chest by setup ZDO first
             ZDO? zdo = ZDOMan.instance.CreateNewZDO(transform.position, hash);
             // set all the data in the zdo
-            zdo.Persistent = false;
+            zdo.Persistent = true;
             zdo.Type = ZDO.ObjectType.Default;
             zdo.Distant = false;
             zdo.SetPrefab(hash);
             zdo.SetRotation(transform.rotation);
             zdo.SetOwner(ZDOMan.GetSessionID());
+            string token = Guid.NewGuid().ToString();
+            zdo.Set(PortChest.TokenKey, token);
             // then tell znetscene to create object
             GameObject? chest = ZNetScene.instance.CreateObject(zdo);
             // and use that return
             Container? container = chest.GetComponent<Container>();
             // set temp container as spawned and hold reference
             SpawnedContainer = container;
-            // set manifest to purchased to remove from UI list
-            manifest.IsPurchased = true;
+            port.m_view.GetZDO().Set(slotKey, token);
+            port.m_view.GetZDO().Set(slotKey + "_prefab", hash);
             manifest.PlaceEffect?.Create(chest.transform.position, chest.transform.rotation);
             return container;
         }
 
         public void Destroy()
         {
-            if (SpawnedContainer == null || !SpawnedContainer.m_nview.IsValid()) return;
-            if (manifest != null)
-            {
-                // reset manifest to make it available to purchase again
-                manifest.IsPurchased = false;
-                // remove reference
-                manifest = null;
-            }
+            if (!port.m_view.IsOwner() || SpawnedContainer == null || !SpawnedContainer.m_nview.IsValid()) return;
             SpawnedContainer.m_nview.ClaimOwnership();
             SpawnedContainer.m_nview.Destroy();
+            port.m_view.GetZDO().Set(slotKey, "");
+            port.m_view.GetZDO().Set(slotKey + "_prefab", 0);
+            manifest = null;
             // remove reference
             SpawnedContainer = null;
         }
@@ -505,6 +569,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         public static readonly int Items = "PortItems".GetStableHashCode();
         public static readonly int TraderName = "PortTraderName".GetStableHashCode();
         public static readonly int HasOpenDelivery = "PortHasOpenDelivery".GetStableHashCode();
+        public static readonly int PersistentContainers = "MWL_PortPersistentContainers".GetStableHashCode();
         
     }
 }

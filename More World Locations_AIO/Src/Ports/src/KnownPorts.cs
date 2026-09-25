@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using HarmonyLib;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace More_World_Locations_AIO;
@@ -8,28 +6,6 @@ namespace More_World_Locations_AIO;
 public static class KnownPorts
 {
     private const string CustomDataKey = "MWL_KnownPorts";
-    private static SerializedGuid? localKnownPorts; // cache player known ports
-    
-    [HarmonyPatch(typeof(Player), nameof(Player.Load))]
-    private static class Player_Load_Patch
-    {
-        [UsedImplicitly]
-        private static void Postfix(Player __instance)
-        {
-            localKnownPorts = new SerializedGuid(__instance);
-        }
-    }
-
-    [HarmonyPatch(typeof(Player), nameof(Player.Save))]
-    private static class Player_Save_Patch
-    {
-        [UsedImplicitly]
-        private static void Prefix(Player __instance)
-        {
-            localKnownPorts?.Save(__instance);
-        }
-    }
-
     private class SerializedGuid
     {
         private readonly List<string> GUIDs = new();
@@ -72,14 +48,15 @@ public static class KnownPorts
 
     public static bool IsKnownPort(this Player player, ShipmentManager.PortID portID)
     {
-        localKnownPorts ??= new SerializedGuid(player);
-        return localKnownPorts.IsKnownPort(portID);
+        SerializedGuid knownPorts = new SerializedGuid(player);
+        return knownPorts.IsKnownPort(portID);
     }
 
     public static void AddKnownPort(this Player player, ShipmentManager.PortID portID)
     {
-        localKnownPorts ??= new SerializedGuid(player);
-        localKnownPorts.Add(portID);
+        SerializedGuid knownPorts = new SerializedGuid(player);
+        knownPorts.Add(portID);
+        knownPorts.Save(player);
     }
 
     public static void ResetKnownPorts(this Player player) => player.m_customData.Remove(CustomDataKey);
