@@ -339,6 +339,32 @@ public class AuditCacheTests
     }
 
     [Fact]
+    public void ARewrittenCfgCommentIsNotAChangeButAValueIs()
+    {
+        // As BepInEx writes MWL's settings every start: the analytics id's
+        // DEFAULT is a fresh random value each time, while its value stays.
+        const string cfg = "warpalicious.More_World_Locations_AIO.cfg";
+        using Installation install = new Installation();
+        install.Write("config/" + cfg,
+            "## Settings file was created by plugin More_World_Locations_AIO\n\n[Analytics]\n\n" +
+            "## Random anonymous ID. Change or delete to reset.\n# Setting type: String\n" +
+            "# Default value: 30ee238c-4f80-4da6-89a7-df331feaa7c3\nInstanceID = 4e5ad3bc\n");
+        AuditCacheKey before = install.Key();
+        string stored = AuditCacheFile.Render(before, SampleReport(), SampleStock);
+
+        install.Write("config/" + cfg,
+            "## Settings file was created by plugin More_World_Locations_AIO\r\n\r\n[Analytics]\r\n\r\n" +
+            "## Random anonymous ID. Change or delete to reset.\r\n# Setting type: String\r\n" +
+            "# Default value: cbe17a60-757f-47f2-b41c-e7fd8091bbba\r\nInstanceID = 4e5ad3bc\r\n");
+        Assert.Equal(before.Digest, install.Key().Digest);
+
+        install.Write("config/" + cfg, "[Analytics]\nInstanceID = something else\n");
+        AuditCacheLookup lookup = AuditCacheFile.Parse(stored, install.Key());
+        Assert.Equal(AuditCacheMiss.KeyChanged, lookup.Miss);
+        Assert.Equal(new[] { "mwl-config" }, lookup.Changed);
+    }
+
+    [Fact]
     public void BundlesFoundOutsideMwlsFolderAreHashedToo()
     {
         using Installation install = new Installation();

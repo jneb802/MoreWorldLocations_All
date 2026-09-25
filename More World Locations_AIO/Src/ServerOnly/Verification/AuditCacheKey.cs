@@ -300,7 +300,14 @@ public static class AuditCacheCanonical
             mwlText += Tree("manifest", HashTree(manifestDirectory!, null, exclude));
         // Only MWL's own settings: other plugins' files reach a verdict through
         // the stock prefabs alone, and those are checked prefab by prefab.
-        FileTree config = HashTree(configDirectory, relative => IsMwlConfigFile(relative, pluginGuid), exclude);
+        // A .cfg is read by its settings, not its bytes: BepInEx rewrites the
+        // comment block every start, and one setting's default is a fresh
+        // random id each time, so the file's bytes change on every boot while
+        // no value does.
+        FileTree config = HashTree(configDirectory, relative => IsMwlConfigFile(relative, pluginGuid), exclude,
+            (relative, absolute) => relative.EndsWith(".cfg", StringComparison.OrdinalIgnoreCase)
+                ? Sha256OfCfgSettings(absolute)
+                : Sha256OfFile(absolute));
 
         return new Dictionary<string, string>(StringComparer.Ordinal)
         {
@@ -354,8 +361,10 @@ public static class AuditCacheCanonical
     /// </summary>
     /// <param name="include">Which relative paths count; null for all of them.</param>
     /// <param name="exclude">Full paths never to read — the cache file itself, should it be kept inside a hashed folder.</param>
+    /// <param name="hash">How one file is digested, from its relative and full path; null for its bytes.</param>
     /// <exception cref="IOException">A file that cannot be read. Not skipped: a file the key could not read is a file it cannot vouch for.</exception>
-    public static FileTree HashTree(string root, Func<string, bool>? include = null, Func<string, bool>? exclude = null)
+    public static FileTree HashTree(string root, Func<string, bool>? include = null, Func<string, bool>? exclude = null,
+        Func<string, string, string>? hash = null)
     {
         if (root == null) throw new ArgumentNullException(nameof(root));
         if (!Directory.Exists(root))
@@ -377,10 +386,30 @@ public static class AuditCacheCanonical
             relative = relative.Replace('\\', '/');
             if (include != null && !include(relative))
                 continue;
-            files.Add(new KeyValuePair<string, string>(relative, Sha256OfFile(absolute)));
+            files.Add(new KeyValuePair<string, string>(relative, hash != null ? hash(relative, absolute) : Sha256OfFile(absolute)));
         }
         files.Sort((a, b) => string.CompareOrdinal(a.Key, b.Key));
         return new FileTree(true, files);
+    }
+
+    /// <summary>
+    /// The digest of a BepInEx .cfg by what it sets: every line that is not
+    /// blank and not a '#' comment, trimmed, in order. Section headers and
+    /// "key = value" lines are all a .cfg holds besides comments, so a change
+    /// to any value still changes the digest; a rewritten description or
+    /// default does not.
+    /// </summary>
+    public static string Sha256OfCfgSettings(string path)
+    {
+        StringBuilder settings = new StringBuilder();
+        foreach (string line in File.ReadAllLines(path, new UTF8Encoding(false)))
+        {
+            string trimmed = line.Trim();
+            if (trimmed.Length == 0 || trimmed[0] == '#')
+                continue;
+            settings.Append(trimmed).Append('\n');
+        }
+        return Sha256Hex(settings.ToString());
     }
 
     public static string Sha256OfFile(string path)
