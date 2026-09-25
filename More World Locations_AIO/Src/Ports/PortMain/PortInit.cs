@@ -137,7 +137,8 @@ public static class PortInit
 
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
-            prefab.GetComponent<ZNetView>().m_persistent = false;
+            prefab.GetComponent<ZNetView>().m_persistent = true;
+            prefab.AddComponent<PortChest>();
 
             // current size 10
             Manifest manifest = new Manifest("Wooden Shipment", prefab.GetComponent<Container>());
@@ -155,7 +156,8 @@ public static class PortInit
             var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
-            prefab.GetComponent<ZNetView>().m_persistent = false;
+            prefab.GetComponent<ZNetView>().m_persistent = true;
+            prefab.AddComponent<PortChest>();
 
             // current size 12
             Manifest manifest = new Manifest("Barrel Shipment", prefab.GetComponent<Container>());
@@ -173,7 +175,8 @@ public static class PortInit
             var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
-            prefab.GetComponent<ZNetView>().m_persistent = false;
+            prefab.GetComponent<ZNetView>().m_persistent = true;
+            prefab.AddComponent<PortChest>();
 
             // current size 24
             Manifest manifest = new Manifest("Fine Shipment", prefab.GetComponent<Container>());
@@ -191,7 +194,8 @@ public static class PortInit
             var placeEffect = prefab.GetComponent<Piece>().m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
-            prefab.GetComponent<ZNetView>().m_persistent = false;
+            prefab.GetComponent<ZNetView>().m_persistent = true;
+            prefab.AddComponent<PortChest>();
 
             // current size 32
             Manifest manifest = new Manifest("Fuling Shipment", prefab.GetComponent<Container>());
@@ -212,7 +216,8 @@ public static class PortInit
             var placeEffect = Jotunn.Managers.PrefabManager.Cache.GetPrefab<Piece>("piece_chest_blackmetal").m_placeEffect;
             prefab.RemoveComponent<Piece>();
             prefab.RemoveComponent<WearNTear>();
-            prefab.GetComponent<ZNetView>().m_persistent = false;
+            prefab.GetComponent<ZNetView>().m_persistent = true;
+            prefab.AddComponent<PortChest>();
             
             // current size 8, let's change that
             var container = prefab.GetComponent<Container>();

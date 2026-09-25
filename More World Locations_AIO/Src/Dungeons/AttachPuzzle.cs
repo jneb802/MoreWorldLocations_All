@@ -323,7 +323,7 @@ public class AttachPuzzle : MonoBehaviour
             }
 
             providedSolution[puzzleTarget.Position] =
-                itemStand.GetAttachedItem() == solutionItemName ? 1 : 0;
+                itemStand.GetAttachedItem() == solutionItemName.GetStableHashCode() ? 1 : 0;
         }
 
         return providedSolution.SequenceEqual(puzzleSolution);
@@ -333,15 +333,15 @@ public class AttachPuzzle : MonoBehaviour
     {
         int prefabHash = prefabName.GetStableHashCode();
 
-        Vector2i sector = ZoneSystem.GetZone(position);
-        int sectorIndex = ZDOMan.instance.SectorToIndex(sector);
+        Vector2s sector = ZoneSystem.GetZone(position);
+        ZoneSystem.SectorIndex sectorIndex = ZoneSystem.SectorToIndex(sector);
 
-        if (sectorIndex < 0 || sectorIndex >= ZDOMan.instance.m_objectsBySector.Length)
+        if (sectorIndex.Sector >= ZDOMan.instance.m_objectsBySector.Length)
         {
             return null;
         }
 
-        List<ZDO> sectorList = ZDOMan.instance.m_objectsBySector[sectorIndex];
+        List<ZDO> sectorList = ZDOMan.instance.m_objectsBySector[(int)sectorIndex.Sector];
         if (sectorList == null)
         {
             return null;

@@ -532,8 +532,6 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 if (m_currentPort.SpawnContainer(m_selectedManifest) is {} container)
                 {
                     Player.m_localPlayer.Purchase(m_selectedManifest);
-                    // set manifest to purchased
-                    m_selectedManifest.IsPurchased = true;
                     // reload manifests to visually update list of manifests
                     // with all manifests that are NOT purchased
                     // we do this so there are no duplicate manifests being sent in a single shipment
@@ -555,7 +553,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 break;
             case TabOption.Teleport:
                 if (m_selectedDestination == null || !Player.m_localPlayer) return;
-                if (!Player.m_localPlayer.IsTeleportable())
+                if (!Player.m_localPlayer.IsTeleportable(allowAllItems: false))
                 {
                     Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_noteleport");
                     return;
@@ -647,7 +645,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void AddManifest(Manifest manifest)
     {
         if (!Player.m_localPlayer.IsKnownManifest(manifest)) return;
-        if (manifest.IsPurchased) return;
+        if (m_currentPort != null && m_currentPort.m_containers.GetManifests().Contains(manifest)) return;
         TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
         item.SetIcon(manifest.Icon);
         item.SetLabel(manifest.Name);

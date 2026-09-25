@@ -286,10 +286,13 @@ public class ShipmentItem
     /// <returns></returns>
     public bool AddItem(Container container)
     {
-        ItemDrop.ItemData? item = container.GetInventory().AddItem(ItemName, Stack, Quality, Variant, CrafterID, CrafterName);
+        ItemDrop.ItemData? item = container.GetInventory().AddItem(
+            ItemName, Stack, Quality, Variant, CrafterID, CrafterName, cheated: false);
         if (item == null) return false;
         item.m_durability = Durability;
         item.m_customData = CustomData;
+        // AddItem saves before these fields are restored. Save the complete item too.
+        container.GetInventory().m_onChanged?.Invoke();
         return true;
     }
     /// <summary>

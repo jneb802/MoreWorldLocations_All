@@ -20,7 +20,6 @@ public class Manifest
     public Sprite? Icon;
     public EffectList? PlaceEffect;
 
-    public bool IsPurchased;
     private static StringBuilder sb = new StringBuilder();
 
     private string _creatureName = string.Empty;
@@ -60,6 +59,8 @@ public class Manifest
     {
         Name = name;
         Chest = container;
+        // The port clears its saved slot when it removes a chest.
+        Chest.m_autoDestroyEmpty = false;
         ChestStableHashCode = container.name.GetStableHashCode();
         if (Manifests.ContainsKey(ChestStableHashCode))
         {
@@ -79,10 +80,6 @@ public class Manifest
         return sb.ToString();
     }
 
-    public static void ResetPurchasedManifests()
-    {
-        foreach (Manifest manifest in Manifests.Values) manifest.IsPurchased = false;
-    }
     
     public class ManifestRecipe
     {
@@ -132,7 +129,6 @@ public static class ManifestHelpers
                 inventory.RemoveItem(requirement.Item.m_shared.m_name, requirement.Amount);
             }
         }
-        manifest.IsPurchased = true;
     }
 
     public static bool HasRequirements(this Player player, Manifest manifest)
