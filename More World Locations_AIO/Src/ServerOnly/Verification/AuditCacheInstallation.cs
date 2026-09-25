@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
-using Jotunn.Managers;
 using UnityEngine;
 
 namespace More_World_Locations_AIO.ServerOnly.Verification;
@@ -33,9 +32,10 @@ public static class AuditCacheInstallation
         try
         {
             // The mock resolution hook first: without it the record would miss
-            // every non-GameObject asset a template's mocks ask for, so a cache
-            // that cannot see those is a cache that stays off.
-            // Internal to Jötunn, so by name, as the reference guard finds it.
+            // the prefabs a template's mocks are copied from when the copy is
+            // not itself looked up (a child-path mock, say), so a cache that
+            // cannot see those is a cache that stays off. Internal to Jötunn,
+            // so found by name, as the reference guard finds it.
             Type? mockManager = AccessTools.TypeByName("Jotunn.Managers.MockManager");
             MethodInfo? target = mockManager == null ? null : AccessTools.Method(mockManager, "GetRealPrefabFromMock",
                 new[] { typeof(UnityEngine.Object), typeof(Type) });
@@ -117,38 +117,13 @@ public static class AuditCacheInstallation
         string.IsNullOrEmpty(path) ? throw new InvalidOperationException($"{what} has no file location") : path;
 
     /// <summary>
-    /// A name's live signature: the prefab the audit's stock lookup finds, and
-    /// the one Jötunn's mock resolution finds, each through
-    /// <see cref="TemplateFactsExtractor.LiveSignature"/>. Both, because they
-    /// are two lookups and a template's copy of a mocked prefab came from the
-    /// second while its comparison baseline came from the first. Null when
-    /// neither exists.
+    /// A stock name's live signature, from the lookup the comparison itself
+    /// uses as its baseline (ZNetScene first). Not Jötunn's cache of every
+    /// loaded object: that answers with whatever object of the name happens to
+    /// be loaded, template pieces included, and its answer moves as the audit
+    /// opens and releases templates.
     /// </summary>
-    private static string? LiveStock(string name)
-    {
-        if (AuditCache.TryParseAssetKey(name, out string typeName, out string assetName))
-        {
-            // A mocked asset that is not a GameObject. What a verdict reads of
-            // one is its name, so whether it resolves, and to what, is the
-            // whole of it.
-            Type? type = Type.GetType(typeName, false);
-            if (type == null)
-                return "type not loaded: " + typeName;
-            UnityEngine.Object found = PrefabManager.Cache.GetPrefab(type, assetName);
-            return found == null ? null : "asset|" + found.name + "|" + found.GetType().FullName;
-        }
-
-        GameObject? stock = TemplateAssets.StockPrefabs?.Invoke(name);
-        GameObject? loaded = PrefabManager.Cache.GetPrefab<GameObject>(name);
-        if (stock == null && loaded == null)
-            return null;
-
-        string stockText = stock == null ? "-" : TemplateFactsExtractor.LiveSignature(stock);
-        string loadedText = loaded == null ? "-"
-            : ReferenceEquals(loaded, stock) ? "(the same object)"
-            : TemplateFactsExtractor.LiveSignature(loaded);
-        return "stock\n" + stockText + "loaded\n" + loadedText;
-    }
+    private static string? LiveStock(string name) => AuditCache.SignStock(name, TemplateAssets.StockPrefabs);
 
     /// <summary>
     /// Every mock Jötunn looks up while a storing audit runs, recorded by the
@@ -168,16 +143,14 @@ public static class AuditCacheInstallation
                 name = name.Substring(0, name.Length - "(Instance)".Length);
             else if (__1 == typeof(Mesh) && name.EndsWith("Instance", StringComparison.Ordinal))
                 name = name.Substring(0, name.Length - "Instance".Length);
-            if (!AuditCache.TryMockAsset(name, out string asset, out bool childPath))
+            if (!AuditCache.TryMockAsset(name, out string asset, out _))
                 return;
 
-            // A GameObject mock, or any mock with a child path, is resolved
-            // from the prefab of that name. A plain asset mock is looked up as
-            // itself first and then, failing that, inside the prefab of the
-            // same name, so both are recorded.
+            // By the asset asked for, whatever the type: a GameObject mock, or
+            // one with a child path, is copied from the prefab of that name, and
+            // a plain asset mock falls back to looking inside it. Only a stock
+            // name is signed; see StockRecord.
             record.Consulted(asset);
-            if (__1 != typeof(GameObject) && !childPath)
-                record.Consulted(AuditCache.AssetKey(__1, asset));
         }
         catch
         {

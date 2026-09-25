@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using UnityEngine;
 
 namespace More_World_Locations_AIO.ServerOnly.Verification;
 
@@ -48,11 +49,38 @@ public static class AuditCache
     public static Func<IReadOnlyDictionary<string, string>>? Installation { get; set; }
 
     /// <summary>
-    /// A stock prefab's live signature by name, or null when nothing of that
-    /// name exists. The same text at audit time and at the next start means the
+    /// A stock prefab's live signature by name — <see cref="SignStock"/> over
+    /// the audit's own baseline lookup in a real start. Null when nothing of
+    /// that name exists; <see cref="StockRecord.NotStockSignature"/> when what
+    /// exists is not a stock prefab. Only ever asked about names in the stock
+    /// snapshot. The same text at audit time and at the next start means the
     /// prefab is the one the verdicts were reached against.
     /// </summary>
     public static Func<string, string?>? LiveStock { get; set; }
+
+    /// <summary>
+    /// The live signature of the stock prefab the comparison would use for
+    /// <paramref name="name"/>, found through <paramref name="baseline"/> — the
+    /// same lookup the audit compares against.
+    ///
+    /// <para>An object with a parent is never signed. A stock prefab is a root:
+    /// what the game registers and a client instantiates. Something parented is
+    /// a piece of something else — a snap point on a piece, an object inside a
+    /// template the audit has open — and a name lookup finds it only while
+    /// whatever holds it happens to be loaded. Signing it made the baseline move
+    /// with the audit's own loading and unloading, so no store could ever
+    /// succeed. It is recorded as not a stock prefab instead, which does not
+    /// change as things load.</para>
+    /// </summary>
+    public static string? SignStock(string name, Func<string, GameObject?>? baseline)
+    {
+        GameObject? prefab = baseline?.Invoke(name);
+        if (prefab == null)
+            return null;
+        if (prefab.transform.parent != null)
+            return StockRecord.NotStockSignature;
+        return TemplateFactsExtractor.LiveSignature(prefab);
+    }
 
     /// <summary>Where the file lives when the environment does not say.</summary>
     public static Func<string>? DefaultPath { get; set; }
@@ -139,7 +167,7 @@ public static class AuditCache
         if (!lookup.Hit)
         {
             Say($"catalogue audit: not reusing stored verdicts ({lookup.Reason}); auditing every template");
-            return new Attempt(path, key, null, new StockRecord(liveStock));
+            return new Attempt(path, key, null, new StockRecord(liveStock, run.Registry));
         }
 
         CatalogueReport report = lookup.Contents!.Report;
@@ -193,7 +221,7 @@ public static class AuditCache
         List<string> appeared = new List<string>();
         foreach (KeyValuePair<string, string> prefab in lookup.Contents.Stock)
         {
-            string now = StockRecord.DigestOf(liveStock, prefab.Key, out string? fault);
+            string now = StockRecord.DigestOf(liveStock, run.Registry, prefab.Key, out string? fault);
             if (fault != null)
                 return AuditCacheLookup.Missed(AuditCacheMiss.Stock, $"stock prefab '{prefab.Key}' could not be read: {fault}", new[] { prefab.Key });
             if (string.Equals(now, prefab.Value, StringComparison.Ordinal))
@@ -359,25 +387,6 @@ public static class AuditCache
         }
     }
 
-    /// <summary>A resource key for a mocked asset that is not a GameObject, so it cannot collide with a prefab name.</summary>
-    public static string AssetKey(Type type, string assetName) =>
-        "@" + (type?.AssemblyQualifiedName ?? "") + "|" + (assetName ?? "");
-
-    /// <summary>Split an <see cref="AssetKey"/>. False for a plain prefab name.</summary>
-    public static bool TryParseAssetKey(string key, out string typeName, out string assetName)
-    {
-        typeName = "";
-        assetName = "";
-        if (key == null || key.Length < 2 || key[0] != '@')
-            return false;
-        int bar = key.IndexOf('|');
-        if (bar < 0)
-            return false;
-        typeName = key.Substring(1, bar - 1);
-        assetName = key.Substring(bar + 1);
-        return true;
-    }
-
     /// <summary>
     /// The asset a mock name asks for, the way Jötunn reads it: one
     /// <c>JVLmock_</c> prefix off, then everything before a <c>__</c> child
@@ -409,14 +418,13 @@ public static class AuditCache
         return false;
     }
 
+    /// <summary>Every name, never a count of the rest: the list is what somebody diagnosing a miss needs.</summary>
     private static string Names(IReadOnlyList<string> names)
     {
-        const int shown = 8;
-        List<string> head = new List<string>();
-        for (int i = 0; i < names.Count && i < shown; i++)
-            head.Add(names[i]);
-        string text = string.Join(", ", head.ToArray());
-        return names.Count > shown ? $"{text} (+{names.Count - shown} more)" : text;
+        string[] all = new string[names.Count];
+        for (int i = 0; i < names.Count; i++)
+            all[i] = names[i];
+        return string.Join(", ", all);
     }
 
     private static void Say(string line)
@@ -449,34 +457,52 @@ public static class AuditCache
 /// digest of its signature at the time.
 ///
 /// <para><b>Why names and not "the plugins".</b> A verdict reads the running
-/// game in two places: the stock prefab each emitted object is compared with
-/// (and whose scale behaviour decides the scale rule), and the real prefabs
-/// Jötunn copies into a template when it resolves the template's mocks. Both are
-/// found by name. Any plugin can change either — edit a vanilla prefab in place,
-/// or register one under a name a template asks for — and recording the names
-/// and their content catches that whichever plugin did it, while leaving every
-/// plugin that touches nothing a template reads free to update without a
+/// game through the stock prefab each emitted object is compared with (and
+/// whose scale behaviour decides the scale rule), and through the real prefabs
+/// Jötunn copies into a template when it resolves the template's mocks. Both
+/// are found by name. Any plugin can change either — edit a vanilla prefab in
+/// place, or register one under a name a template asks for — and recording the
+/// names and their content catches that whichever plugin did it, while leaving
+/// every plugin that touches nothing a template reads free to update without a
 /// re-audit.</para>
 ///
-/// <para><b>Two kinds of name.</b> A name the audit asked for — a stock lookup,
-/// a mock the resolver looked for, a spawn or drop reference, an interior —
-/// is recorded whether or not it resolved: an absent prefab that appears
-/// changes the answer. A name an object in the resolved template merely bears
-/// is recorded only if it resolves, because only then did its content come from
-/// the live game rather than the bundle.</para>
+/// <para><b>Only stock prefabs are signed.</b> A name is signed only when it is
+/// in the embedded stock snapshot — the names a client without the mod can
+/// build — and only when what the baseline lookup finds for it is a root
+/// object (<see cref="AuditCache.SignStock"/>). Every other name the audit
+/// asked about is recorded as <see cref="NotStock"/>, whatever it resolved to
+/// at the moment: the lookup falls back to any loaded object of that name, so
+/// what it finds for a name the game does not register depends on which
+/// templates and bundles happen to be loaded, and a digest of that would change
+/// with the audit's own loading. The snapshot is part of MWL's DLL, so which
+/// names are signed cannot change without the key changing too.</para>
+///
+/// <para><b>What is recorded.</b> Every name the audit's stock lookup is asked
+/// for (the comparison and the scale conversion), every asset Jötunn's mock
+/// resolution asks for, every mock name a resolved template still carries,
+/// every spawn and drop reference, and the interior prefab. Not the names that
+/// objects in a template merely bear: a template's own children, snap points
+/// and all, are the template's content, which the key covers.</para>
 /// </summary>
 public sealed class StockRecord
 {
-    /// <summary>The digest recorded for a name that resolved to nothing.</summary>
+    /// <summary>The digest recorded for a stock name that resolved to nothing.</summary>
     public const string Absent = "-";
 
-    private readonly Func<string, string?> _sign;
-    private readonly Dictionary<string, string> _recorded = new Dictionary<string, string>(StringComparer.Ordinal);
-    private readonly HashSet<string> _absentBorne = new HashSet<string>(StringComparer.Ordinal);
+    /// <summary>The digest recorded for a name that is not a stock prefab, whether or not anything by that name is loaded.</summary>
+    public const string NotStock = "not-stock";
 
-    public StockRecord(Func<string, string?> sign)
+    /// <summary>What a signer returns for a stock name that resolved to something that is not a stock prefab.</summary>
+    public const string NotStockSignature = "\u0000not a stock prefab";
+
+    private readonly Func<string, string?> _sign;
+    private readonly StockPrefabRegistry _registry;
+    private readonly Dictionary<string, string> _recorded = new Dictionary<string, string>(StringComparer.Ordinal);
+
+    public StockRecord(Func<string, string?> sign, StockPrefabRegistry registry)
     {
         _sign = sign ?? throw new ArgumentNullException(nameof(sign));
+        _registry = registry ?? throw new ArgumentNullException(nameof(registry));
     }
 
     /// <summary>The first signing failure. Once set nothing more is recorded and nothing is stored.</summary>
@@ -490,12 +516,7 @@ public sealed class StockRecord
     {
         if (Fault != null || string.IsNullOrEmpty(name) || _recorded.ContainsKey(name))
             return;
-        if (_absentBorne.Contains(name))
-        {
-            _recorded[name] = Absent;
-            return;
-        }
-        string digest = DigestOf(_sign, name, out string? fault);
+        string digest = DigestOf(_sign, _registry, name, out string? fault);
         if (fault != null)
         {
             Fault = fault;
@@ -504,27 +525,11 @@ public sealed class StockRecord
         _recorded[name] = digest;
     }
 
-    /// <summary>A name an object in a resolved template bears. Recorded only when it resolves.</summary>
-    public void Borne(string name)
-    {
-        if (Fault != null || string.IsNullOrEmpty(name) || _recorded.ContainsKey(name) || _absentBorne.Contains(name))
-            return;
-        string digest = DigestOf(_sign, name, out string? fault);
-        if (fault != null)
-        {
-            Fault = fault;
-            return;
-        }
-        if (digest == Absent)
-            _absentBorne.Add(name);
-        else
-            _recorded[name] = digest;
-    }
-
     /// <summary>
-    /// Everything a read template's facts name: the objects it holds, what they
-    /// can spawn or drop, its interior. Mock names are recorded by the asset
-    /// they ask for.
+    /// What a read template's facts ask for by name: a mock that is still a
+    /// mock (by the asset it asks for), what its objects can spawn or drop, its
+    /// interior. The names its objects bear are not recorded; the emitted ones
+    /// reach the record through the stock lookup the comparison makes.
     /// </summary>
     public void Read(TemplateFacts facts)
     {
@@ -533,15 +538,10 @@ public sealed class StockRecord
         TemplatesRead++;
         foreach (ChildFact child in facts.Children)
         {
-            if (!child.IsRoot)
-            {
-                if (AuditCache.TryMockAsset(child.PrefabName, out string asset, out _))
-                    Consulted(asset);
-                else
-                    Borne(child.PrefabName);
-            }
+            if (!child.IsRoot && AuditCache.TryMockAsset(child.PrefabName, out string asset, out _))
+                Consulted(asset);
             foreach (string referenced in child.ReferencedPrefabs)
-                Consulted(AuditCache.TryMockAsset(referenced, out string asset, out _) ? asset : referenced);
+                Consulted(AuditCache.TryMockAsset(referenced, out string mocked, out _) ? mocked : referenced);
         }
         if (facts.InteriorPrefabName.Length > 0)
             Consulted(facts.InteriorPrefabName);
@@ -564,7 +564,7 @@ public sealed class StockRecord
         List<string> moved = new List<string>();
         foreach (KeyValuePair<string, string> entry in Entries)
         {
-            string now = DigestOf(_sign, entry.Key, out string? fault);
+            string now = DigestOf(_sign, _registry, entry.Key, out string? fault);
             if (fault != null)
             {
                 Fault ??= fault;
@@ -577,14 +577,25 @@ public sealed class StockRecord
         return moved;
     }
 
-    /// <summary>A name's digest: SHA-256 of its live signature, or <see cref="Absent"/>.</summary>
-    public static string DigestOf(Func<string, string?> sign, string name, out string? fault)
+    /// <summary>
+    /// A name's digest: <see cref="NotStock"/> for a name outside the stock
+    /// snapshot (the signer is not asked), otherwise SHA-256 of its live
+    /// signature, <see cref="Absent"/>, or <see cref="NotStock"/> when what the
+    /// lookup found is not a stock prefab.
+    /// </summary>
+    public static string DigestOf(Func<string, string?> sign, StockPrefabRegistry registry, string name, out string? fault)
     {
         fault = null;
+        if (!registry.Has(name))
+            return NotStock;
         try
         {
             string? signature = sign(name);
-            return signature == null ? Absent : AuditCacheCanonical.Sha256Hex(signature);
+            if (signature == null)
+                return Absent;
+            if (signature == NotStockSignature)
+                return NotStock;
+            return AuditCacheCanonical.Sha256Hex(signature);
         }
         catch (Exception ex)
         {

@@ -52,15 +52,11 @@ public class AuditCacheSweepTests
             Environment.SetEnvironmentVariable(ValidationSwitches.AuditCachePathVariable, CachePath);
             Environment.SetEnvironmentVariable(ValidationSwitches.AuditCacheVariable, null);
             AuditCache.Installation = () => new Dictionary<string, string>(Installation, StringComparer.Ordinal);
-            AuditCache.LiveStock = name => StockOverride.TryGetValue(name, out string? signature) ? signature : Live(name);
+            AuditCache.LiveStock = name => StockOverride.TryGetValue(name, out string? signature)
+                ? signature
+                : AuditCache.SignStock(name, TemplateAssets.StockPrefabs);
             AuditCache.DefaultPath = null;
             BepInEx.Logging.ManualLogSource.Captured = Log;
-        }
-
-        private static string? Live(string name)
-        {
-            GameObject? prefab = TemplateAssets.StockPrefabs?.Invoke(name);
-            return prefab == null ? null : TemplateFactsExtractor.LiveSignature(prefab);
         }
 
         /// <summary>A registration sweep, as a start runs it, to completion.</summary>
@@ -245,6 +241,42 @@ public class AuditCacheSweepTests
 
         Assert.True(cache.World.Opened.Count > opened);
         Assert.True(cache.Logged("(no longer resolve: wood_floor)"), string.Join("\n", cache.Log));
+    }
+
+    /// <summary>
+    /// What the first real start hit: names that are not stock prefabs — snap
+    /// points on pieces, objects inside templates — answered by whatever object
+    /// of that name was loaded at the moment, so the store refused every time.
+    /// </summary>
+    [Fact]
+    public void ObjectsThatComeAndGoWithLoadingNeitherBlockTheStoreNorAMatch()
+    {
+        TemplateWorld world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
+        GameObject withSnapPoints = Templates.Stock(LocationDB.All[0].Name);
+        withSnapPoints.Child("$hud_snappoint_bottom 1").AddComponent<ZNetView>();
+        world.WithAsset(LocationDB.All[0].Name, withSnapPoints);
+        // A stock name whose lookup finds an object inside some template.
+        GameObject elsewhere = Templates.Stock("MWL_OpenRightNow", child: "wood_floor");
+        using CacheWorld cache = new CacheWorld(world);
+        cache.World.WithStock("wood_floor", Templates.ChildOf(elsewhere, 0));
+        Func<string, GameObject?> inner = TemplateAssets.StockPrefabs!;
+        int loads = 0;
+        TemplateAssets.StockPrefabs = name => name.StartsWith("$hud_snappoint", StringComparison.Ordinal)
+            ? Templates.StockPrefab(name, "loaded " + loads++)
+            : inner(name);
+
+        cache.Sweep();
+
+        Assert.True(cache.Logged("catalogue audit: stored "), string.Join("\n", cache.Log));
+        string stored = File.ReadAllText(cache.CachePath);
+        Assert.Contains("stock\t$hud_snappoint_bottom 1\tnot-stock\n", stored);
+        Assert.Contains("stock\twood_floor\tnot-stock\n", stored);
+
+        cache.Restart();
+        int opened = cache.World.Opened.Count;
+        cache.Sweep();
+        Assert.Equal(opened, cache.World.Opened.Count);
+        Assert.True(cache.Logged("reused"), string.Join("\n", cache.Log));
     }
 
     [Fact]

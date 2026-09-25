@@ -162,6 +162,9 @@ public static class CatalogueAudit
         /// <summary>The rules' digest this run's report will carry.</summary>
         public string PolicyFingerprint => _policyFingerprint;
 
+        /// <summary>The stock snapshot this run checks names against.</summary>
+        public StockPrefabRegistry Registry => _registry;
+
         /// <summary>The stock snapshot's build this run checks names against.</summary>
         public string StockBuildId => _registry.GameBuildId;
 

@@ -59,7 +59,7 @@ public class AuditCacheTests
 
     private static readonly IReadOnlyList<KeyValuePair<string, string>> SampleStock = new[]
     {
-        new KeyValuePair<string, string>("Vines", StockRecord.Absent),
+        new KeyValuePair<string, string>("Vines", StockRecord.NotStock),
         new KeyValuePair<string, string>("wood\tfloor", "ab12"),
     };
 
@@ -399,7 +399,8 @@ public class AuditCacheTests
                 [AuditCacheMiss.NoFile] = AuditCacheFile.Load(Path.Combine(dir, "none.txt"), key),
                 [AuditCacheMiss.Magic] = AuditCacheFile.Parse("SOMETHING-ELSE\t1\n" + good.Substring(good.IndexOf('\n') + 1), key),
                 [AuditCacheMiss.FormatVersion] = AuditCacheFile.Parse(
-                    good.Replace(AuditCacheFile.Magic + "\t1\n", AuditCacheFile.Magic + "\t2\n"), key),
+                    good.Replace(AuditCacheFile.Magic + "\t" + AuditCacheFile.FormatVersion + "\n",
+                        AuditCacheFile.Magic + "\t" + (AuditCacheFile.FormatVersion - 1) + "\n"), key),
                 [AuditCacheMiss.Truncated] = AuditCacheFile.Parse(good.Substring(0, good.Length / 2), key),
                 [AuditCacheMiss.BodyDigest] = AuditCacheFile.Parse(good.Replace("\tBlocked\t", "\tCompatible\t"), key),
                 [AuditCacheMiss.CountMismatch] = AuditCacheFile.Parse(Reseal(good, body => body, counts: "7\t2"), key),
@@ -409,7 +410,7 @@ public class AuditCacheTests
             Directory.CreateDirectory(dir);
             // A valid header, then a byte sequence that is not UTF-8.
             File.WriteAllBytes(Path.Combine(dir, "bad.txt"),
-                System.Text.Encoding.ASCII.GetBytes(AuditCacheFile.Magic + "\t1\n").Concat(new byte[] { 0xc3, 0x28, 0x0a }).ToArray());
+                System.Text.Encoding.ASCII.GetBytes(AuditCacheFile.Magic + "\t" + AuditCacheFile.FormatVersion + "\n").Concat(new byte[] { 0xc3, 0x28, 0x0a }).ToArray());
             seen[AuditCacheMiss.Unreadable] = AuditCacheFile.Load(Path.Combine(dir, "bad.txt"), key);
 
             foreach (KeyValuePair<AuditCacheMiss, AuditCacheLookup> pair in seen)
@@ -509,38 +510,58 @@ public class AuditCacheTests
     }
 
     [Fact]
-    public void TheRecordKeepsWhatWasAskedForAndOnlyTheBorneNamesThatResolve()
+    public void TheRecordKeepsWhatWasAskedForAndSignsOnlyStockNames()
     {
         Dictionary<string, string> live = new Dictionary<string, string>
         {
             ["stone_wall_2x1"] = "wall",
             ["Greydwarf"] = "creature",
-            ["piece_chest_wood"] = "chest",
+            ["$hud_snappoint_bottom 1"] = "a snap point on whatever is loaded",
+            ["Missing_piece"] = "a template's own object",
         };
-        StockRecord record = new StockRecord(name => live.TryGetValue(name, out string s) ? s : null);
+        List<string> signed = new List<string>();
+        StockRecord record = new StockRecord(name =>
+        {
+            signed.Add(name);
+            return live.TryGetValue(name, out string s) ? s : null;
+        }, Fixtures.Stock);
         TemplateFacts facts = new TemplateFacts("MWL_A", "Meadows", children: new[]
         {
             new ChildFact("MWL_A", "MWL_A", false, false, true, isRoot: true),
             new ChildFact("MWL_A/wall", "stone_wall_2x1", true, false, true),
             new ChildFact("MWL_A/Cube", "Cube", false, false, true),
+            new ChildFact("MWL_A/wall/$hud_snappoint_bottom 1", "$hud_snappoint_bottom 1", false, true, true),
             new ChildFact("MWL_A/mock", "JVLmock_Missing_piece", false, false, true),
+            new ChildFact("MWL_A/mock2", "JVLmock_Skeleton", false, false, true),
             new ChildFact("MWL_A/chest", "piece_chest_wood", true, false, true,
                 referencedPrefabs: new[] { "Greydwarf", "JVLmock_Coins", "Ruby" }),
         }, interiorPrefabName: "Crypt_Interior");
 
+        // The comparison's lookup, as the sweep's wrapper records it.
+        record.Consulted("stone_wall_2x1");
         record.Read(facts);
 
         Assert.Null(record.Fault);
         Assert.Equal(1, record.TemplatesRead);
         Dictionary<string, string> recorded = record.Entries.ToDictionary(e => e.Key, e => e.Value);
-        Assert.Equal(new[] { "Coins", "Crypt_Interior", "Greydwarf", "Missing_piece", "Ruby", "piece_chest_wood", "stone_wall_2x1" },
+        Assert.Equal(new[] { "Coins", "Crypt_Interior", "Greydwarf", "Missing_piece", "Ruby", "Skeleton", "stone_wall_2x1" },
             recorded.Keys.OrderBy(k => k, StringComparer.Ordinal));
-        Assert.Equal(StockRecord.Absent, recorded["Missing_piece"]);
-        Assert.Equal(StockRecord.Absent, recorded["Ruby"]);
         Assert.Equal(AuditCacheCanonical.Sha256Hex("wall"), recorded["stone_wall_2x1"]);
-        // The root is the template itself and "Cube" is the bundle's own object.
+        Assert.Equal(AuditCacheCanonical.Sha256Hex("creature"), recorded["Greydwarf"]);
+        // Stock names that resolved to nothing.
+        Assert.Equal(StockRecord.Absent, recorded["Skeleton"]);
+        Assert.Equal(StockRecord.Absent, recorded["Coins"]);
+        Assert.Equal(StockRecord.Absent, recorded["Ruby"]);
+        // Asked for, and not stock prefabs: recorded without being looked at.
+        Assert.Equal(StockRecord.NotStock, recorded["Missing_piece"]);
+        Assert.Equal(StockRecord.NotStock, recorded["Crypt_Interior"]);
+        Assert.DoesNotContain("Missing_piece", signed);
+        Assert.DoesNotContain("Crypt_Interior", signed);
+        // Names objects merely bear are the template's content, not the game's.
         Assert.DoesNotContain("MWL_A", recorded.Keys);
         Assert.DoesNotContain("Cube", recorded.Keys);
+        Assert.DoesNotContain("$hud_snappoint_bottom 1", recorded.Keys);
+        Assert.DoesNotContain("piece_chest_wood", recorded.Keys);
 
         Assert.Empty(record.Recheck());
         live["stone_wall_2x1"] = "wall, edited by some other mod";
@@ -548,9 +569,41 @@ public class AuditCacheTests
     }
 
     [Fact]
+    public void ANameOutsideTheSnapshotIsNeverSignedSoItsLoadStateCannotMoveTheBaseline()
+    {
+        int calls = 0;
+        StockRecord record = new StockRecord(name => "a different object every time " + calls++, Fixtures.Stock);
+
+        record.Consulted("$hud_snappoint_bottom 1");
+        record.Consulted("$hud_snappoint_top 4");
+
+        Assert.Equal(0, calls);
+        Assert.All(record.Entries, e => Assert.Equal(StockRecord.NotStock, e.Value));
+        Assert.Empty(record.Recheck());
+        Assert.Equal(0, calls);
+    }
+
+    [Fact]
+    public void AStockNameThatResolvesToATemplateOwnedObjectIsNotSigned()
+    {
+        GameObject template = Templates.Stock("MWL_Somewhere", child: "wood_floor");
+        GameObject owned = Templates.ChildOf(template, 0);
+        GameObject stock = Templates.StockPrefab("wood_floor", "collider");
+
+        Assert.Equal(StockRecord.NotStockSignature, AuditCache.SignStock("wood_floor", _ => owned));
+        Assert.Equal(TemplateFactsExtractor.LiveSignature(stock), AuditCache.SignStock("wood_floor", _ => stock));
+        Assert.Null(AuditCache.SignStock("wood_floor", _ => null));
+        Assert.Null(AuditCache.SignStock("wood_floor", null));
+
+        StockRecord record = new StockRecord(name => AuditCache.SignStock(name, _ => owned), Fixtures.Stock);
+        record.Consulted("wood_floor");
+        Assert.Equal(StockRecord.NotStock, record.Entries.Single().Value);
+    }
+
+    [Fact]
     public void ASignerThatThrowsBreaksTheRecordRatherThanTheAudit()
     {
-        StockRecord record = new StockRecord(name => throw new InvalidOperationException("no ZNetScene"));
+        StockRecord record = new StockRecord(name => throw new InvalidOperationException("no ZNetScene"), Fixtures.Stock);
         record.Consulted("wood_floor");
         Assert.NotNull(record.Fault);
         Assert.Empty(record.Entries);
@@ -583,10 +636,11 @@ public class AuditCacheTests
         {
             ["stone_wall_2x1"] = "wall",
             ["wood_floor"] = "floor",
-            ["Vines"] = null,
+            ["Skeleton"] = null,
+            ["Vines"] = "whatever is loaded",
         };
         Func<string, string?> sign = name => live.TryGetValue(name, out string? s) ? s : null;
-        StockRecord record = new StockRecord(sign);
+        StockRecord record = new StockRecord(sign, Fixtures.Stock);
         foreach (string name in live.Keys.ToList())
             record.Consulted(name);
         AuditCacheKey key = Key();
@@ -596,11 +650,18 @@ public class AuditCacheTests
 
         Assert.True(Check().Hit, Check().Reason);
 
+        // Not a stock name: whatever it resolves to now is not a reason to audit.
+        live["Vines"] = "something else is loaded now";
+        Assert.True(Check().Hit, Check().Reason);
+
         live["stone_wall_2x1"] = "wall with a new child";
         AuditCacheLookup changed = Check();
         Assert.Equal(AuditCacheMiss.Stock, changed.Miss);
         Assert.Equal(new[] { "stone_wall_2x1" }, changed.Changed);
         Assert.Equal("stock prefabs changed: stone_wall_2x1", changed.Reason);
+
+        live["stone_wall_2x1"] = StockRecord.NotStockSignature;
+        Assert.Equal("stock prefabs changed: stone_wall_2x1", Check().Reason);
         live["stone_wall_2x1"] = "wall";
 
         live["wood_floor"] = null;
@@ -609,10 +670,54 @@ public class AuditCacheTests
         Assert.Equal("no longer resolve: wood_floor", vanished.Reason);
         live["wood_floor"] = "floor";
 
-        live["Vines"] = "somebody registered it";
+        live["Skeleton"] = "somebody registered it";
         AuditCacheLookup appeared = Check();
-        Assert.Equal(new[] { "Vines" }, appeared.Changed);
-        Assert.Equal("now resolve: Vines", appeared.Reason);
+        Assert.Equal(new[] { "Skeleton" }, appeared.Changed);
+        Assert.Equal("now resolve: Skeleton", appeared.Reason);
+    }
+
+    [Fact]
+    public void AMissAndARefusalNameEveryChangedPrefab()
+    {
+        CatalogueSubject[] subjects = { new CatalogueSubject("MWL_A", "Meadows") };
+        CatalogueReport report = CatalogueAudit.Run(subjects, s => Fixtures.Compatible(s.Name, s.Pack), Fixtures.Stock, Fixtures.ExcludedPacks);
+        string[] names = { "stone_wall_2x1", "wood_floor", "piece_chest_wood", "Greydwarf", "Coins", "Ruby", "Skeleton",
+            "loot_chest_wood", "vfx_Place_wood_wall", "Spawner_GreydwarfNest" };
+        Dictionary<string, string> live = names.ToDictionary(n => n, n => n);
+        Func<string, string?> sign = name => live.TryGetValue(name, out string? s) ? s : null;
+        StockRecord record = new StockRecord(sign, Fixtures.Stock);
+        foreach (string name in names)
+            record.Consulted(name);
+        AuditCacheKey key = Key();
+        string text = AuditCacheFile.Render(key, report, record.Entries);
+        foreach (string name in names)
+            live[name] += " edited";
+
+        AuditCacheLookup lookup = AuditCache.Check(AuditCacheFile.Parse(text, key), RunOf(subjects), sign);
+        foreach (string name in names)
+            Assert.Contains(name, lookup.Reason);
+        Assert.DoesNotContain("more)", lookup.Reason);
+
+        List<string> log = new List<string>();
+        BepInEx.Logging.ManualLogSource.Captured = log;
+        try
+        {
+            StockRecord during = new StockRecord(sign, Fixtures.Stock);
+            foreach (string name in names)
+                during.Consulted(name);
+            foreach (string name in names)
+                live[name] += " again";
+            AuditCache.Attempt attempt = new AuditCache.Attempt("unused", key, null, during);
+            Assert.Null(AuditCache.Prepare(attempt, report));
+            string refusal = log.Single(line => line.Contains("stock prefabs changed while the audit ran"));
+            foreach (string name in names)
+                Assert.Contains(name, refusal);
+            Assert.DoesNotContain("more)", refusal);
+        }
+        finally
+        {
+            BepInEx.Logging.ManualLogSource.Captured = null;
+        }
     }
 
     [Fact]

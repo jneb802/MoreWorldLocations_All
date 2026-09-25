@@ -59,10 +59,14 @@ The stored verdicts are reused only when all of the following are unchanged:
 * the names of the other loaded plugins, which the verdicts cite;
 * every `MOREWORLDLOCATIONS_*` environment variable except the two below;
 * every live stock prefab the verdicts were reached against. The file records
-  each prefab the audit compared against, resolved a mock from, or found
-  referenced, with a digest of its current state. Each is checked again
-  before reuse. A prefab that another mod edited, removed or added under one
-  of those names causes a miss, and the log names it.
+  each name the audit compared against, resolved a mock from, or found
+  referenced. A name in the stock prefab snapshot is recorded with a digest
+  of the prefab the comparison uses for it. It is checked again before reuse,
+  so a prefab another mod edited, removed or added under that name causes a
+  miss, and the log names it. Any other name is recorded as `not-stock` and
+  never examined. Such names are not stock prefabs: a lookup finds whatever
+  object of that name happens to be loaded, such as a snap point or a piece
+  of an open template, and that changes as templates load and unload.
 
 Other plugins' DLLs and settings are not part of the key. Updating or
 reconfiguring a plugin that touches none of those prefabs does not force

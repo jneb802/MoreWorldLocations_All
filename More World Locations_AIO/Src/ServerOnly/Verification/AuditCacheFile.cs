@@ -113,7 +113,9 @@ public static class AuditCacheFile
     /// of the key as well, so a new format is a new key even if a reader were
     /// lenient.
     /// </summary>
-    public const int FormatVersion = 1;
+    // 2: every name outside the stock snapshot is stored as "not-stock", and a
+    // stock name is signed from the comparison's own lookup alone.
+    public const int FormatVersion = 2;
 
     /// <summary>Render the verdicts, the key they were reached under, and the stock prefabs they were reached against.</summary>
     public static string Render(AuditCacheKey key, CatalogueReport report, IReadOnlyList<KeyValuePair<string, string>> stock)
