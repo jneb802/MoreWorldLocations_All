@@ -99,7 +99,7 @@ public static class ProtectedLocationPeacefulArea
 
         effectArea.m_type = EffectArea.Type.None;
         effectArea.m_statusEffect = StatusEffectName;
-        effectArea.m_playerOnly = true;
+        effectArea.m_playerOnly = false;
         SetStatusEffectHash(effectArea);
     }
 
