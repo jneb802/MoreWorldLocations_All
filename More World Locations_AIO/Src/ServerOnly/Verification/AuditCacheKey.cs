@@ -176,7 +176,7 @@ public static class AuditCacheCanonical
     /// opens them, a new way of loading bundles, a change in what a definition
     /// means. Every stored verdict is then re-audited on the next start.
     /// </summary>
-    public const int MwlCacheVersion = 1;
+    public const int MwlCacheVersion = 2;
 
     /// <summary>The cache format, MWL's cache version, the content fingerprint's inputs and the rules' version.</summary>
     public static string Format(int cacheFormatVersion, int mwlCacheVersion = MwlCacheVersion) =>
