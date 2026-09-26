@@ -290,6 +290,46 @@ public class AuditCacheTests
         "- asset ID: 02\n  bundle: mwl_tower1\n  path in bundle: Assets/MWL/Swamp/MWL_Tower1.prefab\n" +
         "- asset ID: 03\n  bundle: cd_room1\n  path in bundle: Assets/MWL/Rooms/CD_Room1.prefab\n";
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SharedAssetInsideATemplateBundleMustInvalidateOtherConsumers(bool sharedFirst)
+    {
+        using Installation install = new Installation();
+        // A valid mixed bundle: the ruins and a room used by another template.
+        // Its manifest lines do not change when the room's authored content changes.
+        string manifest = Manifest.Replace("bundle: cd_room1", "bundle: mwl_ruins1");
+        if (sharedFirst)
+        {
+            int start = manifest.IndexOf("- asset ID: 03", StringComparison.Ordinal);
+            string room = manifest.Substring(start);
+            manifest = manifest.Substring(0, start).Replace("asset locations:\n", "asset locations:\n" + room);
+        }
+        install.Write("plugins/MWL/assetBundleManifest_full", manifest);
+        AuditCacheKey before = install.Key();
+        string? towerBefore = install.Files("MWL_Tower1");
+
+        install.Write("plugins/MWL/Bundles/mwl_ruins1", "ruins unchanged; shared room changed");
+
+        Assert.True(before.Digest != install.Key().Digest || towerBefore != install.Files("MWL_Tower1"),
+            "The shared room changed, but neither the shared key nor its other consumer's input changed.");
+    }
+
+    [Fact]
+    public void ChangingADependencyBundleInvalidatesConsumersWithoutAManifestEdit()
+    {
+        using Installation install = new Installation();
+        install.Write("plugins/MWL/assetBundleManifest_full",
+            Manifest.Replace("bundle dependencies:\n", "bundle dependencies:\n- mwl_tower1: mwl_ruins1\n"));
+        AuditCacheKey before = install.Key();
+        string? towerBefore = install.Files("MWL_Tower1");
+
+        install.Write("plugins/MWL/Bundles/mwl_ruins1", "a dependency of the unchanged tower bundle, rebuilt");
+
+        Assert.True(before.Digest != install.Key().Digest || towerBefore != install.Files("MWL_Tower1"),
+            "Dependency bytes changed without changing the manifest; the consumer must be re-audited.");
+    }
+
     /// <summary>A BepInEx installation on disk, as the engine half reads it.</summary>
     private sealed class Installation : IDisposable
     {
