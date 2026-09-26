@@ -1,0 +1,106 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!--
+          net48 matches the mod's own target and runs under Mono (closest to
+          Valheim's in-game runtime); net10.0 is the fast local loop that
+          `dotnet test` uses. Run both through run-tests.sh.
+        -->
+        <TargetFrameworks>net48;net10.0</TargetFrameworks>
+        <LangVersion>10</LangVersion>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>More_World_Locations_AIO.Tests</RootNamespace>
+        <AssemblyName>MoreWorldLocations.Tests</AssemblyName>
+        <!-- CS8602/8604 fire only because shim types are null-annotated where the game's aren't -->
+        <NoWarn>$(NoWarn);CS8602;CS8604</NoWarn>
+    </PropertyGroup>
+
+    <!--
+      Compile the real mod sources against the shims in Shims/ rather than
+      against the Unity/Valheim/BepInEx assemblies, so the tests exercise the
+      shipped code and not a copy of it. Selected engine hooks are called
+      directly against doubles; real Harmony timing still needs station tests.
+    -->
+    <ItemGroup>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/PeerAdmission.cs" Link="ModSrc/PeerAdmission.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyMode.cs" Link="ModSrc/ServerOnlyMode.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyAllowlist.cs" Link="ModSrc/ServerOnlyAllowlist.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlySelection.cs" Link="ModSrc/ServerOnlySelection.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ValidationSwitches.cs" Link="ModSrc/ValidationSwitches.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ServerOnlyHandshake.cs" Link="ModSrc/ServerOnlyHandshake.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainOperation.cs" Link="ModSrc/LocationTerrainOperation.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainModifierOrder.cs" Link="ModSrc/TerrainModifierOrder.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ByteBudgetCache.cs" Link="ModSrc/ByteBudgetCache.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/WorldLoadGate.cs" Link="ModSrc/WorldLoadGate.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ScaleSyncConversion.cs" Link="ModSrc/ScaleSyncConversion.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/StartupFaults.cs" Link="ModSrc/StartupFaults.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/GenerationHold.cs" Link="ModSrc/GenerationHold.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainTemplate.cs" Link="ModSrc/TerrainTemplate.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/SitePreflight.cs" Link="ModSrc/SitePreflight.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationSpawnGate.cs" Link="ModSrc/LocationSpawnGate.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/ZoneReadinessBarrier.cs" Link="ModSrc/ZoneReadinessBarrier.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainPatch.cs" Link="ModSrc/LocationTerrainPatch.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainConversion.cs" Link="ModSrc/TerrainConversion.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainReader.cs" Link="ModSrc/LocationTerrainReader.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainBridge.cs" Link="ModSrc/LocationTerrainBridge.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainPlan.cs" Link="ModSrc/LocationTerrainPlan.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/TerrainBlob.cs" Link="ModSrc/TerrainBlob.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainLedger.cs" Link="ModSrc/LocationTerrainLedger.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/LocationTerrainWriter.cs" Link="ModSrc/LocationTerrainWriter.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/SiteTerrainLedger.cs" Link="ModSrc/SiteTerrainLedger.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFacts.cs" Link="ModSrc/Verification/TemplateFacts.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFinding.cs" Link="ModSrc/Verification/TemplateFinding.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/StockPrefabRegistry.cs" Link="ModSrc/Verification/StockPrefabRegistry.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/ComponentPolicy.cs" Link="ModSrc/Verification/ComponentPolicy.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplatePolicy.cs" Link="ModSrc/Verification/TemplatePolicy.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFingerprint.cs" Link="ModSrc/Verification/TemplateFingerprint.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/ApprovedSelection.cs" Link="ModSrc/Verification/ApprovedSelection.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/VerificationData.cs" Link="ModSrc/Verification/VerificationData.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueReport.cs" Link="ModSrc/Verification/CatalogueReport.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueAudit.cs" Link="ModSrc/Verification/CatalogueAudit.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueNames.cs" Link="ModSrc/Verification/CatalogueNames.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateAssets.cs" Link="ModSrc/Verification/TemplateAssets.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateOwnership.cs" Link="ModSrc/Verification/TemplateOwnership.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateLease.cs" Link="ModSrc/Verification/TemplateLease.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/EmissionTrace.cs" Link="ModSrc/Verification/EmissionTrace.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplatePlan.cs" Link="ModSrc/Verification/TemplatePlan.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheKey.cs" Link="ModSrc/Verification/AuditCacheKey.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheFile.cs" Link="ModSrc/Verification/AuditCacheFile.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCache.cs" Link="ModSrc/Verification/AuditCache.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheCode.cs" Link="ModSrc/Verification/AuditCacheCode.cs"/>
+        <!--
+          The engine-facing halves. They need an object hierarchy, which is what
+          the Unity doubles in Shims/VerificationShims.cs are for; everything
+          they decide still lives in the pure files above.
+        -->
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFactsExtractor.cs" Link="ModSrc/Verification/TemplateFactsExtractor.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueSweep.cs" Link="ModSrc/Verification/CatalogueSweep.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/MockReferenceGuard.cs" Link="ModSrc/Verification/MockReferenceGuard.cs"/>
+        <Compile Include="../More World Locations_AIO/Src/Locations/LocationDB.cs" Link="ModSrc/LocationDB.cs"/>
+    </ItemGroup>
+
+    <!--
+      The same two data files the mod embeds, under the same logical names, so
+      the tests check the stock snapshot and catalogue names rather than
+      fixtures that agree with themselves.
+    -->
+    <ItemGroup>
+        <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/StockPrefabs.tsv" LogicalName="MoreWorldLocations.ServerOnly.StockPrefabs.tsv"/>
+        <EmbeddedResource Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueNames.tsv" LogicalName="MoreWorldLocations.ServerOnly.CatalogueNames.tsv"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../MoreWorldLocations.Doubles/MoreWorldLocations.Doubles.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
+        <PackageReference Include="xunit" Version="2.8.1"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1"/>
+        <PackageReference Include="xunit.runner.console" Version="2.8.1">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

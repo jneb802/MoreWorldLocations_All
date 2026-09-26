@@ -8,6 +8,7 @@ using BepInEx.Logging;
 using Common;
 using HarmonyLib;
 using Jotunn.Managers;
+using More_World_Locations_AIO.ServerOnly;
 using More_World_Locations_AIO.Shipments;
 using More_World_Locations_AIO.Shrines;
 using More_World_Locations_AIO.Utils;
@@ -25,8 +26,12 @@ namespace More_World_Locations_AIO
     {
         internal const string ModName = "More_World_Locations_AIO";
         internal const string ModVersion = "5.1.4";
+        // Server-only mode keeps the catalogue audit's verdicts between starts and re-audits only the templates
+        // whose own inputs changed. If a change here can alter what a template resolves to, or how it is judged,
+        // outside ServerOnly/ and outside the template's own bundle and definition, bump
+        // ServerOnly.Verification.AuditCacheCanonical.MwlCacheVersion so every stored verdict is audited again.
         internal const string Author = "warpalicious";
-        private const string ModGUID = Author + "." + ModName;
+        internal const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         internal static string ConnectionError = "";
@@ -70,6 +75,21 @@ namespace More_World_Locations_AIO
             
             PortInit.Init(root);
             BepinexConfigs.BindFeatureConfigs();
+
+            // Read once, here, and let every other decision ask the flag. This
+            // runs long before ZNet exists, so no peer can connect against a
+            // mode that is still unset.
+            ServerOnlyMode.Set(BepinexConfigs.ServerOnly.Value == PortInit.Toggle.On);
+            if (ServerOnlyMode.Enabled)
+            {
+                // Before RegisterAll runs, because the audit it performs has to
+                // be able to open a template that is not registered -- which is
+                // every template it has not yet approved.
+                More_World_Locations_AIO.ServerOnly.Verification.GameTemplateAssets.Install();
+                More_World_Locations_AIOLogger.LogInfo(
+                    "Server-only mode: clients without More World Locations are admitted, " +
+                    "and only locations this run's audit approves are registered.");
+            }
             
             YAMLManager.ParseTraderYaml("warpalicious.More_World_Locations_TraderItems.yml", (ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value);
 
@@ -77,6 +97,26 @@ namespace More_World_Locations_AIO
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
+            if (ServerOnlyMode.Enabled)
+            {
+                // Before any template is resolved: the audit opens every
+                // template in the catalogue, and an unguarded resolution of one
+                // with an unresolvable mock moves objects into vanilla prefabs.
+                More_World_Locations_AIO.ServerOnly.Verification.MockReferenceGuardPatch.Install(_harmony);
+                // The audit's verdict cache: reuses a previous start's verdicts
+                // only when every input, the live stock prefabs included, is
+                // provably unchanged.
+                More_World_Locations_AIO.ServerOnly.Verification.AuditCacheInstallation.Install(_harmony);
+                GenerationHold.Install();
+                // Jötunn injects its list into the world when the sweep starts;
+                // what the sweep approves is put into the world through Jötunn's
+                // own late path, which prepares the location the same way.
+                LocationDB.LateRegistration = name =>
+                {
+                    Jotunn.Entities.CustomLocation custom = ZoneManager.Instance.GetCustomLocation(name);
+                    ZoneManager.Instance.RegisterLocationInZoneSystem(custom.ZoneLocation);
+                };
+            }
             SetupWatcher();
 
             Prefabs.LoadPrefabBundles();
