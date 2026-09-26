@@ -1,5 +1,10 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 5.1.4     | - Removed unintended chest and network components from the Ashlands port's container placement markers (`MWL_Port5`). |
+|           | - Removed the guardstone from the Mistlands port (`MWL_Port3`). |
+| 5.1.3     | - Apply Peaceful to players and creatures inside ports, traders, and trainers. The effect suppresses attack damage inside each location's exterior radius and replaces the previous piece-health patch. |
+|           | - Fixed Peaceful status-effect registration so protection works on the first join. |
+|           | - Allow multiple players to view the same port UI. Shipment actions retain shared-chest safeguards and remain blocked while a port chest is open. |
 | 5.1.2     | - Fixed shipping-port chests and items duplicating when another player arrives or the server restarts. Chests now use shared, persistent inventories. Existing saved port contents migrate once. |
 | 5.1.1     | - Added five new Swamp locations: `MWL_SwampTempleSmall1`, `MWL_SwampTemple2`, `MWL_SwampShrine1`, `MWL_SwampSanctuary1`, and `MWL_SwampComplex1`.                                                                                                                                       |
 |           | - To add the new locations to an existing world, install Upgrade World and run: `locations_add MWL_SwampTempleSmall1,MWL_SwampTemple2,MWL_SwampShrine1,MWL_SwampSanctuary1,MWL_SwampComplex1 start`                                                                                       |

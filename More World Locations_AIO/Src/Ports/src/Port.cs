@@ -19,7 +19,7 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     public Humanoid? m_currentHumanoid;
     private readonly TempItems m_tempItems = new();
     private bool m_initialized;
-    private bool m_openPending;
+    private bool m_actionPending;
     private bool m_migrationFailed;
     public void Awake()
     {
@@ -180,40 +180,54 @@ public class Port : MonoBehaviour, Interactable, Hoverable
 
     private void RPC_RequestPortControl(long sender)
     {
-        if (!m_view.IsOwner() || (PortUI.IsVisible() && PortUI.instance?.m_currentPort == this)) return;
+        if (!m_view.IsOwner() || m_actionPending) return;
         RefreshContainers();
         if (!CanModifyContainers()) return;
         m_view.GetZDO().SetOwner(sender);
     }
 
-    private IEnumerator OpenWhenReady(Humanoid user)
+    public void RunContainerAction(Humanoid user, Func<bool> isCurrent, Action action)
     {
-        m_openPending = true;
-        m_view.InvokeRPC("MWL_RequestPortControl");
-        for (int i = 0; i < 30; i++)
+        if (m_actionPending || !m_view.IsValid()) return;
+        StartCoroutine(RunWhenReady(user, isCurrent, action));
+    }
+
+    private IEnumerator RunWhenReady(Humanoid user, Func<bool> isCurrent, Action action)
+    {
+        m_actionPending = true;
+        try
         {
-            if (!user || !m_view.IsValid()) break;
-            RefreshContainers();
-            if (CanModifyContainers())
+            // Browsing does not reserve the port. Only a chest-changing action
+            // requests ownership, and it must still pass the chest-in-use checks.
+            if (!m_view.IsOwner()) m_view.InvokeRPC("MWL_RequestPortControl");
+            for (int i = 0; i < 30; i++)
             {
-                m_name = m_view.GetZDO().GetString(PortVars.Name, m_name);
-                m_portID = new ShipmentManager.PortID(m_view.GetZDO().GetString(PortVars.GUID), m_name);
-                ShipmentManager.RequestShipments();
-                PortUI.instance?.Show(this);
-                if (user is Player player) player.AddKnownPort(m_portID);
-                m_currentHumanoid = user;
-                m_openPending = false;
-                yield break;
+                if (!user || !m_view.IsValid() || !isCurrent()) yield break;
+                RefreshContainers();
+                if (CanModifyContainers())
+                {
+                    m_currentHumanoid = user;
+                    action();
+                    yield break;
+                }
+                yield return new WaitForSeconds(0.1f);
             }
-            yield return new WaitForSeconds(0.1f);
+            if (user && isCurrent()) user.Message(MessageHud.MessageType.Center, "$msg_inuse");
         }
-        if (user) user.Message(MessageHud.MessageType.Center, "$msg_inuse");
-        m_openPending = false;
+        finally
+        {
+            m_actionPending = false;
+        }
     }
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
-        if (hold || PortUI.instance == null || m_openPending) return false;
-        StartCoroutine(OpenWhenReady(user));
+        if (hold || PortUI.instance == null || !m_view.IsValid()) return false;
+        m_name = m_view.GetZDO().GetString(PortVars.Name, m_name);
+        m_portID = new ShipmentManager.PortID(m_view.GetZDO().GetString(PortVars.GUID), m_name);
+        ShipmentManager.RequestShipments();
+        PortUI.instance.Show(this);
+        if (user is Player player) player.AddKnownPort(m_portID);
+        m_currentHumanoid = user;
         return false;
     }
 
@@ -256,6 +270,10 @@ public class Port : MonoBehaviour, Interactable, Hoverable
     {
         EnsureInitialized();
         if (!CanModifyContainers()) return false;
+        // Another viewer may have collected the selected delivery while this
+        // panel was open. Resolve the current entry before creating any items.
+        if (!ShipmentManager.Shipments.TryGetValue(delivery.ShipmentID, out delivery) ||
+            delivery.State != ShipmentState.Delivered || delivery.DestinationPortID != m_portID.GUID) return false;
         if (!delivery.CanAccess(Player.m_localPlayer))
         {
             if (m_currentHumanoid != null) m_currentHumanoid.Message(MessageHud.MessageType.Center, LocalKeys.ShipmentNotOwned);
