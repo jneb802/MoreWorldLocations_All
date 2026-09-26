@@ -178,6 +178,36 @@ public class AuditCacheSweepTests
         Assert.Equal(audited, audited.Where(cache.World.IsInWorld).ToArray());
     }
 
+    [Theory]
+    [InlineData("add")]
+    [InlineData("edit")]
+    [InlineData("remove")]
+    public void TranslationFileChangesKeepAWarmStartWithoutOpeningTemplates(string change)
+    {
+        using CacheWorld cache = new CacheWorld();
+        using AuditCacheTests.Installation install = new AuditCacheTests.Installation();
+        const string file = "config/warpalicious.More_World_Locations_Localization.English.yml";
+        if (change != "add")
+            install.Write(file, "mwl_name: Original display name\n");
+        // Exercise the real installation fingerprint, not a hand-written cache key.
+        AuditCache.Installation = _ => install.Inputs();
+        CatalogueReport audited = cache.Sweep();
+        Assert.True(File.Exists(cache.CachePath));
+
+        cache.Restart();
+        if (change == "remove")
+            File.Delete(Path.Combine(install.Root, file));
+        else
+            install.Write(file, "mwl_name: Translated display name\n");
+        int opened = cache.World.Opened.Count;
+        CatalogueReport reused = cache.Sweep();
+
+        Assert.Equal(opened, cache.World.Opened.Count);
+        Assert.True(cache.Logged("catalogue audit: reused "), string.Join("\n", cache.Log));
+        Assert.True(CatalogueSweep.RegistrationReady);
+        AssertSameReport(audited, reused);
+    }
+
     [Fact]
     public void AChangedKeyPartAuditsAgainAndRewrites()
     {

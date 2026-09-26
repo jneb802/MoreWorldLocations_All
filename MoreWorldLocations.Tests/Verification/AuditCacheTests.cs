@@ -272,7 +272,9 @@ public class AuditCacheTests
     [Theory]
     [InlineData("warpalicious.More_World_Locations_AIO.cfg", true)]
     [InlineData("warpalicious.More_World_Locations_LootLists.yml", true)]
-    [InlineData("warpalicious.More_World_Locations_Localization.English.yml", true)]
+    [InlineData("warpalicious.More_World_Locations_Localization.English.yml", false)]
+    [InlineData("warpalicious.More_World_Locations_Localization.French.yaml", false)]
+    [InlineData("warpalicious.More_World_Locations_LocalizationExtras.yml", true)]
     [InlineData("sub/warpalicious.More_World_Locations_Extra.yaml", true)]
     [InlineData("warpalicious.More_World_Locations_AIO.json", false)]
     [InlineData("MWL_Ports/shipments.json", false)]
@@ -331,7 +333,7 @@ public class AuditCacheTests
     }
 
     /// <summary>A BepInEx installation on disk, as the engine half reads it.</summary>
-    private sealed class Installation : IDisposable
+    internal sealed class Installation : IDisposable
     {
         public readonly string Root = Path.Combine(Path.GetTempPath(), "mwl-install-" + Guid.NewGuid().ToString("N"));
 

@@ -267,9 +267,10 @@ public static class AuditCacheCanonical
 
     /// <summary>
     /// Whether a file under the config folder is one of MWL's own: its BepInEx
-    /// settings (named after its plugin id) and its YAML files. Everything else
-    /// there belongs to other plugins, and reaches a verdict only through the
-    /// stock prefabs, which are checked directly.
+    /// settings (named after its plugin id) and its content YAML files.
+    /// Localization YAML only supplies display text, so it cannot change a
+    /// compatibility verdict or the selected locations. Other plugins reach
+    /// a verdict through the stock prefabs, which are checked directly.
     /// </summary>
     public static bool IsMwlConfigFile(string relativePath, string pluginGuid)
     {
@@ -281,7 +282,8 @@ public static class AuditCacheCanonical
             return name.StartsWith(pluginGuid, StringComparison.OrdinalIgnoreCase);
         if (name.EndsWith(".yml", StringComparison.OrdinalIgnoreCase)
             || name.EndsWith(".yaml", StringComparison.OrdinalIgnoreCase))
-            return name.StartsWith(MwlYamlPrefix, StringComparison.OrdinalIgnoreCase);
+            return name.StartsWith(MwlYamlPrefix, StringComparison.OrdinalIgnoreCase)
+                && !name.StartsWith(MwlYamlPrefix + "Localization.", StringComparison.OrdinalIgnoreCase);
         return false;
     }
 

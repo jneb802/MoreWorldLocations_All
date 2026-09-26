@@ -64,7 +64,10 @@ every template:
   dependencies, is outside MWL's folder or cannot be read, every bundle
   counts here;
 * MWL's own settings under `BepInEx/config`: its `.cfg` and its
-  `warpalicious.More_World_Locations_*` YAML files;
+  `warpalicious.More_World_Locations_*` YAML files, except the
+  `warpalicious.More_World_Locations_Localization.<Language>.yml` translation
+  files (or `.yaml`). Adding, editing or removing those files changes display
+  text, so it does not cause a new compatibility audit;
 * the game's `assembly_valheim.dll`, its version text, network version, and
   whether it runs headless;
 * the loaded Jötunn DLL and every file in `BepInEx/core`;
