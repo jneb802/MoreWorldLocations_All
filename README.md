@@ -231,6 +231,15 @@ As of version 4.1.0, you can disable individual features via the config file. Un
 
 This is useful if you want a simpler, purely POI-based experience without the interactive features.
 
+## Shipping Port Configs
+Under the `0 - Shipment Ports` section, server owners can configure manifest coin costs. These settings are server-synced, affect the cost shown in the Shipping Port UI, and affect the coin payment required to send shipments. Valid values are `0` through `100000`; invalid values outside that range are clamped.
+
+- **Wooden Manifest Coin Cost** — Default `50`
+- **Barrel Manifest Coin Cost** — Default `55`
+- **Fine Manifest Coin Cost** — Default `100`
+- **Fuling Manifest Coin Cost** — Default `280`
+- **Dvergr Manifest Coin Cost** — Default `410`
+
 ## YAML Configs
 Several aspects of the mod can be customized via YAML files in your BepInEx config folder. Each is controlled by a toggle in the `0 - Features` config section and will auto-extract a default file to the config folder when enabled.
 

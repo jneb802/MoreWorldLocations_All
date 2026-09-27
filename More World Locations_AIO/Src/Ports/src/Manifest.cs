@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BepInEx.Configuration;
 using JetBrains.Annotations;
 using More_World_Locations_AIO.Managers;
 using UnityEngine;
@@ -16,7 +17,13 @@ public class Manifest
     public Container Chest;
     public ManifestRecipe Recipe = new();
     public string RequiredDefeatKey = "";
-    public int CostToShip = 50;
+    public int DefaultCostToShip = 50;
+    public ConfigEntry<int>? CostToShipConfig;
+    public int CostToShip
+    {
+        get => Mathf.Clamp(CostToShipConfig?.Value ?? DefaultCostToShip, 0, PortInit.ManifestCoinCostMax);
+        set => DefaultCostToShip = value;
+    }
     public Sprite? Icon;
     public EffectList? PlaceEffect;
 
