@@ -96,7 +96,7 @@ public class TraderPrefabs
             {
                 if (kvp.Key == "version") continue;
 
-                var itemsYaml = deserializer.Deserialize<List<TraderManager.TradeItemYAML>>(
+                var itemsYaml = deserializer.Deserialize<List<TradeItemYAML>>(
                     new SerializerBuilder().Build().Serialize(kvp.Value));
 
                 List<Trader.TradeItem> items = new List<Trader.TradeItem>();
@@ -117,8 +117,8 @@ public class TraderPrefabs
         }
         catch (Exception ex)
         {
-            WarpLogger.Logger.LogError("Failed to parse trader YAML: " + ex.Message);
-            WarpLogger.Logger.LogWarning("Falling back to hardcoded trader items");
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("Failed to parse trader YAML: " + ex.Message);
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning("Falling back to hardcoded trader items");
         }
     }
 
@@ -129,7 +129,7 @@ public class TraderPrefabs
             return items;
         }
 
-        WarpLogger.Logger.LogWarning($"No YAML data for {traderName}, using hardcoded fallback");
+        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning($"No YAML data for {traderName}, using hardcoded fallback");
 
         switch (traderName)
         {
@@ -278,6 +278,15 @@ public class TraderPrefabs
         var item = CreateTradeItem(prefabName, stack, price, requiredGlobalKey);
         if (item != null)
             items.Add(item);
+    }
+    
+    public class TradeItemYAML
+    {
+        public string PrefabName { get; set; }
+        public int Stack { get; set; } = 1;
+        public int Price { get; set; }
+        public string RequiredGlobalKey { get; set; } = "";
+        public string NotRequiredGlobalKey { get; set; } = "";
     }
 
 }
