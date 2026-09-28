@@ -1,5 +1,8 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 5.1.5     | - Create shrines and waystones from the game's vanilla ward prefab while preserving their MWL behavior. |
+|           | - Removed three obsolete prefab bundles, reducing the mod DLL by approximately 17.5 MiB. |
+|           | - Obsolete legacy chests, their contents, and legacy spawners are removed from saves that still contain them. Current locations no longer use these prefabs. |
 | 5.1.4     | - Removed unintended chest and network components from the Ashlands port's container placement markers (`MWL_Port5`). |
 |           | - Removed the guardstone from the Mistlands port (`MWL_Port3`). |
 | 5.1.3     | - Apply Peaceful to players and creatures inside ports, traders, and trainers. The effect suppresses attack damage inside each location's exterior radius and replaces the previous piece-health patch. |
