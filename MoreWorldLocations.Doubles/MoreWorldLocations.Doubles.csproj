@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net48;net10.0</TargetFrameworks>
+        <LangVersion>10</LangVersion>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <!--
+          The assembly is NAMED assembly_valheim on purpose.
+
+          The behaviour check asks which assembly a component's type comes from,
+          because that is the question that matters: a client without the mod
+          loads the game's assemblies and nothing else. A test double compiled
+          into the test assembly would answer "foreign" for every stand-in,
+          every fixture would be rejected, and the check would look like it was
+          working while proving nothing. Here the doubles are seen as the game's
+          own code, which is what they stand for, and a deliberately foreign
+          behaviour lives in the test assembly, where it really is foreign.
+        -->
+        <AssemblyName>assembly_valheim</AssemblyName>
+        <RootNamespace></RootNamespace>
+        <NoWarn>$(NoWarn);CS8618;CS8625;CS0067</NoWarn>
+    </PropertyGroup>
+
+</Project>

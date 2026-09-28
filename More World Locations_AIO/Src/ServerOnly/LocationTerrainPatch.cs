@@ -1,0 +1,287 @@
+using System.Collections.Generic;
+using HarmonyLib;
+using More_World_Locations_AIO.ServerOnly.Verification;
+using UnityEngine;
+
+namespace More_World_Locations_AIO.ServerOnly;
+
+/// <summary>
+/// Where the terrain conversion is driven from: a zone finishing generation.
+///
+/// This half is engine glue and is deliberately thin -- find the location
+/// proxies near the zone, read their templates' modifiers, hand them to
+/// <see cref="LocationTerrainWriter.WriteZone"/>. The decisions all live there,
+/// where they can be tested without a world.
+///
+/// <para><b>Where the placement comes from.</b> Not from a ledger of our own:
+/// <c>ZoneSystem.PlaceLocations</c> computes the position and rotation locally
+/// and keeps neither -- <c>LocationInstance</c> stores only the pre-ground-data
+/// position and a placed flag. Vanilla does save the <c>LocationProxy</c>, at
+/// exactly the transform the location was placed with, so reading it makes the
+/// placement survive a restart for free and removes any chance of our record
+/// disagreeing with the world.</para>
+/// </summary>
+[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.PlaceLocations))]
+public static class LocationTerrainPatch
+{
+    private static BepInEx.Logging.ManualLogSource Log =>
+        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger;
+
+    /// <summary>
+    /// Terrain read off a resolved template, as values, once per name.
+    ///
+    /// Values and not components. A cached <c>TerrainModifier</c> keeps its
+    /// GameObject, which keeps the template, which keeps the bundle — so every
+    /// template ever read stayed resident for the life of the world and the
+    /// release that would have unloaded it could never take effect. A null entry
+    /// records a template that would not load, so the next caller does not try
+    /// again and log again.
+    /// </summary>
+    private static readonly Dictionary<string, TerrainTemplate?> s_templateTerrain = new();
+
+    /// <summary>Sites already reported as reaching too far, so the log says it once.</summary>
+    private static readonly HashSet<string> s_reportedOutOfReach = new();
+
+    /// <summary>A new world reads its own templates; see LocationTerrainWriter.Reset.</summary>
+    internal static void Forget()
+    {
+        s_templateTerrain.Clear();
+        s_reportedOutOfReach.Clear();
+    }
+
+    private static void Postfix(Vector2s zoneID, Heightmap hmap, ZoneSystem.SpawnMode mode)
+    {
+        if (!ServerOnlyMode.Enabled || hmap == null)
+            return;
+        // Ghost is a dedicated server generating for a peer; Full is a host
+        // generating for itself. Client mode rebuilds from ZDOs and must not
+        // write.
+        if (mode != ZoneSystem.SpawnMode.Ghost && mode != ZoneSystem.SpawnMode.Full)
+            return;
+
+        try
+        {
+            LocationTerrainWriter.WriteZone(zoneID, hmap, SitesNear(zoneID));
+        }
+        catch (System.Exception ex)
+        {
+            // One zone's failure is one zone's. Letting it out of here would
+            // stop the game generating the world.
+            Log.LogError($"Terrain for zone {zoneID.x},{zoneID.y} failed: {ex}");
+        }
+    }
+
+
+    /// <summary>
+    /// The sites whose terrain could reach this zone: the location proxies in it
+    /// and its eight neighbours, read from saved data.
+    /// </summary>
+    private static List<LocationTerrainPlan.PlacedSite> SitesNear(Vector2s zoneID)
+    {
+        var sites = new List<LocationTerrainPlan.PlacedSite>();
+        if (ZDOMan.instance == null || ZoneSystem.instance == null)
+            return sites;
+
+        var visited = new HashSet<ZoneSystem.SectorIndex>();
+        var zdos = new List<ZDO>();
+        for (int x = zoneID.x - 1; x <= zoneID.x + 1; x++)
+            for (int y = zoneID.y - 1; y <= zoneID.y + 1; y++)
+                ZDOMan.instance.FindObjects(new Vector2s(x, y), zdos, visited);
+
+        foreach (ZDO zdo in zdos)
+        {
+            if (zdo.GetPrefab() != LocationProxyPrefab)
+                continue;
+            LocationTerrainPlan.PlacedSite? site = SiteOf(zdo);
+            if (site.HasValue)
+                sites.Add(site.Value);
+        }
+        return sites;
+    }
+
+    /// <summary>
+    /// One location proxy as a site of ours with its terrain read off the
+    /// resolved template, or null when it is not ours or has no terrain.
+    /// </summary>
+    private static LocationTerrainPlan.PlacedSite? SiteOf(ZDO zdo)
+    {
+        {
+            int locationHash = zdo.GetInt(ZDOVars.s_location, 0);
+            if (locationHash == 0)
+                return null;
+            if (!ZoneSystem.instance.m_locationsByHash.TryGetValue(locationHash, out ZoneSystem.ZoneLocation location))
+                return null;
+
+            string name = location.m_prefabName;
+            // Only ours. A vanilla location's modifiers are in a template the
+            // stock client HAS, so it shapes that ground itself; converting them
+            // as well would apply the deltas on top and sink the site twice.
+            if (!ServerOnlySelection.IsOurs(name))
+                return null;
+
+            TerrainTemplate? terrain = TerrainOf(location, name);
+            if (terrain == null || terrain.Modifiers.Count == 0)
+                return null;
+
+            Vector3 placement = zdo.GetPosition();
+            Quaternion rotation = zdo.GetRotation();
+
+            // No asset needed: the descriptors carry root-relative positions, so
+            // a site's ground can be worked out long after its template has been
+            // released.
+            List<LocationTerrainOperation> operations = terrain.OperationsAt(placement, rotation);
+            if (operations.Count == 0)
+                return null;
+
+            if (ReachesTooFar(zdo, operations, name, placement))
+                return null;
+
+            return new LocationTerrainPlan.PlacedSite(name, placement, operations);
+        }
+    }
+
+    /// <summary>
+    /// Whether a site reaches beyond the ring of zones this scheme can see.
+    ///
+    /// The per-zone rule works because two neighbouring zones each find the
+    /// other's proxy. A site reaching two zones away would be found by the near
+    /// neighbour and not by the far one, and the far one would keep the ground
+    /// the client generated — a step in the middle of the site. It is reported
+    /// and skipped entirely rather than written where it happens to be seen.
+    /// </summary>
+    private static bool ReachesTooFar(
+        ZDO zdo, IReadOnlyList<LocationTerrainOperation> operations, string name, Vector3 placement)
+    {
+        Vector2s home = zdo.GetSector();
+        foreach (Vector2s touched in LocationTerrainReader.ZonesTouched(operations))
+        {
+            if (Mathf.Abs(touched.x - home.x) <= 1 && Mathf.Abs(touched.y - home.y) <= 1)
+                continue;
+            string id = LocationTerrainReader.SiteId(name, placement, home);
+            if (s_reportedOutOfReach.Add(id))
+                Log.LogError(
+                    $"{name} at {placement.x:0},{placement.z:0} shapes ground in zone " +
+                    $"{touched.x},{touched.y}, more than one zone from its own {home.x},{home.y}. " +
+                    "No part of it was converted: writing only the zones that can see it would leave " +
+                    "a step across the site.");
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// A template's terrain modifiers, in the order they appear in it.
+    ///
+    /// <c>Utils.GetEnabledComponentsInChildren</c> is what vanilla itself uses to
+    /// read a location's children, so the set here is the set the game would
+    /// instantiate on a client that has the template — including the rule that a
+    /// child under an inactive parent does not count.
+    /// </summary>
+    internal static TerrainTemplate? TerrainOf(ZoneSystem.ZoneLocation location, string name)
+    {
+        if (s_templateTerrain.TryGetValue(name, out TerrainTemplate? cached))
+            return cached;
+
+        // Through the shared lease, so this read owns a reference for exactly as
+        // long as it is reading and gives it back afterwards. It used to call
+        // location.m_prefab.Load() with no release at all: an acquire with no
+        // matching give-back, which pinned the template and its bundle for the
+        // life of the process.
+        TerrainTemplate? terrain = null;
+        using (ITemplateHandle? lease = TemplateAssets.Open(name))
+        {
+            GameObject asset = lease?.Asset;
+            if (asset == null)
+            {
+                // Not cached as "no terrain": a template that would not load
+                // says nothing about what it does to the ground, and the
+                // difference decides whether a site is published or held.
+                Log.LogWarning($"{name}: its template would not load, so its terrain cannot be read.");
+                return null;
+            }
+            terrain = TerrainTemplate.Read(asset);
+        }
+
+        s_templateTerrain[name] = terrain;
+        if (terrain.Modifiers.Count > 0)
+            Log.LogInfo($"{name}: {terrain.Modifiers.Count} terrain modifier(s) to convert for stock clients.");
+        return terrain;
+    }
+
+    /// <summary>
+    /// Every placed site of ours in the world, read from saved location proxies.
+    ///
+    /// One pass over the LocationProxy ZDOs; it reads and generates nothing. It
+    /// is what a restart needs in order to know which conversions were left
+    /// unfinished, because the zones concerned are already generated and will
+    /// not run their own hook again.
+    /// </summary>
+    internal static List<LocationTerrainPlan.PlacedSite> OurPlacedSites()
+    {
+        var sites = new List<LocationTerrainPlan.PlacedSite>();
+        if (ZDOMan.instance == null || ZoneSystem.instance == null)
+            return sites;
+
+        var proxies = new List<ZDO>();
+        int index = 0;
+        ZDOMan.instance.GetAllZDOsWithPrefabIterative("LocationProxy", proxies, ref index);
+        foreach (ZDO zdo in proxies)
+        {
+            LocationTerrainPlan.PlacedSite? site = SiteOf(zdo);
+            if (site.HasValue)
+                sites.Add(site.Value);
+        }
+        Log.LogInfo($"{sites.Count} placed site(s) of ours carry terrain, out of {proxies.Count} location proxies.");
+        return sites;
+    }
+
+    private static readonly int LocationProxyPrefab = "LocationProxy".GetStableHashCode();
+}
+
+/// <summary>
+/// The clock the outstanding work runs on, and the one pass that takes it up
+/// again after a restart.
+///
+/// Zone generation is driven by where players are, so a site whose last zone is
+/// waiting can stay waiting for as long as nobody moves. ZoneSystem.Update is
+/// the game's own per-frame hook; the work inside it is bounded and on a timer.
+/// </summary>
+[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Update))]
+public static class LocationTerrainTick
+{
+    private static bool s_reseeded;
+
+    internal static void Forget() => s_reseeded = false;
+
+    private static void Postfix()
+    {
+        if (!ServerOnlyMode.Enabled || ZoneSystem.instance == null)
+            return;
+
+        if (!s_reseeded && ZoneSystem.instance.LocationsGenerated)
+        {
+            s_reseeded = true;
+            LocationTerrainWriter.Reseed(LocationTerrainPatch.OurPlacedSites());
+        }
+
+        LocationTerrainWriter.Tick(Time.time);
+    }
+}
+
+/// <summary>A new world: forget the templates read for the last one.</summary>
+[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Awake))]
+public static class LocationTerrainWriterReset
+{
+    private static void Postfix()
+    {
+        LocationTerrainWriter.Reset();
+        LocationTerrainPatch.Forget();
+        LocationTerrainTick.Forget();
+        LocationSpawnGate.Forget();
+        ZoneReadinessBarrier.Forget();
+        Verification.EmissionTrace.Forget();
+        // A new world generates different ground, so the heights kept from the
+        // builder for the last one describe nowhere.
+        LocationTerrainBridge.ForgetGeneratedHeights();
+    }
+}

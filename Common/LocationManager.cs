@@ -224,10 +224,13 @@ public class LocationManager
     {
         SoftReference<GameObject> softReferencePrefab = Jotunn.Managers.AssetManager.Instance.GetSoftReference<GameObject>(locationName);
 
+        // Server-only mode's scale conversion, on the asset the location is
+        // actually built from. ResolveMocksOnLoad combines callbacks per asset,
+        // so this is registered once per registration and not per audit read.
         Jotunn.Managers.AssetManager.Instance.ResolveMocksOnLoad(
             softReferencePrefab.m_assetID,
             null,
-            null);
+            resolvedObj => More_World_Locations_AIO.ServerOnly.ScaleSyncConversion.OnResolved(locationName, resolvedObj));
 
         CustomLocation customLocation = new
             CustomLocation(
@@ -251,6 +254,7 @@ public class LocationManager
             null,
             resolvedObj =>
             {
+                More_World_Locations_AIO.ServerOnly.ScaleSyncConversion.OnResolved(locationName, resolvedObj);
                 GameObject prefab = resolvedObj as GameObject;
                 if (prefab == null)
                 {

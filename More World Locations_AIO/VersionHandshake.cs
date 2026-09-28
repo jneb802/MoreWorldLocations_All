@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using HarmonyLib;
+using More_World_Locations_AIO.ServerOnly;
 
 namespace More_World_Locations_AIO
 {
@@ -21,7 +22,8 @@ namespace More_World_Locations_AIO
             // Make calls to check versions
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug("Invoking version check");
             ZPackage zpackage = new();
-            zpackage.Write(More_World_Locations_AIOPlugin.ModVersion);
+            zpackage.Write(ServerOnlyHandshake.Announce(
+                More_World_Locations_AIOPlugin.ModVersion, ServerOnlyMode.Enabled));
             peer.m_rpc.Invoke($"{More_World_Locations_AIOPlugin.ModName}_VersionCheck", zpackage);
         }
     }
@@ -31,11 +33,35 @@ namespace More_World_Locations_AIO
     {
         private static bool Prefix(ZRpc rpc, ZPackage pkg, ref ZNet __instance)
         {
-            if (!__instance.IsServer() || RpcHandlers.ValidatedPeers.Contains(rpc)) return true;
-            // Disconnect peer if they didn't send mod version at all
+            if (!__instance.IsServer()) return true;
+
+            // A peer's version answer is queued on its socket before its PeerInfo,
+            // so by now the server has recorded a match, a mismatch, or nothing.
+            // Nothing means no MWL on the client. The decision is made here for
+            // every peer, validated ones included: a "validated, so let it in"
+            // shortcut ahead of this would walk a modded client straight past
+            // server-only mode's refusal of exactly that client.
+            PeerAdmission.Verdict verdict = PeerAdmission.DecideFor(
+                validated: RpcHandlers.ValidatedPeers.Contains(rpc),
+                refused: RpcHandlers.RefusedPeers.Contains(rpc));
+
+            if (PeerAdmission.Admits(verdict, ServerOnlyMode.Enabled))
+            {
+                if (verdict == PeerAdmission.Verdict.WithoutMod)
+                {
+                    More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
+                        $"A peer without {More_World_Locations_AIOPlugin.ModName} joined: it receives the approved locations as vanilla objects");
+                }
+                return true;
+            }
+
+            // Refused here as well as when its version answer arrived, so
+            // admission never depends on the client acting on the error it was
+            // sent.
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(
-                $"Peer ({rpc.m_socket.GetHostName()}) never sent version or couldn't due to previous disconnect, disconnecting");
-            rpc.Invoke("Error", 3);
+                $"Peer ({rpc.m_socket.GetHostName()}) refused at PeerInfo: "
+                + PeerAdmission.RefusalReason(verdict, ServerOnlyMode.Enabled));
+            rpc.Invoke("Error", (int)ZNet.ConnectionStatus.ErrorVersion);
             return false; // Prevent calling underlying method
         }
 
@@ -71,6 +97,7 @@ namespace More_World_Locations_AIO
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
                 $"Peer ({peer.m_rpc.m_socket.GetHostName()}) disconnected, removing from validated list");
             _ = RpcHandlers.ValidatedPeers.Remove(peer.m_rpc);
+            _ = RpcHandlers.RefusedPeers.Remove(peer.m_rpc);
         }
     }
 
@@ -78,38 +105,69 @@ namespace More_World_Locations_AIO
     {
         public static readonly List<ZRpc> ValidatedPeers = new();
 
+        /// <summary>Peers that answered the version check with another version.</summary>
+        public static readonly List<ZRpc> RefusedPeers = new();
+
         public static void RPC_More_World_Locations_AIO_Version(ZRpc rpc, ZPackage pkg)
         {
             string? version = pkg.ReadString();
 
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
                 $"Version check, local: {More_World_Locations_AIOPlugin.ModVersion},  remote: {version}");
+
+            bool isServer = ZNet.instance.IsServer();
+
+            // On a client: a server-only server announces itself, so say what to
+            // do about it rather than leaving the player a version number that
+            // matches their own.
+            if (!isServer && ServerOnlyHandshake.AnnouncesServerOnly(version))
+            {
+                More_World_Locations_AIOPlugin.ConnectionError =
+                    ServerOnlyHandshake.ClientMessage(More_World_Locations_AIOPlugin.ModName, version);
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(
+                    "This server runs " + More_World_Locations_AIOPlugin.ModName
+                    + " in server-only mode and is for clients without the mod");
+                return;
+            }
+
             if (version != More_World_Locations_AIOPlugin.ModVersion)
             {
                 More_World_Locations_AIOPlugin.ConnectionError =
                     $"{More_World_Locations_AIOPlugin.ModName} Installed: {More_World_Locations_AIOPlugin.ModVersion}\n Needed: {version}";
-                if (!ZNet.instance.IsServer()) return;
+                if (!isServer) return;
                 // Different versions - force disconnect client from server
                 More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(
                     $"Peer ({rpc.m_socket.GetHostName()}) has incompatible version, disconnecting...");
-                rpc.Invoke("Error", 3);
+                if (!RefusedPeers.Contains(rpc)) RefusedPeers.Add(rpc);
+                rpc.Invoke("Error", (int)ZNet.ConnectionStatus.ErrorVersion);
+                return;
             }
-            else
+
+            if (!isServer)
             {
-                if (!ZNet.instance.IsServer())
-                {
-                    // Enable mod on client if versions match
-                    More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
-                        "Received same version from server!");
-                }
-                else
-                {
-                    // Add client to validated list
-                    More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
-                        $"Adding peer ({rpc.m_socket.GetHostName()}) to validated list");
-                    ValidatedPeers.Add(rpc);
-                }
+                // Enable mod on client if versions match
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
+                    "Received same version from server!");
+                return;
             }
+
+            // On the server the peer has now identified itself as having the mod.
+            // It is recorded either way; whether that admits it is
+            // PeerAdmission's decision and depends on the mode.
+            ValidatedPeers.Add(rpc);
+            PeerAdmission.Verdict verdict = PeerAdmission.Decide(
+                answeredVersionCheck: true, versionMatched: true);
+            if (PeerAdmission.Admits(verdict, ServerOnlyMode.Enabled))
+            {
+                More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogInfo(
+                    $"Adding peer ({rpc.m_socket.GetHostName()}) to validated list");
+                return;
+            }
+
+            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogWarning(
+                $"Peer ({rpc.m_socket.GetHostName()}) refused: "
+                + PeerAdmission.RefusalReason(verdict, ServerOnlyMode.Enabled));
+            rpc.Invoke("Error", (int)ZNet.ConnectionStatus.ErrorVersion);
         }
     }
 }

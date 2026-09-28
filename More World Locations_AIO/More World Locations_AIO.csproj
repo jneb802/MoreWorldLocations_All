@@ -41,6 +41,13 @@
 
     <!-- Embedded Resources -->
     <ItemGroup>
+        <!--
+          The server-only verification's two data files. LogicalName is set so
+          the test build, which has a different root namespace, finds them under
+          the same name and exercises the SHIPPED data rather than a copy.
+        -->
+        <EmbeddedResource Include="Src/ServerOnly/Verification/StockPrefabs.tsv" LogicalName="MoreWorldLocations.ServerOnly.StockPrefabs.tsv" />
+        <EmbeddedResource Include="Src/ServerOnly/Verification/CatalogueNames.tsv" LogicalName="MoreWorldLocations.ServerOnly.CatalogueNames.tsv" />
         <EmbeddedResource Include="assets/moreworldlocations_prefabs_1" />
         <EmbeddedResource Include="assets/moreworldlocations_prefabs_2" />
         <EmbeddedResource Include="assets/moreworldlocations_prefabs_3" />
