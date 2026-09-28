@@ -41,9 +41,6 @@
 
     <!-- Embedded Resources -->
     <ItemGroup>
-        <EmbeddedResource Include="assets/moreworldlocations_prefabs_1" />
-        <EmbeddedResource Include="assets/moreworldlocations_prefabs_2" />
-        <EmbeddedResource Include="assets/moreworldlocations_prefabs_3" />
         <EmbeddedResource Include="assets/ports" />
         <EmbeddedResource Include="assets/portlocation" />
         <EmbeddedResource Include="assets/portbundle" />
