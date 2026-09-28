@@ -224,7 +224,6 @@ public class Port : MonoBehaviour, Interactable, Hoverable
         if (hold || PortUI.instance == null || !m_view.IsValid()) return false;
         m_name = m_view.GetZDO().GetString(PortVars.Name, m_name);
         m_portID = new ShipmentManager.PortID(m_view.GetZDO().GetString(PortVars.GUID), m_name);
-        ShipmentManager.RequestShipments();
         PortUI.instance.Show(this);
         if (user is Player player) player.AddKnownPort(m_portID);
         m_currentHumanoid = user;
