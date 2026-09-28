@@ -471,3 +471,8 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 
 
 </details>
+
+
+## AI agent entry point
+
+See [AGENTS.md](AGENTS.md) for testing-tool instructions, repository ownership boundaries and linked runnable examples. Claude-based agents can use the [CLAUDE.md](CLAUDE.md) pointer to the same instructions.

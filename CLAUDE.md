@@ -27,3 +27,7 @@ configuration.
 - Cite specific files and lines for any finding.
 - Do not flag style-only issues unless they obscure behavior or maintainability.
 - Do not ask the author to run a full GitHub Actions build unless the workflow provides the required Valheim assemblies.
+
+## Testing-framework agent guidance
+
+Read [AGENTS.md](AGENTS.md) for test-layer ownership, current package/pack setup and the shared agent workflow. Existing project-specific guidance above remains applicable.
