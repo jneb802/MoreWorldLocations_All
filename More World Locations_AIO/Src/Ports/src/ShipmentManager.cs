@@ -232,11 +232,16 @@ public class ShipmentManager : MonoBehaviour
     
     public static void ReadLocalFile()
     {
-        if (!ZNet.instance) return;
+        if (!ZNet.instance || !ZNet.instance.IsServer()) return;
+        Shipments.Clear();
         if (!Directory.Exists(MWL_FolderPath)) Directory.CreateDirectory(MWL_FolderPath);
 
         string path = GetFilePath(ZNet.m_world.m_name);
-        if (!File.Exists(path)) return;
+        if (!File.Exists(path))
+        {
+            SyncShipments();
+            return;
+        }
         string json;
         if (COMPRESS_DATA)
         {
@@ -251,16 +256,23 @@ public class ShipmentManager : MonoBehaviour
             json = File.ReadAllText(path);
         }
         Dictionary<string, Shipment>? data = JsonConvert.DeserializeObject<Dictionary<string, Shipment>>(json);
-        if (data == null) return;
-        Shipments = data;
-        // ServerSyncedShipments.Value = json;
+        if (data != null) Shipments = data;
+        // ServerSync sends this initial value to joining clients. Port browsing
+        // can then use the local collection without requesting a new broadcast.
+        SyncShipments();
+    }
+
+    private static string SyncShipments()
+    {
+        string json = JsonConvert.SerializeObject(Shipments, Formatting.Indented);
+        if (ServerSyncedShipments != null) ServerSyncedShipments.Value = json;
+        return json;
     }
 
     public static void UpdateShipments()
     {
         if (!ZNet.instance || !ZNet.instance.IsServer()) return;
-        string json = JsonConvert.SerializeObject(Shipments, Formatting.Indented);
-        if (ServerSyncedShipments != null) ServerSyncedShipments.Value = json;
+        string json = SyncShipments();
         if (!Directory.Exists(MWL_FolderPath)) Directory.CreateDirectory(MWL_FolderPath);
         string path = GetFilePath(ZNet.m_world.m_name);
         if (COMPRESS_DATA)
@@ -287,7 +299,6 @@ public class ShipmentManager : MonoBehaviour
         {
             ZRoutedRpc.instance.Register<string, string>(nameof(RPC_ServerReceiveShipment), RPC_ServerReceiveShipment);
             ZRoutedRpc.instance.Register<string, string>(nameof(RPC_ServerShipmentCollected), RPC_ServerShipmentCollected);
-            ZRoutedRpc.instance.Register(nameof(RPC_RequestShipments), new Action<long>(RPC_RequestShipments));
         }
     }
     public static void RPC_ServerReceiveShipment(long sender, string senderName, string serializedShipment)
@@ -300,20 +311,6 @@ public class ShipmentManager : MonoBehaviour
         if (!newShipment.IsValid) return;
 
         Shipments[newShipment.ShipmentID] = newShipment;
-        UpdateShipments();
-    }
-
-    public static void RequestShipments()
-    {
-        if (!ZNet.instance || ZNet.instance.IsServer()) return;
-        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug("[Shipment Manager] Client requesting shipments from server");
-        ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), nameof(RPC_RequestShipments));
-    }
-
-    public static void RPC_RequestShipments(long sender)
-    {
-        if (!ZNet.instance || !ZNet.instance.IsServer()) return;
-        More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"[Shipment Manager] Server received shipment request, pushing {Shipments.Count} shipments");
         UpdateShipments();
     }
 
