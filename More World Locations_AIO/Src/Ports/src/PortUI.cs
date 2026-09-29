@@ -622,6 +622,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         ClearLeftPanel();
         foreach (ZDO port in ShipmentManager.GetPorts()) AddPort(port);
+        SortPortItems();
         ResizeLeftList();
     }
 
@@ -629,6 +630,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         ClearLeftPanel();
         foreach (ZDO port in ShipmentManager.GetPorts()) AddPortal(port);
+        SortPortItems();
         ResizeLeftList();
     }
 
@@ -666,6 +668,23 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         foreach(TempListItem? item in m_tempListItems) item.Destroy();
         m_tempListItems.Clear();
+    }
+
+    private void SortPortItems()
+    {
+        if (!Player.m_localPlayer) return;
+        HashSet<string> favorites = Player.m_localPlayer.GetFavoritePorts();
+        List<TempListItem> ports = m_tempListItems
+            .Where(item => item.PortID != null)
+            .OrderByDescending(item => favorites.Contains(item.PortID!.Value.GUID))
+            .ThenBy(item => item.PortID!.Value.Name, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(item => item.PortID!.Value.GUID, StringComparer.Ordinal)
+            .ToList();
+        for (int index = 0; index < ports.Count; index++)
+        {
+            TempListItem item = ports[index];
+            item.SetPortOrder(index, favorites.Contains(item.PortID!.Value.GUID));
+        }
     }
 
     public void AddManifest(Manifest manifest)
@@ -765,6 +784,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         if (string.IsNullOrEmpty(info.portID.Name)) return;
         TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
         item.SetIcon(Minimap.instance.GetSprite(Minimap.PinType.Icon2));
+        item.PortID = info.portID;
         item.SetLabel($"{info.portID.Name}");
         item.SetButton(() =>
         {
@@ -819,6 +839,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         if (string.IsNullOrEmpty(info.portID.Name)) return; // make sure zdo has a port name
         TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
         item.SetIcon(Minimap.instance.GetSprite(Minimap.PinType.Icon4));
+        item.PortID = info.portID;
         item.SetLabel($"{info.portID.Name}");
         item.SetButton(() =>
         {
@@ -851,6 +872,14 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     }
     private class TempListItem
     {
+        public ShipmentManager.PortID? PortID;
+
+        public void SetPortOrder(int index, bool favorite)
+        {
+            if (Prefab == null || PortID == null) return;
+            Prefab.transform.SetSiblingIndex(index);
+            SetLabel((favorite ? "★ " : "") + PortID.Value.Name);
+        }
         private readonly GameObject? Prefab;
         private readonly Button? Button;
         private readonly Image? Icon;
@@ -994,6 +1023,11 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         private readonly RectTransform BodyRect;
         private readonly Button MapButton;
         private readonly Image MapIcon;
+        private readonly Button FavoriteButton;
+        private readonly Text FavoriteLabel;
+        private readonly Text FavoriteIcon;
+        private readonly Vector2 NameSize;
+        private readonly Vector2 NamePosition;
         public Port.PortInfo? MapInfo;
         
         private readonly float BodyMinHeight;
@@ -1001,11 +1035,45 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         public RightPanel(Text name, Text body, Button mapButton)
         {
             Name = name;
+            NameSize = name.rectTransform.sizeDelta;
+            NamePosition = name.rectTransform.anchoredPosition;
             BodyText = body;
             BodyRect = BodyText.rectTransform;
             MapButton = mapButton;
             MapIcon = MapButton.GetComponent<Image>();
+            FavoriteButton = Instantiate(mapButton, mapButton.transform.parent);
+            FavoriteButton.name = "FavoriteButton";
+            FavoriteButton.onClick = new Button.ButtonClickedEvent();
+            FavoriteLabel = FavoriteButton.transform.Find("Text").GetComponent<Text>();
+            RectTransform mapRect = MapButton.GetComponent<RectTransform>();
+            RectTransform favoriteRect = FavoriteButton.GetComponent<RectTransform>();
+            favoriteRect.anchoredPosition -= new Vector2(mapRect.rect.width + 16f, 0f);
+            FavoriteButton.GetComponent<Image>().color = Color.clear;
+            FavoriteIcon = Instantiate(FavoriteLabel, FavoriteButton.transform);
+            FavoriteIcon.name = "Star";
+            FavoriteIcon.rectTransform.anchoredPosition = Vector2.zero;
+            FavoriteIcon.rectTransform.sizeDelta = mapRect.rect.size;
+            FavoriteIcon.alignment = TextAnchor.MiddleCenter;
+            FavoriteIcon.resizeTextForBestFit = false;
+            FavoriteIcon.fontSize = 36;
+            FavoriteIcon.raycastTarget = false;
+            FavoriteButton.onClick.AddListener(() =>
+            {
+                if (MapInfo == null || !Player.m_localPlayer) return;
+                Player.m_localPlayer.ToggleFavoritePort(MapInfo.portID);
+                UpdateFavoriteLabel();
+                instance?.SortPortItems();
+            });
             BodyMinHeight = body.rectTransform.sizeDelta.y;
+        }
+
+        private void UpdateFavoriteLabel()
+        {
+            bool favorite = MapInfo != null && Player.m_localPlayer &&
+                            Player.m_localPlayer.GetFavoritePorts().Contains(MapInfo.portID.GUID);
+            FavoriteLabel.text = Localization.instance.Localize(favorite ? LocalKeys.RemoveFavorite : LocalKeys.AddFavorite);
+            FavoriteIcon.text = favorite ? "★" : "☆";
+            FavoriteIcon.color = favorite ? new Color(1f, 0.8f, 0.2f) : Color.white;
         }
         public void SetMapButton(UnityAction action) => MapButton.onClick.AddListener(action);
         public void SetName(string name)
@@ -1028,6 +1096,11 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             MapButton.gameObject.SetActive(info != null);
             MapInfo = info;
+            FavoriteButton.gameObject.SetActive(info != null);
+            // Reserve space only while the port actions are visible.
+            Name.rectTransform.sizeDelta = NameSize - (info != null ? new Vector2(66f, 0f) : Vector2.zero);
+            Name.rectTransform.anchoredPosition = NamePosition - (info != null ? new Vector2(33f, 0f) : Vector2.zero);
+            UpdateFavoriteLabel();
             if (Minimap.instance && MapIcon.sprite == null)
             {
                 MapIcon.sprite = Minimap.instance.GetSprite(Minimap.PinType.Icon2);

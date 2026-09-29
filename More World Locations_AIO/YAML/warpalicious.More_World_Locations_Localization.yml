@@ -62,6 +62,8 @@ label_port: Port
 label_delivery: Deliveries
 label_manifest: Manifest
 label_open_map: Open Map
+label_add_favorite: Favorite
+label_remove_favorite: Unfavorite
 label_teleport: Teleport
 label_in_transit: In Transit
 label_delivered: Delivered

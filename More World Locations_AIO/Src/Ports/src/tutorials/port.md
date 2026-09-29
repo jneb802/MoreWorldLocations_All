@@ -6,6 +6,8 @@
 
 <color=orange><b>Selecting a Destination</b></color>
 <size=5>●</size> Click a port in the list to select it as your destination
+<size=5>●</size> Click <color=yellow>[Favorite]</color> beside Open Map to keep that port at the top of the Ports and Teleport lists
+<size=5>●</size> Favorites are saved with your character. Click <color=yellow>[Unfavorite]</color> to remove one
 <size=5>●</size> Hover over a port to see its tooltip:
    <size=5>♦</size> Shipment cost (scales with distance)
    <size=5>♦</size> Estimated time of arrival
