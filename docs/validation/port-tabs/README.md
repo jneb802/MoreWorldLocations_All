@@ -1,6 +1,6 @@
 # Valnet image proof: port tabs
 
-These screenshots show the earlier Send/Receive design. They do not validate the later unified Cargo list. Updated Valnet captures are pending.
+These screenshots show the earlier Send/Receive design. For the current layout, see the [unified Cargo Valnet proof](../port-cargo/README.md).
 
 Captured on valnet-client-01 on 2026-09-29 in TestingWorld, using the maintained Praetoris Season 8 client profile aligned to deployed release 8.0.29 and candidate code e28b791. These are original OBS captures. Temporary ports and seeded shipments provided the UI states.
 
