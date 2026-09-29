@@ -7,6 +7,8 @@ public static class LocalKeys
     public static readonly string Deliveries = "$label_delivery";
     public static readonly string Manifest = "$label_manifest";
     public static readonly string OpenMap = "$label_open_map";
+    public static readonly string AddFavorite = "$label_add_favorite";
+    public static readonly string RemoveFavorite = "$label_remove_favorite";
     public static readonly string Teleport = "$label_teleport";
     public static readonly string InTransit = "$label_in_transit";
     public static readonly string Discovered = "$label_delivered";
