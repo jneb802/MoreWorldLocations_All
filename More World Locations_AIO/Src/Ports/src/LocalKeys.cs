@@ -3,9 +3,14 @@ namespace More_World_Locations_AIO;
 public static class LocalKeys
 {
     public static readonly string Shipments = "$label_shipment";
-    public static readonly string Port = "$label_port";
     public static readonly string Deliveries = "$label_delivery";
-    public static readonly string Manifest = "$label_manifest";
+    public static readonly string Buy = "$label_port_buy";
+    public static readonly string Send = "$label_port_send";
+    public static readonly string Receive = "$label_port_receive";
+    public static readonly string Destinations = "$label_port_destinations";
+    public static readonly string Outgoing = "$label_port_outgoing";
+    public static readonly string NoOutgoing = "$msg_port_no_outgoing";
+    public static readonly string NoIncoming = "$msg_port_no_incoming";
     public static readonly string OpenMap = "$label_open_map";
     public static readonly string AddFavorite = "$label_add_favorite";
     public static readonly string RemoveFavorite = "$label_remove_favorite";
@@ -25,10 +30,11 @@ public static class LocalKeys
     public static readonly string EstimatedShipTime = "$label_estimated_ship_time";
     public static readonly string Origin = "$label_origin";
     public static readonly string Destination = "$label_destination";
-    public static readonly string PortTooltip = "$tooltip_port";
-    public static readonly string ShipmentTooltip = "$tooltip_shipment";
-    public static readonly string DeliveryTooltip = "$tooltip_delivery";
-    public static readonly string ManifestTooltip = "$tooltip_manifest";
+    public static readonly string SendTooltip = "$tooltip_port_send";
+    public static readonly string ReceiveTooltip = "$tooltip_port_receive";
+    public static readonly string BuyTooltip = "$tooltip_port_buy";
+    public static readonly string DestinationsTooltip = "$tooltip_port_destinations";
+    public static readonly string OutgoingTooltip = "$tooltip_port_outgoing";
     public static readonly string TeleportTooltip = "$tooltip_teleport";
     public static readonly string Exit = "$label_exit";
     public static readonly string Purchase = "$label_purchase";

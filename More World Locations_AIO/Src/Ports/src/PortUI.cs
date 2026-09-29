@@ -48,9 +48,12 @@ public static class LoadPortUI
         go.CopySpriteAndMaterial(craftingPanel, "Panel/Tabs/Port", "TabsButtons/Craft");
         go.CopySpriteAndMaterial(craftingPanel, "Panel/Tabs/Port/Selected", "TabsButtons/Craft/Selected");
         go.CopyButtonState(craftingPanel, "Panel/Tabs/Port", "TabsButtons/Craft");
-        go.CopySpriteAndMaterial(craftingPanel, "Panel/Tabs/Shipment", "TabsButtons/Craft");
-        go.CopySpriteAndMaterial(craftingPanel, "Panel/Tabs/Shipment/Selected", "TabsButtons/Craft/Selected");
-        go.CopyButtonState(craftingPanel, "Panel/Tabs/Shipment", "TabsButtons/Craft");
+        foreach (string view in new[] { "Destinations", "Outgoing" })
+        {
+            go.CopySpriteAndMaterial(craftingPanel, "Panel/SendViews/" + view, "TabsButtons/Craft");
+            go.CopySpriteAndMaterial(craftingPanel, "Panel/SendViews/" + view + "/Selected", "TabsButtons/Craft/Selected");
+            go.CopyButtonState(craftingPanel, "Panel/SendViews/" + view, "TabsButtons/Craft");
+        }
         go.CopySpriteAndMaterial(craftingPanel, "Panel/Tabs/Delivery", "TabsButtons/Craft");
         go.CopySpriteAndMaterial(craftingPanel, "Panel/Tabs/Delivery/Selected", "TabsButtons/Craft/Selected");
         go.CopyButtonState(craftingPanel, "Panel/Tabs/Delivery", "TabsButtons/Craft");
@@ -156,10 +159,17 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     private Image HelpBackground = null!;
     private GameObject Darken = null!;
     private Text Topic = null!;
-    private Tab PortTab = null!;
-    private Tab ShipmentTab = null!;
-    private Tab DeliveryTab = null!;
-    private Tab ManifestTab = null!;
+    private Tab SendTab = null!;
+    private Tab DestinationsView = null!;
+    private Tab OutgoingView = null!;
+    private GameObject SendViewBar = null!;
+    private RectTransform LeftPanel = null!;
+    private Vector2 LeftPanelPosition;
+    private Vector2 LeftPanelSize;
+    private readonly List<Tab> SendViews = new();
+    private bool m_showOutgoing;
+    private Tab ReceiveTab = null!;
+    private Tab BuyTab = null!;
     private Tab TeleportTab = null!;
     private VerticalLayoutGroup LeftPanelLayout = null!;
     private RectTransform LeftPanelRoot = null!;
@@ -176,8 +186,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     private Port.PortInfo? m_selectedDestination;
     public Shipment? m_selectedDelivery;
     private Manifest? m_selectedManifest;
+    private string? m_selectedShipmentID;
     
-    private TabOption m_currentTab = TabOption.Ports;
+    private TabOption m_currentTab = TabOption.Help;
     private float m_portPinTimer;
     private int m_session;
 
@@ -185,7 +196,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     private Action? OnSentShipment;
     private enum TabOption
     {
-        Ports, Shipments, Delivery, Manifest, Teleport
+        Send, Receive, Buy, Teleport, Help
     }
     
     public void Awake()
@@ -202,11 +213,15 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         MainButton = transform.Find("Panel/Description/SendButton").GetComponent<Button>();
         MainButtonText =  transform.Find("Panel/Description/SendButton/Text").GetComponent<Text>();
         Help = new HowTo(transform.Find("Panel/HowToButton"));
-        PortTab = new Tab(transform.Find("Panel/Tabs/Port"));
-        ShipmentTab = new Tab(transform.Find("Panel/Tabs/Shipment"));
-        DeliveryTab = new Tab(transform.Find("Panel/Tabs/Delivery"));
-        ManifestTab = new Tab(transform.Find("Panel/Tabs/Manifests"));
+        SendTab = new Tab(transform.Find("Panel/Tabs/Port"));
+        ReceiveTab = new Tab(transform.Find("Panel/Tabs/Delivery"));
+        BuyTab = new Tab(transform.Find("Panel/Tabs/Manifests"));
         TeleportTab = new Tab(transform.Find("Panel/Tabs/Teleport"));
+        TeleportTab.SetOrder(0);
+        BuyTab.SetOrder(1);
+        SendTab.SetOrder(2);
+        ReceiveTab.SetOrder(3);
+        SetupSendViews();
         LeftPanelRoot =  transform.Find("Panel/LeftPanel/Viewport/ListRoot").GetComponent<RectTransform>();
         m_leftListMinHeight = LeftPanelRoot.sizeDelta.y;
         LeftPanelLayout = LeftPanelRoot.GetComponent<VerticalLayoutGroup>();
@@ -223,22 +238,19 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         Requirements.level.Label = transform.Find("Panel/Description/Requirements/level/MinLevel/Text").GetComponent<Text>();
 
         m_defaultIcon = Icon.sprite;
-        PortTab.SetButton(OnPortTab);
-        ShipmentTab.SetButton(OnShipmentTab);
-        DeliveryTab.SetButton(OnDeliveryTab);
-        ManifestTab.SetButton(OnManifestTab);
+        SendTab.SetButton(OnSendTab);
+        ReceiveTab.SetButton(OnReceiveTab);
+        BuyTab.SetButton(OnBuyTab);
         TeleportTab.SetButton(OnTeleportTab);
         MainButton.onClick.AddListener(OnMainButton);
         Description.SetMapButton(OnMapButton);
         
-        PortTab.SetLabel(LocalKeys.Port);
-        PortTab.SetTooltip(LocalKeys.PortTooltip);
-        ShipmentTab.SetLabel(LocalKeys.Shipments);
-        ShipmentTab.SetTooltip(LocalKeys.ShipmentTooltip);
-        DeliveryTab.SetLabel(LocalKeys.Deliveries);
-        DeliveryTab.SetTooltip(LocalKeys.DeliveryTooltip);
-        ManifestTab.SetLabel(LocalKeys.Manifest);
-        ManifestTab.SetTooltip(LocalKeys.ManifestTooltip);
+        SendTab.SetLabel(LocalKeys.Send);
+        SendTab.SetTooltip(LocalKeys.SendTooltip);
+        ReceiveTab.SetLabel(LocalKeys.Receive);
+        ReceiveTab.SetTooltip(LocalKeys.ReceiveTooltip);
+        BuyTab.SetLabel(LocalKeys.Buy);
+        BuyTab.SetTooltip(LocalKeys.BuyTooltip);
         TeleportTab.SetLabel(LocalKeys.Teleport);
         TeleportTab.SetTooltip(LocalKeys.TeleportTooltip);
         transform.Find("Panel/Description/MapButton/Text").GetComponent<Text>().text = Localization.instance.Localize(LocalKeys.OpenMap);
@@ -252,6 +264,77 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             m_rect.anchoredPosition = PanelOffsetConfig.Value;
         TeleportTab.Enable(UseTeleportTab?.Value is PortInit.Toggle.On);
         Hide();
+    }
+
+    private void SetupSendViews()
+    {
+        LeftPanel = transform.Find("Panel/LeftPanel").GetComponent<RectTransform>();
+        LeftPanelPosition = LeftPanel.anchoredPosition;
+        LeftPanelSize = LeftPanel.sizeDelta;
+        SendViewBar = new GameObject("SendViews", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        RectTransform bar = SendViewBar.GetComponent<RectTransform>();
+        bar.SetParent(LeftPanel.parent, false);
+        bar.anchorMin = LeftPanel.anchorMin;
+        bar.anchorMax = LeftPanel.anchorMax;
+        bar.pivot = LeftPanel.pivot;
+        bar.anchoredPosition = LeftPanelPosition;
+        bar.sizeDelta = new Vector2(LeftPanelSize.x, 32f);
+        HorizontalLayoutGroup layout = SendViewBar.GetComponent<HorizontalLayoutGroup>();
+        layout.spacing = 4f;
+        layout.childControlWidth = true;
+        layout.childForceExpandWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandHeight = true;
+        Transform outgoing = transform.Find("Panel/Tabs/Shipment");
+        outgoing.SetParent(bar, false);
+        outgoing.name = "Outgoing";
+        HorizontalLayoutGroup tabsLayout = transform.Find("Panel/Tabs").GetComponent<HorizontalLayoutGroup>();
+        tabsLayout.childControlWidth = true;
+        tabsLayout.childForceExpandWidth = true;
+        Transform destinations = Instantiate(outgoing, bar);
+        destinations.name = "Destinations";
+        destinations.SetAsFirstSibling();
+        DestinationsView = new Tab(destinations, SendViews);
+        OutgoingView = new Tab(outgoing, SendViews);
+        DestinationsView.SetLabel(LocalKeys.Destinations);
+        OutgoingView.SetLabel(LocalKeys.Outgoing);
+        DestinationsView.SetTooltip(LocalKeys.DestinationsTooltip);
+        OutgoingView.SetTooltip(LocalKeys.OutgoingTooltip);
+        DestinationsView.SetButton(() => ShowSendView(false));
+        OutgoingView.SetButton(() => ShowSendView(true));
+        SetSendViewsVisible(false);
+    }
+
+    private void SetSendViewsVisible(bool visible)
+    {
+        SendViewBar.SetActive(visible);
+        LeftPanel.anchoredPosition = LeftPanelPosition - (visible ? new Vector2(0f, 40f) : Vector2.zero);
+        LeftPanel.sizeDelta = LeftPanelSize - (visible ? new Vector2(0f, 40f) : Vector2.zero);
+    }
+
+    private void ResetSelection()
+    {
+        m_selectedDestination = null;
+        m_selectedDelivery = null;
+        m_selectedManifest = null;
+        m_selectedShipmentID = null;
+        Description.ResetDescription();
+        Requirements.SetActive(false);
+        Icon.sprite = m_defaultIcon;
+        OnUpdate = null;
+        OnSentShipment = null;
+    }
+
+    private void ShowSendView(bool outgoing)
+    {
+        m_session++;
+        m_showOutgoing = outgoing;
+        ResetSelection();
+        (outgoing ? OutgoingView : DestinationsView).SetSelected(true);
+        if (outgoing) LoadShipments();
+        else LoadPorts();
+        SetMainButtonText(LocalKeys.Exit);
+        MainButton.interactable = true;
     }
 
     public void Update()
@@ -321,6 +404,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         if (instance == null) return;
         if (sender is not ConfigEntry<PortInit.Toggle> config) return;
         instance.TeleportTab.Enable(config.Value is PortInit.Toggle.On);
+        if (config.Value is PortInit.Toggle.Off && instance.m_currentTab == TabOption.Teleport && IsVisible())
+            instance.OnBuyTab();
     }
 
     public void OnMapButton()
@@ -347,20 +432,11 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         m_session++;
         m_currentPort = port;
         gameObject.SetActive(true);
-        PortTab.SetSelected(true);
         SetTopic(m_currentPort.m_name);
-        Description.ResetDescription();
-        m_currentTab = TabOption.Ports;
-        PortTab.SetSelected(true);
-        LoadPorts();
-        ResizeLeftList();
-        SetMainButtonText(LocalKeys.Exit);
-        Requirements.SetActive(false);
-        m_selectedDestination = null;
-        Description.ResetDescription();
-        Icon.sprite = m_defaultIcon;
-        MainButton.interactable = true;
-        OnUpdate = null;
+        Tab.SetAllSelected(false);
+        ResetSelection();
+        if (UseTeleportTab?.Value is PortInit.Toggle.On) OnTeleportTab();
+        else OnBuyTab();
         Help.SetGlow(false);
         Help.SetIcon(Minimap.instance.GetSprite(Minimap.PinType.Hildir1));
         ShipmentManager.OnShipmentsUpdated += OnShipmentsRefreshed;
@@ -368,105 +444,83 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     public void OnHelp()
     {
+        m_session++;
+        m_currentTab = TabOption.Help;
+        SetSendViewsVisible(false);
+        ResetSelection();
         Tab.SetAllSelected(false);
         Help.SetGlow(true);
         LoadTutorials();
         SetMainButtonText(LocalKeys.Exit);
-        m_selectedDestination = null;
-        m_selectedManifest = null;
-        Description.ResetDescription();
         MainButton.interactable = true;
-        Requirements.SetActive(false);
-        Icon.sprite = m_defaultIcon;
-        OnUpdate = null;
     }
-    public void OnManifestTab()
+    public void OnBuyTab()
     {
-        m_currentTab = TabOption.Manifest;
-        if (ManifestTab.IsSelected) return;
-        ManifestTab.SetSelected(true);
+        if (BuyTab.IsSelected) return;
+        m_session++;
+        SetSendViewsVisible(false);
+        ResetSelection();
+        m_currentTab = TabOption.Buy;
+        BuyTab.SetSelected(true);
         LoadManifests();
         SetMainButtonText(LocalKeys.Purchase);
-        m_selectedDestination = null;
-        Description.ResetDescription();
         MainButton.interactable = false;
-        Requirements.SetActive(false);
-        Icon.sprite = m_defaultIcon;
-        OnUpdate = null;
         Help.SetGlow(false);
     }
 
-    public void OnPortTab()
+    public void OnSendTab()
     {
-        m_currentTab = TabOption.Ports;
-        if (PortTab.IsSelected) return;
-        PortTab.SetSelected(true);
-        LoadPorts();
-        SetMainButtonText(LocalKeys.Exit);
-        m_selectedDestination = null;
-        m_selectedManifest = null;
-        Description.ResetDescription();
-        MainButton.interactable = true;
-        Requirements.SetActive(false);
-        Icon.sprite = m_defaultIcon;
-        OnUpdate = null;
+        m_currentTab = TabOption.Send;
+        if (SendTab.IsSelected) return;
+        SendTab.SetSelected(true);
+        SetSendViewsVisible(true);
+        ShowSendView(false);
         Help.SetGlow(false);
     }
 
-    public void OnShipmentTab()
+    public void OnReceiveTab()
     {
-        m_currentTab = TabOption.Shipments;
-        if (ShipmentTab.IsSelected || m_currentPort == null) return;
-        ShipmentTab.SetSelected(true);
-        LoadShipments();
-        SetMainButtonText(LocalKeys.Exit);
-        Description.ResetDescription();
-        m_selectedDestination = null;
-        m_selectedManifest = null;
-        MainButton.interactable = true;
-        Requirements.SetActive(false);
-        Icon.sprite = m_defaultIcon;
-        OnUpdate = null;
-        Help.SetGlow(false);
-    }
-
-    public void OnDeliveryTab()
-    {
-        m_currentTab = TabOption.Delivery;
-        if (DeliveryTab.IsSelected) return;
-        DeliveryTab.SetSelected(true);
+        if (ReceiveTab.IsSelected) return;
+        m_session++;
+        SetSendViewsVisible(false);
+        ResetSelection();
+        m_currentTab = TabOption.Receive;
+        ReceiveTab.SetSelected(true);
         LoadDeliveries();
         SetMainButtonText(LocalKeys.OpenDelivery);
         MainButton.interactable = false;
-        Description.ResetDescription();
-        m_selectedDestination = null;
-        m_selectedManifest = null;
-        Requirements.SetActive(false);
-        Icon.sprite = m_defaultIcon;
-        OnUpdate = null;
         Help.SetGlow(false);
     }
 
     private void OnShipmentsRefreshed()
     {
-        if (m_currentTab == TabOption.Shipments) LoadShipments();
-        else if (m_currentTab == TabOption.Delivery) LoadDeliveries();
+        string? selectedID = m_selectedShipmentID;
+        if (m_currentTab == TabOption.Send && m_showOutgoing)
+        {
+            ResetSelection();
+            LoadShipments();
+        }
+        else if (m_currentTab == TabOption.Receive)
+        {
+            ResetSelection();
+            MainButton.interactable = false;
+            LoadDeliveries();
+        }
+        else return;
+        if (selectedID != null) m_tempListItems.Find(item => item.ShipmentID == selectedID)?.Select();
     }
 
     public void OnTeleportTab()
     {
-        m_currentTab = TabOption.Teleport;
         if (TeleportTab.IsSelected) return;
+        m_session++;
+        SetSendViewsVisible(false);
+        ResetSelection();
+        m_currentTab = TabOption.Teleport;
         TeleportTab.SetSelected(true);
         LoadPortals();
         SetMainButtonText(LocalKeys.Teleport);
-        m_selectedDestination = null;
-        m_selectedManifest = null;
-        Description.ResetDescription();
         MainButton.interactable = false;
-        Requirements.SetActive(false);
-        Icon.sprite = m_defaultIcon;
-        OnUpdate = null;
         Help.SetGlow(false);
     }
 
@@ -483,8 +537,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void OnMainButton()
     {
         if (m_currentPort == null || !Player.m_localPlayer) return;
-        bool changesContainers = (m_currentTab == TabOption.Ports && m_selectedDestination != null) ||
-                                 m_currentTab == TabOption.Delivery || m_currentTab == TabOption.Manifest;
+        bool changesContainers = (m_currentTab == TabOption.Send && m_selectedDestination != null) ||
+                                 m_currentTab == TabOption.Receive || m_currentTab == TabOption.Buy;
         if (!changesContainers)
         {
             ExecuteMainButton();
@@ -508,9 +562,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         if (m_currentPort == null || !Player.m_localPlayer) return;
         switch (m_currentTab)
         {
-            case TabOption.Ports:
-                // port tab has 2 options, to exit UI, or send shipment
-                // depending on state of selected destination
+            case TabOption.Send:
+                // Outgoing and an unselected destination list use the Exit action.
                 if (m_selectedDestination == null) Hide();
                 else
                 {
@@ -539,10 +592,10 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                     }
                 }
                 break;
-            case TabOption.Shipments:
+            case TabOption.Help:
                 Hide();
                 break;
-            case TabOption.Delivery:
+            case TabOption.Receive:
                 if (m_selectedDelivery == null) return;
                 if (m_currentPort.LoadDelivery(m_selectedDelivery))
                 {
@@ -553,7 +606,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                     // should we Hide panel when delivery loaded ??
                 }
                 break;
-            case TabOption.Manifest:
+            case TabOption.Buy:
                 if (m_selectedManifest == null || !Player.m_localPlayer.HasRequirements(m_selectedManifest)) return;
                 if (m_currentPort.SpawnContainer(m_selectedManifest) is {} container)
                 {
@@ -608,7 +661,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         float totalItemHeight = count * m_listItemHeight;
         float totalSpacingHeight = Mathf.Max(0, count - 1) * padding;
         float newHeight = totalItemHeight + totalSpacingHeight;
-        LeftPanelRoot.sizeDelta = new Vector2(LeftPanelRoot.sizeDelta.x, Mathf.Max(newHeight, m_leftListMinHeight));
+        float minHeight = m_leftListMinHeight - (SendViewBar.activeSelf ? 40f : 0f);
+        LeftPanelRoot.sizeDelta = new Vector2(LeftPanelRoot.sizeDelta.x, Mathf.Max(newHeight, minHeight));
     }
 
     public void LoadTutorials()
@@ -651,6 +705,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             .ToList();
         foreach (Shipment shipment in shipments) AddShipment(shipment);
         ResizeLeftList();
+        if (shipments.Count == 0) Description.SetBodyText(LocalKeys.NoOutgoing);
     }
 
     public void LoadDeliveries()
@@ -662,6 +717,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             .ToList();
         foreach(Shipment? delivery in deliveries) AddDelivery(delivery);
         ResizeLeftList();
+        if (deliveries.Count == 0) Description.SetBodyText(LocalKeys.NoIncoming);
     }
 
     public void ClearLeftPanel()
@@ -712,12 +768,14 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void AddDelivery(Shipment shipment)
     {
         TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
+        item.ShipmentID = shipment.ShipmentID;
         item.SetIcon("Cart");
         item.SetLabel(shipment.OriginPortName);
         item.SetButton(() =>
         {
             item.SetSelected(true);
             m_selectedDelivery = shipment;
+            m_selectedShipmentID = shipment.ShipmentID;
             Description.SetName(shipment.OriginPortName);
             Description.SetBodyText(shipment.GetTooltip());
             MainButton.interactable = shipment.State == ShipmentState.Delivered && shipment.CanAccess(Player.m_localPlayer);
@@ -729,6 +787,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 timer += dt;
                 if (timer <= 1f) return; // update every 1 second
                 timer = 0.0f;
+                MainButton.interactable = shipment.State == ShipmentState.Delivered && shipment.CanAccess(Player.m_localPlayer);
                 Description.SetBodyText(shipment.GetTooltip());
             };
         });
@@ -754,11 +813,14 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void AddShipment(Shipment shipment)
     {
         TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
+        item.ShipmentID = shipment.ShipmentID;
         item.SetIcon("VikingShip");
         item.SetLabel(shipment.DestinationPortName);
         item.SetButton(() =>
         {
             item.SetSelected(true);
+            ResetSelection();
+            m_selectedShipmentID = shipment.ShipmentID;
             Description.SetName(shipment.DestinationPortName);
             Description.SetBodyText(shipment.GetTooltip());
             float timer = 0f;
@@ -872,6 +934,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     }
     private class TempListItem
     {
+        public string? ShipmentID;
+        public void Select() => Button?.onClick.Invoke();
         public ShipmentManager.PortID? PortID;
 
         public void SetPortOrder(int index, bool favorite)
@@ -966,16 +1030,18 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         private readonly GameObject Selected;
         private readonly Text SelectedLabel;
         private readonly UITooltip? Tooltip;
+        private readonly List<Tab> Group;
         public bool IsSelected => Selected.activeInHierarchy;
 
-        public Tab(Transform transform)
+        public Tab(Transform transform, List<Tab>? group = null)
         {
             Prefab = transform.gameObject;
             Button = transform.GetComponent<Button>();
             Label = transform.Find("Text").GetComponent<Text>();
             Selected = transform.Find("Selected").gameObject;
             SelectedLabel = transform.Find("Selected/SelectedText").GetComponent<Text>();
-            instance?.Tabs.Add(this);
+            Group = group ?? instance!.Tabs;
+            Group.Add(this);
             Tooltip = Button.gameObject.AddComponent<UITooltip>();
             // anchor and fixed position only works for gamepad :(
             // so perhaps we will just make our own UI Tooltip component
@@ -986,6 +1052,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         }
 
         public void Enable(bool enable) => Prefab.SetActive(enable);
+        public void SetOrder(int order) => Prefab.transform.SetSiblingIndex(order);
         public void SetButton(UnityAction action) => Button.onClick.AddListener(action);
         public static void SetAllSelected(bool enable)
         {
@@ -1011,7 +1078,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         public void SetSelected(bool selected)
         {
             if (instance == null) return;
-            foreach(Tab tab in instance.Tabs) tab.Selected.SetActive(false);
+            foreach(Tab tab in Group) tab.Selected.SetActive(false);
             Selected.SetActive(selected);
         }
     }
