@@ -50,7 +50,7 @@
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_LocationConfigs.yml" />
         <EmbeddedResource Include="YAML/warpalicious.More_World_Locations_Localization.yml" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/introduction.md" />
-        <EmbeddedResource Include="Src/Ports/src/tutorials/receive.md" />
+        <EmbeddedResource Include="Src/Ports/src/tutorials/cargo.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/buy.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/send.md" />
         <EmbeddedResource Include="Src/Ports/src/tutorials/teleport.md" />

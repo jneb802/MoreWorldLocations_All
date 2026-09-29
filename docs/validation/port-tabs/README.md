@@ -1,5 +1,7 @@
 # Valnet image proof: port tabs
 
+These screenshots show the earlier Send/Receive design. They do not validate the later unified Cargo list. Updated Valnet captures are pending.
+
 Captured on valnet-client-01 on 2026-09-29 in TestingWorld, using the maintained Praetoris Season 8 client profile aligned to deployed release 8.0.29 and candidate code e28b791. These are original OBS captures. Temporary ports and seeded shipments provided the UI states.
 
 Send → Destinations: the four top-level tabs are Teleport, Buy, Send, Receive. A selected destination shows Favorite and Open Map.

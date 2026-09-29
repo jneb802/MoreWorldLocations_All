@@ -8,5 +8,5 @@ The <color=yellow>Buy</color> tab sells shipping chests, called <color=orange>ma
 
 <color=orange><b>Loading Cargo</b></color>
 <size=5>●</size> Open the purchased chests and put your items inside.
-<size=5>●</size> Return to the Port Manager and open <color=yellow>Send → Destinations</color> to choose where the cargo goes.
+<size=5>●</size> Return to the Port Manager and open <color=yellow>Send</color> to choose where the cargo goes.
 <size=5>●</size> You do not need to fill every slot, but empty chests cannot be sent.
