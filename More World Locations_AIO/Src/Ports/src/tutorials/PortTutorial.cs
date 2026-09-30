@@ -36,10 +36,9 @@ public class PortTutorial
     {
         PortTutorial introTab = new PortTutorial("Introduction", "introduction.md");
         PortTutorial teleportTab = new PortTutorial(LocalKeys.Teleport, "teleport.md");
-        PortTutorial manifestTab = new PortTutorial(LocalKeys.Manifest, "manifest.md");
-        PortTutorial portTab = new PortTutorial(LocalKeys.Port, "port.md");
-        PortTutorial shipmentTab = new PortTutorial(LocalKeys.Shipments, "shipment.md");
-        PortTutorial deliveryTab = new PortTutorial(LocalKeys.Deliveries, "delivery.md");
+        PortTutorial buyTab = new PortTutorial(LocalKeys.Buy, "buy.md");
+        PortTutorial shipTab = new PortTutorial(LocalKeys.Ship, "ship.md");
+        PortTutorial cargoTab = new PortTutorial(LocalKeys.Cargo, "cargo.md");
     }
 
     private static List<string> LoadMarkdownFromAssembly(string resourceName, string folder = "Src.Ports.src.tutorials")

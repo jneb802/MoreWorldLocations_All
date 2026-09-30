@@ -4,10 +4,12 @@ public static class LocalKeys
 {
     public static readonly string Shipments = "$label_shipment";
     public static readonly string Deliveries = "$label_delivery";
-    public static readonly string Port = "$label_port";
-    public static readonly string Manifest = "$label_manifest";
-    public static readonly string NoOutgoing = "$msg_port_no_outgoing";
-    public static readonly string NoIncoming = "$msg_port_no_incoming";
+    public static readonly string Buy = "$label_port_buy";
+    public static readonly string Ship = "$label_port_ship";
+    public static readonly string Cargo = "$label_port_cargo";
+    public static readonly string CargoFrom = "$label_port_cargo_from";
+    public static readonly string CargoTo = "$label_port_cargo_to";
+    public static readonly string NoCargo = "$msg_port_no_cargo";
     public static readonly string OpenMap = "$label_open_map";
     public static readonly string AddFavorite = "$label_add_favorite";
     public static readonly string RemoveFavorite = "$label_remove_favorite";
@@ -27,10 +29,9 @@ public static class LocalKeys
     public static readonly string EstimatedShipTime = "$label_estimated_ship_time";
     public static readonly string Origin = "$label_origin";
     public static readonly string Destination = "$label_destination";
-    public static readonly string PortTooltip = "$tooltip_port";
-    public static readonly string ManifestTooltip = "$tooltip_manifest";
-    public static readonly string ShipmentTooltip = "$tooltip_shipment";
-    public static readonly string DeliveryTooltip = "$tooltip_delivery";
+    public static readonly string ShipTooltip = "$tooltip_port_ship";
+    public static readonly string CargoTooltip = "$tooltip_port_cargo";
+    public static readonly string BuyTooltip = "$tooltip_port_buy";
     public static readonly string TeleportTooltip = "$tooltip_teleport";
     public static readonly string Exit = "$label_exit";
     public static readonly string Purchase = "$label_purchase";
