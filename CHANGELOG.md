@@ -1,6 +1,10 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 5.1.5     | - Create shrines and waystones from the game's vanilla ward prefab while preserving their MWL behavior. |
+| 5.1.6     | - Added a Favorite button beside Open Map in the Ports tab. Favorites are saved with your character. |
+|           | - Ports and Teleport lists show favorites first, with alphabetical sorting within each group. |
+| 5.1.5     | - Reduced port network traffic: opening a port no longer sends the full shipment list to all players or rewrites the shipment file. |
+|           | - Synchronize saved shipments when players join. Shipment creation, collection, and expiration continue to synchronize updates. Update both server and clients to 5.1.5. |
+|           | - Create shrines and waystones from the game's vanilla ward prefab while preserving their MWL behavior. |
 |           | - Removed three obsolete prefab bundles, reducing the mod DLL by approximately 17.5 MiB. |
 |           | - Obsolete legacy chests, their contents, and legacy spawners are removed from saves that still contain them. Current locations no longer use these prefabs. |
 | 5.1.4     | - Removed unintended chest and network components from the Ashlands port's container placement markers (`MWL_Port5`). |
