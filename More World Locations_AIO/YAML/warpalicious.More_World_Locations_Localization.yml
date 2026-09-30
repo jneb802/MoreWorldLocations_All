@@ -59,12 +59,10 @@ mwl_forbiddencatacombs_runestone_text: "When the jarls passed, they were laid to
 # Ports UI
 label_shipment: Shipments
 label_delivery: Deliveries
-label_port_buy: Buy
-label_port_send: Send
-label_port_cargo: Cargo
-label_port_cargo_from: "From $1"
-label_port_cargo_to: "To $1"
-msg_port_no_cargo: No incoming or outgoing cargo at this port. Use Send to send cargo.
+label_port: Ports
+label_manifest: Manifest
+msg_port_no_outgoing: No outgoing shipments from this port. Use Ports to send cargo.
+msg_port_no_incoming: No incoming shipments at this port.
 label_open_map: Open Map
 label_add_favorite: Favorite
 label_remove_favorite: Unfavorite
@@ -84,9 +82,10 @@ label_contents: Contents
 label_estimated_ship_time: Estimated shipment time
 label_origin: Origin
 label_destination: Destination
-tooltip_port_send: Choose a destination for your cargo
-tooltip_port_cargo: Track incoming and outgoing cargo, and collect deliveries at this port
-tooltip_port_buy: Buy shipping chests to fill with cargo
+tooltip_port: Choose a destination for your cargo
+tooltip_manifest: Purchase shipping chests
+tooltip_shipment: Track shipments sent from this port
+tooltip_delivery: View and collect incoming shipments at this port
 tooltip_teleport: Teleport to ports
 label_exit: Exit
 label_purchase: Purchase
