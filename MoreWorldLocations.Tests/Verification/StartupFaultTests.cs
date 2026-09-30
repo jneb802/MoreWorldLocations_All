@@ -22,6 +22,8 @@ public sealed class StartupFaultTests : IDisposable
         .CreateDelegate(typeof(Func<int, Exception?, Exception?>));
     private static readonly Func<ZNet, bool> Save = (Func<ZNet, bool>)Hook("SavePatch", "Prefix")
         .CreateDelegate(typeof(Func<ZNet, bool>));
+    // The save hook guards a server's save; the doubles' ZNet is a client until told otherwise.
+    private static ZNet AServer() => new ZNet { Server = true };
 
     public StartupFaultTests()
     {
@@ -104,11 +106,11 @@ public sealed class StartupFaultTests : IDisposable
         Assert.NotNull(inserted);
         Assert.Contains("ON PURPOSE", CatalogueSweep.FailureReason);
         Assert.False(CatalogueSweep.RegistrationReady);
-        Assert.False(Save(new ZNet()));
+        Assert.False(Save(AServer()));
         Assert.Equal(0, loads);
         Assert.True(CatalogueSweep.Resweep()); // one-shot is consumed, no reset or env edit
         Assert.True(CatalogueSweep.RegistrationReady);
-        Assert.True(Save(new ZNet()));
+        Assert.True(Save(AServer()));
         Assert.Equal(1, loads);
         Assert.Equal(ZoneSystem.instance!.m_locations.Count,
             ZoneSystem.instance.m_locations.Select(x => x.m_prefab.Name).Distinct().Count());
@@ -129,18 +131,18 @@ public sealed class StartupFaultTests : IDisposable
         if (mode == "load-throw") Assert.IsType<InvalidOperationException>(error);
         else { Assert.Null(error); Assert.True(ZNet.m_loadError); }
         Assert.Equal(0, loads);
-        Assert.False(Save(new ZNet()));
+        Assert.False(Save(AServer()));
         Assert.False(CatalogueSweep.Resweep());
         Assert.Null(Load(() => loads++));
-        Assert.False(Save(new ZNet()));
+        Assert.False(Save(AServer()));
         Assert.Equal(0, loads);
         GenerationHold.LoadGate = new WorldLoadGate(); // a new process, not a scene reset
         GenerationHold.Forget();
         ZNet.m_loadError = false;
         StartupFaults.Current = new StartupFaults(null);
-        Assert.Null(Load(() => { Assert.False(Save(new ZNet())); loads++; }));
+        Assert.Null(Load(() => { Assert.False(Save(AServer())); loads++; }));
         Assert.Equal(1, loads);
-        Assert.True(Save(new ZNet()));
+        Assert.True(Save(AServer()));
     }
 
     [Theory]
@@ -171,7 +173,7 @@ public sealed class StartupFaultTests : IDisposable
             Assert.Equal(reason, GenerationHold.LoadGate.Failure);
             Assert.Equal(opened, world.Opened.Count);
             Assert.Null(Load(() => loads++));
-            Assert.False(Save(new ZNet()));
+            Assert.False(Save(AServer()));
             Assert.False(CatalogueSweep.RegistrationReady);
             Assert.Equal(0, loads);
         }
@@ -187,7 +189,7 @@ public sealed class StartupFaultTests : IDisposable
         int loads = 0;
         Assert.Null(Load(() => loads++));
         Assert.Equal(1, loads);
-        Assert.True(Save(new ZNet()));
+        Assert.True(Save(AServer()));
     }
 
     [Fact]

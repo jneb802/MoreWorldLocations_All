@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><AdapterPackageVersion Condition="'$(AdapterPackageVersion)' == ''">0.1.0-preview.2</AdapterPackageVersion></PropertyGroup>
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../MoreWorldLocations.TestAdapter/PortDeliveryState.cs" Link="Production/PortDeliveryState.cs" />
+    <Compile Include="../MoreWorldLocations.TestAdapter/DetachedItem.cs" Link="Production/DetachedItem.cs" />
+    <ProjectReference Include="../MoreWorldLocations.SystemTests/MoreWorldLocations.SystemTests.csproj" />
+    <Compile Include="../MoreWorldLocations.TestAdapter/PortCommandCatalog.cs" Link="Production/PortCommandCatalog.cs" />
+    <Compile Include="../MoreWorldLocations.TestAdapter/PortReply.cs" Link="Production/PortReply.cs" />
+    <!-- PortReply reads its fields with the adapter package's KeyValueReply (see the target below). -->
+    <PackageReference Include="Valheim.Testing.Adapter" Version="[$(AdapterPackageVersion)]" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.1" />
+  </ItemGroup>
+  <!--
+    KeyValueReply is plain .NET; the adapter package's other sources need the game and ValheimCLI, so only that file
+    of the package is compiled here.
+  -->
+  <Target Name="KeepOnlyKeyValueReply" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <_AdapterSourceNeedingTheGame Include="@(Compile)" Condition="'%(Compile.NuGetPackageId)' == 'Valheim.Testing.Adapter' And '%(Compile.Filename)' != 'KeyValueReply'" />
+      <Compile Remove="@(_AdapterSourceNeedingTheGame)" />
+    </ItemGroup>
+  </Target>
+</Project>

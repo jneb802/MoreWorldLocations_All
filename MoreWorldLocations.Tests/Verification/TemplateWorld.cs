@@ -136,7 +136,7 @@ public static class Templates
     public static GameObject Stock(string name = "Test_Template", string child = "wood_floor")
     {
         var root = new GameObject(name);
-        root.Child(child).AddComponent<ZNetView>();
+        root.Child(child).AddPersistentView();
         return root;
     }
 
@@ -150,4 +150,17 @@ public static class Templates
     }
 
     public static GameObject ChildOf(GameObject root, int index) => root.transform.GetChild(index).gameObject;
+
+    /// <summary>
+    /// Keeps a template or prefab asleep, as an asset is: under an inactive holder, so a component added to it does not
+    /// wake (a Container's Awake needs its object's ZNetView, as in the game). The walk reads activeSelf, which this
+    /// leaves alone.
+    /// </summary>
+    public static GameObject Asleep(GameObject go)
+    {
+        var holder = new GameObject("assets");
+        holder.SetActive(false);
+        go.transform.SetParent(holder.transform, false);
+        return go;
+    }
 }

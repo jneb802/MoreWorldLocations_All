@@ -27,8 +27,7 @@ public sealed class TerrainWorld : IDisposable
         WorldGenerator.instance = World;
         Builder = new HeightmapBuilder();
         HeightmapBuilder.instance = Builder;
-        Heightmap.Registered = null;
-        Heightmap.Loaded.Clear();
+        Heightmap.Registered = null;   // no zone loaded
         ServerOnlyMode.Set(true);
         LocationTerrainWriter.Reset();
         LocationTerrainPatch.Forget();
@@ -145,7 +144,6 @@ public sealed class TerrainWorld : IDisposable
         WorldGenerator.instance = null;
         HeightmapBuilder.instance = null;
         Heightmap.Registered = null;
-        Heightmap.Loaded.Clear();
         ServerOnlyMode.Set(false);
         LocationTerrainWriter.Reset();
         LocationTerrainPatch.Forget();

@@ -188,7 +188,7 @@ public class ReviewRegressionTests
         // the game rather than check anything.
         var root = new GameObject("Test_Template");
         GameObject floor = root.Child("wood_floor");
-        floor.AddComponent<ZNetView>();
+        floor.AddPersistentView();
         floor.Child("mesh");
         floor.Child("collider").AddComponent<Collider>();
 
@@ -204,13 +204,13 @@ public class ReviewRegressionTests
         // Nothing added and nothing foreign: the same objects, the same
         // components, one field pointed somewhere else. The client builds the
         // stock prefab and rolls the stock loot.
-        var root = new GameObject("Test_Template");
+        var root = Templates.Asleep(new GameObject("Test_Template"));
         GameObject chest = root.Child("piece_chest_wood");
-        chest.AddComponent<ZNetView>();
+        chest.AddPersistentView();
         Container authored = chest.AddComponent<Container>();
         authored.m_defaultItems.m_drops.Add(new DropTable.DropData { m_item = new GameObject("Ruby") });
 
-        var stock = new GameObject("piece_chest_wood");
+        var stock = Templates.Asleep(new GameObject("piece_chest_wood"));
         Container stockContainer = stock.AddComponent<Container>();
         stockContainer.m_defaultItems.m_drops.Add(new DropTable.DropData { m_item = new GameObject("Coins") });
 
@@ -305,7 +305,7 @@ public class ReviewRegressionTests
     public void Control_AnIncompatibleApprovedLocationIsNeverRegistered()
     {
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
-        world.Asset("MWL_Ruins1").Child("Review_CustomWall").AddComponent<ZNetView>();
+        world.Asset("MWL_Ruins1").Child("Review_CustomWall").AddPersistentView();
 
         LocationDB.RegisterAll();
         TemplateWorld.RunEnforcementHook();
@@ -321,7 +321,7 @@ public class ReviewRegressionTests
         // step, with the "already done" flag set before either. Logging must not
         // be able to decide whether a rejected build stays in the world.
         using var world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
-        world.Asset("MWL_Ruins1").Child("Review_CustomWall").AddComponent<ZNetView>();
+        world.Asset("MWL_Ruins1").Child("Review_CustomWall").AddPersistentView();
 
         BepInEx.Logging.ManualLogSource.ThrowOnNextInfo = true;
         LocationDB.RegisterAll();

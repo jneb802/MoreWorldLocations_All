@@ -35,7 +35,7 @@ public class ScaleSyncConversionTests : IDisposable
     {
         GameObject child = parent.Child(name);
         child.transform.localScale = new Vector3(x, y, z);
-        ZNetView view = child.AddComponent<ZNetView>();
+        ZNetView view = child.AddPersistentView();
         view.m_syncInitialScale = sync;
         child.Child("mesh").AddComponent<BoxCollider>();
         return child;
@@ -45,7 +45,7 @@ public class ScaleSyncConversionTests : IDisposable
     private static Func<string, GameObject?> Stock(string name, bool readsScale, Vector3? scale = null)
     {
         var prefab = new GameObject(name);
-        prefab.AddComponent<ZNetView>().m_syncInitialScale = readsScale;
+        prefab.AddPersistentView().m_syncInitialScale = readsScale;
         prefab.Child("mesh").AddComponent<BoxCollider>();
         if (scale.HasValue)
             prefab.transform.localScale = scale.Value;
@@ -56,7 +56,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void AScaleTheStockPrefabWillReadIsConverted()
     {
         var root = new GameObject("MWL_Scaled1");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         GameObject scaled = Networked(root, "TreasureChest_dvergrtown", 1.2f, 1.2f, 1.2f);
 
         Assert.Equal(1, ScaleSyncConversion.Apply(root, Stock("TreasureChest_dvergrtown", readsScale: true)));
@@ -67,7 +67,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void AScaleTheStockPrefabWillIgnoreIsNotConverted()
     {
         var root = new GameObject("MWL_Scaled2");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         GameObject scaled = Networked(root, "Greydwarf_Root", 0.79669f, 0.79669f, 0.79669f);
 
         Assert.Equal(0, ScaleSyncConversion.Apply(root, Stock("Greydwarf_Root", readsScale: false)));
@@ -78,7 +78,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void AScaleTheStockPrefabAlreadyBuildsAtNeedsNothingSent()
     {
         var root = new GameObject("MWL_Scaled3");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "big_rock", 2f, 2f, 2f);
 
         // The stock prefab is authored at 2 as well: the client builds the right
@@ -91,7 +91,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void UnitScaleAlreadySyncedAndDisabledViewsAreLeftAlone()
     {
         var root = new GameObject("MWL_Scaled4");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "loot_chest_wood", 1f, 1f, 1f);
         Networked(root, "loot_chest_wood", 0.99999994f, 1f, 1f);
         Networked(root, "loot_chest_wood", 1.2f, 1.2f, 1.2f, sync: true);
@@ -106,7 +106,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void WithoutABaselineNothingIsConverted()
     {
         var root = new GameObject("MWL_Scaled5");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "TreasureChest_dvergrtown", 1.2f, 1.2f, 1.2f);
 
         Assert.Equal(0, ScaleSyncConversion.Apply(root, _ => null));
@@ -118,7 +118,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void ApplyingItTwiceChangesNothingTheSecondTime()
     {
         var root = new GameObject("MWL_Scaled6");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "TreasureChest_dvergrtown", 1.2f, 1.2f, 1.2f);
         Func<string, GameObject?> stock = Stock("TreasureChest_dvergrtown", readsScale: true);
 
@@ -130,7 +130,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void ItReachesAnObjectNestedUnderAnother()
     {
         var root = new GameObject("MWL_Scaled7");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         GameObject deep = Networked(root.Child("Blueprint"), "wood_wall_roof_upsidedown", 1f, 1f, 1.05f);
 
         Assert.Equal(1, ScaleSyncConversion.Apply(root, Stock("wood_wall_roof_upsidedown", readsScale: true)));
@@ -145,7 +145,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void AScaledObjectBlocksTheTemplateUntilTheConversionHasRun()
     {
         var root = new GameObject("MWL_Scaled8");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "loot_chest_wood", 1.2f, 1.2f, 1.2f);
         Func<string, GameObject?> stock = Stock("loot_chest_wood", readsScale: true);
 
@@ -169,7 +169,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void AStockPrefabThatIgnoresScaleKeepsTheTemplateBlocked()
     {
         var root = new GameObject("MWL_Scaled9");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "loot_chest_wood", 0.79669f, 0.79669f, 0.79669f);
         Func<string, GameObject?> stock = Stock("loot_chest_wood", readsScale: false);
 
@@ -186,7 +186,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void AScaleWithNoBaselineIsUnresolvedRatherThanApproved()
     {
         var root = new GameObject("MWL_Scaled10");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         Networked(root, "loot_chest_wood", 1.2f, 1.2f, 1.2f, sync: true);
 
         TemplateEvaluation result = Fixtures.Evaluate(
@@ -200,7 +200,7 @@ public class ScaleSyncConversionTests : IDisposable
     public void ItClearsTheScaleFindingAndNoOther()
     {
         var root = new GameObject("MWL_Scaled11");
-        root.AddComponent<ZNetView>();
+        root.AddPersistentView();
         GameObject scaled = Networked(root, "loot_chest_wood", 1.2f, 1.2f, 1.2f);
         scaled.GetComponent<ZNetView>()!.m_persistent = false;
         Func<string, GameObject?> stock = Stock("loot_chest_wood", readsScale: true);
@@ -231,7 +231,7 @@ public class ScaleSyncConversionTests : IDisposable
         try
         {
             var root = new GameObject("MWL_Scaled12");
-            root.AddComponent<ZNetView>();
+            root.AddPersistentView();
             GameObject scaled = Networked(root, "TreasureChest_dvergrtown", 1.2f, 1.2f, 1.2f);
             TemplateAssets.StockPrefabs = Stock("TreasureChest_dvergrtown", readsScale: true);
 

@@ -297,7 +297,7 @@ public class AuditCacheSweepTests
     {
         TemplateWorld world = new TemplateWorld().WithPlainAssetsForEveryDefinition();
         GameObject withSnapPoints = Templates.Stock(LocationDB.All[0].Name);
-        withSnapPoints.Child("$hud_snappoint_bottom 1").AddComponent<ZNetView>();
+        withSnapPoints.Child("$hud_snappoint_bottom 1").AddPersistentView();
         world.WithAsset(LocationDB.All[0].Name, withSnapPoints);
         // A stock name whose lookup finds an object inside some template.
         GameObject elsewhere = Templates.Stock("MWL_OpenRightNow", child: "wood_floor");

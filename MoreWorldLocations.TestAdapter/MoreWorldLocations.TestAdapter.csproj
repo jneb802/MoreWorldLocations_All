@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="GameReferences.props" />
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework><LangVersion>10</LangVersion><Nullable>enable</Nullable>
+    <DebugType>embedded</DebugType><Version>0.1.0</Version>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup><Reference Include="valheimCLI"><HintPath>$(CliDll)</HintPath><Private>false</Private></Reference></ItemGroup>
+  <!--
+    Source only, compiled into this adapter: registration once ValheimCLI's extension API is ready (with the
+    owned-session capability), console aliases, the plugin-installed capability and the reply-field parser.
+  -->
+  <PropertyGroup><AdapterPackageVersion Condition="'$(AdapterPackageVersion)' == ''">0.1.0-preview.2</AdapterPackageVersion></PropertyGroup>
+  <ItemGroup><PackageReference Include="Valheim.Testing.Adapter" Version="[$(AdapterPackageVersion)]" PrivateAssets="all" /></ItemGroup>
+  <!-- Build against the exact ValheimCLI you install; there is deliberately no default path. -->
+  <Target Name="RequireCliDll" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(CliDll)' == ''" Text="Set -p:CliDll=/absolute/path/to/valheimCLI.dll to the exact ValheimCLI build you will install." />
+    <Error Condition="'$(CliDll)' != '' And !Exists('$(CliDll)')" Text="CliDll does not exist: $(CliDll)" />
+  </Target>
+</Project>

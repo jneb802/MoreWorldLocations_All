@@ -16,12 +16,12 @@ public class ReviewScaleReceiverTests
     {
         var root = new GameObject("ReviewScaledSite");
         GameObject emitted = root.Child("wood_floor");
-        emitted.AddComponent<ZNetView>().m_persistent = true;
+        emitted.AddPersistentView().m_persistent = true;
         emitted.transform.localScale = new Vector3(1f, 1f, 1.05f);
         emitted.Child("mesh").AddComponent<BoxCollider>();
 
         var stock = new GameObject("wood_floor");
-        ZNetView receiver = stock.AddComponent<ZNetView>();
+        ZNetView receiver = stock.AddPersistentView();
         receiver.m_persistent = true;
         receiver.m_syncInitialScale = receiverSyncs;
         stock.Child("mesh").AddComponent<BoxCollider>();

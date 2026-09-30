@@ -99,7 +99,7 @@ public class LeaseBalanceTests
     private static GameObject Template(string name)
     {
         var root = new GameObject(name);
-        root.Child("wood_floor").AddComponent<ZNetView>();
+        root.Child("wood_floor").AddPersistentView();
         return root;
     }
 

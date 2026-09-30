@@ -29,6 +29,9 @@ public class LocationTerrainDispatchTests : IDisposable
 
     private readonly SyntheticWorld _world = new();
     private readonly HeightmapBuilder _builder = new();
+    /// <summary>The build each zone's heightmap was made from, as generation hands it over.</summary>
+    private readonly Dictionary<Vector2s, HeightmapBuilder.HMBuildData> _built = new();
+    private readonly ZNet _net = ZNet.instance;
 
     public LocationTerrainDispatchTests()
     {
@@ -36,11 +39,12 @@ public class LocationTerrainDispatchTests : IDisposable
         WorldGenerator.instance = _world;
         HeightmapBuilder.instance = _builder;
         ZoneSystem.instance = new ZoneSystem();
-        Heightmap.Registered = null;
-        Heightmap.Loaded.Clear();
+        // No network unless a test makes one: the doubles start with a ZNet.
+        ZNet.instance = null!;
+        Heightmap.Registered = null;   // no zone loaded
         LocationTerrainWriter.Reset();
-        _builder.Build(A, _world);
-        _builder.Build(B, _world);
+        _built[A] = _builder.Build(A, _world);
+        _built[B] = _builder.Build(B, _world);
     }
 
     public void Dispose()
@@ -49,8 +53,8 @@ public class LocationTerrainDispatchTests : IDisposable
         WorldGenerator.instance = null;
         HeightmapBuilder.instance = null;
         ZoneSystem.instance = null;
+        ZNet.instance = _net;
         Heightmap.Registered = null;
-        Heightmap.Loaded.Clear();
         LocationTerrainWriter.Reset();
     }
 
@@ -58,12 +62,14 @@ public class LocationTerrainDispatchTests : IDisposable
     private Heightmap Load(Vector2s zone, bool withCompiler = true)
     {
         Heightmap hm = Heightmap.CreateForZone(zone, width: 64, withCompiler: withCompiler);
-        hm.m_buildData = _builder.Built.TryGetValue(zone, out var built) ? built : null;
-        Heightmap.Loaded[zone] = hm;
+        hm.m_buildData = _built.TryGetValue(zone, out var built) ? built : null;
+        Unload(zone);
+        Heightmap.s_heightmaps.Add(hm);
         return hm;
     }
 
-    private void Unload(Vector2s zone) => Heightmap.Loaded.Remove(zone);
+    private void Unload(Vector2s zone) =>
+        Heightmap.s_heightmaps.RemoveAll(loaded => ZoneSystem.GetZone(loaded.transform.position) == zone);
 
     private void Generated(Vector2s zone) => ZoneSystem.instance.Generated.Add(zone);
 
@@ -250,7 +256,7 @@ public class LocationTerrainDispatchTests : IDisposable
         // "TCData is not null" as success is how a completed identity gets paired
         // with terrain this write never made.
         Heightmap hmA = Load(A);
-        hmA.m_terrainComp!.SaveFails = true;
+        hmA.m_terrainComp!.m_initialized = false; // The game's Save returns silently for a compiler not set up.
 
         LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
 
@@ -273,7 +279,7 @@ public class LocationTerrainDispatchTests : IDisposable
         compiler.Save();
         Assert.NotNull(compiler.m_nview.GetZDO().GetByteArray(ZDOVars.s_TCData));
 
-        compiler.SaveFails = true;
+        compiler.m_initialized = false;
         LocationTerrainWriter.WriteZone(A, hmA, new List<LocationTerrainPlan.PlacedSite> { BoundarySite() });
 
         Assert.DoesNotContain(LocationTerrainLedger.All(),
@@ -545,12 +551,12 @@ public class LocationTerrainDispatchTests : IDisposable
 
             // A peer that IS connected still owns its own compiler.
             compiler.SetOwner(4242L);
-            ZNet.instance.ConnectedPeers.Add(4242L);
+            ZNet.instance.Peers[4242L] = new ZNetPeer();
             Assert.False(LocationTerrainBridge.WriteDetached(
                 A, zone, TerrainBlob.Header.Fresh, out failure));
             Assert.Contains("connected peer", failure);
         }
-        finally { ZNet.instance = null; }
+        finally { ZNet.instance = null!; }
     }
 
     [Fact]
@@ -614,7 +620,9 @@ public class LocationTerrainDispatchTests : IDisposable
     [Fact]
     public void AZoneWithNoGeneratedHeightsWaitsRatherThanConvertingAgainstZero()
     {
-        _builder.Built.Remove(A);
+        // Zone A's build is handed out elsewhere first, so the builder has none ready for it.
+        _builder.RequestTerrainSync(ZoneSystem.GetZonePos(A), 64, 1f, false, _world);
+        _built.Remove(A);
         Heightmap hmA = Load(A);
         hmA.m_buildData = null;
 

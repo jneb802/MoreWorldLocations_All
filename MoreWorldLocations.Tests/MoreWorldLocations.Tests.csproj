@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup><TestingPackageVersion Condition="'$(TestingPackageVersion)' == ''">0.1.0-preview.7</TestingPackageVersion></PropertyGroup>
+    <ItemGroup><PackageReference Include="Valheim.Testing" Version="[$(TestingPackageVersion)]" /></ItemGroup>
 
     <PropertyGroup>
         <!--
           net48 matches the mod's own target and runs under Mono (closest to
           Valheim's in-game runtime); net10.0 is the fast local loop that
-          `dotnet test` uses. Run both through run-tests.sh.
+          `dotnet test` uses. run-tests.sh runs both (net48 under Mono on macOS/Linux).
         -->
         <TargetFrameworks>net48;net10.0</TargetFrameworks>
         <LangVersion>10</LangVersion>
@@ -17,10 +19,12 @@
     </PropertyGroup>
 
     <!--
-      Compile the real mod sources against the shims in Shims/ rather than
-      against the Unity/Valheim/BepInEx assemblies, so the tests exercise the
-      shipped code and not a copy of it. Selected engine hooks are called
-      directly against doubles; real Harmony timing still needs station tests.
+      Compile the real mod sources against the game doubles in
+      MoreWorldLocations.Doubles (Valheim.Testing.Doubles plus MWL's additions,
+      built as assembly_valheim) rather than against the Unity/Valheim/BepInEx
+      assemblies, so the tests exercise the shipped code and not a copy of it.
+      Selected engine hooks are called directly against doubles; real Harmony
+      timing still needs an in-game check.
     -->
     <ItemGroup>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/PeerAdmission.cs" Link="ModSrc/PeerAdmission.cs"/>
@@ -71,8 +75,8 @@
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/AuditCacheCode.cs" Link="ModSrc/Verification/AuditCacheCode.cs"/>
         <!--
           The engine-facing halves. They need an object hierarchy, which is what
-          the Unity doubles in Shims/VerificationShims.cs are for; everything
-          they decide still lives in the pure files above.
+          the Unity doubles are for; everything they decide still lives in the
+          pure files above.
         -->
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/TemplateFactsExtractor.cs" Link="ModSrc/Verification/TemplateFactsExtractor.cs"/>
         <Compile Include="../More World Locations_AIO/Src/ServerOnly/Verification/CatalogueSweep.cs" Link="ModSrc/Verification/CatalogueSweep.cs"/>

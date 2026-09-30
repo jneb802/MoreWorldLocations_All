@@ -5,6 +5,8 @@
 // Register() makes a location available immediately, which is the BEST case. If
 // the audit still cannot inspect an unregistered template under ideal timing,
 // no amount of real Jotunn latency would save it.
+//
+// Harmony's attributes come from Valheim.Testing.Doubles (HarmonyDoubles.cs).
 
 using System.Collections.Generic;
 
@@ -104,26 +106,5 @@ namespace More_World_Locations_AIO
                 pack.Add(new MWLLocation { Name = name, AssetPath = name });
             return pack.ToArray();
         }
-    }
-}
-
-namespace HarmonyLib
-{
-    /// <summary>
-    /// The attributes the sweep's hooks carry. Declarations only: nothing here
-    /// patches anything, and a test that calls a Postfix calls it directly. What
-    /// a hook is attached to, and when Harmony runs it, is exactly the thing
-    /// these doubles cannot establish -- it needs a running game.
-    /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method, AllowMultiple = true)]
-    public class HarmonyPatch : System.Attribute
-    {
-        public HarmonyPatch(System.Type declaringType, string methodName) { }
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method)]
-    public class HarmonyAfter : System.Attribute
-    {
-        public HarmonyAfter(params string[] before) { }
     }
 }

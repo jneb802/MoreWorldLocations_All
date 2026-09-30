@@ -267,7 +267,6 @@ public class LocationTerrainBridgeTests : IDisposable
         // and records it as done. A zone whose heights are not built is a zone
         // to leave alone.
         Heightmap hm = Zone(built: false);
-        _builder.Built.Clear();
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
 
         Assert.False(LocationTerrainBridge.TryGeneratedHeightAt(zone, hm, out _, out string why));
@@ -311,7 +310,6 @@ public class LocationTerrainBridgeTests : IDisposable
     {
         Heightmap hm = Zone();
         hm.m_buildData!.m_baseHeights = hm.m_buildData.m_baseHeights.Take(16).ToList();
-        _builder.Built.Clear();
         TerrainZoneDeltas zone = LocationTerrainBridge.Adopt(hm.m_terrainComp);
 
         Assert.Throws<InvalidOperationException>(() => LocationTerrainBridge.GeneratedHeightAt(zone, hm));

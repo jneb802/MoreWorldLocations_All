@@ -51,7 +51,7 @@ public sealed class EmissionTraceTests : IDisposable
     {
         GameObject go = parent.Child(prefab);
         go.transform.position = new Vector3(x, 0f, z);
-        go.AddComponent<ZNetView>();
+        go.AddPersistentView();
         return go;
     }
 
@@ -66,7 +66,7 @@ public sealed class EmissionTraceTests : IDisposable
         var go = new GameObject(prefab + "(Clone)");
         go.transform.position = at;
         var zdo = ZDOMan.instance!.CreateNewZDO(at, prefab.GetStableHashCode());
-        var view = go.AddComponent<ZNetView>();
+        var view = go.AddPersistentView();
         view.Zdo = zdo;
         return (view, zdo);
     }
@@ -119,8 +119,8 @@ public sealed class EmissionTraceTests : IDisposable
         Begin(root, new Vector3(100f, 30f, 200f));
 
         // Vanilla's SetSpawned(false): the branch and every networked object under it.
-        branch.activeSelf = false;
-        chest.activeSelf = false;
+        branch.SetActive(false);
+        chest.SetActive(false);
         EmissionTrace.Randomised("RandomSpawn", branch, branch.activeSelf, EmissionTrace.NetworkedUnder(branch));
 
         string[] r = Assert.Single(Rows("R"));
@@ -158,7 +158,7 @@ public sealed class EmissionTraceTests : IDisposable
         GameObject self = Networked(bp, "Spawner_GreydwarfNest", 4f, 4f);
         self.AddComponent<RandomSpawn>();
         Begin(root, Vector3.zero);
-        self.activeSelf = false;
+        self.SetActive(false);
         EmissionTrace.Randomised("RandomSpawn", self, false, EmissionTrace.NetworkedUnder(self));
         string[] c = Assert.Single(Rows("C"));
         Assert.Equal("MWL_Traced/Blueprint/Spawner_GreydwarfNest", c[3]);

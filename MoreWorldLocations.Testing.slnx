@@ -1,0 +1,8 @@
+<Solution>
+  <!-- Test projects only; open MoreWorldLocations_All.sln for the mod itself. The game-side
+       MoreWorldLocations.TestAdapter is built separately against an exact ValheimCLI (see its README). -->
+  <Project Path="MoreWorldLocations.Doubles/MoreWorldLocations.Doubles.csproj" />
+  <Project Path="MoreWorldLocations.Tests/MoreWorldLocations.Tests.csproj" />
+  <Project Path="MoreWorldLocations.SystemTests/MoreWorldLocations.SystemTests.csproj" />
+  <Project Path="MoreWorldLocations.TestAdapter.Tests/MoreWorldLocations.TestAdapter.Tests.csproj" />
+</Solution>

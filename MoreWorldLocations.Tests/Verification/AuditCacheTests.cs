@@ -843,7 +843,7 @@ public class AuditCacheTests
     public void TheLiveSignatureSeesWhatTheComparisonsOwnSignatureLeavesOut()
     {
         GameObject prefab = Templates.StockPrefab("wood_floor", "collider");
-        ZNetView view = prefab.AddComponent<ZNetView>();
+        ZNetView view = prefab.AddPersistentView();
         string before = TemplateFactsExtractor.LiveSignature(prefab);
 
         view.m_syncInitialScale = !view.m_syncInitialScale;

@@ -1,6 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <TestingPackageVersion Condition="'$(TestingPackageVersion)' == ''">0.1.0-preview.7</TestingPackageVersion>
+        <DoublesPackageVersion Condition="'$(DoublesPackageVersion)' == ''">0.1.0-preview.6</DoublesPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <TargetFrameworks>net48;net10.0</TargetFrameworks>
         <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
@@ -21,5 +26,18 @@
         <RootNamespace></RootNamespace>
         <NoWarn>$(NoWarn);CS8618;CS8625;CS0067</NoWarn>
     </PropertyGroup>
+
+    <!--
+      The game doubles come from the Valheim.Testing.Doubles source package, compiled
+      into this assembly. The .cs files in this project are MWL's additions to them. A partial type cannot span
+      assemblies, so every addition lives here, never in the test project. See
+      https://github.com/tvongaza/ValheimTesting/blob/main/docs/testing-toolkit.md#a-doubles-assembly-named-assembly_valheim
+    -->
+    <ItemGroup>
+        <PackageReference Include="Valheim.Testing.Doubles" Version="[$(DoublesPackageVersion)]" PrivateAssets="all" />
+        <!-- The doubles' TerrainWorld builds on Valheim.Testing; the same version the tests use. -->
+        <PackageReference Include="Valheim.Testing" Version="[$(TestingPackageVersion)]" />
+    </ItemGroup>
+
 
 </Project>
