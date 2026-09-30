@@ -1,5 +1,6 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 5.1.7     | - Republished 5.1.6 with a new version to work around failed Thunderstore downloads. No gameplay changes. Update both server and clients to 5.1.7. |
 | 5.1.6     | - Added a Favorite button beside Open Map in the Ports tab. Favorites are saved with your character. |
 |           | - Ports and Teleport lists show favorites first, with alphabetical sorting within each group. |
 | 5.1.5     | - Reduced port network traffic: opening a port no longer sends the full shipment list to all players or rewrites the shipment file. |
