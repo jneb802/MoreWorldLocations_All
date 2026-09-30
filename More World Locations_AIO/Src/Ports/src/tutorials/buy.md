@@ -1,4 +1,4 @@
-The <color=yellow>Buy</color> tab sells shipping chests, called <color=orange>manifests</color>. Fill these chests with the items you want to send.
+The <color=yellow>Buy Shipment</color> tab sells shipping chests, called <color=orange>manifests</color>. Fill these chests with the items you want to send.
 
 <color=orange><b>Buying Chests</b></color>
 <size=5>●</size> Select a chest to see its capacity and purchase requirements.
@@ -8,5 +8,5 @@ The <color=yellow>Buy</color> tab sells shipping chests, called <color=orange>ma
 
 <color=orange><b>Loading Cargo</b></color>
 <size=5>●</size> Open the purchased chests and put your items inside.
-<size=5>●</size> Return to the Port Manager and open <color=yellow>Ship</color> to choose where the cargo goes.
+<size=5>●</size> Return to the Port Manager and open <color=yellow>Send Shipment</color> to choose where the cargo goes.
 <size=5>●</size> You do not need to fill every slot, but empty chests cannot be sent.

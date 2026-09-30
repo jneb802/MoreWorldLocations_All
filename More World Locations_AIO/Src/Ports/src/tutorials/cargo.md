@@ -11,4 +11,4 @@ The <color=yellow>Cargo</color> tab combines incoming and outgoing shipments at 
 <size=5>●</size> Chests appear near the Port Manager with the delivered items inside.
 <size=5>●</size> Empty all the chests to complete the delivery. Clear existing cargo before opening another delivery.
 
-To send new cargo, choose a destination in <color=yellow>Ship</color>.
+To send new cargo, choose a destination in <color=yellow>Send Shipment</color>.

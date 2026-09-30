@@ -938,6 +938,13 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             Label = transform.Find("Text").GetComponent<Text>();
             Selected = transform.Find("Selected").gameObject;
             SelectedLabel = transform.Find("Selected/SelectedText").GetComponent<Text>();
+            foreach (Text text in new[] { Label, SelectedLabel })
+            {
+                text.resizeTextMaxSize = text.fontSize;
+                text.resizeTextMinSize = 12;
+                text.resizeTextForBestFit = true;
+                text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            }
             instance!.Tabs.Add(this);
             Tooltip = Button.gameObject.AddComponent<UITooltip>();
             // anchor and fixed position only works for gamepad :(

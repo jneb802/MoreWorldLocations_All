@@ -59,12 +59,12 @@ mwl_forbiddencatacombs_runestone_text: "When the jarls passed, they were laid to
 # Ports UI
 label_shipment: Shipments
 label_delivery: Deliveries
-label_port_buy: Buy
-label_port_ship: Ship
+label_port_buy: Buy Shipment
+label_port_ship: Send Shipment
 label_port_cargo: Cargo
 label_port_cargo_from: "From $1"
 label_port_cargo_to: "To $1"
-msg_port_no_cargo: No incoming or outgoing cargo at this port. Use Ship to send cargo.
+msg_port_no_cargo: No incoming or outgoing cargo at this port. Use Send Shipment to send cargo.
 label_open_map: Open Map
 label_add_favorite: Favorite
 label_remove_favorite: Unfavorite
