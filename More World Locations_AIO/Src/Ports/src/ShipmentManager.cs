@@ -9,7 +9,8 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using ServerSync;
+using Jotunn.Entities;
+using Jotunn.Managers;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 
@@ -24,7 +25,16 @@ public class ShipmentManager : MonoBehaviour
     public static ConfigEntry<PortInit.Toggle> OverrideTransitTime = null!;
     public static ConfigEntry<float> ExpirationTime = null!;
     public static ConfigEntry<PortInit.Toggle> ExpirationEnabled = null!;
-    private static CustomSyncedValue<string>? ServerSyncedShipments;
+    private static CustomRPC PrivateShipments = null!;
+    private static readonly Dictionary<long, PeerView> PeerViews = new();
+
+    private sealed class PeerView
+    {
+        public ZNetPeer Peer = null!;
+        public long PlayerID;
+        public string PlayerName = string.Empty;
+        public HashSet<string> ShipmentIDs = new();
+    }
     
     public static ShipmentManager? instance;
     
@@ -66,15 +76,7 @@ public class ShipmentManager : MonoBehaviour
     public void Awake()
     {
         instance = this;
-        if (PortInit.configSync is ConfigSync configSync)
-        {
-            ServerSyncedShipments = new CustomSyncedValue<string>(configSync, "MWL_ServerSyncedShipments", "");
-            ServerSyncedShipments.ValueChanged += OnClientUpdateShipments;
-        }
-        else
-        {
-            More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogError("[Shipment Manager] Failed to find ServerSync");
-        }
+        PrivateShipments = NetworkManager.Instance.AddRPC("PrivateShipments", IgnoreClientSnapshot, ReceiveSnapshot);
     }
 
     public void Update()
@@ -96,6 +98,8 @@ public class ShipmentManager : MonoBehaviour
         [UsedImplicitly]
         private static void Postfix(ZNet __instance)
         {
+            Shipments.Clear();
+            PeerViews.Clear();
             if (!__instance.IsServer()) return;
             // read file once world is set, to get the world name
             ReadLocalFile();
@@ -167,20 +171,55 @@ public class ShipmentManager : MonoBehaviour
         }
 
         if (removedExpiredShipment) UpdateShipments();
+        else if (isServer) RefreshPeerViews();
     }
 
-    public void OnClientUpdateShipments()
+    private static IEnumerator IgnoreClientSnapshot(long sender, ZPackage package)
     {
-        if (ZNet.instance && ZNet.instance.IsServer()) return;
-        // when the client first connects to the server, and the server has no data
-        // make sure that the value passed is not null
-        if (string.IsNullOrEmpty(ServerSyncedShipments?.Value)) return;
-        Dictionary<string, Shipment>? data = JsonConvert.DeserializeObject<Dictionary<string, Shipment>>(ServerSyncedShipments.Value);
-        if (data == null) return;
+        yield break;
+    }
+
+    private static IEnumerator ReceiveSnapshot(long sender, ZPackage package)
+    {
+        if (!ZNet.instance || ZNet.instance.IsServer() || sender != ZRoutedRpc.instance.GetServerPeerID()) yield break;
+        Dictionary<string, Shipment>? data = JsonConvert.DeserializeObject<Dictionary<string, Shipment>>(package.ReadString());
+        if (data == null) yield break;
         Shipments.Clear();
         Shipments.AddRange(data);
         OnShipmentsUpdated?.Invoke();
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"Received {Shipments.Count} shipments from server");
+    }
+
+    private static void RefreshPeerViews()
+    {
+        if (!ZNet.instance || !ZNet.instance.IsServer()) return;
+        HashSet<long> connected = new();
+        foreach (ZNetPeer peer in ZNet.instance.GetPeers())
+        {
+            if (peer.m_server || !peer.IsReady()) continue;
+            long peerID = peer.m_uid;
+            long playerID = GetSenderPlayerID(peerID);
+            if (playerID == 0L) continue;
+            connected.Add(peerID);
+            Dictionary<string, Shipment> visible = new();
+            foreach (KeyValuePair<string, Shipment> entry in Shipments)
+            {
+                if (entry.Value.CanServerAccess(peerID, playerID, peer.m_playerName)) visible.Add(entry.Key, entry.Value);
+            }
+            HashSet<string> ids = new(visible.Keys);
+            // Transit state follows shared timestamps on each client. Only membership
+            // changes require a new snapshot; another player's changes do not.
+            if (PeerViews.TryGetValue(peerID, out PeerView view) && ReferenceEquals(view.Peer, peer)
+                && view.PlayerID == playerID && view.PlayerName == peer.m_playerName && view.ShipmentIDs.SetEquals(ids)) continue;
+            ZPackage package = new();
+            package.Write(JsonConvert.SerializeObject(visible, Formatting.None));
+            PrivateShipments.SendPackage(peerID, package);
+            PeerViews[peerID] = new PeerView { Peer = peer, PlayerID = playerID, PlayerName = peer.m_playerName, ShipmentIDs = ids };
+        }
+        foreach (long peerID in new List<long>(PeerViews.Keys))
+        {
+            if (!connected.Contains(peerID)) PeerViews.Remove(peerID);
+        }
     }
 
     public static HashSet<ZDO> GetPorts()
@@ -234,12 +273,12 @@ public class ShipmentManager : MonoBehaviour
     {
         if (!ZNet.instance || !ZNet.instance.IsServer()) return;
         Shipments.Clear();
+        PeerViews.Clear();
         if (!Directory.Exists(MWL_FolderPath)) Directory.CreateDirectory(MWL_FolderPath);
 
         string path = GetFilePath(ZNet.m_world.m_name);
         if (!File.Exists(path))
         {
-            SyncShipments();
             return;
         }
         string json;
@@ -257,22 +296,12 @@ public class ShipmentManager : MonoBehaviour
         }
         Dictionary<string, Shipment>? data = JsonConvert.DeserializeObject<Dictionary<string, Shipment>>(json);
         if (data != null) Shipments = data;
-        // ServerSync sends this initial value to joining clients. Port browsing
-        // can then use the local collection without requesting a new broadcast.
-        SyncShipments();
-    }
-
-    private static string SyncShipments()
-    {
-        string json = JsonConvert.SerializeObject(Shipments, Formatting.Indented);
-        if (ServerSyncedShipments != null) ServerSyncedShipments.Value = json;
-        return json;
     }
 
     public static void UpdateShipments()
     {
         if (!ZNet.instance || !ZNet.instance.IsServer()) return;
-        string json = SyncShipments();
+        string json = JsonConvert.SerializeObject(Shipments, Formatting.Indented);
         if (!Directory.Exists(MWL_FolderPath)) Directory.CreateDirectory(MWL_FolderPath);
         string path = GetFilePath(ZNet.m_world.m_name);
         if (COMPRESS_DATA)
@@ -289,6 +318,7 @@ public class ShipmentManager : MonoBehaviour
         {
             File.WriteAllText(path, json);
         }
+        RefreshPeerViews();
     }
 
     [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
@@ -303,12 +333,18 @@ public class ShipmentManager : MonoBehaviour
     }
     public static void RPC_ServerReceiveShipment(long sender, string senderName, string serializedShipment)
     {
+        if (!ZNet.instance || !ZNet.instance.IsServer()) return;
+        ZNetPeer peer = ZNet.instance.GetPeer(sender);
+        long playerID = GetSenderPlayerID(sender);
+        if (peer == null || !peer.IsReady() || playerID == 0L) return;
+        senderName = peer.m_playerName;
         Shipment newShipment = new Shipment(serializedShipment);
         newShipment.SetServerSender(sender, senderName);
+        newShipment.SenderPlayerID = playerID;
         More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug(newShipment.IsValid // make sure that the shipment is deserialized correctly
             ? $"Shipment from {senderName} registered!"
             : $"Shipment from {senderName} is invalid");
-        if (!newShipment.IsValid) return;
+        if (!newShipment.IsValid || string.IsNullOrEmpty(newShipment.ShipmentID) || Shipments.ContainsKey(newShipment.ShipmentID)) return;
 
         Shipments[newShipment.ShipmentID] = newShipment;
         UpdateShipments();
@@ -316,10 +352,13 @@ public class ShipmentManager : MonoBehaviour
 
     public static void RPC_ServerShipmentCollected(long sender, string senderName, string shipmentID)
     {
+        if (!ZNet.instance || !ZNet.instance.IsServer()) return;
+        ZNetPeer peer = ZNet.instance.GetPeer(sender);
+        if (peer == null || !peer.IsReady()) return;
+        senderName = peer.m_playerName;
         if (!Shipments.TryGetValue(shipmentID, out Shipment shipment))
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} said that they collected shipment {shipmentID}, but not found in dictionary");
-            UpdateShipments();
             return;
         }
 
@@ -327,7 +366,6 @@ public class ShipmentManager : MonoBehaviour
         if (!shipment.CanServerAccess(sender, senderPlayerID, senderName))
         {
             More_World_Locations_AIOPlugin.More_World_Locations_AIOLogger.LogDebug($"{senderName} tried to collect shipment {shipmentID}, but does not own it");
-            UpdateShipments();
             return;
         }
 
@@ -337,11 +375,12 @@ public class ShipmentManager : MonoBehaviour
 
     private static long GetSenderPlayerID(long sender)
     {
-        if (!ZNet.instance || !ZNet.instance.IsServer() || ZDOMan.instance == null) return 0L;
+        if (!ZNet.instance || !ZNet.instance.IsServer()) return 0L;
         ZNetPeer peer = ZNet.instance.GetPeer(sender);
-        if (peer == null || peer.m_characterID.IsNone()) return 0L;
-        ZDO character = ZDOMan.instance.GetZDO(peer.m_characterID);
-        return character != null ? character.GetLong(ZDOVars.s_playerID) : 0L;
+        if (peer == null) return 0L;
+        ZDO? character = ZDOMan.instance != null && !peer.m_characterID.IsNone() ? ZDOMan.instance.GetZDO(peer.m_characterID) : null;
+        long playerID = character != null ? character.GetLong(ZDOVars.s_playerID) : 0L;
+        return playerID != 0L ? playerID : peer.m_playerID;
     }
 
     public struct PortID
