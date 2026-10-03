@@ -30,8 +30,8 @@ remained enabled. Production was not changed or restarted.
 Valheim Monitor recorded four baseline port synchronization messages totaling
 2,272 bytes for one creation and collection: both changes went to both clients.
 Monitor did not expose the candidate's outbound Jotunn shipment message, even
-with its capture expanded from five to 100 methods. Therefore, this test does
-not establish a comparable byte reduction or an overall hourly traffic reduction.
+with its capture expanded from five to 100 methods. This first run did not
+establish a comparable byte reduction.
 Client cache contents and update callbacks establish that unrelated private
 shipment updates were eliminated.
 
@@ -42,6 +42,28 @@ without calling `ZRpc.Invoke`. Monitor counts named outbound messages at
 `ZRpc.Invoke`, so it misses this optimized route. Monitor's total traffic
 counter still reads the game's sent counters. Other outgoing routed messages
 that use this optimization have the same gap in their per-message breakdown.
+
+A second comparison temporarily removed Network Performance System from
+Valdev and both clients. Monitor captured the 100 largest message methods.
+Both builds used the same restored world and initially empty shipment files.
+Each build completed three identical creation and collection cycles with
+17 Wood per shipment and two connected players. Connection messages were
+outside the measured windows. Transit took five seconds, and expiration was
+disabled in both runs.
+
+| Build | Outgoing shipment bytes | Update messages |
+| --- | ---: | ---: |
+| Original 5.1.7 | 6,810 | 12 |
+| Candidate 5.1.8 | 2,312 | 6 |
+
+Outgoing shipment bytes decreased by 66.05%, and update messages decreased
+by 50%. The original build sent every creation and collection to both clients.
+The candidate sent each change only to its owner. The observer's cache stayed
+empty, and its update log contained only the initial empty view. All three
+deliveries preserved and returned all 17 Wood. These figures measure shipment
+updates in this two-client scenario. They do not measure total hourly traffic
+or traffic with Network Performance System enabled. The earlier functional
+run above used the complete production mod set, including that mod.
 
 The release build passed with no errors. Server and client logs had no new
 shipment errors. Existing headless shader errors and the unrelated
@@ -54,7 +76,8 @@ selections were restored and checked. Test helpers were removed. Both Valnet
 machines were stopped. Valdev loaded the restored 5.1.7 mod.
 
 Evidence is retained in the operator workspace under
-`validation-artifacts/mwl-private-shipments-20261003`.
+`validation-artifacts/mwl-private-shipments-20261003` and
+`validation-artifacts/mwl-private-shipments-monitor-ab-20261003`.
 
 Deployment must update the server and clients together to 5.1.8 because the
 shipment synchronization protocol changed. Existing shipment save files do
