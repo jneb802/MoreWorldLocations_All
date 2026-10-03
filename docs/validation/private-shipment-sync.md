@@ -35,6 +35,14 @@ not establish a comparable byte reduction or an overall hourly traffic reduction
 Client cache contents and update callbacks establish that unrelated private
 shipment updates were eliminated.
 
+Follow-up inspection identified the measurement gap. The installed Network
+Performance System DLL enables `RelaySendReuse`. Its `RelaySend.SendFrame`
+updates the game's sent counters and sends directly through `m_socket.Send`,
+without calling `ZRpc.Invoke`. Monitor counts named outbound messages at
+`ZRpc.Invoke`, so it misses this optimized route. Monitor's total traffic
+counter still reads the game's sent counters. Other outgoing routed messages
+that use this optimization have the same gap in their per-message breakdown.
+
 The release build passed with no errors. Server and client logs had no new
 shipment errors. Existing headless shader errors and the unrelated
 MoreVanillaBuildPrefabs Trailership warning remained. A test helper initially
