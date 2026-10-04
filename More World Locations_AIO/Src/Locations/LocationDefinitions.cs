@@ -434,6 +434,9 @@ public static class LocationDefinitions
 
     public static readonly MWLLocation[] Plains =
     {
+        new MWLLocation { Name = "MWL_FulingWalkways1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_FulingWalkways1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsCamp", Priotized = true, RandomRotation = false, ExteriorRadius = 22, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 2f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
         new() { Name = "MWL_GoblinFort1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_GoblinFort1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsFort", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MinTerrainDelta = 0f, MaxTerrainDelta = 10f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
 
@@ -517,6 +520,9 @@ public static class LocationDefinitions
 
     public static readonly MWLLocation[] Mistlands =
     {
+        new MWLLocation { Name = "MWL_DvergrRockHut1", AssetPath = "Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrRockHut1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Mist4", MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 8f, MinAltitude = 2f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
+
         new() { Name = "MWL_MistFort2", AssetPath = "Assets/WarpProjects/More World Locations/Mistlands/MWL_MistFort2.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Mistlands, Priotized = true, ExteriorRadius = 8, ClearArea = true, RandomRotation = false, Group = "Mist3", MinDistanceFromSimilar = 256, MinTerrainDelta = 0f, MaxTerrainDelta = 15f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
 

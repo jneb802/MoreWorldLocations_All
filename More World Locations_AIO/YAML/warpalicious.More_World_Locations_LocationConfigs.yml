@@ -136,6 +136,7 @@ Mountains:
   MWL_WoodHouse1: 5
 
 Plains:
+  MWL_FulingWalkways1: 15
   MWL_FulingStoneHouse1: 15
   MWL_FulingStoneHouse2: 15
   MWL_FulingStoneHouse3: 15
@@ -164,6 +165,7 @@ Plains:
   MWL_RockGarden1: 15
 
 Mistlands:
+  MWL_DvergrRockHut1: 10
   MWL_AncientShrine1: 15
   MWL_DvergrEitrSingularity1: 25
   MWL_DvergrHouse1: 20
