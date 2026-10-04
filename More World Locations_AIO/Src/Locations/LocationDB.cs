@@ -49,6 +49,8 @@ public static class LocationDB
         if (BepinexConfigs.EnableTrainers.Value != PortInit.Toggle.Off)
             Register(LocationDefinitions.Trainers);
 
+        ProceduralRoadsIntegration.RegisterRoadLocations();
+
         ZoneManager.OnVanillaLocationsAvailable -= RegisterAll;
     }
 
@@ -77,7 +79,7 @@ public static class LocationDB
 
     private static void Register(MWLLocation[] pack)
     {
-        foreach (var loc in pack)
+        foreach (MWLLocation loc in pack)
             loc.Register();
     }
 }
