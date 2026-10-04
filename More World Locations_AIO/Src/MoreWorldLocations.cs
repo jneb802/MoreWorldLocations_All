@@ -86,12 +86,11 @@ namespace More_World_Locations_AIO
             MinimapTraderIcons.LoadIcons();
             MinimapTraderIcons.BuildLocationSpriteData();
 
-            // Uncomment for one local game run to regenerate assetBundleManifest_full.
-            // AssetBundles.BuildCombinedManifest(
-            //     Path.Combine(BepInEx.Paths.PluginPath, "warpalicious-More_World_Locations_AIO", "Bundles"),
-            //     "full",
-            //     LocationDB.GetAllAssetPaths().Concat(RoomDB.GetAllAssetPaths()).ToArray()
-            // );
+            AssetBundles.BuildCombinedManifest(
+                Path.Combine(Path.GetDirectoryName(assembly.Location), "Bundles"),
+                "full",
+                LocationDB.GetAllAssetPaths().Concat(RoomDB.GetAllAssetPaths()).ToArray()
+            );
 
             LocationQuantityManager.LoadOrMigrateConfigs(Config);
             
