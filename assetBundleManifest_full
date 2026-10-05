@@ -3,6 +3,9 @@ version: 2
 bundles directory: ./Bundles
 bundle dependencies:
 asset locations:
+- asset ID: 0ea5c0290ea5c0290ea5c0290ea5c029
+  bundle: mwl_sunkentower1
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_SunkenTower1.prefab
 - asset ID: 3959cb003959cb003959cb003959cb00
   bundle: mwl_charredtower1
   path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_CharredTower1.prefab

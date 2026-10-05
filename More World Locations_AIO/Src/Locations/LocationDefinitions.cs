@@ -591,6 +591,9 @@ public static class LocationDefinitions
 
     public static readonly MWLLocation[] Ashlands =
     {
+        new MWLLocation { Name = "MWL_SunkenTower1", AssetPath = "Assets/WarpProjects/More World Locations/Ashlands/MWL_SunkenTower1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, BiomeArea = Heightmap.BiomeArea.Median, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Ashlands_Tower", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = -3f, MaxAltitude = 1f, InForest = false } },
+
         new MWLLocation { Name = "MWL_CharredTower1", AssetPath = "Assets/WarpProjects/More World Locations/Ashlands/MWL_CharredTower1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.AshLands, Priotized = true, ExteriorRadius = 20, ClearArea = true, RandomRotation = false, Group = "Ashlands_Tower", MinDistanceFromSimilar = 512, MaxTerrainDelta = 5f, MinAltitude = 1, InForest = false } },
 
