@@ -1,0 +1,707 @@
+﻿SoftRef manifest - Text
+version: 2
+bundles directory: ./Bundles
+bundle dependencies:
+asset locations:
+- asset ID: 0ea5c0290ea5c0290ea5c0290ea5c029
+  bundle: mwl_sunkentower1
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_SunkenTower1.prefab
+- asset ID: 3959cb003959cb003959cb003959cb00
+  bundle: mwl_charredtower1
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_CharredTower1.prefab
+- asset ID: 9eb3127b9eb3127b9eb3127b9eb3127b
+  bundle: mwl_dvergrrockhut1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrRockHut1.prefab
+- asset ID: f4c8a343f4c8a343f4c8a343f4c8a343
+  bundle: mwl_fulingwalkways1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingWalkways1.prefab
+- asset ID: 000080bc000080bc000080bc000080bc
+  bundle: mwl_foresthouse2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestHouse2.prefab
+- asset ID: 01f9e5b601f9e5b601f9e5b601f9e5b6
+  bundle: mwl_meadowslighthouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsLighthouse1.prefab
+- asset ID: 021cf240021cf240021cf240021cf240
+  bundle: mwl_secretroom1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_SecretRoom1.prefab
+- asset ID: 05078907050789070507890705078907
+  bundle: mwl_meadowshouse2
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsHouse2.prefab
+- asset ID: 051e1380051e1380051e1380051e1380
+  bundle: mwl_abandonedhouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_AbandonedHouse1.prefab
+- asset ID: 055693d6055693d6055693d6055693d6
+  bundle: mwl_fulingvillage1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingVillage1.prefab
+- asset ID: 07280a5807280a5807280a5807280a58
+  bundle: mwl_swampcomplex1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampComplex1.prefab
+- asset ID: 076e7223076e7223076e7223076e7223
+  bundle: mwl_rootstower2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RootsTower2.prefab
+- asset ID: 08174fb008174fb008174fb008174fb0
+  bundle: mwl_woodhouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_WoodHouse1.prefab
+- asset ID: 0a96622a0a96622a0a96622a0a96622a
+  bundle: mwl_deershrine2
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_DeerShrine2.prefab
+- asset ID: 0bd85c540bd85c540bd85c540bd85c54
+  bundle: cd_lower_room2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Room2.prefab
+- asset ID: 0c71eb750c71eb750c71eb750c71eb75
+  bundle: mwl_swamptower3
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTower3.prefab
+- asset ID: 101434cd101434cd101434cd101434cd
+  bundle: mwl_marblehome1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleHome1.prefab
+- asset ID: 10a8d8e810a8d8e810a8d8e810a8d8e8
+  bundle: mwl_swampbrokentower3
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampBrokenTower3.prefab
+- asset ID: 13b6ce4d13b6ce4d13b6ce4d13b6ce4d
+  bundle: mwl_ruins1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_Ruins1.prefab
+- asset ID: 13b752b413b752b413b752b413b752b4
+  bundle: mwl_ruins6
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_Ruins6.prefab
+- asset ID: 13b7d69313b7d69313b7d69313b7d693
+  bundle: mwl_ruins7
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_Ruins7.prefab
+- asset ID: 13b9833013b9833013b9833013b98330
+  bundle: mwl_ruins2
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_Ruins2.prefab
+- asset ID: 13ba070f13ba070f13ba070f13ba070f
+  bundle: mwl_ruins3
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_Ruins3.prefab
+- asset ID: 13beed7613beed7613beed7613beed76
+  bundle: mwl_ruins8
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_Ruins8.prefab
+- asset ID: 13fd137e13fd137e13fd137e13fd137e
+  bundle: bfd_stairwell3
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Stairwell3.prefab
+- asset ID: 165e3cb1165e3cb1165e3cb1165e3cb1
+  bundle: mwl_swamptrainer1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_SwampTrainer1.prefab
+- asset ID: 1779b7b51779b7b51779b7b51779b7b5
+  bundle: mwl_massgrave1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_MassGrave1.prefab
+- asset ID: 181c2b7b181c2b7b181c2b7b181c2b7b
+  bundle: mwl_ruinswell1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_RuinsWell1.prefab
+- asset ID: 1bd9b5c01bd9b5c01bd9b5c01bd9b5c0
+  bundle: cd_lower_cell5
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Cell5.prefab
+- asset ID: 1ce3cb521ce3cb521ce3cb521ce3cb52
+  bundle: mwl_marblehome2
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleHome2.prefab
+- asset ID: 2041c01a2041c01a2041c01a2041c01a
+  bundle: cd_endcap2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap2.prefab
+- asset ID: 209087b8209087b8209087b8209087b8
+  bundle: mwl_fulingwall1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingWall1.prefab
+- asset ID: 22afcf0e22afcf0e22afcf0e22afcf0e
+  bundle: mwl_misttrainer1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_MistTrainer1.prefab
+- asset ID: 22c40aff22c40aff22c40aff22c40aff
+  bundle: mwl_swamptower1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTower1.prefab
+- asset ID: 2314d4b32314d4b32314d4b32314d4b3
+  bundle: bfd_modular8_puzzle
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular8_Puzzle.prefab
+- asset ID: 23a7326523a7326523a7326523a73265
+  bundle: mwl_fulingvillage2
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingVillage2.prefab
+- asset ID: 25431b9625431b9625431b9625431b96
+  bundle: mwl_forestcamp1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestCamp1.prefab
+- asset ID: 25a678e225a678e225a678e225a678e2
+  bundle: bfd_modulardivider1
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularDivider1.prefab
+- asset ID: 26829411268294112682941126829411
+  bundle: mwl_forestruin3
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin3.prefab
+- asset ID: 2ad618212ad618212ad618212ad61821
+  bundle: mwl_swampaltar2
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampAltar2.prefab
+- asset ID: 2bab8ebb2bab8ebb2bab8ebb2bab8ebb
+  bundle: mwl_ashlandsfort1
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort1.prefab
+- asset ID: 2baec87d2baec87d2baec87d2baec87d
+  bundle: mwl_ashlandsfort3
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort3.prefab
+- asset ID: 2baf4c5c2baf4c5c2baf4c5c2baf4c5c
+  bundle: mwl_ashlandsfort2
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_AshlandsFort2.prefab
+- asset ID: 2bc6e1932bc6e1932bc6e1932bc6e193
+  bundle: mwl_stonetower1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneTower1.prefab
+- asset ID: 2bc765f22bc765f22bc765f22bc765f2
+  bundle: mwl_stonetower2
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneTower2.prefab
+- asset ID: 2beec66f2beec66f2beec66f2beec66f
+  bundle: mwl_belmont1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_Belmont1.prefab
+- asset ID: 2dc407002dc407002dc407002dc40700
+  bundle: mwl_ruinsarena1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_RuinsArena1.prefab
+- asset ID: 2e378dab2e378dab2e378dab2e378dab
+  bundle: mwl_swampaltar4
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampAltar4.prefab
+- asset ID: 31b34a3f31b34a3f31b34a3f31b34a3f
+  bundle: mwl_meadowstower1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsTower1.prefab
+- asset ID: 340940d4340940d4340940d4340940d4
+  bundle: cd_lower_cell1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Cell1.prefab
+- asset ID: 37700dcc37700dcc37700dcc37700dcc
+  bundle: mwl_dvergreitrsingularity1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrEitrSingularity1.prefab
+- asset ID: 377c525c377c525c377c525c377c525c
+  bundle: mwl_oceantavern1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_OceanTavern1.prefab
+- asset ID: 38714b2e38714b2e38714b2e38714b2e
+  bundle: cd_endcap6
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap6.prefab
+- asset ID: 3a270b5e3a270b5e3a270b5e3a270b5e
+  bundle: mwl_treehouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_Treehouse1.prefab
+- asset ID: 3ca42f6d3ca42f6d3ca42f6d3ca42f6d
+  bundle: mwl_ruinstower6
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinsTower6.prefab
+- asset ID: 3d1d65ce3d1d65ce3d1d65ce3d1d65ce
+  bundle: mwl_swampwell1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampWell1.prefab
+- asset ID: 3dd6d4b53dd6d4b53dd6d4b53dd6d4b5
+  bundle: mwl_mountainoverlook1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_MountainOverlook1.prefab
+- asset ID: 3ebbe3e53ebbe3e53ebbe3e53ebbe3e5
+  bundle: bfd_modular9
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular9.prefab
+- asset ID: 40b3518940b3518940b3518940b35189
+  bundle: mwl_foresttower4
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestTower4.prefab
+- asset ID: 40b70daa40b70daa40b70daa40b70daa
+  bundle: mwl_foresttower5
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestTower5.prefab
+- asset ID: 40b836e840b836e840b836e840b836e8
+  bundle: mwl_foresttower3
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestTower3.prefab
+- asset ID: 40b8bac740b8bac740b8bac740b8bac7
+  bundle: mwl_foresttower2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestTower2.prefab
+- asset ID: 40d8d75940d8d75940d8d75940d8d759
+  bundle: cd_lower_cell2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Cell2.prefab
+- asset ID: 4168a0d34168a0d34168a0d34168a0d3
+  bundle: mwl_meadowsbarn1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsBarn1.prefab
+- asset ID: 416f6f6e416f6f6e416f6f6e416f6f6e
+  bundle: mwl_forestskull1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestSkull1.prefab
+- asset ID: 461126df461126df461126df461126df
+  bundle: mwl_rockgarden1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_RockGarden1.prefab
+- asset ID: 46a715db46a715db46a715db46a715db
+  bundle: mwl_ruinscastle3
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinsCastle3.prefab
+- asset ID: 46aa4f9d46aa4f9d46aa4f9d46aa4f9d
+  bundle: mwl_ruinscastle1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinsCastle1.prefab
+- asset ID: 4756cfef4756cfef4756cfef4756cfef
+  bundle: cd_entrance2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Entrance2.prefab
+- asset ID: 4758f2f24758f2f24758f2f24758f2f2
+  bundle: cd_lower_hallway3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Hallway3.prefab
+- asset ID: 475976d1475976d1475976d1475976d1
+  bundle: cd_lower_hallway2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Hallway2.prefab
+- asset ID: 4759fb384759fb384759fb384759fb38
+  bundle: cd_lower_hallway5
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Hallway5.prefab
+- asset ID: 475c2bb4475c2bb4475c2bb4475c2bb4
+  bundle: cd_lower_hallway1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Hallway1.prefab
+- asset ID: 47a4099147a4099147a4099147a40991
+  bundle: cd_room3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Room3.prefab
+- asset ID: 48db43b148db43b148db43b148db43b1
+  bundle: mwl_forestgreathouse2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestGreatHouse2.prefab
+- asset ID: 4971b4d14971b4d14971b4d14971b4d1
+  bundle: cd_roombig3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_RoomBig3.prefab
+- asset ID: 497238b0497238b0497238b0497238b0
+  bundle: cd_roombig2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_RoomBig2.prefab
+- asset ID: 4972bc0f4972bc0f4972bc0f4972bc0f
+  bundle: cd_roombig1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_RoomBig1.prefab
+- asset ID: 499f355c499f355c499f355c499f355c
+  bundle: mwl_oakhut1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_OakHut1.prefab
+- asset ID: 4acabefc4acabefc4acabefc4acabefc
+  bundle: mwl_ruinschurch1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_RuinsChurch1.prefab
+- asset ID: 4d2991e84d2991e84d2991e84d2991e8
+  bundle: mwl_swampruin1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampRuin1.prefab
+- asset ID: 4d3f60b84d3f60b84d3f60b84d3f60b8
+  bundle: cd_endcap4
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap4.prefab
+- asset ID: 4ec9f50c4ec9f50c4ec9f50c4ec9f50c
+  bundle: mwl_plainspillar1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_PlainsPillar1.prefab
+- asset ID: 4fa7c3574fa7c3574fa7c3574fa7c357
+  bundle: cd_lower_endcap3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Endcap3.prefab
+- asset ID: 502f02d9502f02d9502f02d9502f02d9
+  bundle: cd_exterior1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/CD_Exterior1.prefab
+- asset ID: 578803da578803da578803da578803da
+  bundle: mwl_maypolehut1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MaypoleHut1.prefab
+- asset ID: 592e18e1592e18e1592e18e1592e18e1
+  bundle: mwl_stonehall1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneHall1.prefab
+- asset ID: 595b5915595b5915595b5915595b5915
+  bundle: mwl_smallhouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_SmallHouse1.prefab
+- asset ID: 59a9f89259a9f89259a9f89259a9f892
+  bundle: mwl_shipyard1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_Shipyard1.prefab
+- asset ID: 5a77fed65a77fed65a77fed65a77fed6
+  bundle: mwl_misttower2
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistTower2.prefab
+- asset ID: 5a7bbc775a7bbc775a7bbc775a7bbc77
+  bundle: mwl_misttower1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistTower1.prefab
+- asset ID: 5c6727b75c6727b75c6727b75c6727b7
+  bundle: mwl_port5
+  path in bundle: Assets/WarpProjects/More World Locations/Ports/MWL_Port5.prefab
+- asset ID: 5c67afdd5c67afdd5c67afdd5c67afdd
+  bundle: mwl_mistworkshop1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistWorkshop1.prefab
+- asset ID: 5df6291b5df6291b5df6291b5df6291b
+  bundle: cd_room1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Room1.prefab
+- asset ID: 5e5fb3ea5e5fb3ea5e5fb3ea5e5fb3ea
+  bundle: mwl_plainstrainer1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTrainer1.prefab
+- asset ID: 5fc89d415fc89d415fc89d415fc89d41
+  bundle: mwl_port3
+  path in bundle: Assets/WarpProjects/More World Locations/Ports/MWL_Port3.prefab
+- asset ID: 60c96abb60c96abb60c96abb60c96abb
+  bundle: mwl_swampgrave1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampGrave1.prefab
+- asset ID: 6326cc5b6326cc5b6326cc5b6326cc5b
+  bundle: mwl_woodbarn1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_WoodBarn1.prefab
+- asset ID: 66937d7566937d7566937d7566937d75
+  bundle: bfd_exterior
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/BFD_Exterior.prefab
+- asset ID: 6764822a6764822a6764822a6764822a
+  bundle: mwl_misthut2
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistHut2.prefab
+- asset ID: 67650689676506896765068967650689
+  bundle: mwl_misthut1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistHut1.prefab
+- asset ID: 690c4c13690c4c13690c4c13690c4c13
+  bundle: mwl_coasttower1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_CoastTower1.prefab
+- asset ID: 6a62159f6a62159f6a62159f6a62159f
+  bundle: mwl_stonefort1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneFort1.prefab
+- asset ID: 6ae291bb6ae291bb6ae291bb6ae291bb
+  bundle: cd_lower_cell4
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Cell4.prefab
+- asset ID: 6c6240596c6240596c6240596c624059
+  bundle: cd_lower_room3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Room3.prefab
+- asset ID: 6cfbcf7a6cfbcf7a6cfbcf7a6cfbcf7a
+  bundle: mwl_swamptower2
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTower2.prefab
+- asset ID: 6d5ab7526d5ab7526d5ab7526d5ab752
+  bundle: mwl_stoneformation1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_StoneFormation1.prefab
+- asset ID: 6dcb257c6dcb257c6dcb257c6dcb257c
+  bundle: bfd_modular11
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular11.prefab
+- asset ID: 6dcdda5f6dcdda5f6dcdda5f6dcdda5f
+  bundle: bfd_modular12
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular12.prefab
+- asset ID: 6dce5e3e6dce5e3e6dce5e3e6dce5e3e
+  bundle: bfd_modular13
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular13.prefab
+- asset ID: 6dcee19d6dcee19d6dcee19d6dcee19d
+  bundle: bfd_modular10
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular10.prefab
+- asset ID: 6dd112196dd112196dd112196dd11219
+  bundle: bfd_modular14
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular14.prefab
+- asset ID: 6e65e4086e65e4086e65e4086e65e408
+  bundle: bfd_stairwell5
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Stairwell5.prefab
+- asset ID: 716351dd716351dd716351dd716351dd
+  bundle: mwl_templeshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_TempleShrine1.prefab
+- asset ID: 7436e3ea7436e3ea7436e3ea7436e3ea
+  bundle: mwl_meadowsfarm1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsFarm1.prefab
+- asset ID: 7496b2cb7496b2cb7496b2cb7496b2cb
+  bundle: mwl_port1
+  path in bundle: Assets/WarpProjects/More World Locations/Ports/MWL_Port1.prefab
+- asset ID: 752fc965752fc965752fc965752fc965
+  bundle: mwl_forestforge2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestForge2.prefab
+- asset ID: 75327e4875327e4875327e4875327e48
+  bundle: mwl_forestforge1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestForge1.prefab
+- asset ID: 7691e69c7691e69c7691e69c7691e69c
+  bundle: mwl_swampaltar1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampAltar1.prefab
+- asset ID: 7c674e5d7c674e5d7c674e5d7c674e5d
+  bundle: mwl_mountaincultshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_MountainCultShrine1.prefab
+- asset ID: 7ce066a37ce066a37ce066a37ce066a3
+  bundle: mwl_blackforestblacksmith2
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_BlackForestBlacksmith2.prefab
+- asset ID: 7ce1f2c07ce1f2c07ce1f2c07ce1f2c0
+  bundle: mwl_blackforestblacksmith1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_BlackForestBlacksmith1.prefab
+- asset ID: 7d0d1be47d0d1be47d0d1be47d0d1be4
+  bundle: mwl_tavern1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_Tavern1.prefab
+- asset ID: 7e3895497e3895497e3895497e389549
+  bundle: mwl_stonecircle1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_StoneCircle1.prefab
+- asset ID: 7fa615b87fa615b87fa615b87fa615b8
+  bundle: mwl_swamphouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampHouse1.prefab
+- asset ID: 82537862825378628253786282537862
+  bundle: mwl_meadowswall1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsWall1.prefab
+- asset ID: 82b45fe382b45fe382b45fe382b45fe3
+  bundle: cd_lower_room1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Room1.prefab
+- asset ID: 8627ecfa8627ecfa8627ecfa8627ecfa
+  bundle: cd_lower_endcap4
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Endcap4.prefab
+- asset ID: 870c7816870c7816870c7816870c7816
+  bundle: mwl_forestruin2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin2.prefab
+- asset ID: 87a8b75e87a8b75e87a8b75e87a8b75e
+  bundle: mwl_mountainsblacksmith1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_MountainsBlacksmith1.prefab
+- asset ID: 8b503fcc8b503fcc8b503fcc8b503fcc
+  bundle: cd_endcap8
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap8.prefab
+- asset ID: 8b5ffc268b5ffc268b5ffc268b5ffc26
+  bundle: mwl_swampaltar3
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampAltar3.prefab
+- asset ID: 8db05c678db05c678db05c678db05c67
+  bundle: mwl_mountainshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_MountainShrine1.prefab
+- asset ID: 8e12a9338e12a9338e12a9338e12a933
+  bundle: bfd_modular7
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular7.prefab
+- asset ID: 8e21848d8e21848d8e21848d8e21848d
+  bundle: mwl_mistpond1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistPond1.prefab
+- asset ID: 8fa508388fa508388fa508388fa50838
+  bundle: mwl_ruinedtower1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedTower1.prefab
+- asset ID: 904200bb904200bb904200bb904200bb
+  bundle: mwl_goblinfort1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_GoblinFort1.prefab
+- asset ID: 93338f0e93338f0e93338f0e93338f0e
+  bundle: mwl_marblecage1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleCage1.prefab
+- asset ID: 93dc0e9b93dc0e9b93dc0e9b93dc0e9b
+  bundle: mwl_forestruin1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestRuin1.prefab
+- asset ID: 9599b9a99599b9a99599b9a99599b9a9
+  bundle: cd_endcap1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap1.prefab
+- asset ID: 98fb2f3398fb2f3398fb2f3398fb2f33
+  bundle: cd_endcap7
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap7.prefab
+- asset ID: 9b1d818a9b1d818a9b1d818a9b1d818a
+  bundle: mwl_ruinsarena3
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_RuinsArena3.prefab
+- asset ID: 9d263b709d263b709d263b709d263b70
+  bundle: mwl_mountaindvergrshrine2
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_MountainDvergrShrine2.prefab
+- asset ID: 9d26bfcf9d26bfcf9d26bfcf9d26bfcf
+  bundle: mwl_mountaindvergrshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_MountainDvergrShrine1.prefab
+- asset ID: 9f0679789f0679789f0679789f067978
+  bundle: mwl_ruinedroottower5
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinedRootTower5.prefab
+- asset ID: 9fb0c0299fb0c0299fb0c0299fb0c029
+  bundle: mwl_fulingtower1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingTower1.prefab
+- asset ID: 9fec58a59fec58a59fec58a59fec58a5
+  bundle: mwl_dvergrknowledgeextractor1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrKnowledgeExtractor1.prefab
+- asset ID: a162bb5ea162bb5ea162bb5ea162bb5e
+  bundle: cd_lower_cell3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Cell3.prefab
+- asset ID: a346becca346becca346becca346becc
+  bundle: mwl_ruinschurch2
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_RuinsChurch2.prefab
+- asset ID: a51ac7c4a51ac7c4a51ac7c4a51ac7c4
+  bundle: mwl_stonetavern1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneTavern1.prefab
+- asset ID: a6423447a6423447a6423447a6423447
+  bundle: bfd_modular3
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular3.prefab
+- asset ID: a650820ca650820ca650820ca650820c
+  bundle: cd_room4
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Room4.prefab
+- asset ID: a6bb2468a6bb2468a6bb2468a6bb2468
+  bundle: mwl_fulingtemplebroken1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingTempleBroken1.prefab
+- asset ID: a7530c02a7530c02a7530c02a7530c02
+  bundle: mwl_marblejail1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleJail1.prefab
+- asset ID: a7dc4aeca7dc4aeca7dc4aeca7dc4aec
+  bundle: mwl_swamptemplesmall1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTempleSmall1.prefab
+- asset ID: a82ded96a82ded96a82ded96a82ded96
+  bundle: cd_room2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Room2.prefab
+- asset ID: a9bb2796a9bb2796a9bb2796a9bb2796
+  bundle: mwl_mistwall1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistWall1.prefab
+- asset ID: a9d02cb9a9d02cb9a9d02cb9a9d02cb9
+  bundle: mwl_swampcourtyard1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampCourtyard1.prefab
+- asset ID: ac3a691dac3a691dac3a691dac3a691d
+  bundle: mwl_meadowstomb4
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsTomb4.prefab
+- asset ID: adc944bdadc944bdadc944bdadc944bd
+  bundle: cd_endcap5
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap5.prefab
+- asset ID: b031a75cb031a75cb031a75cb031a75c
+  bundle: cd_lower_endcap2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Endcap2.prefab
+- asset ID: b176670cb176670cb176670cb176670c
+  bundle: mwl_woodtower3
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_WoodTower3.prefab
+- asset ID: b1776e4ab1776e4ab1776e4ab1776e4a
+  bundle: mwl_woodtower1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_WoodTower1.prefab
+- asset ID: b17a232db17a232db17a232db17a232d
+  bundle: mwl_woodtower2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_WoodTower2.prefab
+- asset ID: b5b294f1b5b294f1b5b294f1b5b294f1
+  bundle: cd_endcap10
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap10.prefab
+- asset ID: b5b31850b5b31850b5b31850b5b31850
+  bundle: cd_endcap13
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap13.prefab
+- asset ID: b5b39c2fb5b39c2fb5b39c2fb5b39c2f
+  bundle: cd_endcap12
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap12.prefab
+- asset ID: b5b4c56db5b4c56db5b4c56db5b4c56d
+  bundle: cd_endcap14
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap14.prefab
+- asset ID: b5b65112b5b65112b5b65112b5b65112
+  bundle: cd_endcap11
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap11.prefab
+- asset ID: b7e76e28b7e76e28b7e76e28b7e76e28
+  bundle: mwl_guardtower1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_GuardTower1.prefab
+- asset ID: b8ef581cb8ef581cb8ef581cb8ef581c
+  bundle: mwl_stonealtar1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneAltar1.prefab
+- asset ID: b96624a7b96624a7b96624a7b96624a7
+  bundle: mwl_ruinstower8
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinsTower8.prefab
+- asset ID: b968a15bb968a15bb968a15bb968a15b
+  bundle: mwl_fulingtemple1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple1.prefab
+- asset ID: b96a4df8b96a4df8b96a4df8b96a4df8
+  bundle: mwl_fulingtemple4
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple4.prefab
+- asset ID: b96b573eb96b573eb96b573eb96b573e
+  bundle: mwl_fulingtemple2
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple2.prefab
+- asset ID: b96bdb1db96bdb1db96bdb1db96bdb1d
+  bundle: mwl_fulingtemple3
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingTemple3.prefab
+- asset ID: b9ba2d4eb9ba2d4eb9ba2d4eb9ba2d4e
+  bundle: mwl_swampsanctuary1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampSanctuary1.prefab
+- asset ID: bba76259bba76259bba76259bba76259
+  bundle: bfd_mainentrance2
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_MainEntrance2.prefab
+- asset ID: bbb2a3a8bbb2a3a8bbb2a3a8bbb2a3a8
+  bundle: mwl_rootstower1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RootsTower1.prefab
+- asset ID: bd013de1bd013de1bd013de1bd013de1
+  bundle: cd_lower_endcap1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Endcap1.prefab
+- asset ID: be0e558abe0e558abe0e558abe0e558a
+  bundle: mwl_fortbakkarhalt1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_FortBakkarhalt1.prefab
+- asset ID: beda93afbeda93afbeda93afbeda93af
+  bundle: mwl_deershrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_DeerShrine1.prefab
+- asset ID: c0c5aecbc0c5aecbc0c5aecbc0c5aecb
+  bundle: mwl_mistshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistShrine1.prefab
+- asset ID: c0d52f4bc0d52f4bc0d52f4bc0d52f4b
+  bundle: mwl_swampshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampShrine1.prefab
+- asset ID: c282e93ec282e93ec282e93ec282e93e
+  bundle: mwl_plainscamp1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_PlainsCamp1.prefab
+- asset ID: c3eac054c3eac054c3eac054c3eac054
+  bundle: mwl_ruinstower3
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinsTower3.prefab
+- asset ID: c5c36fbdc5c36fbdc5c36fbdc5c36fbd
+  bundle: bfd_modular12_solution
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular12_Solution.prefab
+- asset ID: c7f667f2c7f667f2c7f667f2c7f667f2
+  bundle: mwl_woodfarm1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_WoodFarm1.prefab
+- asset ID: c9c8bb04c9c8bb04c9c8bb04c9c8bb04
+  bundle: mwl_meadowstavern1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsTavern1.prefab
+- asset ID: d04beea9d04beea9d04beea9d04beea9
+  bundle: bfd_modular5
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular5.prefab
+- asset ID: d06f01a0d06f01a0d06f01a0d06f01a0
+  bundle: mwl_mistfort2
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MistFort2.prefab
+- asset ID: d2c0291fd2c0291fd2c0291fd2c0291f
+  bundle: mwl_guckpit1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_GuckPit1.prefab
+- asset ID: d421fa97d421fa97d421fa97d421fa97
+  bundle: mwl_swampcastle2
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampCastle2.prefab
+- asset ID: d530c8f5d530c8f5d530c8f5d530c8f5
+  bundle: cd_lower_endcap5
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Lower_Endcap5.prefab
+- asset ID: d5843198d5843198d5843198d5843198
+  bundle: cd_hallway3
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Hallway3.prefab
+- asset ID: d5876a5ad5876a5ad5876a5ad5876a5a
+  bundle: cd_hallway1
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Hallway1.prefab
+- asset ID: d587edb9d587edb9d587edb9d587edb9
+  bundle: cd_hallway2
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Hallway2.prefab
+- asset ID: d6a91f78d6a91f78d6a91f78d6a91f78
+  bundle: mwl_marblecliffaltar1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_MarbleCliffAltar1.prefab
+- asset ID: d9a3b77dd9a3b77dd9a3b77dd9a3b77d
+  bundle: mwl_mistlandsblacksmith1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_MistlandsBlacksmith1.prefab
+- asset ID: db526465db526465db526465db526465
+  bundle: mwl_plainstavern1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_PlainsTavern1.prefab
+- asset ID: db796d5fdb796d5fdb796d5fdb796d5f
+  bundle: mwl_rootruins1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RootRuins1.prefab
+- asset ID: dbe9a85bdbe9a85bdbe9a85bdbe9a85b
+  bundle: mwl_fulingrock1
+  path in bundle: Assets/WarpProjects/More World Locations/Plains/MWL_FulingRock1.prefab
+- asset ID: e70f2e28e70f2e28e70f2e28e70f2e28
+  bundle: mwl_port6
+  path in bundle: Assets/WarpProjects/More World Locations/Ports/MWL_Port6.prefab
+- asset ID: e754c22ae754c22ae754c22ae754c22a
+  bundle: bfd_modularend9
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd9.prefab
+- asset ID: e756f4b6e756f4b6e756f4b6e756f4b6
+  bundle: bfd_modularend5
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd5.prefab
+- asset ID: e7577815e7577815e7577815e7577815
+  bundle: bfd_modularend6
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd6.prefab
+- asset ID: e757fbf4e757fbf4e757fbf4e757fbf4
+  bundle: bfd_modularend7
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd7.prefab
+- asset ID: e7587e4be7587e4be7587e4be7587e4b
+  bundle: bfd_modularend8
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd8.prefab
+- asset ID: e75a2c70e75a2c70e75a2c70e75a2c70
+  bundle: bfd_modularend3
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd3.prefab
+- asset ID: e75ab0d7e75ab0d7e75ab0d7e75ab0d7
+  bundle: bfd_modularend4
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_ModularEnd4.prefab
+- asset ID: e83ac6fbe83ac6fbe83ac6fbe83ac6fb
+  bundle: mwl_dvergrhousewood2
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouseWood2.prefab
+- asset ID: e83d7bdee83d7bdee83d7bdee83d7bde
+  bundle: mwl_dvergrhousewood1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouseWood1.prefab
+- asset ID: e8a9f8e8e8a9f8e8e8a9f8e8e8a9f8e8
+  bundle: mwl_meadowsruin1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsRuin1.prefab
+- asset ID: eb79ceedeb79ceedeb79ceedeb79ceed
+  bundle: mwl_meadowssawmill1
+  path in bundle: Assets/WarpProjects/More World Locations/Meadows/MWL_MeadowsSawmill1.prefab
+- asset ID: ebda23d1ebda23d1ebda23d1ebda23d1
+  bundle: cd_endcap9
+  path in bundle: Assets/WarpProjects/Dungeons/ForbiddenCatacombs/Rooms/CD_Endcap9.prefab
+- asset ID: edc33b83edc33b83edc33b83edc33b83
+  bundle: mwl_meadowstrainer1
+  path in bundle: Assets/WarpProjects/MoreWorldTraders/MWL_MeadowsTrainer1.prefab
+- asset ID: ee21fc1eee21fc1eee21fc1eee21fc1e
+  bundle: mwl_stonecastle1
+  path in bundle: Assets/WarpProjects/More World Locations/Mountain/MWL_StoneCastle1.prefab
+- asset ID: ee38bcaaee38bcaaee38bcaaee38bcaa
+  bundle: mwl_treetowers1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_TreeTowers1.prefab
+- asset ID: ee9c8d38ee9c8d38ee9c8d38ee9c8d38
+  bundle: bfd_modular6
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular6.prefab
+- asset ID: ef545307ef545307ef545307ef545307
+  bundle: mwl_castlecorner1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_CastleCorner1.prefab
+- asset ID: f38c19bff38c19bff38c19bff38c19bf
+  bundle: mwl_dvergrhouse1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrHouse1.prefab
+- asset ID: f63a6360f63a6360f63a6360f63a6360
+  bundle: mwl_ancientshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_AncientShrine1.prefab
+- asset ID: f9896f00f9896f00f9896f00f9896f00
+  bundle: mwl_forestgrove1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestGrove1.prefab
+- asset ID: fa1dd1fdfa1dd1fdfa1dd1fdfa1dd1fd
+  bundle: mwl_swamptemple1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTemple1.prefab
+- asset ID: fa2086e0fa2086e0fa2086e0fa2086e0
+  bundle: mwl_swamptemple2
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampTemple2.prefab
+- asset ID: fa41d327fa41d327fa41d327fa41d327
+  bundle: mwl_ruinsarena2
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RuinsArena2.prefab
+- asset ID: face2e91face2e91face2e91face2e91
+  bundle: mwl_forestpillar1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_ForestPillar1.prefab
+- asset ID: fbdac35efbdac35efbdac35efbdac35e
+  bundle: mwl_swampbrokentower1
+  path in bundle: Assets/WarpProjects/More World Locations/Swamp/MWL_SwampBrokenTower1.prefab
+- asset ID: fbdd43b2fbdd43b2fbdd43b2fbdd43b2
+  bundle: mwl_port4
+  path in bundle: Assets/WarpProjects/More World Locations/Ports/MWL_Port4.prefab
+- asset ID: fe00b2ecfe00b2ecfe00b2ecfe00b2ec
+  bundle: mwl_rockshrine1
+  path in bundle: Assets/WarpProjects/More World Locations/Blackforest/MWL_RockShrine1.prefab
+- asset ID: ff3eb93cff3eb93cff3eb93cff3eb93c
+  bundle: mwl_port2
+  path in bundle: Assets/WarpProjects/More World Locations/Ports/MWL_Port2.prefab
+- asset ID: e87b79bde87b79bde87b79bde87b79bd
+  bundle: bfd_modular1
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular1.prefab
+- asset ID: 06cc184c06cc184c06cc184c06cc184c
+  bundle: bfd_modular2
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular2.prefab
+- asset ID: 814312ae814312ae814312ae814312ae
+  bundle: bfd_modular4
+  path in bundle: Assets/WarpProjects/Dungeons/UndergroundRuins/Rooms/BFD_Modular4.prefab

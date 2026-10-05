@@ -1,7 +1,7 @@
 ![More World Locations AIO](https://i.imgur.com/Xd52Zfj.png)
 
 # More World Locations
-This mod massively enhances the world exploration component of Valheim by adding 190 new POI locations across all biomes, including 188 custom locations and 2 procedurally generated dungeons.
+This mod massively enhances the world exploration component of Valheim by adding 194 new POI locations across all biomes, including 192 custom locations and 2 procedurally generated dungeons.
 
 ## Table of Contents
 - [Features](#features)
@@ -30,7 +30,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - [Credit & Thanks](#credit--thanks)
 
 ## Features
-- Adds 188 custom locations across all biomes. Each spawns up to 20 times.
+- Adds 192 custom locations across all biomes. Each spawns up to 20 times.
 - Adds 2 procedurally generated dungeons, one in Black Forest and one in Swamp.
 - Adds Shipping Port locations to ship items and teleport between other discovered shipping port locations.
 - Adds Shrines that provide temporary buffs with randomized effects and durations.
@@ -69,19 +69,19 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 </details>
 <details>
-  <summary>Adds 23 locations to the Plains.</summary>
+  <summary>Adds 24 locations to the Plains.</summary>
 
   ![Plains Pack 1](https://i.imgur.com/APTsEfG.png)
 
 </details>
 <details>
-  <summary>Adds 23 locations to the Mistlands.</summary>
+  <summary>Adds 24 locations to the Mistlands.</summary>
 
   ![Mistlands Pack 1](https://i.imgur.com/uy5nOkT.png)
 
 </details>
 <details>
-  <summary>Adds 7 locations to the Ashlands.</summary>
+  <summary>Adds 9 locations to the Ashlands.</summary>
 
   ![Ashlands Pack 1](https://i.imgur.com/hnmWJXh.png)
 
@@ -400,6 +400,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_WoodFarm1 | H1lli           |
 | MWL_WoodHouse1 | H1lli           |
 | MWL_FulingRock1 | BatgirlXXRobin               |
+| MWL_FulingWalkways1 | |
 | MWL_FulingTarPit1 | |
 | MWL_FulingTemple1 | Hilli               |
 | MWL_FulingTemple2 | Hilli               |
@@ -424,6 +425,8 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_DvergrHouse1 | MaxFoxGaming           |
 | MWL_DvergrKnowledgeExtractor1 | MaxFoxGaming           |
 | MWL_AshlandsFort1 | Insanity               |
+| MWL_CharredTower1 | |
+| MWL_SunkenTower1 | |
 | MWL_AshlandsFort2 | Insanity               |
 | MWL_AshlandsFort3 | Insanity               |
 | MWL_CastleCorner1       | Ninebyte & Dhakhar |
@@ -440,6 +443,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_Port5 | |
 | MWL_Port6 | |
 | MWL_DvergrHouseWood1 | Hilli |
+| MWL_DvergrRockHut1 | |
 | MWL_DvergrHouseWood2 | Hilli |
 | MWL_MarbleJail1 | Bryn |
 | MWL_FulingTempleBroken1 | Hilli |
