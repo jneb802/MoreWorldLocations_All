@@ -1,7 +1,7 @@
 ![More World Locations AIO](https://i.imgur.com/Xd52Zfj.png)
 
 # More World Locations
-This mod massively enhances the world exploration component of Valheim by adding 192 new POI locations across all biomes, including 190 custom locations and 2 procedurally generated dungeons.
+This mod massively enhances the world exploration component of Valheim by adding 193 new POI locations across all biomes, including 191 custom locations and 2 procedurally generated dungeons.
 
 ## Table of Contents
 - [Features](#features)
@@ -30,7 +30,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - [Credit & Thanks](#credit--thanks)
 
 ## Features
-- Adds 190 custom locations across all biomes. Each spawns up to 20 times.
+- Adds 191 custom locations across all biomes. Each spawns up to 20 times.
 - Adds 2 procedurally generated dungeons, one in Black Forest and one in Swamp.
 - Adds Shipping Port locations to ship items and teleport between other discovered shipping port locations.
 - Adds Shrines that provide temporary buffs with randomized effects and durations.
@@ -81,7 +81,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 
 </details>
 <details>
-  <summary>Adds 7 locations to the Ashlands.</summary>
+  <summary>Adds 8 locations to the Ashlands.</summary>
 
   ![Ashlands Pack 1](https://i.imgur.com/hnmWJXh.png)
 
@@ -425,6 +425,7 @@ A special thank you to the mod developer Rusty. He built the majority of the shi
 | MWL_DvergrHouse1 | MaxFoxGaming           |
 | MWL_DvergrKnowledgeExtractor1 | MaxFoxGaming           |
 | MWL_AshlandsFort1 | Insanity               |
+| MWL_CharredTower1 | |
 | MWL_AshlandsFort2 | Insanity               |
 | MWL_AshlandsFort3 | Insanity               |
 | MWL_CastleCorner1       | Ninebyte & Dhakhar |

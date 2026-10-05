@@ -3,6 +3,9 @@ version: 2
 bundles directory: ./Bundles
 bundle dependencies:
 asset locations:
+- asset ID: 3959cb003959cb003959cb003959cb00
+  bundle: mwl_charredtower1
+  path in bundle: Assets/WarpProjects/More World Locations/Ashlands/MWL_CharredTower1.prefab
 - asset ID: 9eb3127b9eb3127b9eb3127b9eb3127b
   bundle: mwl_dvergrrockhut1
   path in bundle: Assets/WarpProjects/More World Locations/Mistlands/MWL_DvergrRockHut1.prefab
