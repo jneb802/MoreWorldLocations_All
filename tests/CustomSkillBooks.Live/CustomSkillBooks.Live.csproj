@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <GameRoot>$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim</GameRoot>
+    <Managed>$(GameRoot)/Valheim.app/Contents/Resources/Data/Managed</Managed>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(GameRoot)/BepInEx/core/BepInEx.dll" />
+    <Reference Include="assembly_valheim" HintPath="$(Managed)/publicized_assemblies/assembly_valheim_publicized.dll" />
+    <Reference Include="assembly_utils" HintPath="$(Managed)/publicized_assemblies/assembly_utils_publicized.dll" />
+    <Reference Include="assembly_guiutils" HintPath="$(Managed)/publicized_assemblies/assembly_guiutils_publicized.dll" />
+    <Reference Include="UnityEngine" HintPath="$(Managed)/UnityEngine.dll" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(Managed)/UnityEngine.CoreModule.dll" />
+    <Reference Include="UnityEngine.PhysicsModule" HintPath="$(Managed)/UnityEngine.PhysicsModule.dll" />
+    <Reference Include="Jotunn" HintPath="../../More World Locations_AIO/Libs/Jotunn.dll" />
+  </ItemGroup>
+</Project>

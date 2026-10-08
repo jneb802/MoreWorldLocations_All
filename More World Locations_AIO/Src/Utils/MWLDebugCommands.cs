@@ -10,6 +10,9 @@ public static class MWLCommands
 {
     static void Postfix()
     {
+        new Terminal.ConsoleCommand("mwl_skillbooks", "List custom skills and their book prefab names. Usage: mwl_skillbooks [filter]",
+            More_World_Locations_AIO.Traders.CustomSkillBooks.ListBooks);
+
         // Teleport to a location instance
         new Terminal.ConsoleCommand("gotolocation", "Teleport to a location. Usage: gotolocation <name> [index]", args =>
         {
