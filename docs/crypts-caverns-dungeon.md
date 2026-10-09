@@ -47,8 +47,8 @@ generation. The existing room sets keep their registration behavior.
    and check room connections, collision, entrances, exits and multiplayer persistence.
    Complete final validation with the current production season's mod set before release.
 
-No Unity assets or bundle files are changed by this code setup. A valid manifest reference
-does not prove that a prefab or all of its dependencies can load; live validation is still required.
+The Unity project and built bundles are maintained outside this repository. A valid manifest
+reference does not prove that a prefab or all of its dependencies can load; live validation is still required.
 
 ## Local manifest generation build
 
@@ -79,3 +79,47 @@ references, including `stone_1x1_high`, `stone_1x1`, `stone_4x2`, `stone_2x1_hig
 `stone_4x2_high` and `stonepillar`. The Linux client also reported missing shader-platform
 data. Room rendering, collision, entrance/exit traversal, saved-world reload and multiplayer
 still require validation after the asset issues are resolved.
+
+## Visual model reference repair (2026-10-09)
+
+The recovered room prefabs marked embedded visual models as `JVLmock_` objects. For example,
+`JVLmock_stone_1x1_high` refers to an internal model, while the game building prefab is
+`stone_wall_1x1`. Jotunn searches its asset and loaded-object caches for the target name.
+These model targets can be absent on one load and available after other locations load.
+When found, Jotunn replaces the authored object, including its material. This made room
+appearance depend on which other assets had loaded. The white surfaces occurred in that
+replacement path; the authored textures were present in the bundles.
+
+The repair removes the mock prefix from embedded visual models whose complete component
+hierarchy contains only Transform, MeshFilter and MeshRenderer components. It preserves
+their meshes, materials, transforms and hierarchy. Gameplay mocks, including spawners,
+chests and pickables, keep their references. Shader and material mocks are unchanged.
+The authoring repair changed 3,413 object names across 21 rooms. The endcap needed no edit.
+All 22 individual development bundles were rebuilt with the existing Windows/LZMA settings.
+
+`tools/unity/repair-crypts-visual-mocks.cs` reproduces the repair through Unity Pipeline's
+`eval_file` command. It backs up the prefabs and their metadata to a unique temporary directory
+and writes a change report there. Run it only in the Crypts & Caverns authoring project.
+A second run against the repaired prefabs reported zero changes. Byte comparison against
+the backups confirmed that only the mock prefixes changed.
+
+The full per-room material inventory is in [crypts-caverns-room-materials.csv](crypts-caverns-room-materials.csv).
+The rooms use Standard, Standard (Specular setup), Standard TwoSided, Particles/Standard Surface,
+Sprites/Default and mocked Valheim Custom/StaticRock, Custom/Creature and Custom/Piece shaders.
+All 3,478 inspected meshes had nonempty, nonconstant texture coordinates. The live diagnostic
+found texture bindings on the visible geometry. No blanket shader replacement is included.
+
+Final visual check used the Season 8 8.0.39 client profile, the rebuilt feature DLL and all
+22 rebuilt bundles. The temporary material diagnostic plugin was removed before launch.
+The saved 12-room test dungeon reloaded, and screenshots showed textured arches and walls
+at player position approximately `(-59.9, 5055.3, -229.8)`. The session registered all 22
+custom rooms and reported no mock-resolution warnings. All 45 deployed files (22 bundles,
+22 Unity manifests and the DLL) matched their build hashes. The DLL build completed with
+zero errors and 148 existing warnings.
+
+This proves the visual repair at the tested interior position and successful saved-room
+loading. It does not prove every room's appearance, all room connections or multiplayer.
+An additional generator object spawned away from the player loaded zero rooms, so it
+does not count as another generation test. The exterior entrance is still inaccessible
+in the interactive test and needs separate work. Shader-platform messages remain during
+startup; the inspected room surfaces render with their textures despite those messages.
