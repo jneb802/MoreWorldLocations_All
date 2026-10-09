@@ -37,3 +37,15 @@ generation. The existing room sets keep their registration behavior.
 
 No Unity assets or bundle files are changed by this code setup. A valid manifest reference
 does not prove that a prefab or all of its dependencies can load; live validation is still required.
+
+## Local manifest generation build
+
+The feature branch temporarily enables `AssetBundles.BuildCombinedManifest` in
+`MoreWorldLocations.cs`. Install the candidate DLL and each individual room bundle with
+its Unity `.manifest` file in the local mod's `Bundles` directory before launching.
+Startup writes `assetBundleManifest_full` beside the DLL using the location and room catalogs.
+Keep the previous DLL, manifest and bundles in a backup outside the loaded profile.
+
+This call runs on every launch while enabled. After the first successful generation,
+disable the call and rebuild the DLL before using this as a normal test build or release.
+The generated manifest must stay beside that DLL.
