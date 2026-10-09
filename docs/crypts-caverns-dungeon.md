@@ -80,46 +80,45 @@ references, including `stone_1x1_high`, `stone_1x1`, `stone_4x2`, `stone_2x1_hig
 data. Room rendering, collision, entrance/exit traversal, saved-world reload and multiplayer
 still require validation after the asset issues are resolved.
 
-## Visual model reference repair (2026-10-09)
+## Verified Unity mapping: stone_2x1_high (2026-10-09)
 
-The recovered room prefabs marked embedded visual models as `JVLmock_` objects. For example,
-`JVLmock_stone_1x1_high` refers to an internal model, while the game building prefab is
-`stone_wall_1x1`. Jotunn searches its asset and loaded-object caches for the target name.
-These model targets can be absent on one load and available after other locations load.
-When found, Jotunn replaces the authored object, including its material. This made room
-appearance depend on which other assets had loaded. The white surfaces occurred in that
-replacement path; the authored textures were present in the bundles.
+Room objects must retain `JVLmock_` and reference the intended game prefab. The earlier
+removal of 3,413 mock prefixes bypassed resolution and was not a valid fix. Those prefixes
+have been restored from the original backups. Its live screenshots and absence of mock
+warnings do not validate the corrected mapping below.
 
-The repair removes the mock prefix from embedded visual models whose complete component
-hierarchy contains only Transform, MeshFilter and MeshRenderer components. It preserves
-their meshes, materials, transforms and hierarchy. Gameplay mocks, including spawners,
-chests and pickables, keep their references. Shader and material mocks are unchanged.
-The authoring repair changed 3,413 object names across 21 rooms. The endcap needed no edit.
-All 22 individual development bundles were rebuilt with the existing Windows/LZMA settings.
+The first scoped replacement is:
 
-`tools/unity/repair-crypts-visual-mocks.cs` reproduces the repair through Unity Pipeline's
-`eval_file` command. It backs up the prefabs and their metadata to a unique temporary directory
-and writes a change report there. Run it only in the Crypts & Caverns authoring project.
-A second run against the repaired prefabs reported zero changes. Byte comparison against
-the backups confirmed that only the mock prefixes changed.
+`JVLmock_stone_2x1_high` → `JVLmock_SunkenKit_int_wall_1x2`
 
-The full per-room material inventory is in [crypts-caverns-room-materials.csv](crypts-caverns-room-materials.csv).
-The rooms use Standard, Standard (Specular setup), Standard TwoSided, Particles/Standard Surface,
-Sprites/Default and mocked Valheim Custom/StaticRock, Custom/Creature and Custom/Piece shaders.
-All 3,478 inspected meshes had nonempty, nonconstant texture coordinates. The live diagnostic
-found texture bindings on the visible geometry. No blanket shader replacement is included.
+The Unity rip's `SunkenKit_int_wall_1x2/stone_hgih` uses the exact same mesh asset as
+`stone_2x1_high/default`: `GameElements/Pieces/_res/stone/default_3.asset`, GUID
+`1a0d8db346766234696718939c5be8d0`. Its transform relative to the prefab root is also
+identical. This mesh occurs 140 times across 27 vanilla room prefabs, including Sunken
+Crypt rooms and Hildir tower rooms. This establishes geometry reuse, not that the name
+`stone_2x1_high` itself is a valid runtime mock target.
 
-Final visual check used the Season 8 8.0.39 client profile, the rebuilt feature DLL and all
-22 rebuilt bundles. The temporary material diagnostic plugin was removed before launch.
-The saved 12-room test dungeon reloaded, and screenshots showed textured arches and walls
-at player position approximately `(-59.9, 5055.3, -229.8)`. The session registered all 22
-custom rooms and reported no mock-resolution warnings. All 45 deployed files (22 bundles,
-22 Unity manifests and the DLL) matched their build hashes. The DLL build completed with
-zero errors and 148 existing warnings.
+`tools/unity/replace-crypts-stone-2x1-high.cs` replaces only this model type with connected
+instances of `world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab`, named with the
+mock prefix. It preserves each instance's position, rotation, scale, sibling order and
+active state. It rejects unexpected meshes or nonvisual source components and checks
+the complete high-detail mesh transformation before saving. Explicit component references
+are remapped to the replacement. Backups and a report are written to a unique temporary
+directory.
 
-This proves the visual repair at the tested interior position and successful saved-room
-loading. It does not prove every room's appearance, all room connections or multiplayer.
-An additional generator object spawned away from the player loaded zero rooms, so it
-does not count as another generation test. The exterior entrance is still inaccessible
-in the interactive test and needs separate work. Shader-platform messages remain during
-startup; the inspected room surfaces render with their textures despite those messages.
+The replacement supplies the Sunken Kit interior material, its lower-detail mesh and its
+collider. The material is `sunkenkit_stone_mat_interior 2`; its `_AddSnow` setting is zero.
+The target prefab's authoring root offset and rotation are not copied into placed instances.
+
+Unity validation confirmed 538 replacements across 21 room prefabs, with unchanged
+high-detail mesh placement. Each replacement remains connected to the intended prefab
+and has its level-of-detail component and collision. Mock counts match the original
+rooms exactly, except for this explicit name mapping. The open authoring scene reflects
+all 538 replacements with no remaining old target names and no unsaved scene changes.
+The updated material inventory is in [crypts-caverns-room-materials.csv](crypts-caverns-room-materials.csv).
+
+The other model types remain mocked with their original names pending individual review.
+The earlier development bundles are obsolete: rebuild before testing this mapping.
+No new bundle deployment or runtime validation has been performed for this change.
+Valnet remains off. The exterior entrance, remaining model mappings, room connections
+and multiplayer still require validation.
