@@ -1,13 +1,13 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 5.2.0     | - Added skill books for modded skills, placed at random trainers. Fixed trainer inventories when traders are disabled. Update both server and clients to 5.2.0. |
-| 5.1.9     | - Corrected prefab references in Forest Skull and Mountain Cultist Shrine. Fixes affected location loading and a related crash during logout/rejoin. Existing location placement is unchanged. Update both server and clients to 5.1.9. |
-| 5.1.8     | - Send shipping data only to players who can access the shipment. Unrelated shipment changes no longer send updates to other players. Saved shipments and legacy shared shipments remain supported. Update both server and clients to 5.1.8. |
-| 5.1.7     | - Republished 5.1.6 with a new version to work around failed Thunderstore downloads. No gameplay changes. Update both server and clients to 5.1.7. |
+| 5.2.0     | - Added skill books for modded skills, placed at random trainers. Fixed trainer inventories when trainers are enabled but traders are disabled. |
+| 5.1.9     | - Corrected prefab references in Forest Skull and Mountain Cultist Shrine. Fixes affected location loading and a related crash during logout/rejoin. Existing location placement is unchanged. |
+| 5.1.8     | - Send shipping data only to players who can access the shipment. Unrelated shipment changes no longer send updates to other players. Saved shipments and legacy shared shipments remain supported. |
+| 5.1.7     | - Republished 5.1.6 with a new version to work around failed Thunderstore downloads. No gameplay changes. |
 | 5.1.6     | - Added a Favorite button beside Open Map in the Ports tab. Favorites are saved with your character. |
 |           | - Ports and Teleport lists show favorites first, with alphabetical sorting within each group. |
 | 5.1.5     | - Reduced port network traffic: opening a port no longer sends the full shipment list to all players or rewrites the shipment file. |
-|           | - Synchronize saved shipments when players join. Shipment creation, collection, and expiration continue to synchronize updates. Update both server and clients to 5.1.5. |
+|           | - Synchronize saved shipments when players join. Shipment creation, collection, and expiration continue to synchronize updates. |
 |           | - Create shrines and waystones from the game's vanilla ward prefab while preserving their MWL behavior. |
 |           | - Removed three obsolete prefab bundles, reducing the mod DLL by approximately 17.5 MiB. |
 |           | - Obsolete legacy chests, their contents, and legacy spawners are removed from saves that still contain them. Current locations no longer use these prefabs. |
