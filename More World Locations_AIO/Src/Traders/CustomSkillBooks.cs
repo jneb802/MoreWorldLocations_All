@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using Common;
 using HarmonyLib;
 using Jotunn.Configs;
 using Jotunn.Managers;
@@ -27,6 +28,40 @@ internal static class CustomSkillBooks
     }
 
     private static readonly Dictionary<Skills.SkillType, CustomSkill> Discovered = new();
+
+    // Use the matching vanilla books as templates for trainer placement, price, and progression.
+    private static readonly Dictionary<string, Skills.SkillType> DefaultStockTemplates = new(StringComparer.Ordinal)
+    {
+        ["midnightsfx.voyager"] = Skills.SkillType.Swim,
+        ["midnightsfx.hauling"] = Skills.SkillType.Run,
+        ["midnightsfx.forging"] = Skills.SkillType.Swords,
+        ["midnightsfx.animalwhisper"] = Skills.SkillType.Ride
+    };
+
+    internal static void AddDefaultStock(List<TraderManager.TradeItemYAML> items)
+    {
+        foreach (CustomSkill skill in Discovered.Values)
+        {
+            if (!DefaultStockTemplates.TryGetValue(skill.Identifier, out Skills.SkillType templateSkill)) continue;
+
+            for (int tier = 1; tier <= 3; tier++)
+            {
+                string bookName = BookName(skill.Type, tier);
+                if (items.Any(item => item.PrefabName == bookName)) continue;
+                TraderManager.TradeItemYAML? template = items.Find(item => item.PrefabName == BookName(templateSkill, tier));
+                if (template == null) continue;
+
+                items.Add(new TraderManager.TradeItemYAML
+                {
+                    PrefabName = bookName,
+                    Stack = template.Stack,
+                    Price = template.Price,
+                    RequiredGlobalKey = template.RequiredGlobalKey,
+                    NotRequiredGlobalKey = template.NotRequiredGlobalKey
+                });
+            }
+        }
+    }
 
     // Called with the vanilla book setup, before Jotunn registers items. No local player is needed.
     internal static void BuildBooks()
@@ -125,7 +160,8 @@ internal static class CustomSkillBooks
             count++;
         }
         args.Context.AddString($"{count} custom skills with books. Both the server and clients need the matching skill mods. " +
-                               "Use the book prefab names in the trader YAML configuration.");
+                               "ImpactfulSkills books are stocked automatically with default trader configs. " +
+                               "Use the book prefab names to set stock in custom trader YAML.");
     }
 
     private static void Warn(string message) =>

@@ -177,7 +177,17 @@ Tier gating ensures trainers stay relevant to your current progression. Lower ti
 
 MWL also creates all three book tiers for custom skills registered through Jotunn or the embedded SkillManager library. This includes ImpactfulSkills' Animal Whisper, Voyager, Hauling, and Forging skills. The skill mods must register their skills before MWL creates its items during game startup.
 
-Run `mwl_skillbooks` in the console to list discovered custom skills and their book prefab names. Use `mwl_skillbooks forging` to filter the list. Add the listed prefab names to your custom trader YAML to sell those books; default trader inventories remain unchanged. Custom book names use `MWL_skillBook_<numeric skill ID>_bookTier<1-3>`. Displayed names use the skill's translation.
+With `Use Custom Trader Configs` off, detected ImpactfulSkills books are automatically added to these trainers:
+
+| Trainer | Custom skills |
+|---------|---------------|
+| Meadows | Voyager, Hauling |
+| Swamp | Forging |
+| Plains | Animal Handling (Animal Whisper identifier) |
+
+These books use the same three tiers, prices, and boss requirements as the trainer's vanilla books. No YAML edits are needed. Skills that are not installed add no stock. Other custom skills have books but are not automatically assigned to trainers.
+
+With `Use Custom Trader Configs` on, your YAML controls all stock; MWL does not add custom skill books automatically. Run `mwl_skillbooks` in the console to list discovered custom skills and their book prefab names. Use `mwl_skillbooks forging` to filter the list, then add the listed prefab names to your chosen trader in the custom YAML. Custom book names use `MWL_skillBook_<numeric skill ID>_bookTier<1-3>`. Displayed names use the skill's translation.
 
 Install the same skill mods on the server and all clients, and enable MWL traders or trainers. Restart after adding or removing a skill mod. Removing a skill mod also removes its book prefabs, so remove those books from trader configuration and saved inventories first. Registry access uses reflection because these libraries do not expose a public list API; MWL logs a warning if the registry format changes.
 
