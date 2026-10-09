@@ -103,7 +103,7 @@ public class TraderPrefabs
 
                 if ((ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value == ConfigurationManager.Toggle.Off)
                 {
-                    CustomSkillBooks.AddDefaultStock(itemsYaml);
+                    CustomSkillBooks.AddDefaultStock(kvp.Key, itemsYaml);
                 }
 
                 List<Trader.TradeItem> items = new List<Trader.TradeItem>();

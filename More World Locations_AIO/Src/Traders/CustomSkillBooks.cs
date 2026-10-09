@@ -29,26 +29,35 @@ internal static class CustomSkillBooks
 
     private static readonly Dictionary<Skills.SkillType, CustomSkill> Discovered = new();
 
-    // Use the matching vanilla books as templates for trainer placement, price, and progression.
-    private static readonly Dictionary<string, Skills.SkillType> DefaultStockTemplates = new(StringComparer.Ordinal)
+    private static readonly string[] DefaultTrainers =
     {
-        ["midnightsfx.voyager"] = Skills.SkillType.Swim,
-        ["midnightsfx.hauling"] = Skills.SkillType.Run,
-        ["midnightsfx.forging"] = Skills.SkillType.Swords,
-        ["midnightsfx.animalwhisper"] = Skills.SkillType.Ride
+        "MWL_MeadowsTrainer1_Trainer",
+        "MWL_SwampTrainer1_Trainer",
+        "MWL_PlainsTrainer1_Trainer",
+        "MWL_MistTrainer1_Trainer"
     };
 
-    internal static void AddDefaultStock(List<TraderManager.TradeItemYAML> items)
+    private static string DefaultTrainer(Skills.SkillType skill)
     {
-        foreach (CustomSkill skill in Discovered.Values)
-        {
-            if (!DefaultStockTemplates.TryGetValue(skill.Identifier, out Skills.SkillType templateSkill)) continue;
+        // Stable per skill, independent of discovery order, other installed skills, and Unity's random state.
+        string key = "MWL_custom_skill_trainer_" + ((int)skill).ToString(CultureInfo.InvariantCulture);
+        uint hash = unchecked((uint)key.GetStableHashCode());
+        return DefaultTrainers[hash % (uint)DefaultTrainers.Length];
+    }
 
+    internal static void AddDefaultStock(string traderName, List<TraderManager.TradeItemYAML> items)
+    {
+        foreach (CustomSkill skill in Discovered.Values.OrderBy(skill => (int)skill.Type))
+        {
+            if (DefaultTrainer(skill.Type) != traderName) continue;
             for (int tier = 1; tier <= 3; tier++)
             {
                 string bookName = BookName(skill.Type, tier);
                 if (items.Any(item => item.PrefabName == bookName)) continue;
-                TraderManager.TradeItemYAML? template = items.Find(item => item.PrefabName == BookName(templateSkill, tier));
+                // Each default trainer already defines the price and progression for all three tiers.
+                TraderManager.TradeItemYAML? template = items.Find(item =>
+                    item.PrefabName.StartsWith("MWL_skillBook_", StringComparison.Ordinal) &&
+                    item.PrefabName.EndsWith("_bookTier" + tier, StringComparison.Ordinal));
                 if (template == null) continue;
 
                 items.Add(new TraderManager.TradeItemYAML
@@ -156,11 +165,12 @@ internal static class CustomSkillBooks
             string detail = $"{name} | {skill.Identifier} | ID {(int)skill.Type} | {skill.Source}";
             if (detail.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0) continue;
             args.Context.AddString(detail);
+            args.Context.AddString("  Default trainer: " + DefaultTrainer(skill.Type));
             for (int tier = 1; tier <= 3; tier++) args.Context.AddString("  " + BookName(skill.Type, tier));
             count++;
         }
         args.Context.AddString($"{count} custom skills with books. Both the server and clients need the matching skill mods. " +
-                               "ImpactfulSkills books are stocked automatically with default trader configs. " +
+                               "Custom skill books are stocked automatically with default trader configs. " +
                                "Use the book prefab names to set stock in custom trader YAML.");
     }
 
