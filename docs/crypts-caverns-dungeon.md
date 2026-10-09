@@ -82,6 +82,12 @@ still require validation after the asset issues are resolved.
 
 ## Verified Unity mapping: stone_2x1_high (2026-10-09)
 
+The complete read-only inventory and remaining candidates are in the
+[prefab mapping CSV](crypts-caverns-prefab-mapping.csv). The
+[mapping evidence](crypts-caverns-prefab-mapping-evidence.json) records source variants,
+mesh GUIDs, root-relative mesh matrices, native materials, components and example
+vanilla room hierarchies. See the mapping review below before any further replacements.
+
 Room objects must retain `JVLmock_` and reference the intended game prefab. The earlier
 removal of 3,413 mock prefixes bypassed resolution and was not a valid fix. Those prefixes
 have been restored from the original backups. Its live screenshots and absence of mock
@@ -122,3 +128,101 @@ The earlier development bundles are obsolete: rebuild before testing this mappin
 No new bundle deployment or runtime validation has been performed for this change.
 Valnet remains off. The exterior entrance, remaining model mappings, room connections
 and multiplayer still require validation.
+
+
+## Remaining prefab mapping review (2026-10-09)
+
+This audit covers all 41 current mock names and 3,491 instances in the 22 room assets.
+It made no Unity asset changes. The 538 previously applied SunkenKit replacements are
+included for completeness. There are 2,953 other mock instances.
+
+The table lists native candidates, not an executable replacement plan. Preserve the
+`JVLmock_` prefix. `__` separates a native prefab root from an exact child path; Jotunn's
+MockManager supports this syntax. Child targets must still resolve in the live game.
+
+- `KEEP`: existing native target and geometry match; retain its behavior.
+- `MATCH`: matching native geometry and mesh transform; native components or materials can differ.
+- `CHILD`: exact visual subtree found in a native prefab. Check runtime lookup, collision and level-of-detail behavior.
+- `OFFSET`, `SCALE`, `TRANSFORM`: shared mesh, but native internal placement differs. A name-only swap changes room geometry.
+- `VARIANT`: model-only and complete native instances need different treatment.
+- `REVIEW`: candidate changes geometry or behavior, or does not satisfy the SunkenKit requirement. Hold replacement.
+- `PAIR_REVIEW`: two model names belong to one native level-of-detail prop. Inspect colocated pairs before replacement.
+- `APPLIED`: the earlier approved replacement, still awaiting runtime validation.
+
+| Current target (without `JVLmock_`) | Count | Native candidate (without `JVLmock_`) | Status |
+|---|---:|---|---|
+| `CircleStone` | 1 | `StartPlatform` | OFFSET |
+| `CurvedRock` | 17 | `caverock_curvedrock` | OFFSET |
+| `FloorBig` | 1 | `caverock_floorbig` | MATCH |
+| `Pickable_ForestCryptRandom` | 39 | `Pickable_ForestCryptRandom` | KEEP |
+| `Pickable_SurtlingCoreStand` | 5 | `Pickable_SurtlingCoreStand` | KEEP |
+| `Skull2` | 1 | `Skull2` | KEEP |
+| `Spawner_Skeleton` | 7 | `Spawner_Skeleton` | KEEP |
+| `Stone throne_broken` | 2 | `piece_throne02__Broken__high` | CHILD |
+| `SunkenKit_int_wall_1x2` | 538 | `SunkenKit_int_wall_1x2` | APPLIED |
+| `TraderRune` | 1 | `TraderRune` | KEEP |
+| `TreasureChest_forestcrypt` | 4 | `TreasureChest_forestcrypt` | KEEP |
+| `altar` | 3 | `altar` | SCALE |
+| `caverock_curvedrock` | 3 | `caverock_curvedrock` | KEEP |
+| `crypt_skeleton_chest` | 2 | `crypt_skeleton_chest` | KEEP |
+| `crypt_skeleton_laying` | 2 | `crypt_skeleton_laying` | KEEP |
+| `dirtwall` | 36 | `dirtwall` | MATCH |
+| `fi_vil_cath_decor_swords_cross` | 2 | `fi_vil_cath_decor_swords_cross` | MATCH |
+| `fi_vil_combs_props_bone_coffin` | 4 | `crypt_skeleton_laying` | REVIEW |
+| `fi_vil_combs_props_bone_hang_01a` | 7 | `crypt_hangingskeleton` | MATCH |
+| `fi_vil_combs_props_bone_skull` | 28 | `Skull1` | MATCH |
+| `fi_vil_combs_props_bonepile_01e` | 16 | `BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_01e` | CHILD |
+| `fi_vil_combs_props_bonepile_02b` | 6 | `BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_02b` | CHILD |
+| `fi_vil_combs_props_bonepile_02c` | 7 | `Pickable_ForestCryptRemains03__crypt_skeleton_pile03` | CHILD |
+| `fi_vil_combs_props_bonepile_04a` | 4 | `Pickable_ForestCryptRemains02__crypt_skeleton_pile02__fi_vil_combs_props_bonepile_04a` | CHILD |
+| `fi_vil_combs_props_bonepile_04b` | 6 | `BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_04b` | CHILD |
+| `fi_vil_combs_props_bonepile_04d` | 8 | `BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_04d` | CHILD |
+| `fi_vil_shield05_a` | 5 | `fi_vil_shield05_a` | MATCH |
+| `skeleton_arm` | 3 | `Pickable_ForestCryptRemains02__crypt_skeleton_pile02__skeleton_arm` | CHILD |
+| `skeleton_pelvis` | 7 | `crypt_skeleton_laying__skeleton_pelvis` | CHILD |
+| `skeleton_ribcage` | 11 | `Pickable_ForestCryptRemains01__crypt_skeleton_pile01__skeleton_ribcage` | CHILD |
+| `stair1` | 44 | `SunkenKit_int_stair` | TRANSFORM |
+| `stone_1x1` | 6 | `stone_wall_1x1__new` | REVIEW |
+| `stone_1x1_high` | 1906 | `stone_wall_1x1__new` | REVIEW |
+| `stone_4x2` | 3 | `SunkenKit_int_wall_2x4` | TRANSFORM |
+| `stone_4x2_high` | 235 | `SunkenKit_int_wall_2x4` | TRANSFORM |
+| `stonepillar` | 80 | `StonePillar` | MATCH |
+| `stoneslab_lod0` | 12 | `StoneSlab` | PAIR_REVIEW |
+| `stoneslab_lod1` | 12 | `StoneSlab` | PAIR_REVIEW |
+| `stonewall` | 3 | `stonewall` | SCALE |
+| `stonewall_1` | 403 | `stonewall_1` | SCALE |
+| `widestone` | 11 | `widestone` | VARIANT |
+
+The 1x1 models are not the `stone_wall_1x1` building prefab. Their exact meshes appear
+inside its `new` visual child: `stone_hgih` and `stone_low`. That child has level-of-detail
+renderers but no collider. The collider, building and damage components belong to the
+parent. Its material is `stone_mat`, not a SunkenKit material. No SunkenKit prefab using
+these mesh GUIDs was found. These 1,912 instances remain on hold; the child path is
+recorded as evidence and an option, not a confirmed dungeon replacement.
+
+For the 4x2 models, `SunkenKit_int_wall_2x4` uses the same two mesh GUIDs, with children
+rotated 90 degrees around Z. `SunkenKit_int_wall_4x4` also shares the mesh but doubles
+its Y dimension. This is why matching only a mesh or a name is insufficient. The stairs
+also have a native child rotation and nonuniform scale. Any later conversion must
+preserve each mesh's world matrix, including room instances with nonuniform scale.
+
+Other placement differences include native `stonewall`, `stonewall_1` and `altar` child
+scale 1.5; `caverock_curvedrock` child X offset -1; model-only `widestone` child scale 2
+and X offset -0.2; and `StartPlatform` child Y offset -0.27. The evidence separates the
+8 model-only widestones from the 3 complete native widestones. Existing complete cave
+rock instances already include their offset and must not receive it twice.
+
+`CircleStone` uses a recovered mesh with a different asset GUID. Unity comparison found
+identical vertices, triangle indices, UVs and normals to the native StartPlatform mesh
+(320 vertices). The four bonepile types found only inside `BogWitch_Camp/Hut` have native
+prop usage, but no room mesh usage was found. The coffin mesh is part of
+`crypt_skeleton_laying`, which adds two other meshes; it is not an exact whole-prop swap.
+
+The evidence's room counts mean serialized MeshFilter uses of the source mesh GUIDs.
+They are not counts of prefab references. Zero does not mean an asset is absent from
+the game, and this working rip does not prove provenance against an untouched rip.
+Source materials under CryptRecovery can differ from native materials. The native
+StonePillar material is itself named `JVLmock_stonepillar` in this working project;
+its live material remains unverified. No runtime resolution, texture or collision proof
+is claimed by this list. No bundles were built, no assets were swapped, and Valnet
+remained off during this audit.
