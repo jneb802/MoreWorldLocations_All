@@ -97,6 +97,7 @@ namespace More_World_Locations_AIO
             
             PrefabManager.OnVanillaPrefabsAvailable += Initialize;
             ZoneManager.OnVanillaLocationsAvailable += LocationDB.RegisterAll;
+            ZoneManager.OnVanillaLocationsAvailable += CryptsCavernsDungeon.RegisterTestExterior;
             DungeonManager.OnVanillaRoomsAvailable += RoomDB.RegisterAll;
 
             ItemManager.OnItemsRegistered += StatusEffectDB.BuildStatusEffects;

@@ -1,7 +1,19 @@
 # Crypts & Caverns dungeon setup
 
-This is the initial room integration. It does not add a world location or a dungeon generator.
-The display name, biome, exterior, creatures and loot are not decided yet.
+This integrates the rooms and a temporary `Crypt4` exterior clone for manual generation tests.
+The final display name, biome, exterior, creatures and loot are not decided yet.
+
+## Temporary test exterior
+
+`MWL_CryptsCaverns_Test` clones the vanilla `Crypt4` location when all room asset references
+are available. Its quantity is zero, so it does not enter natural world generation.
+Use the `location MWL_CryptsCaverns_Test` developer command in a disposable test world.
+
+The clone keeps Crypt4's entrance, interior environment and generator settings. The generator
+uses `MWL_CryptsCaverns`, excludes the vanilla room theme, and clears Crypt4's required vanilla
+room list. Its unique network prefab name, `MWL_DG_CryptsCaverns_Test`, prevents Expand World
+Data from substituting the vanilla generator when it spawns objects by prefab name.
+The original `Crypt4` location is unchanged.
 
 ## Room assets
 
@@ -49,3 +61,21 @@ Keep the previous DLL, manifest and bundles in a backup outside the loaded profi
 This call runs on every launch while enabled. After the first successful generation,
 disable the call and rebuild the DLL before using this as a normal test build or release.
 The generated manifest must stay beside that DLL.
+
+## Initial generation test (2026-10-09)
+
+On Valnet client 01, the Season 8 profile used the production 8.0.39 dependency versions,
+the candidate DLL, the 22 individual room bundles and the valheimCLI test helper.
+Manual placement in `TestingWorld` found all 22 custom rooms. Seeds 1041, 1042 and 1043
+placed 46, 33 and 27 rooms respectively, including endcaps. The test exterior had no
+naturally placed instances before manual placement.
+
+An initial test retained the name `DG_ForestCrypt` and generated vanilla rooms because
+Expand World Data resolves spawned objects by prefab name. Giving the cloned generator
+its own network prefab name fixed that behavior in the repeated test.
+
+This is generation proof, not release validation. Jotunn reported unresolved model
+references, including `stone_1x1_high`, `stone_1x1`, `stone_4x2`, `stone_2x1_high`,
+`stone_4x2_high` and `stonepillar`. The Linux client also reported missing shader-platform
+data. Room rendering, collision, entrance/exit traversal, saved-world reload and multiplayer
+still require validation after the asset issues are resolved.
