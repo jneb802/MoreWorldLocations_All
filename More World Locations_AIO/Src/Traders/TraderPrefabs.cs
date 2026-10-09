@@ -32,6 +32,8 @@ public class TraderPrefabs
     {
         var assetBundle = Prefabs.vendorNpcBundle;
 
+        if (traderItemsCache.Count == 0) BuildAllTraderItemsFromYAML();
+
         AddVendorPrefab(assetBundle, "MWL_MeadowsTrainer1_Trainer", "$mwl_meadowstrainer1_trainer", GetTraderItems("MWL_MeadowsTrainer1_Trainer"));
         AddVendorPrefab(assetBundle, "MWL_SwampTrainer1_Trainer", "$mwl_swamptrainer1_trainer", GetTraderItems("MWL_SwampTrainer1_Trainer"));
         AddVendorPrefab(assetBundle, "MWL_PlainsTrainer1_Trainer", "$mwl_plainstrainer1_trainer", GetTraderItems("MWL_PlainsTrainer1_Trainer"));
@@ -98,6 +100,11 @@ public class TraderPrefabs
 
                 var itemsYaml = deserializer.Deserialize<List<TraderManager.TradeItemYAML>>(
                     new SerializerBuilder().Build().Serialize(kvp.Value));
+
+                if ((ConfigurationManager.Toggle)BepinexConfigs.UseCustomTraderConfigs.Value == ConfigurationManager.Toggle.Off)
+                {
+                    CustomSkillBooks.AddDefaultStock(kvp.Key, itemsYaml);
+                }
 
                 List<Trader.TradeItem> items = new List<Trader.TradeItem>();
                 foreach (var itemData in itemsYaml)

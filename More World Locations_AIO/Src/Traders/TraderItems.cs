@@ -70,12 +70,13 @@ public class TraderItems
                 CreateSkillBook(skill, tier);
             }
         }
+        CustomSkillBooks.BuildBooks();
     }
     
     public static void CreateSkillBook(Skills.SkillType skill, int tier)
     {
         ItemConfig bookConfig = new ItemConfig();
-        string customItemName = "MWL_skillBook_" + skill.ToString() + "_bookTier" + tier;
+        string customItemName = CustomSkillBooks.BookName(skill, tier);
         CustomItem customItem = new CustomItem(customItemName, "MWL_skillTome", bookConfig);
         ItemDrop itemDrop = customItem.ItemDrop;
         itemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;

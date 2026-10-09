@@ -175,6 +175,8 @@ Tier gating ensures trainers stay relevant to your current progression. Lower ti
 
 > **Configurable:** Trainer inventories can be customized via YAML. See [YAML Configs](#yaml-configs).
 
+Skill books also support modded skills. Modded skill books are placed at random trainers.
+
 ### Blacksmith Stones
 Blacksmith Stones are a new consumable item sold by blacksmith traders. They allow you to upgrade weapons and armor **past their normal maximum quality level**.
 
