@@ -130,7 +130,7 @@ Traders function like Valheim's vanilla Haldor — interact with them to open a 
 ### Trainers & Skill Books
 MWL adds 4 trainer NPCs across different biomes. Trainers sell Skill Books — consumable items that raise a specific skill level when used. They are generated for every skill type in the game and come in 3 tiers.
 
-Skill books also support modded skills, including those added by ImpactfulSkills and Ranching.
+Skill books also support modded skills. Modded skill books are placed at random trainers.
 
 | Trainer Location | Biome |
 |-----------------|-------|
