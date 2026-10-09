@@ -2520,9 +2520,9 @@
     {
       "current_mock": "JVLmock_stone_1x1",
       "instances": 6,
-      "status": "REVIEW",
-      "candidate_mock": "JVLmock_stone_wall_1x1__new",
-      "notes": "Low-detail mesh appears in this visual child. It also adds high-detail LOD. No same-mesh SunkenKit found; collider is on building root, not this child. Not equivalent to whole building piece.",
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_1x2",
+      "notes": "Geometry verified after local X scale 0.5; no offset for low mesh. Native prefab adds high-detail mesh with a slight relative offset. Preserve existing instance transforms. Runtime materials, UV appearance and collision remain untested.",
       "source_variants": [
         {
           "source": "Assets/GameElements/Pieces/_res/stone/stone_1x1.prefab",
@@ -2542,14 +2542,14 @@
             "MCRoom26_ru",
             "MCRoom27_ru"
           ],
-          "all_source_meshes_match_target_transform": true
+          "all_source_meshes_match_target_transform": false
         }
       ],
       "candidate": {
-        "path": "Assets/GameElements/Pieces/stone_wall_1x1.prefab",
-        "root": "stone_wall_1x1",
-        "hierarchy": "new",
-        "name": "new",
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab",
+        "root": "SunkenKit_int_wall_1x2",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_1x2",
         "components": [
           "Transform",
           "LODGroup",
@@ -2558,23 +2558,24 @@
           "MeshRenderer",
           "Transform",
           "MeshFilter",
-          "MeshRenderer"
+          "MeshRenderer",
+          "BoxCollider"
         ],
         "meshes": [
           {
             "name": "stone_hgih",
-            "guid": "2f541e922766de24687d110a707fff89",
+            "guid": "1a0d8db346766234696718939c5be8d0",
             "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
             "materials": [
-              "Assets/GameElements/Pieces/_res/stone/stone_mat.mat"
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
             ]
           },
           {
             "name": "stone_low",
-            "guid": "0e4238eb20677aa4ba8921853b1ad68e",
+            "guid": "db66fe3319322ea40bcb9a212d2e264e",
             "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
             "materials": [
-              "Assets/GameElements/Pieces/_res/stone/stone_mat.mat"
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
             ]
           }
         ]
@@ -2601,14 +2602,34 @@
           "path": "Assets/world/Rooms/cave/cave_new_deeproom_bottom_ice.prefab",
           "hierarchy": "cave_new_deeproom_bottom_ice/Ice_floor (2)/ice_low"
         }
-      ]
+      ],
+      "scaled_geometry_comparison": {
+        "scale": [
+          0.5,
+          1,
+          1
+        ],
+        "translation_after_scale": [
+          0,
+          0,
+          0
+        ],
+        "source_mesh_guid": "0e4238eb20677aa4ba8921853b1ad68e",
+        "target_mesh_guid": "db66fe3319322ea40bcb9a212d2e264e",
+        "maximum_bidirectional_vertex_error": 5.000000000143778e-07,
+        "maximum_target_triangle_nearest_source_triangle_error": 5.000000000143778e-07,
+        "source_vertex_count": 24,
+        "target_vertex_count": 24,
+        "triangle_count_each": 12,
+        "uv_comparison_performed": false
+      }
     },
     {
       "current_mock": "JVLmock_stone_1x1_high",
       "instances": 1906,
-      "status": "REVIEW",
-      "candidate_mock": "JVLmock_stone_wall_1x1__new",
-      "notes": "High-detail mesh appears in this visual child. It also adds low-detail LOD. No same-mesh SunkenKit found; collider is on building root, not this child. Native stone material is not SunkenKit material. Do not rename blindly.",
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_1x2",
+      "notes": "Geometry verified after local X scale 0.5 and local X offset +0.00973847482. Aligning high mesh leaves native low mesh/collider offset by this amount. Preserve existing instance transforms. Runtime materials, UV appearance and collision remain untested.",
       "source_variants": [
         {
           "source": "Assets/GameElements/Pieces/_res/stone/stone_1x1_high.prefab",
@@ -2646,14 +2667,14 @@
             "MCRoom9_ru",
             "MCRoomEntrance_ru"
           ],
-          "all_source_meshes_match_target_transform": true
+          "all_source_meshes_match_target_transform": false
         }
       ],
       "candidate": {
-        "path": "Assets/GameElements/Pieces/stone_wall_1x1.prefab",
-        "root": "stone_wall_1x1",
-        "hierarchy": "new",
-        "name": "new",
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab",
+        "root": "SunkenKit_int_wall_1x2",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_1x2",
         "components": [
           "Transform",
           "LODGroup",
@@ -2662,23 +2683,24 @@
           "MeshRenderer",
           "Transform",
           "MeshFilter",
-          "MeshRenderer"
+          "MeshRenderer",
+          "BoxCollider"
         ],
         "meshes": [
           {
             "name": "stone_hgih",
-            "guid": "2f541e922766de24687d110a707fff89",
+            "guid": "1a0d8db346766234696718939c5be8d0",
             "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
             "materials": [
-              "Assets/GameElements/Pieces/_res/stone/stone_mat.mat"
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
             ]
           },
           {
             "name": "stone_low",
-            "guid": "0e4238eb20677aa4ba8921853b1ad68e",
+            "guid": "db66fe3319322ea40bcb9a212d2e264e",
             "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
             "materials": [
-              "Assets/GameElements/Pieces/_res/stone/stone_mat.mat"
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
             ]
           }
         ]
@@ -2705,7 +2727,27 @@
           "path": "Assets/world/Rooms/rooms/meadowsvillage_greathall.prefab",
           "hierarchy": "meadowsvillage_greathall/house/furniture/stone_wall_1x1 (1)/worn/stone_hgih"
         }
-      ]
+      ],
+      "scaled_geometry_comparison": {
+        "scale": [
+          0.5,
+          1,
+          1
+        ],
+        "translation_after_scale": [
+          0.00973847482,
+          0,
+          0
+        ],
+        "source_mesh_guid": "2f541e922766de24687d110a707fff89",
+        "target_mesh_guid": "1a0d8db346766234696718939c5be8d0",
+        "maximum_bidirectional_vertex_error": 5.251800000438678e-07,
+        "maximum_target_triangle_nearest_source_triangle_error": 5.251800000438678e-07,
+        "source_vertex_count": 332,
+        "target_vertex_count": 331,
+        "triangle_count_each": 420,
+        "uv_comparison_performed": false
+      }
     },
     {
       "current_mock": "JVLmock_stone_4x2",

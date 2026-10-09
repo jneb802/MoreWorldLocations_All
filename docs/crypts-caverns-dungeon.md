@@ -182,8 +182,8 @@ MockManager supports this syntax. Child targets must still resolve in the live g
 | `skeleton_pelvis` | 7 | `crypt_skeleton_laying__skeleton_pelvis` | CHILD |
 | `skeleton_ribcage` | 11 | `Pickable_ForestCryptRemains01__crypt_skeleton_pile01__skeleton_ribcage` | CHILD |
 | `stair1` | 44 | `SunkenKit_int_stair` | TRANSFORM |
-| `stone_1x1` | 6 | `stone_wall_1x1__new` | REVIEW |
-| `stone_1x1_high` | 1906 | `stone_wall_1x1__new` | REVIEW |
+| `stone_1x1` | 6 | `SunkenKit_int_wall_1x2` | TRANSFORM |
+| `stone_1x1_high` | 1906 | `SunkenKit_int_wall_1x2` | TRANSFORM |
 | `stone_4x2` | 3 | `SunkenKit_int_wall_2x4` | TRANSFORM |
 | `stone_4x2_high` | 235 | `SunkenKit_int_wall_2x4` | TRANSFORM |
 | `stonepillar` | 80 | `StonePillar` | MATCH |
@@ -193,12 +193,22 @@ MockManager supports this syntax. Child targets must still resolve in the live g
 | `stonewall_1` | 403 | `stonewall_1` | SCALE |
 | `widestone` | 11 | `widestone` | VARIANT |
 
-The 1x1 models are not the `stone_wall_1x1` building prefab. Their exact meshes appear
-inside its `new` visual child: `stone_hgih` and `stone_low`. That child has level-of-detail
-renderers but no collider. The collider, building and damage components belong to the
-parent. Its material is `stone_mat`, not a SunkenKit material. No SunkenKit prefab using
-these mesh GUIDs was found. These 1,912 instances remain on hold; the child path is
-recorded as evidence and an option, not a confirmed dungeon replacement.
+The user's scaled-1x2 hypothesis resolves the 1x1 geometry question. Comparing only mesh
+GUIDs missed this relationship. The SunkenKit 1x2 meshes reproduce the 1x1 geometry when
+scaled by (0.5, 1, 1). The high-detail mesh also needs a local X translation of
++0.00973847482 after scaling; the low-detail mesh needs no translation. Both comparisons
+have maximum vertex and triangle-position errors below 0.000001 local units. High-detail
+meshes have 420 triangles each but different vertex counts (332 versus 331), which does
+not change their matching triangle geometry. Low-detail meshes both have 12 triangles.
+
+The candidate for these 1,912 instances is now `JVLmock_SunkenKit_int_wall_1x2` with the
+placement correction above. Preserve existing room transforms and multiply the local
+X scale by 0.5. Apply the high-detail offset through the existing instance transform,
+not directly along world X. One native root cannot align both detail levels exactly:
+aligning the high mesh leaves the low mesh/collider about 0.00974 local units offset.
+Check this during replacement validation. UVs, native material appearance, collision and
+runtime resolution are not established by the geometry comparison. No replacement was
+performed. The building prefab `stone_wall_1x1` is not the proposed replacement.
 
 For the 4x2 models, `SunkenKit_int_wall_2x4` uses the same two mesh GUIDs, with children
 rotated 90 degrees around Z. `SunkenKit_int_wall_4x4` also shares the mesh but doubles
