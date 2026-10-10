@@ -15,6 +15,7 @@ public static class RoomDB
     {
         All = RoomDefinitions.UndergroundRuins
             .Concat(RoomDefinitions.ForbiddenCatacombs)
+            .Concat(CryptsCavernsDungeon.Rooms)
             .ToArray();
 
         _byName = All.ToDictionary(r => r.Name);
@@ -24,6 +25,7 @@ public static class RoomDB
     {
         Register(RoomDefinitions.UndergroundRuins);
         Register(RoomDefinitions.ForbiddenCatacombs);
+        CryptsCavernsDungeon.RegisterRoomsIfAvailable();
 
         DungeonManager.OnVanillaRoomsAvailable -= RegisterAll;
     }
