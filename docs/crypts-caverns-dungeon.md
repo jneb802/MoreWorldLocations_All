@@ -3,6 +3,11 @@
 This integrates the rooms and a temporary `Crypt4` exterior clone for manual generation tests.
 The final display name, biome, exterior, creatures and loot are not decided yet.
 
+Latest Unity state: 2,849 additional prefab replacements have been applied and checked,
+including the scaled 1x1 SunkenKit mapping. Only 4 coffin models and 24 slab LOD models
+remain pending from the mapping review. See [Applied reviewed mappings](#applied-reviewed-mappings).
+Bundles have not been rebuilt after these changes.
+
 ## Temporary test exterior
 
 `MWL_CryptsCaverns_Test` clones the vanilla `Crypt4` location when all room asset references
@@ -123,7 +128,7 @@ rooms exactly, except for this explicit name mapping. The open authoring scene r
 all 538 replacements with no remaining old target names and no unsaved scene changes.
 The updated material inventory is in [crypts-caverns-room-materials.csv](crypts-caverns-room-materials.csv).
 
-The other model types remain mocked with their original names pending individual review.
+At this stage the other model types still used their original names pending review.
 The earlier development bundles are obsolete: rebuild before testing this mapping.
 No new bundle deployment or runtime validation has been performed for this change.
 Valnet remains off. The exterior entrance, remaining model mappings, room connections
@@ -208,7 +213,7 @@ not directly along world X. One native root cannot align both detail levels exac
 aligning the high mesh leaves the low mesh/collider about 0.00974 local units offset.
 Check this during replacement validation. UVs, native material appearance, collision and
 runtime resolution are not established by the geometry comparison. No replacement was
-performed. The building prefab `stone_wall_1x1` is not the proposed replacement.
+performed during that comparison. The building prefab `stone_wall_1x1` is not the proposed replacement.
 
 For the 4x2 models, `SunkenKit_int_wall_2x4` uses the same two mesh GUIDs, with children
 rotated 90 degrees around Z. `SunkenKit_int_wall_4x4` also shares the mesh but doubles
@@ -236,3 +241,51 @@ StonePillar material is itself named `JVLmock_stonepillar` in this working proje
 its live material remains unverified. No runtime resolution, texture or collision proof
 is claimed by this list. No bundles were built, no assets were swapped, and Valnet
 remained off during this audit.
+
+## Applied reviewed mappings
+
+Applied 2,849 further replacements across all 22 room prefab assets. The earlier 538
+`stone_2x1_high` replacements remain in place. Every object retains its `JVLmock_` name
+and uses the reviewed native root or explicit child path. The conversion includes:
+
+- 1,912 1x1 models to `SunkenKit_int_wall_1x2`, with local X scale halved and the verified high-detail offset.
+- 238 4x2 models to `SunkenKit_int_wall_2x4`, with rotation compensation.
+- 44 stair models to `SunkenKit_int_stair`, with rotation and scale compensation.
+- 655 other models to the reviewed props and visual children, including walls, pillars, rocks and bones.
+
+The [swap results](crypts-caverns-prefab-swap-results.json) contain per-room totals,
+replacement counts, verification results and saved prefab hashes. Original room assets
+and metadata are backed up outside the Unity project; their location is in that report.
+The [material inventory](crypts-caverns-room-materials.csv) now reflects the saved assets.
+
+Validation:
+
+- A full dry run passed before saving. It checked current meshes and placement, and rejected transforms that could not be represented without changing shape.
+- The conversion remapped 2,761 component references. Largest mesh-matrix difference was 0.000002862.
+- Reloading the saved prefabs verified all 2,849 placements, native meshes, material assignments, collider counts and native prefab connections where applicable.
+- Per-room mock counts exactly match the expected renames; total remains 3,491. Serialized local object references have no missing targets.
+- A repeated dry run proposed zero further changes.
+- The Crypts & Caverns authoring scene is open, reflects the new prefab contents and has no unsaved changes. Its scene file was not edited.
+- The backups contain the same 33 empty LOD renderer entries as the saved rooms, including entries inherited from the existing skeleton props. The swap introduced none; these existing entries remain for separate review.
+
+The unresolved 4 `fi_vil_combs_props_bone_coffin`, 12 `stoneslab_lod0` and 12
+`stoneslab_lod1` instances remain unchanged. A full skeleton adds geometry to the coffin
+model; the slab LOD pairs require placement review before combining them into `StoneSlab`.
+No bundles or DLLs were built or deployed for this swap. Valnet remains off. Correct
+native material assignments in Unity are not proof of runtime mock resolution, shader
+rendering, collision or traversal; those checks remain required before release.
+
+### Conversion tools
+
+`tools/unity/replace-crypts-reviewed-prefabs.cs` runs through official Unity Pipeline
+`eval_file`. Set `/tmp/mwl-prefab-swap-config.json` to an object with `apply` (boolean),
+`mapping` (absolute path to the mapping evidence JSON), and `output` (a new absolute
+evidence directory). Run with `apply=false` first, then `apply=true` using the same output
+directory. Apply requires unchanged preflight input hashes, backs up every room and
+restores saved rooms if the conversion fails. It rejects Play mode, Prefab mode and
+unsaved scenes. Whole native props stay connected to their prefab sources; child mocks
+copy the selected native subtree and retain its explicit runtime lookup path.
+
+`tools/unity/verify-crypts-reviewed-prefabs.cs` uses that same configuration to reload and
+check the saved results. It briefly imports uniquely named copies of the backups to
+compare inherited LOD entries, then removes those temporary assets in a `finally` block.
