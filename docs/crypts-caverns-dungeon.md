@@ -8,6 +8,32 @@ including the scaled 1x1 SunkenKit mapping. Only 4 coffin models and 24 slab LOD
 remain pending from the mapping review. See [Applied reviewed mappings](#applied-reviewed-mappings).
 Bundles have not been rebuilt after these changes.
 
+The old rip's `MDD_Exterior` has also been recreated at
+`Assets/WarpProjects/CryptRecovery/Exterior/MDD_Exterior.prefab` in the current Unity
+project. This is an exterior geometry template; it is not yet connected to the custom
+dungeon or used by the temporary test exterior.
+
+It contains 269 connected native prefab instances using 11 exact-name matches. All
+282 source piece/group transforms and active states were preserved, including the
+Blueprint parent offset and nonuniform scales. Verification reloaded the saved prefab
+and checked its hierarchy, transforms, native source connections and missing components.
+The old project was not changed, and no old meshes, materials or assemblies were copied.
+
+The 13 non-piece objects are empty helper/group transforms. In particular, the two
+gateway cube helpers have no copied blocking colliders or renderers, and the old light,
+terrain modifier, teleport links, Location and dungeon-generator components are not
+installed. Their original settings are preserved in
+[the legacy settings record](mdd-exterior-legacy-settings.json), including the old
+interior height of 5,000 and the obsolete `MDD_BigRoom` requirement. These need deliberate
+setup for the new theme before this asset becomes a working dungeon entrance.
+
+The [recreation input](mdd-exterior-recreation.json) records the source checksum,
+transforms and target asset paths. The [recreation result](mdd-exterior-recreation-result.json)
+records the saved verification. `tools/unity/recreate-mdd-exterior.cs` performs the
+reconstruction through Unity Pipeline and refuses to overwrite an existing destination.
+The native wall-torch prefab already has a null flare-particle material in this rip;
+both recreated torches inherit that issue. The building geometry uses native assets.
+
 ## Temporary test exterior
 
 `MWL_CryptsCaverns_Test` clones the vanilla `Crypt4` location when all room asset references
