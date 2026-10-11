@@ -13,8 +13,9 @@ The old rip's `MDD_Exterior` has also been recreated at
 project. This is an exterior geometry template; it is not yet connected to the custom
 dungeon or used by the temporary test exterior.
 
-It contains 269 connected native prefab instances using 11 exact-name matches. All
-282 source piece/group transforms and active states were preserved, including the
+It contains 276 connected native prefab instances using 12 exact-name matches: 269
+building pieces and 7 `rock1_mountain` instances under `Vegetation`. All
+289 source piece/group transforms and active states were preserved, including the
 Blueprint parent offset and nonuniform scales. Verification reloaded the saved prefab
 and checked its hierarchy, transforms, native source connections and missing components.
 The old project was not changed, and no old meshes, materials or assemblies were copied.
@@ -31,6 +32,11 @@ The [recreation input](mdd-exterior-recreation.json) records the source checksum
 transforms and target asset paths. The [recreation result](mdd-exterior-recreation-result.json)
 records the saved verification. `tools/unity/recreate-mdd-exterior.cs` performs the
 reconstruction through Unity Pipeline and refuses to overwrite an existing destination.
+The first reconstruction omitted the seven nested vegetation prefabs because their
+stripped Transform records do not contain parent fields. Those rocks have now been
+restored using the old source prefab's default transforms plus each instance's overrides.
+The reconstruction tool checks that every source PrefabInstance is accounted for in
+the placement plan. Reloaded verification includes all seven rocks and the 269 pieces.
 The native wall-torch prefab already has a null flare-particle material in this rip;
 both recreated torches inherit that issue. The building geometry uses native assets.
 

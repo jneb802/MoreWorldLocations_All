@@ -1,6 +1,17 @@
 // Unity Pipeline eval_file. Rebuild geometry with current native assets; no old game assets imported.
 string repository = "/Users/benjmarston/Develop/MoreWorldLocations-crypts-caverns";
 Newtonsoft.Json.Linq.JObject plan = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(repository + "/docs/mdd-exterior-recreation.json"));
+string originalPath = "/Users/benjmarston/Develop/valheimRipMocked/" + (string)plan["source"];
+using (System.Security.Cryptography.SHA256 sha = System.Security.Cryptography.SHA256.Create())
+    if (System.BitConverter.ToString(sha.ComputeHash(System.IO.File.ReadAllBytes(originalPath))).Replace("-", "").ToLowerInvariant() != (string)plan["source_sha256"])
+        throw new System.Exception("Source changed; regenerate the placement plan.");
+// Stripped Transform records do not contain m_Father. Account for their PrefabInstance records explicitly.
+System.Collections.Generic.HashSet<string> nestedSource = new System.Collections.Generic.HashSet<string>();
+foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(System.IO.File.ReadAllText(originalPath), @"(?m)^--- !u!1001 &(-?\d+)")) nestedSource.Add(match.Groups[1].Value);
+System.Collections.Generic.HashSet<string> nestedPlan = new System.Collections.Generic.HashSet<string>();
+foreach (Newtonsoft.Json.Linq.JObject node in plan["nodes"])
+    if (node["source_instance_id"] != null) nestedPlan.Add((string)node["source_instance_id"]);
+if (!nestedSource.SetEquals(nestedPlan)) throw new System.Exception("Placement plan omits or duplicates source nested prefab instances.");
 string destination = (string)plan["destination"];
 if (System.IO.File.Exists(destination)) throw new System.Exception("Destination already exists: " + destination);
 System.Collections.Generic.Dictionary<string, UnityEngine.GameObject> assets = new System.Collections.Generic.Dictionary<string, UnityEngine.GameObject>();

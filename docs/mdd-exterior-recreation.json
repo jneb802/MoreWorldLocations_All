@@ -232,6 +232,174 @@
       "prefab": null
     },
     {
+      "id": "6743792237844969354",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 11.369577,
+        "y": 11.574526,
+        "z": -10.936192
+      },
+      "rotation": {
+        "x": -0.11024423,
+        "y": 0.14527483,
+        "z": -0.015293705,
+        "w": 0.98311114
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "6739303599792240219"
+    },
+    {
+      "id": "8411346518216149502",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 4.3421116,
+        "y": 10.151167,
+        "z": 11.559084
+      },
+      "rotation": {
+        "x": -0.16069925,
+        "y": 0.91528165,
+        "z": -0.15432304,
+        "w": 0.33558863
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "8406822691492300847"
+    },
+    {
+      "id": "3705637732130257356",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 11.030792,
+        "y": 20.305616,
+        "z": 2.5891533
+      },
+      "rotation": {
+        "x": 0.6078978,
+        "y": 0.15587954,
+        "z": 0.14506608,
+        "w": 0.7649299
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.81166995
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "3710124175696984093"
+    },
+    {
+      "id": "8202046898255211681",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 15.911832,
+        "y": 4.7189302,
+        "z": 1.3846703
+      },
+      "rotation": {
+        "x": 0.7035323,
+        "y": 0.2233957,
+        "z": -0.6524799,
+        "w": -0.17148402
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.81167
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "8197560222876773744"
+    },
+    {
+      "id": "5680561981908530087",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 9.18232,
+        "y": 5.1842384,
+        "z": 14.324907
+      },
+      "rotation": {
+        "x": 0.822556,
+        "y": -0.02786088,
+        "z": 0.29993877,
+        "w": 0.48235062
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.81167
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "5676077746352468598"
+    },
+    {
+      "id": "8161895762762652528",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 11.9310875,
+        "y": 7.595666,
+        "z": -10.051813
+      },
+      "rotation": {
+        "x": 0.4156578,
+        "y": 0.06534064,
+        "z": 0.26136222,
+        "w": 0.86870545
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.85420156
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "8166419576864791201"
+    },
+    {
+      "id": "592001798016004731",
+      "parent": "6410931890623548959",
+      "name": "JVLmock_rock1_mountain",
+      "active": 1,
+      "position": {
+        "x": 16.543327,
+        "y": 1.9957113,
+        "z": -0.52223206
+      },
+      "rotation": {
+        "x": -0.76874256,
+        "y": -0.1654967,
+        "z": 0.6127926,
+        "w": -0.078300774
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.8116698
+      },
+      "prefab": "rock1_mountain",
+      "source_instance_id": "587479895195218858"
+    },
+    {
       "id": "1240869657528700994",
       "parent": "2114421865787825355",
       "name": "Blueprint",
@@ -6521,9 +6689,18 @@
     ],
     "blackmarble_out_1": [
       "Assets/GameElements/Pieces/blackmarble_out_1.prefab"
+    ],
+    "rock1_mountain": [
+      "Assets/world/Props/Rocks/rock1_mountain.prefab"
     ]
   },
   "source_sha256": "e3bda9e279302c39cdc43dc0d57287bc49e5f7b4b926e2e4bfdf37babb834d73",
   "destination": "Assets/WarpProjects/CryptRecovery/Exterior/MDD_Exterior.prefab",
-  "scope": "Recreate native prefab instances and helper transforms. Old generator, teleport, terrain and helper rendering components are recorded separately, not installed."
+  "scope": "Recreate native prefab instances and helper transforms. Old generator, teleport, terrain and helper rendering components are recorded separately, not installed.",
+  "nested_instance_audit": {
+    "total_source_prefab_instances": 7,
+    "recreated": 7,
+    "source_prefab": "Assets/PrefabInstance/JVLmock_rock1_mountain.prefab",
+    "root_defaults_and_instance_overrides_combined": true
+  }
 }

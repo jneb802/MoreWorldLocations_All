@@ -1,9 +1,51 @@
 {
   "destination": "Assets/WarpProjects/CryptRecovery/Exterior/MDD_Exterior.prefab",
-  "instances": 269,
-  "preservedNodes": 282,
-  "maximumTransformError": 9.23705556E-14,
+  "instances": 276,
+  "preservedNodes": 289,
+  "maximumTransformError": 2.98023224E-08,
   "nativePrefabs": [
+    {
+      "id": "6743792237844969354",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "8411346518216149502",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "3705637732130257356",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "8202046898255211681",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "5680561981908530087",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "8161895762762652528",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "592001798016004731",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
     {
       "id": "7732295234582544233",
       "name": "JVLmock_piece_walltorch",
