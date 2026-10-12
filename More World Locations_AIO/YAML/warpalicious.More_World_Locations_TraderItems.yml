@@ -262,8 +262,53 @@ MWL_OceanTavern1_Vendor:
     price: 70
     requiredGlobalKey: "defeated_fader"
 
-# Meadows Trainer 1 - Mobility and gathering skills (Run, Jump, Swim, Sneak, WoodCutting, Fishing, Pickaxes)
+# Meadows Trainer 1 - Mobility, gathering, and production skills (Run, Jump, Swim, Sneak, WoodCutting, Fishing, Pickaxes, Cooking, Farming, Crafting)
 MWL_MeadowsTrainer1_Trainer:
+  - prefabName: MWL_skillBook_Cooking_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Cooking_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Cooking_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Farming_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Farming_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Farming_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
+  - prefabName: MWL_skillBook_Crafting_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Crafting_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Crafting_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
   - prefabName: MWL_skillBook_Run_bookTier1
     stack: 1
     price: 100
@@ -370,8 +415,23 @@ MWL_MeadowsTrainer1_Trainer:
     requiredGlobalKey: "defeated_goblinking"
     notRequiredGlobalKey: ""
 
-# Swamp Trainer 1 - Melee weapon skills (Swords, Knives, Clubs, Polearms, Spears, Axes)
+# Swamp Trainer 1 - Melee combat skills (Swords, Knives, Clubs, Polearms, Spears, Axes, Unarmed)
 MWL_SwampTrainer1_Trainer:
+  - prefabName: MWL_skillBook_Unarmed_bookTier1
+    stack: 1
+    price: 100
+    requiredGlobalKey: ""
+    notRequiredGlobalKey: "defeated_bonemass"
+  - prefabName: MWL_skillBook_Unarmed_bookTier2
+    stack: 1
+    price: 300
+    requiredGlobalKey: "defeated_bonemass"
+    notRequiredGlobalKey: "defeated_goblinking"
+  - prefabName: MWL_skillBook_Unarmed_bookTier3
+    stack: 1
+    price: 500
+    requiredGlobalKey: "defeated_goblinking"
+    notRequiredGlobalKey: ""
   - prefabName: MWL_skillBook_Swords_bookTier1
     stack: 1
     price: 100
