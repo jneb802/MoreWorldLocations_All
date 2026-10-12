@@ -36,8 +36,6 @@ public class MWLRoom
         {
             if (prefab == null) return;
 
-            UndergroundRuinsStairs.PrepareRoom(Name, prefab);
-
             if (placementLimit > 0 && prefab.GetComponent<RoomExtras>() == null)
             {
                 RoomExtras extras = prefab.AddComponent<RoomExtras>();
