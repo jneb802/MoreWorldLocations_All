@@ -1,0 +1,302 @@
+{
+  "applied_at": "2026-10-09T22:16:46.478159-07:00",
+  "scope": "Unity room prefab replacements only; no bundle builds or runtime test.",
+  "evidence_directory": "/Users/benjmarston/Develop/mwl-dungeon-walk-validation-20261009/prefab-swaps-20261009-221555",
+  "rooms": 22,
+  "replaced": 2849,
+  "remapped_component_references": 2761,
+  "maximum_mesh_matrix_error": 2.861023e-06,
+  "saved_asset_verification": {
+    "verified": 2849,
+    "maxSavedTransformError": 4.76837158e-06,
+    "rooms": [
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom10_ru.prefab",
+        "verified": 77,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom11_ru.prefab",
+        "verified": 172,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom12_ru.prefab",
+        "verified": 116,
+        "preexistingNullLodRenderers": 1
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom13_ru.prefab",
+        "verified": 116,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom14_ru.prefab",
+        "verified": 117,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom15_ru.prefab",
+        "verified": 118,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom16_ru.prefab",
+        "verified": 117,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom17_ru.prefab",
+        "verified": 198,
+        "preexistingNullLodRenderers": 1
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom18_ru.prefab",
+        "verified": 56,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom19_ru.prefab",
+        "verified": 60,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom22_ru.prefab",
+        "verified": 438,
+        "preexistingNullLodRenderers": 13
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom23_ru.prefab",
+        "verified": 459,
+        "preexistingNullLodRenderers": 1
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom24_ru.prefab",
+        "verified": 130,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom26_ru.prefab",
+        "verified": 4,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom27_ru.prefab",
+        "verified": 64,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom3_ru.prefab",
+        "verified": 87,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom4_ru.prefab",
+        "verified": 115,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom7_ru.prefab",
+        "verified": 69,
+        "preexistingNullLodRenderers": 1
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom8_ru.prefab",
+        "verified": 71,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom9_ru.prefab",
+        "verified": 73,
+        "preexistingNullLodRenderers": 0
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MCRoomEntrance_ru.prefab",
+        "verified": 190,
+        "preexistingNullLodRenderers": 16
+      },
+      {
+        "path": "Assets/WarpProjects/CryptRecovery/Rooms/MC_EndCap_ru.prefab",
+        "verified": 2,
+        "preexistingNullLodRenderers": 0
+      }
+    ]
+  },
+  "repeat_run_replacements": 0,
+  "mock_count_before": 3491,
+  "mock_count_after": 3491,
+  "scene_file_unchanged": true,
+  "serialized_local_reference_errors": 0,
+  "remaining_unresolved": {
+    "JVLmock_fi_vil_combs_props_bone_coffin": 4,
+    "JVLmock_stoneslab_lod0": 12,
+    "JVLmock_stoneslab_lod1": 12
+  },
+  "mappings": [
+    {
+      "before": "JVLmock_CircleStone",
+      "after": "JVLmock_StartPlatform",
+      "count": 1
+    },
+    {
+      "before": "JVLmock_CurvedRock",
+      "after": "JVLmock_caverock_curvedrock",
+      "count": 17
+    },
+    {
+      "before": "JVLmock_FloorBig",
+      "after": "JVLmock_caverock_floorbig",
+      "count": 1
+    },
+    {
+      "before": "JVLmock_Stone throne_broken",
+      "after": "JVLmock_piece_throne02__Broken__high",
+      "count": 2
+    },
+    {
+      "before": "JVLmock_altar",
+      "after": "JVLmock_altar",
+      "count": 3
+    },
+    {
+      "before": "JVLmock_dirtwall",
+      "after": "JVLmock_dirtwall",
+      "count": 27
+    },
+    {
+      "before": "JVLmock_fi_vil_cath_decor_swords_cross",
+      "after": "JVLmock_fi_vil_cath_decor_swords_cross",
+      "count": 2
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bone_hang_01a",
+      "after": "JVLmock_crypt_hangingskeleton",
+      "count": 7
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bone_skull",
+      "after": "JVLmock_Skull1",
+      "count": 28
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bonepile_01e",
+      "after": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_01e",
+      "count": 16
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bonepile_02b",
+      "after": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_02b",
+      "count": 6
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bonepile_02c",
+      "after": "JVLmock_Pickable_ForestCryptRemains03__crypt_skeleton_pile03",
+      "count": 7
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bonepile_04a",
+      "after": "JVLmock_Pickable_ForestCryptRemains02__crypt_skeleton_pile02__fi_vil_combs_props_bonepile_04a",
+      "count": 4
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bonepile_04b",
+      "after": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_04b",
+      "count": 6
+    },
+    {
+      "before": "JVLmock_fi_vil_combs_props_bonepile_04d",
+      "after": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_04d",
+      "count": 8
+    },
+    {
+      "before": "JVLmock_fi_vil_shield05_a",
+      "after": "JVLmock_fi_vil_shield05_a",
+      "count": 5
+    },
+    {
+      "before": "JVLmock_skeleton_arm",
+      "after": "JVLmock_Pickable_ForestCryptRemains02__crypt_skeleton_pile02__skeleton_arm",
+      "count": 3
+    },
+    {
+      "before": "JVLmock_skeleton_pelvis",
+      "after": "JVLmock_crypt_skeleton_laying__skeleton_pelvis",
+      "count": 7
+    },
+    {
+      "before": "JVLmock_skeleton_ribcage",
+      "after": "JVLmock_Pickable_ForestCryptRemains01__crypt_skeleton_pile01__skeleton_ribcage",
+      "count": 11
+    },
+    {
+      "before": "JVLmock_stair1",
+      "after": "JVLmock_SunkenKit_int_stair",
+      "count": 44
+    },
+    {
+      "before": "JVLmock_stone_1x1",
+      "after": "JVLmock_SunkenKit_int_wall_1x2",
+      "count": 6
+    },
+    {
+      "before": "JVLmock_stone_1x1_high",
+      "after": "JVLmock_SunkenKit_int_wall_1x2",
+      "count": 1906
+    },
+    {
+      "before": "JVLmock_stone_4x2",
+      "after": "JVLmock_SunkenKit_int_wall_2x4",
+      "count": 3
+    },
+    {
+      "before": "JVLmock_stone_4x2_high",
+      "after": "JVLmock_SunkenKit_int_wall_2x4",
+      "count": 235
+    },
+    {
+      "before": "JVLmock_stonepillar",
+      "after": "JVLmock_StonePillar",
+      "count": 80
+    },
+    {
+      "before": "JVLmock_stonewall",
+      "after": "JVLmock_stonewall",
+      "count": 3
+    },
+    {
+      "before": "JVLmock_stonewall_1",
+      "after": "JVLmock_stonewall_1",
+      "count": 403
+    },
+    {
+      "before": "JVLmock_widestone",
+      "after": "JVLmock_widestone",
+      "count": 8
+    }
+  ],
+  "saved_prefab_sha256": {
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom10_ru.prefab": "174ca5e464fdb1aafb93fdf15ff2d0844ef679f53b6effbd5157b7ac6257ea6a",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom11_ru.prefab": "56c2fc403d9b442a831f532df1b7ce7194e2334d6d30394f697e4f14180a194e",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom12_ru.prefab": "e58b648ea7383c7cb2e29fb81896c2f127dfe72e459e5f1559dd958485ca1158",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom13_ru.prefab": "6c2fe7805314f26a8cdeabab7546ef0ea4be16425ceda39dd7d2de73ff14dfb8",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom14_ru.prefab": "96bf2ea92294a759e05fe77f0f9551514ccbdee8cdb9b706e6e76369cd1fe476",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom15_ru.prefab": "1fd085f892ad87055a0782da31f34ac1488075f4266402400108603716737e34",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom16_ru.prefab": "3691a42249489d2ff0d70d0479cc7d7e33c64966c1184cea941790139151f6b3",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom17_ru.prefab": "1b8de3cfa27d13d940a10892025cd140e542a23adbe52e014c6c8c74de201c90",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom18_ru.prefab": "ee5236896db6965d7012e44a5070445fe53de71c0aa31078140096efc044b22c",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom19_ru.prefab": "62d4cca8c6e68fdbf1b6c84cd5816e4b47075829468d308656c1cf37851464e9",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom22_ru.prefab": "f6992ba8802625952dcd325a0f93d9b52f7e64b28f4245aa7dd935d4701ebdcb",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom23_ru.prefab": "e8c2b32adeab12a16c89259a03014bfaba145e91f20e1e6bf164463eb57dc16d",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom24_ru.prefab": "17813e7174cfd50639820800bcbd9897be8579c89c0b9953396fc4e7cb17b7e1",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom26_ru.prefab": "708f53aefc7cccdc06f4cc67435c1ca15ec13836adcaee07c2a90db5f3b7d34b",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom27_ru.prefab": "8c59db877fc7b6f52f69e9b8ad209fe681ce9d611abaaaae1763868d22590e2e",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom3_ru.prefab": "f4f75aaf53e65c34ec92bb050c2214caf6f263277bf9ebdf998f13ec659a0a65",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom4_ru.prefab": "9d3397dc898976e0dcf1674f7be5583d8f5461e5754e2a837bdb0eca71a915e7",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom7_ru.prefab": "6f7239ca0d01612cef5c4fbaed681e514dcdcd68ff9372cf6775467cb31f3a98",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom8_ru.prefab": "bbbd72167b302b00cafe0844adfbdd57d73323d0a4b03f74a7c91a11ded8e650",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoom9_ru.prefab": "266b356c285b21dc3bc8fafbb12656306834eb1fcb173e2e667c0955bdac83cc",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MCRoomEntrance_ru.prefab": "996282c998cd9c87bd5502c05e5bccf05a4c691c281115692078ef7549471c96",
+    "Assets/WarpProjects/CryptRecovery/Rooms/MC_EndCap_ru.prefab": "b94bd410dcee54b116d886c31d1b0d86da3e67c2b23f0f9aa1d30f6f07302227"
+  },
+  "room_metadata_unchanged": 22
+}
