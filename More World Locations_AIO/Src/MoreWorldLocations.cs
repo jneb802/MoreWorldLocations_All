@@ -21,11 +21,13 @@ namespace More_World_Locations_AIO
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
+    [BepInDependency(ValheimFortressGUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class More_World_Locations_AIOPlugin : BaseUnityPlugin
     {
         internal const string ModName = "More_World_Locations_AIO";
         internal const string ModVersion = "5.2.1";
         internal const string Author = "warpalicious";
+        internal const string ValheimFortressGUID = "MidnightsFX.ValheimFortress";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;

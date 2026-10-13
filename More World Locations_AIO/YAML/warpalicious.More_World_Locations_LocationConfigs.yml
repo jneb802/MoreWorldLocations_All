@@ -145,6 +145,8 @@ Plains:
   MWL_FulingStoneOpen2: 15
   MWL_FulingTemple5: 15
   MWL_MinddripHallow1: 15
+  # Requires Valheim Fortress; ignored when that mod is not loaded.
+  MWL_ShrineEvent1: 15
   MWL_StoneTopHouse1: 15
   MWL_FulingTarPit1: 15
   MWL_FulingRock1: 15

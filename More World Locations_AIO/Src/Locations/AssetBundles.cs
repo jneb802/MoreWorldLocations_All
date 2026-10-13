@@ -29,6 +29,15 @@ public class AssetBundles
             string manifestPathFull = GetManifest();
             
             if (manifestPathFull != null) Runtime.AddManifest(manifestPathFull);
+
+            // Optional locations have separate manifests so their assets are only registered
+            // when the required plugin is loaded. Paths are relative to the MWL DLL.
+            string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            foreach (MWLLocation location in LocationDB.All.Where(location => !string.IsNullOrEmpty(location.RequiredPlugin)))
+            {
+                string optionalManifest = Path.Combine(directoryPath, "assetBundleManifest_" + location.Name.ToLowerInvariant());
+                Runtime.AddManifest(optionalManifest);
+            }
         }
     }
     
