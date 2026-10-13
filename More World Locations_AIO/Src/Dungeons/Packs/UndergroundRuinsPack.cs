@@ -26,6 +26,7 @@ public static class UndergroundRuinsPack
 
         KitClones = new[]
         {
+            new KitClone { Name = "BFD_Kit_stone_stair", VanillaSource = "stone_stair", Strip = StripFlags.PieceWNTZNV },
             new KitClone { Name = "BFD_Kit_dirtfloor",        VanillaSource = "dirtfloor" },
             new KitClone { Name = "BFD_Kit_Stoneblock",       VanillaSource = "Stoneblock" },
             new KitClone { Name = "BFD_Kit_StoneblockSmall",  VanillaSource = "StoneblockSmall" },
@@ -86,6 +87,7 @@ public static class UndergroundRuinsPack
     {
         List<string> names = new()
         {
+            "BFD_Kit_stone_stair",
             "BFD_Kit_dirtfloor",
             "BFD_Kit_Stoneblock",
             "BFD_Kit_StoneblockSmall",
