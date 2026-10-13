@@ -1,5 +1,6 @@
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                           |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 5.2.1     | - Fixed Underground Ruins stairs disappearing when dungeons load. Interior stairs now use the static dungeon kit prefab. Existing dungeons restore these stairs when their rooms load. |
 | 5.2.0     | - Added skill books for modded skills, placed at random trainers. Fixed trainer inventories when trainers are enabled but traders are disabled. |
 | 5.1.9     | - Corrected prefab references in Forest Skull and Mountain Cultist Shrine. Fixes affected location loading and a related crash during logout/rejoin. Existing location placement is unchanged. |
 | 5.1.8     | - Send shipping data only to players who can access the shipment. Unrelated shipment changes no longer send updates to other players. Saved shipments and legacy shared shipments remain supported. |
