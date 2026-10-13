@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <AssemblyName>MWL.LocationReload</AssemblyName>
+    <GameManaged>$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim/Valheim.app/Contents/Resources/Data/Managed</GameManaged>
+    <BepInExCore>$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim/BepInEx/core</BepInExCore>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(BepInExCore)/BepInEx.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(GameManaged)/UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="assembly_valheim" HintPath="$(GameManaged)/assembly_valheim.dll" Private="false" />
+    <Reference Include="assembly_utils" HintPath="$(GameManaged)/assembly_utils.dll" Private="false" />
+    <Reference Include="SoftReferenceableAssets" HintPath="$(GameManaged)/SoftReferenceableAssets.dll" Private="false" />
+  </ItemGroup>
+</Project>
