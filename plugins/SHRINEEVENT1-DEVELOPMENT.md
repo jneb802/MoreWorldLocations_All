@@ -37,15 +37,20 @@ and effects remain. This callback only applies to ShrineEvent1.
 
 Fortress 0.39.0 or newer is required for the offering interaction. The copied
 `Src/Integrations/FortressAPI.cs` comes from v0.39.0 (schema 3). The component
-looks up `VF_wild_shrine_yellow1` / `Resin` from Fortress's currently loaded
+looks up `VF_wild_shrine_yellow1` / the offered item prefab from Fortress's currently loaded
 wild-shrine configuration, then runs that definition with the location's own
 spawn points. It does not duplicate the event definition or parse Fortress YAML.
 
-The payment is fixed at 50 resin because the API does not expose tribute
-amounts. Players can interact with the centre shrine or use resin on it. The
+The payment is fixed at 50 of the selected item because the API does not expose tribute
+amounts. Normal interaction selects `Resin` (Black Forest). Using a `Resin`
+or `Guck` inventory item selects the matching Fortress entry; `Guck` selects
+the Swamp test. Both entries must configure a tribute amount of 50. The
 component checks inventory and the event definition, validates the floor below
-each spawn marker, and consumes resin across stacks only after a successful
-API start. Failed checks leave the inventory unchanged.
+each spawn marker, and consumes only the selected item across stacks after a
+successful API start. Failed checks leave the inventory unchanged. Both event
+types share the same reservation and active-runner lock. Other tribute items
+are rejected. Wave definitions, creature stats, modifiers and rewards remain in
+Fortress configuration; no Unity bundle rebuild is needed to change them.
 
 `Interior/ShrineEventSpawnPoints` contains four markers, 20 metres from the
 centre. Floor casts are limited to six metres around each marker. They never
@@ -84,3 +89,17 @@ reconnection during a challenge have not been validated.
 Before production packaging, rebuild all bundles together and use the resulting
 dependency manifests. Update this location's soft-reference manifest to match
 that build's dependencies; do not ship this single-bundle development output.
+
+The Resin/Guck selection change was tested on Valnet01 with the Season 8
+8.0.43 mod set and the same development bundle. The original DLL rejected
+Guck without payment. The updated DLL rejected Wood and insufficient Guck,
+started Swamp for exactly 50 Guck while preserving Resin, and blocked both
+offering types during the event without further payment. Swamp completed four
+phases, with the Oozer in the finale, and produced rewards in the room. Normal
+interaction then started Black Forest for 50 Resin while preserving Guck.
+Tests used the real `UseItem` and `Interact` methods through valheimCLI.
+Damage commands advanced combat; this is interaction and progression proof,
+not combat-balance proof. A Wraith received the random SLS Fast modifier;
+future balance measurements must account for random SLS modifiers as well as
+the explicitly configured Fortress rules. Evidence is in
+`valheim-validation-evidence/shrine-tribute-20261014` beside the repositories.

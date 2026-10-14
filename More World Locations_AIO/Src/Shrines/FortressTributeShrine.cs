@@ -11,7 +11,7 @@ namespace More_World_Locations_AIO.Shrines;
 public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverable
 {
     public const string ShrineName = "VF_wild_shrine_yellow1";
-    public const string TributePrefab = "Resin";
+    public const string DefaultTributePrefab = "Resin";
     // Fortress 0.39 returns the event definition, but does not expose its tribute amount.
     public const int TributeAmount = 50;
     public Transform SpawnRoot = null!;
@@ -72,38 +72,38 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
     public string GetHoverName() => "Plains challenge shrine";
     public float GetHoverOffset() => 0f;
     public string GetHoverText() => Localization.instance.Localize(GetHoverName() + "\n" +
-        (EventActive ? "Challenge in progress" : "[<color=yellow><b>$KEY_Use</b></color>] Offer 50 $item_resin"));
+        (EventActive ? "Challenge in progress" : "[<color=yellow><b>$KEY_Use</b></color>] Offer 50 $item_resin (Black Forest)\nUse 50 $item_guck for Swamp"));
 
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
         if (hold) return false;
-        return Offer(user);
+        return Offer(user, DefaultTributePrefab);
     }
 
     public bool UseItem(Humanoid user, ItemDrop.ItemData item)
     {
-        if (item?.m_dropPrefab == null || item.m_dropPrefab.name != TributePrefab)
+        if (item?.m_dropPrefab == null || (item.m_dropPrefab.name != DefaultTributePrefab && item.m_dropPrefab.name != "Guck"))
         {
-            user.Message(MessageHud.MessageType.Center, "This shrine accepts 50 resin.");
+            user.Message(MessageHud.MessageType.Center, "This shrine accepts 50 resin or 50 guck.");
             return false;
         }
-        return Offer(user);
+        return Offer(user, item.m_dropPrefab.name);
     }
 
-    private static int CountTribute(Humanoid user) => user.GetInventory().GetAllItems()
-        .Where(item => item.m_dropPrefab != null && item.m_dropPrefab.name == TributePrefab).Sum(item => item.m_stack);
+    private static int CountTribute(Humanoid user, string tributePrefab) => user.GetInventory().GetAllItems()
+        .Where(item => item.m_dropPrefab != null && item.m_dropPrefab.name == tributePrefab).Sum(item => item.m_stack);
 
-    private bool Offer(Humanoid user)
+    private bool Offer(Humanoid user, string tributePrefab)
     {
         if (user != Player.m_localPlayer || !Initialize()) return false;
         if (pending || EventActive) { user.Message(MessageHud.MessageType.Center, "A challenge is already in progress."); return true; }
-        if (CountTribute(user) < TributeAmount) { user.Message(MessageHud.MessageType.Center, "You need 50 resin."); return true; }
+        if (CountTribute(user, tributePrefab) < TributeAmount) { user.Message(MessageHud.MessageType.Center, $"You need {TributeAmount} {tributePrefab.ToLowerInvariant()}."); return true; }
         pending = true;
-        StartCoroutine(StartOffering(user));
+        StartCoroutine(StartOffering(user, tributePrefab));
         return true;
     }
 
-    private IEnumerator StartOffering(Humanoid user)
+    private IEnumerator StartOffering(Humanoid user, string tributePrefab)
     {
         long peer = ZNet.GetUID();
         try
@@ -112,11 +112,11 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
             for (int attempt = 0; attempt < 30 && !view.IsOwner(); attempt++) yield return new WaitForSeconds(0.1f);
             if (!view.IsValid() || !view.IsOwner() || ReservedByOther(peer) || EventActive)
             { user.Message(MessageHud.MessageType.Center, "The shrine is busy. Try again."); yield break; }
-            if (user == null || Vector3.Distance(user.transform.position, transform.position) > 5f || CountTribute(user) < TributeAmount) yield break;
+            if (user == null || Vector3.Distance(user.transform.position, transform.position) > 5f || CountTribute(user, tributePrefab) < TributeAmount) yield break;
 
-            VFChallengeDefinition definition = API.GetShrineChallengeDefinition(ShrineName, TributePrefab);
+            VFChallengeDefinition definition = API.GetShrineChallengeDefinition(ShrineName, tributePrefab);
             if (definition == null)
-            { user.Message(MessageHud.MessageType.Center, "Resin challenge unavailable. Requires Fortress 0.39 and its shrine configuration."); yield break; }
+            { user.Message(MessageHud.MessageType.Center, $"The {tributePrefab.ToLowerInvariant()} challenge is unavailable. Your offering was not consumed."); yield break; }
             Vector3[] points = GetSpawnPoints();
             if (points.Length == 0)
             { user.Message(MessageHud.MessageType.Center, "The shrine has no clear spawn points."); yield break; }
@@ -125,7 +125,7 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
             Transform rewardMarker = transform.Find("spawnpoint");
             Vector3 rewardPosition = rewardMarker != null ? rewardMarker.position : transform.position + Vector3.up;
             if (!API.RunChallenge(definition, points, rewardPosition))
-            { user.Message(MessageHud.MessageType.Center, "The challenge could not start. Your resin was not consumed."); yield break; }
+            { user.Message(MessageHud.MessageType.Center, "The challenge could not start. Your offering was not consumed."); yield break; }
 
             // The API returns only bool. Its synchronous call creates one registered
             // network runner; retain that runner's ID for the offering lock.
@@ -134,14 +134,14 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
             view.GetZDO().Set(RunnerKey, runnerView.GetZDO().m_uid);
             view.GetZDO().Set(StartedKey, Now);
             int remaining = TributeAmount;
-            foreach (ItemDrop.ItemData stack in user.GetInventory().GetAllItems().Where(item => item.m_dropPrefab != null && item.m_dropPrefab.name == TributePrefab).ToArray())
+            foreach (ItemDrop.ItemData stack in user.GetInventory().GetAllItems().Where(item => item.m_dropPrefab != null && item.m_dropPrefab.name == tributePrefab).ToArray())
             {
                 int amount = Math.Min(remaining, stack.m_stack);
                 user.GetInventory().RemoveItem(stack, amount);
                 remaining -= amount;
                 if (remaining == 0) break;
             }
-            Debug.Log($"[MWL ShrineEvent] Started {ShrineName}/{TributePrefab}; consumed={TributeAmount}; runner={runnerView.GetZDO().m_uid}; points={string.Join(", ", points.Select(point => point.ToString("F2")))}");
+            Debug.Log($"[MWL ShrineEvent] Started {ShrineName}/{tributePrefab}; consumed={TributeAmount}; runner={runnerView.GetZDO().m_uid}; points={string.Join(", ", points.Select(point => point.ToString("F2")))}");
         }
         finally
         {
