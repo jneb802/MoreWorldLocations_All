@@ -20,6 +20,7 @@ public class MWLLocation
 
         Config.Quantity = LocationQuantityManager.GetQuantity(Name);
         ProtectedLocationPeacefulArea.RegisterPrefabPatch(Name, Config);
+        ShrineEventLocation.RegisterPrefabPatch(Name);
 
         if (!string.IsNullOrEmpty(DungeonTheme) || !string.IsNullOrEmpty(InteriorPrefabName))
         {

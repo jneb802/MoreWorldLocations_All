@@ -27,6 +27,8 @@ public class AssetBundles
         public static void Prefix()
         {
             string manifestPathFull = GetManifest();
+            SoftReferenceableAssets.AssetBundleManifest fullManifest =
+                SoftReferenceableAssets.AssetBundleManifest.DeserializeFromDisk(manifestPathFull);
             
             if (manifestPathFull != null) Runtime.AddManifest(manifestPathFull);
 
@@ -35,6 +37,11 @@ public class AssetBundles
             string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             foreach (MWLLocation location in LocationDB.All.Where(location => !string.IsNullOrEmpty(location.RequiredPlugin)))
             {
+                // A regenerated full manifest already contains optional locations.
+                // SoftRef requires each asset ID to be registered only once.
+                if (fullManifest != null && fullManifest.m_assetToLocationMap.Values.Any(asset => asset.m_path == location.AssetPath))
+                    continue;
+
                 string optionalManifest = Path.Combine(directoryPath, "assetBundleManifest_" + location.Name.ToLowerInvariant());
                 Runtime.AddManifest(optionalManifest);
             }

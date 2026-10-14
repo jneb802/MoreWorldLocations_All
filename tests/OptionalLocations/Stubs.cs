@@ -56,6 +56,10 @@ namespace Common
 }
 namespace More_World_Locations_AIO
 {
+    public static class ShrineEventLocation
+    {
+        public static void RegisterPrefabPatch(string name) { }
+    }
     public static class More_World_Locations_AIOPlugin { public const string ValheimFortressGUID = "MidnightsFX.ValheimFortress"; }
     public class ToggleConfig { public PortInit.Toggle Value = PortInit.Toggle.On; }
     public static class PortInit

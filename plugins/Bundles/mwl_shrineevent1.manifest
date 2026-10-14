@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.0.46f1
-CRC: 3837066746
+CRC: 2972155507
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 19538f9e6e0f99c6261c2384a1971a45
+    Hash: b9d94d09e03e7e18a018dde3ae18e92e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8d6d7217eae7ef3b6df3239d53247c83
+    Hash: 81fe72a9e22510875c1b67b105b6436f
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: f6bed93d1a4624e91165a888e25fbcfd
+    Hash: 800a4c1f5ac10a24fdffb81180a82a02
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -68,6 +68,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -1094038755, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 901333681, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1578695569, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1434102732, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -108,9 +110,13 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -391423902, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 130663047, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 269728403, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 2053127972, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 712945444, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -188,6 +194,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: ItemStand/OrientationSettings
 - AssemblyName: assembly_valheim
   ClassName: LevelEffects/LevelSetup
+- AssemblyName: assembly_valheim
+  ClassName: MaterialVariationSettings
 - AssemblyName: assembly_valheim
   ClassName: Piece/Requirement
 - AssemblyName: assembly_valheim
