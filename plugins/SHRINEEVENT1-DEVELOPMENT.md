@@ -41,13 +41,14 @@ looks up `VF_wild_shrine_yellow1` / the offered item prefab from Fortress's curr
 wild-shrine configuration, then runs that definition with the location's own
 spawn points. It does not duplicate the event definition or parse Fortress YAML.
 
-The payment is fixed at 50 of the selected item because the API does not expose tribute
-amounts. Normal interaction selects `Resin` (Black Forest). Using a `Resin`
-or `Guck` inventory item selects the matching Fortress entry; `Guck` selects
-the Swamp test. Both entries must configure a tribute amount of 50. The
+The payment is fixed at 10 of the selected item because the API does not expose tribute
+amounts. Normal interaction selects `Resin` (Black Forest). Item use accepts
+`Resin`, `Guck`, `Crystal`, `BlackMetal`, `SeekerMeat`, `Softtissue`, `CharredBone`,
+`SealBlubber`, `Amber`, and `Ruby`, in tier order 1–10. Each corresponding Fortress
+entry must configure a tribute amount of 10. The
 component checks inventory and the event definition, validates the floor below
 each spawn marker, and consumes only the selected item across stacks after a
-successful API start. Failed checks leave the inventory unchanged. Both event
+successful API start. Failed checks leave the inventory unchanged. All event
 types share the same reservation and active-runner lock. Other tribute items
 are rejected. Wave definitions, creature stats, modifiers and rewards remain in
 Fortress configuration; no Unity bundle rebuild is needed to change them.

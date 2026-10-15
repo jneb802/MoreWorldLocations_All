@@ -13,7 +13,12 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
     public const string ShrineName = "VF_wild_shrine_yellow1";
     public const string DefaultTributePrefab = "Resin";
     // Fortress 0.39 returns the event definition, but does not expose its tribute amount.
-    public const int TributeAmount = 50;
+    public const int TributeAmount = 10;
+    private static readonly HashSet<string> TributePrefabs = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "Resin", "Guck", "Crystal", "BlackMetal", "SeekerMeat",
+        "Softtissue", "CharredBone", "SealBlubber", "Amber", "Ruby"
+    };
     public Transform SpawnRoot = null!;
 
     private const string RequestControl = "MWL_ShrineEvent_RequestControl";
@@ -72,7 +77,7 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
     public string GetHoverName() => "Plains challenge shrine";
     public float GetHoverOffset() => 0f;
     public string GetHoverText() => Localization.instance.Localize(GetHoverName() + "\n" +
-        (EventActive ? "Challenge in progress" : "[<color=yellow><b>$KEY_Use</b></color>] Offer 50 $item_resin (Black Forest)\nUse 50 $item_guck for Swamp"));
+        (EventActive ? "Challenge in progress" : $"[<color=yellow><b>$KEY_Use</b></color>] Offer {TributeAmount} $item_resin (Black Forest)\nUse {TributeAmount} of a tribute item to select another tier."));
 
     public bool Interact(Humanoid user, bool hold, bool alt)
     {
@@ -82,9 +87,9 @@ public sealed class FortressTributeShrine : MonoBehaviour, Interactable, Hoverab
 
     public bool UseItem(Humanoid user, ItemDrop.ItemData item)
     {
-        if (item?.m_dropPrefab == null || (item.m_dropPrefab.name != DefaultTributePrefab && item.m_dropPrefab.name != "Guck"))
+        if (item?.m_dropPrefab == null || !TributePrefabs.Contains(item.m_dropPrefab.name))
         {
-            user.Message(MessageHud.MessageType.Center, "This shrine accepts 50 resin or 50 guck.");
+            user.Message(MessageHud.MessageType.Center, $"Offer {TributeAmount} resin, guck, crystal, black metal, seeker meat, soft tissue, charred bone, seal fat, amber or ruby.");
             return false;
         }
         return Offer(user, item.m_dropPrefab.name);
