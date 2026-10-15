@@ -65,8 +65,10 @@ while that runner exists, including while its GameObject is unloaded. Fortress
 synchronous API call. This depends on the `VF_api_challenge_runner` prefab name.
 The offering unlocks when Fortress removes that runner after completion.
 
-Placement and quantity match Minddrip Hallow: Plains, `PlainsInterior` group,
-quantity 15, minimum distance 500, minimum altitude 8, maximum terrain delta 4,
+The default quantity is 0: this is a development location for manual placement.
+Existing profile quantity overrides still take precedence over this default.
+Placement remains Plains, `PlainsInterior` group,
+minimum distance 500, minimum altitude 8, maximum terrain delta 4,
 and minimum distance from similar locations 1024. The exterior remains a copied
 Minddrip placeholder.
 
