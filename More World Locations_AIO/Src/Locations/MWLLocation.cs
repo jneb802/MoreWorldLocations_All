@@ -1,3 +1,4 @@
+using BepInEx.Bootstrap;
 using Jotunn.Configs;
 
 namespace More_World_Locations_AIO;
@@ -8,12 +9,18 @@ public class MWLLocation
     public string AssetPath { get; set; }
     public string DungeonTheme { get; set; }
     public string InteriorPrefabName { get; set; }
+    public string? RequiredPlugin { get; set; }
     public LocationConfig Config { get; set; }
+
+    public bool IsAvailable => string.IsNullOrEmpty(RequiredPlugin) || Chainloader.PluginInfos.ContainsKey(RequiredPlugin);
 
     public void Register()
     {
+        if (!IsAvailable) return;
+
         Config.Quantity = LocationQuantityManager.GetQuantity(Name);
         ProtectedLocationPeacefulArea.RegisterPrefabPatch(Name, Config);
+        ShrineEventLocation.RegisterPrefabPatch(Name);
 
         if (!string.IsNullOrEmpty(DungeonTheme) || !string.IsNullOrEmpty(InteriorPrefabName))
         {
