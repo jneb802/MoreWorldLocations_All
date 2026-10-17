@@ -24,7 +24,6 @@ public static class LocationDB
             .Concat(LocationDefinitions.Traders)
             .Concat(LocationDefinitions.Trainers)
             .Concat(LocationDefinitions.Dungeons)
-            .Where(location => location.IsAvailable)
             .ToArray();
 
         _byName = All.ToDictionary(l => l.Name);
