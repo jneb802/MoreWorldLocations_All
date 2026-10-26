@@ -23,6 +23,7 @@ This mod massively enhances the world exploration component of Valheim by adding
 - [More World Locations](#more-world-locations-1)
 - [All-in-One Pack vs. Individual Packs](#all-in-one-pack-vs-individual-packs)
 - [FAQ](#faq)
+- [Performance and Stuttering](#performance-and-stuttering)
 - [Known Incompatibilities](#known-incompatibilities)
 - [Mod Support & Feedback](#mod-support--feedback)
 - [Donations/Tips](#donationstips)
@@ -286,6 +287,10 @@ The goal of the More World Locations series is to solve Valheim's exploration pr
 ## FAQ
 Q: I'm seeing a lot of "Failed to place all X, placed Y out of Z" warning messages during world generation. Is something wrong?
 A: No, this is completely normal! When Valheim generates a world, it tries to place each location type a set number of times. For each attempt, it checks many conditions: Is this the right biome? Is the ground flat enough? Is it far enough from similar locations? Is the altitude correct? Sometimes there simply isn't enough suitable conditions to hit the target spawn quantity.
+
+## Performance and Stuttering
+
+Base-game Valheim can stutter when locations and dungeons load. More World Locations adds more locations, which can make this more noticeable. We recommend installing [Valheim Community Patch](https://thunderstore.io/c/valheim/p/MidnightMods/ValheimCommunityPatch/), which includes fixes that reduce these loading stutters.
 
 ## Known Incompatibilities
 - Currently incompatible with the mod SeedTotem by MathiasDecrock. If SeedTotem is loaded alongside this mod, you will experience significant FPS drops.
