@@ -45,6 +45,24 @@ public static class LocalKeys
     public static readonly string DeliveryCollected = "$msg_delivery_collected";
     public static readonly string ShipmentNotOwned = "This shipment belongs to another player";
 
+    // Port map (teleport picker) and controller hints
+    public static readonly string PortMap = "$label_port_map";
+    public static readonly string From = "$label_from";
+    public static readonly string Favorites = "$label_favorites";
+    public static readonly string NoFavorites = "$label_no_favorites";
+    public static readonly string Distance = "$label_distance";
+    public static readonly string Free = "$label_free";
+    public static readonly string AimAtPort = "$label_aim_at_port";
+    public static readonly string NoKnownPorts = "$msg_no_known_ports";
+    public static readonly string HintTabs = "$hint_tabs";
+    public static readonly string HintSelect = "$hint_select";
+    public static readonly string HintClose = "$hint_close";
+    public static readonly string HintBack = "$hint_back";
+    public static readonly string HintFavorites = "$hint_favorites";
+    public static readonly string HintCyclePorts = "$hint_cycle_ports";
+    public static readonly string ConfirmTeleport = "$label_confirm_teleport";
+    public static readonly string ConfirmTeleportBody = "$msg_confirm_teleport";
+
     public static string ToKey(this ShipmentState state) => state switch
     {
         ShipmentState.InTransit => InTransit,

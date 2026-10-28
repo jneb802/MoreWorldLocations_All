@@ -96,6 +96,7 @@ public static class PortInit
         PortUI.UseTeleportTab = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport To Ports", Toggle.On, "If on, players can teleport to ports", synced: true);
         PortUI.UseTeleportTab.SettingChanged += PortUI.OnUseTeleportTabChange;
         PortUI.TeleportCostPerMeter = plugin.Config.BindConfig("0 - Shipment Ports", "Teleport Cost Per Meter", 0.01f, "Coins charged per meter when teleporting. Set to 0 for free teleports. Default 0.01 = 1 coin per 100 meters", synced: true);
+        PortMap.HidePinsOnPortMap = plugin.Config.BindConfig("0 - Shipment Ports", "Hide Pins On Port Map", Toggle.On, "If on, player-placed map pins are hidden while the port map (teleport picker) is open so port pins stay readable. Location, player and boss pins stay visible.", synced: false);
     }
 
     private static void SetupPort()
