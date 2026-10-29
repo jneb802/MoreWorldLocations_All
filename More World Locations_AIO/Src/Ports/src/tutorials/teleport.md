@@ -14,4 +14,6 @@
 
 Your own map pins work as usual while the Port Map is open; only clicks on a port are taken over.
 
+On worlds without a map, the Teleport tab lists your discovered ports instead: pick one and confirm.
+
 <color=yellow>Note:</color> The teleport fee scales with distance and is shown before you confirm. Teleporting is a config option and may be disabled by the server.

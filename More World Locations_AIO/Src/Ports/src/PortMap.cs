@@ -56,9 +56,15 @@ public static class PortMap
 
     // ------------------------------------------------------------------ open / close
 
+    /// <summary>
+    /// False on worlds, or for characters, that play without a map. The port panel then offers
+    /// the teleport tab as a plain list instead of opening this picker.
+    /// </summary>
+    internal static bool Available => !Game.m_noMap;
+
     public static void Open(Port origin)
     {
-        if (Minimap.instance == null || Player.m_localPlayer == null) return;
+        if (Minimap.instance == null || Player.m_localPlayer == null || !Available) return;
         if (s_open) Close(false);
 
         List<Port.PortInfo> ports = CollectPorts(origin);
@@ -70,11 +76,7 @@ public static class PortMap
 
         PortUI.instance?.Hide();
 
-        // No-map worlds refuse the large map; the picker is the one place it has to open.
-        bool noMap = Game.m_noMap;
-        Game.m_noMap = false;
         Minimap.instance.ShowPointOnMap(origin.transform.position);
-        Game.m_noMap = noMap;
         if (Minimap.instance.m_mode != Minimap.MapMode.Large) return;
 
         s_origin = origin;
@@ -267,40 +269,63 @@ public static class PortMap
     /// True while the teleport confirmation is up, and for the rest of the frame it closed on, so
     /// the A/B press that answered it is not also read by the map.
     /// </summary>
-    private static bool Confirming => UnifiedPopup.IsAvailable() && UnifiedPopup.WasVisibleThisFrame();
+    internal static bool Confirming => UnifiedPopup.IsAvailable() && UnifiedPopup.WasVisibleThisFrame();
 
-    /// <summary>Teleporting costs coins, so it is never a single press: ask first, then pay and go.</summary>
     private static void Teleport(PortEntry? entry)
     {
-        if (entry == null || Player.m_localPlayer == null || Minimap.instance == null || Confirming) return;
+        if (entry == null || Minimap.instance == null) return;
+        RequestTeleport(entry.Info, () => ExecuteTeleport(entry));
+    }
+
+    /// <summary>
+    /// Teleporting costs coins, so it is never a single press: check, ask, then run execute. Shared
+    /// by the map and by the list the port panel falls back to on no-map worlds.
+    /// </summary>
+    internal static void RequestTeleport(Port.PortInfo info, Action execute)
+    {
+        if (Player.m_localPlayer == null || Confirming) return;
         Player player = Player.m_localPlayer;
-        if (!player.IsTeleportable(allowAllItems: false))
-        {
-            player.Message(MessageHud.MessageType.Center, "$msg_noteleport");
-            return;
-        }
-        if (!CanAfford(player, entry))
-        {
-            player.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
-            return;
-        }
+        if (!CheckTeleport(player, info)) return;
         if (!UnifiedPopup.IsAvailable())
         {
-            ExecuteTeleport(entry);
+            execute();
             return;
         }
         string header = ControllerHints.Localize(LocalKeys.ConfirmTeleport);
-        string body = Localization.instance.Localize(LocalKeys.ConfirmTeleportBody, entry.Info.portID.Name)
-                      + "\n\n" + ControllerHints.Localize(CostText(player, entry));
+        string body = Localization.instance.Localize(LocalKeys.ConfirmTeleportBody, info.portID.Name)
+                      + "\n\n" + ControllerHints.Localize(CostText(player, info));
         UnifiedPopup.Push(new YesNoPopup(header, body,
             () =>
             {
                 UnifiedPopup.Pop();
-                ExecuteTeleport(entry);
+                execute();
             },
             UnifiedPopup.Pop,
             localizeText: false,
             coverBackground: false));
+    }
+
+    /// <summary>Messages the player and returns false when they cannot teleport or cannot pay.</summary>
+    internal static bool CheckTeleport(Player player, Port.PortInfo info)
+    {
+        if (!player.IsTeleportable(allowAllItems: false))
+        {
+            player.Message(MessageHud.MessageType.Center, "$msg_noteleport");
+            return false;
+        }
+        if (!CanAfford(player, info))
+        {
+            player.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>Takes the fee and goes. Callers run CheckTeleport first.</summary>
+    internal static void PayAndTeleport(Player player, Port.PortInfo info)
+    {
+        if (!player.NoCostCheat()) PortUI.ConsumeTeleportRequirements(player, PortUI.GetTeleportRequirements(info));
+        player.TeleportTo(info.position, Quaternion.identity, true);
     }
 
     private static void ExecuteTeleport(PortEntry entry)
@@ -308,30 +333,20 @@ public static class PortMap
         if (Player.m_localPlayer == null || Minimap.instance == null || !s_open) return;
         Player player = Player.m_localPlayer;
         // Re-checked here: the popup may have been answered after the player lost coins or the map.
-        if (!player.IsTeleportable(allowAllItems: false))
-        {
-            player.Message(MessageHud.MessageType.Center, "$msg_noteleport");
-            return;
-        }
-        if (!CanAfford(player, entry))
-        {
-            player.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
-            return;
-        }
-        if (!player.NoCostCheat()) PortUI.ConsumeTeleportRequirements(player, PortUI.GetTeleportRequirements(entry.Info));
-        Vector3 destination = entry.Info.position;
+        if (!CheckTeleport(player, entry.Info)) return;
+        Port.PortInfo destination = entry.Info;
         Close(false); // also consumes the pad press that answered the confirmation
         Minimap.instance.SetMapMode(Minimap.MapMode.Small);
-        player.TeleportTo(destination, Quaternion.identity, true);
+        PayAndTeleport(player, destination);
     }
 
-    private static bool CanAfford(Player player, PortEntry entry) =>
-        player.NoCostCheat() || PortUI.HasTeleportRequirements(player, PortUI.GetTeleportRequirements(entry.Info));
+    internal static bool CanAfford(Player player, Port.PortInfo info) =>
+        player.NoCostCheat() || PortUI.HasTeleportRequirements(player, PortUI.GetTeleportRequirements(info));
 
     /// <summary>"Cost: 42 Coins" (red when unaffordable) or "Cost: Free". Not yet localized.</summary>
-    private static string CostText(Player player, PortEntry entry)
+    internal static string CostText(Player player, Port.PortInfo info)
     {
-        List<Manifest.Requirement> cost = PortUI.GetTeleportRequirements(entry.Info);
+        List<Manifest.Requirement> cost = PortUI.GetTeleportRequirements(info);
         if (cost.Count == 0 || player.NoCostCheat())
         {
             return $"{LocalKeys.Cost}: <color=yellow>{LocalKeys.Free}</color>";
@@ -1076,7 +1091,7 @@ public static class PortMap
             Player player = Player.m_localPlayer;
             string text = $"<color=orange>{entry.Info.portID.Name}</color>{(entry.Favorite ? " ★" : "")}\n";
             text += $"{LocalKeys.Distance}: <color=yellow>{(int)entry.Info.GetDistance(player)}m</color>\n";
-            text += CostText(player, entry);
+            text += CostText(player, entry.Info);
             return ControllerHints.Localize(text);
         }
 
