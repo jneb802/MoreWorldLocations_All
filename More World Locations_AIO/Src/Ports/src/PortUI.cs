@@ -7,6 +7,7 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using More_World_Locations_AIO.Managers;
 using More_World_Locations_AIO.tutorials;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -130,6 +131,19 @@ public static class InventoryGui_IsVisible_Patch
     }
 }
 
+// Vanilla opens the inventory on Y from InventoryGui.Update without regard for this panel, and
+// that Update may run before the panel's own. Reading the pad from a prefix on it wins the race,
+// so the press is consumed as a favorite toggle before the inventory ever sees it.
+[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
+public static class InventoryGui_Update_Patch
+{
+    [UsedImplicitly]
+    private static void Prefix()
+    {
+        PortUI.instance?.HandleGamepadInput();
+    }
+}
+
 public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     public enum BackgroundOption { Opaque, Transparent }
@@ -183,6 +197,15 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     private Action<float>? OnUpdate;
     private Action? OnSentShipment;
+
+    // Gamepad navigation: the list is walked with the d-pad / left stick, tabs with the bumpers,
+    // and every action currently available is spelled out with a controller glyph in the hint bar.
+    private int m_gamepadIndex = -1;
+    private int m_shownFrame = -1;
+    private int m_gamepadFrame = -1;
+    private ScrollRect? m_leftScroll;
+    private ControllerHints.HintBar? m_hints;
+
     private enum TabOption
     {
         Ports, Shipments, Delivery, Manifest, Teleport
@@ -251,6 +274,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         if (PanelOffsetConfig != null)
             m_rect.anchoredPosition = PanelOffsetConfig.Value;
         TeleportTab.Enable(UseTeleportTab?.Value is PortInit.Toggle.On);
+        m_leftScroll = LeftPanelRoot.GetComponentInParent<ScrollRect>();
+        DisableButtonNavigation();
+        BuildHintBar();
         Hide();
     }
 
@@ -263,13 +289,159 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             Minimap.instance.RemovePin(m_tempPin);
         }
-        if (!ZInput.GetKeyDown(KeyCode.Escape) && !ZInput.GetKeyDown(KeyCode.Tab)) return;
-        Hide();
+        UpdateHints(dt);
+        // The frame the panel was (re)opened on may still carry the press that closed the port map.
+        if (Time.frameCount == m_shownFrame) return;
+        // The teleport confirmation owns the input while it is up.
+        if (PortMap.Confirming) return;
+        if (ZInput.GetKeyDown(KeyCode.Escape) || ZInput.GetKeyDown(KeyCode.Tab))
+        {
+            Hide();
+            return;
+        }
+        HandleGamepadInput();
     }
 
     public void OnDestroy()
     {
+        m_hints?.Destroy();
+        m_hints = null;
         instance = null;
+    }
+
+    // ------------------------------------------------------------------ gamepad
+
+    private bool TeleportEnabled => UseTeleportTab?.Value is PortInit.Toggle.On;
+
+    // Unity's event system would otherwise walk the buttons with the d-pad and submit them on A,
+    // doubling up on the explicit handling below.
+    private void DisableButtonNavigation()
+    {
+        foreach (Selectable selectable in GetComponentsInChildren<Selectable>(true))
+        {
+            Navigation navigation = selectable.navigation;
+            navigation.mode = Navigation.Mode.None;
+            selectable.navigation = navigation;
+        }
+    }
+
+    // Runs once per frame, from whichever of this panel's Update and the InventoryGui prefix is first.
+    internal void HandleGamepadInput()
+    {
+        if (!IsVisible() || !ZInput.IsGamepadActive() || PortMap.Confirming) return;
+        if (Time.frameCount == m_shownFrame || Time.frameCount == m_gamepadFrame) return;
+        m_gamepadFrame = Time.frameCount;
+        HandleGamepad();
+    }
+
+    private void HandleGamepad()
+    {
+        if (ZInput.GetButtonDown("JoyButtonB"))
+        {
+            ControllerHints.Consume("JoyButtonB");
+            Hide();
+            return;
+        }
+        if (ZInput.GetButtonDown("JoyTabLeft")) CycleTab(-1);
+        else if (ZInput.GetButtonDown("JoyTabRight")) CycleTab(1);
+        else if (ZInput.GetButtonDown("JoyDPadDown") || ZInput.GetButtonDown("JoyLStickDown")) MoveSelection(1);
+        else if (ZInput.GetButtonDown("JoyDPadUp") || ZInput.GetButtonDown("JoyLStickUp")) MoveSelection(-1);
+        else if (ZInput.GetButtonDown("JoyButtonA"))
+        {
+            ControllerHints.Consume("JoyButtonA");
+            if (MainButton.interactable) OnMainButton();
+        }
+        else if (ZInput.GetButtonDown("JoyButtonX"))
+        {
+            ControllerHints.Consume("JoyButtonX");
+            if (TeleportEnabled) OnTeleportTab();
+        }
+        else if (ZInput.GetButtonDown("JoyButtonY"))
+        {
+            ControllerHints.Consume("JoyButtonY");
+            Description.ToggleFavorite();
+        }
+
+        float stick = ZInput.GetJoyRightStickY();
+        if (Mathf.Abs(stick) > 0.2f) Description.Scroll(stick * Time.deltaTime);
+    }
+
+    // Bumpers walk the enabled tabs in the order they are drawn, then the help page. The teleport
+    // tab is deliberately not in the cycle: it opens the port map, so it has its own button.
+    private void CycleTab(int direction)
+    {
+        List<(Tab tab, Action select)> tabs = new();
+        if (PortTab.IsEnabled) tabs.Add((PortTab, OnPortTab));
+        if (ShipmentTab.IsEnabled) tabs.Add((ShipmentTab, OnShipmentTab));
+        if (DeliveryTab.IsEnabled) tabs.Add((DeliveryTab, OnDeliveryTab));
+        if (ManifestTab.IsEnabled) tabs.Add((ManifestTab, OnManifestTab));
+        // Without a map the teleport tab is an ordinary list tab and joins the cycle.
+        if (TeleportTab.IsEnabled && !PortMap.Available) tabs.Add((TeleportTab, OnTeleportTab));
+        tabs.Sort((a, b) => a.tab.SiblingIndex.CompareTo(b.tab.SiblingIndex));
+        int count = tabs.Count + 1; // + help
+        int current = tabs.FindIndex(entry => entry.tab.IsSelected);
+        if (current < 0) current = Help.IsGlowing ? tabs.Count : 0;
+        int next = (current + direction + count) % count;
+        if (next == tabs.Count) OnHelp();
+        else tabs[next].select();
+    }
+
+    private void MoveSelection(int direction)
+    {
+        if (m_tempListItems.Count == 0) return;
+        // Port lists are re-ordered by sibling index after sorting, so walk them in visual order.
+        List<TempListItem> items = m_tempListItems.OrderBy(item => item.SiblingIndex).ToList();
+        if (m_gamepadIndex < 0) m_gamepadIndex = direction > 0 ? 0 : items.Count - 1;
+        else m_gamepadIndex = Mathf.Clamp(m_gamepadIndex + direction, 0, items.Count - 1);
+        items[m_gamepadIndex].Select();
+        EnsureItemVisible(m_gamepadIndex);
+    }
+
+    private void EnsureItemVisible(int index)
+    {
+        if (m_leftScroll == null || m_leftScroll.viewport == null) return;
+        float stride = m_listItemHeight + LeftPanelLayout.spacing;
+        float contentHeight = LeftPanelRoot.sizeDelta.y;
+        float viewportHeight = m_leftScroll.viewport.rect.height;
+        float overflow = contentHeight - viewportHeight;
+        if (overflow <= 0f) return;
+        float top = index * stride;
+        float bottom = top + m_listItemHeight;
+        float scrollTop = (1f - m_leftScroll.verticalNormalizedPosition) * overflow;
+        if (top < scrollTop) scrollTop = top;
+        else if (bottom > scrollTop + viewportHeight) scrollTop = bottom - viewportHeight;
+        m_leftScroll.verticalNormalizedPosition = 1f - Mathf.Clamp01(scrollTop / overflow);
+    }
+
+    private void BuildHintBar()
+    {
+        Transform? panel = transform.Find("Panel");
+        m_hints = new ControllerHints.HintBar(panel != null ? panel : transform, "GamepadHints", 17f, horizontal: true, spacing: 18f);
+        RectTransform rect = m_hints.Rect;
+        rect.anchorMin = new Vector2(0f, 0f);
+        rect.anchorMax = new Vector2(0f, 0f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(10f, -8f);
+        m_hints.SetVisible(false);
+    }
+
+    private void UpdateHints(float dt)
+    {
+        if (m_hints == null) return;
+        bool show = ZInput.IsGamepadActive();
+        m_hints.SetVisible(show);
+        TeleportTab.SetGlyph(show && TeleportEnabled ? ControllerHints.ButtonX : null);
+        if (!show) return;
+        List<string> hints = new()
+        {
+            ControllerHints.Format(ControllerHints.Glyphs(ControllerHints.LeftBumper, ControllerHints.RightBumper), LocalKeys.HintTabs),
+            ControllerHints.Format(ControllerHints.Glyphs(ControllerHints.DPadUp, ControllerHints.DPadDown), LocalKeys.HintSelect),
+        };
+        if (MainButton.interactable) hints.Add(ControllerHints.Format(ControllerHints.ButtonA, MainButtonText.text));
+        if (Description.MapInfo != null) hints.Add(ControllerHints.Format(ControllerHints.ButtonY, Description.IsFavorite ? LocalKeys.RemoveFavorite : LocalKeys.AddFavorite));
+        hints.Add(ControllerHints.Format(ControllerHints.ButtonB, LocalKeys.HintClose));
+        m_hints.Set(hints);
+        m_hints.Update(dt);
     }
 
     public static bool IsVisible() => instance != null && instance.gameObject.activeInHierarchy;
@@ -345,6 +517,9 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         if (ShipmentManager.instance == null) return;
         m_session++;
+        m_shownFrame = Time.frameCount;
+        m_gamepadIndex = -1;
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
         m_currentPort = port;
         gameObject.SetActive(true);
         PortTab.SetSelected(true);
@@ -453,12 +628,21 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         else if (m_currentTab == TabOption.Delivery) LoadDeliveries();
     }
 
+    // The teleport tab is the port map: every discovered port pinned and labeled on the world map,
+    // with a favorites sidebar. Closing the map brings this panel back. Worlds and characters that
+    // play without a map get the tab as a plain list of ports instead.
     public void OnTeleportTab()
     {
+        if (m_currentPort == null) return;
+        if (PortMap.Available)
+        {
+            PortMap.Open(m_currentPort);
+            return;
+        }
         m_currentTab = TabOption.Teleport;
         if (TeleportTab.IsSelected) return;
         TeleportTab.SetSelected(true);
-        LoadPortals();
+        LoadTeleportPorts();
         SetMainButtonText(LocalKeys.Teleport);
         m_selectedDestination = null;
         m_selectedManifest = null;
@@ -578,25 +762,20 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 m_selectedManifest = null;
                 break;
             case TabOption.Teleport:
-                if (m_selectedDestination == null || !Player.m_localPlayer) return;
-                if (!Player.m_localPlayer.IsTeleportable(allowAllItems: false))
+                if (m_selectedDestination == null) return;
+                Port.PortInfo destination = m_selectedDestination;
+                int session = m_session;
+                PortMap.RequestTeleport(destination, () =>
                 {
-                    Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_noteleport");
-                    return;
-                }
-                // Check and consume teleport requirements before teleporting.
-                if (!Player.m_localPlayer.NoCostCheat())
-                {
-                    var teleportCost = GetTeleportRequirements(m_selectedDestination);
-                    if (!HasTeleportRequirements(Player.m_localPlayer, teleportCost))
-                    {
-                        Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_missingrequirement");
-                        return;
-                    }
-                    ConsumeTeleportRequirements(Player.m_localPlayer, teleportCost);
-                }
-                Player.m_localPlayer.TeleportTo(m_selectedDestination.position, Quaternion.identity, true);
-                Hide();
+                    Player? player = Player.m_localPlayer;
+                    if (player == null || !IsVisible() || m_session != session || m_selectedDestination != destination) return;
+                    // Re-checked here: the popup may have been answered after the player lost coins.
+                    if (!PortMap.CheckTeleport(player, destination)) return;
+                    Hide();
+                    // The press that answered the confirmation must not also be read as jump.
+                    if (ZInput.IsGamepadActive()) ControllerHints.Consume("JoyButtonA");
+                    PortMap.PayAndTeleport(player, destination);
+                });
                 break;
         }
     }
@@ -626,12 +805,53 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         ResizeLeftList();
     }
 
-    public void LoadPortals()
+    // The no-map fallback for the teleport tab: known ports as a list, pick one and confirm.
+    public void LoadTeleportPorts()
     {
         ClearLeftPanel();
-        foreach (ZDO port in ShipmentManager.GetPorts()) AddPortal(port);
+        foreach (ZDO port in ShipmentManager.GetPorts()) AddTeleportPort(port);
         SortPortItems();
         ResizeLeftList();
+    }
+
+    private void AddTeleportPort(ZDO port)
+    {
+        if (m_currentPort == null || !Player.m_localPlayer) return;
+        if (port == m_currentPort.m_view.GetZDO()) return; // do not show current port
+        Port.PortInfo info = new Port.PortInfo(port);
+        if (!Player.m_localPlayer.IsKnownPort(info.portID)) return;
+        if (string.IsNullOrEmpty(info.portID.Name)) return;
+        TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
+        item.SetIcon(Minimap.instance.GetSprite(Minimap.PinType.Icon4));
+        item.PortID = info.portID;
+        item.SetLabel($"{info.portID.Name}");
+        item.SetButton(() =>
+        {
+            item.SetSelected(true);
+            m_selectedDestination = info;
+            Description.SetName($"<color=orange>{info.portID.Name}</color> ({(int)info.GetDistance(Player.m_localPlayer)}m)");
+            Description.SetBodyText(info.GetTooltip());
+            Description.ShowMapButton(info);
+            SetMainButtonText(LocalKeys.Teleport);
+            Requirements.SetActive(true);
+            Requirements.LoadTeleportCost(GetTeleportRequirements(info));
+            Requirements.SetLevel(1.ToString());
+            MainButton.interactable = true;
+            float timer = 0f;
+            OnUpdate = dt =>
+            {
+                Requirements.Update(dt, Player.m_localPlayer);
+                bool shouldUpdate =
+                    info.shipments.Any(s => s.State == ShipmentState.InTransit) ||
+                    info.deliveries.Any(d => d.State == ShipmentState.InTransit);
+                if (!shouldUpdate) return;
+                timer += dt;
+                if (timer <= 1f) return;
+                timer = 0.0f;
+                Description.SetBodyText(info.GetTooltip());
+            };
+        });
+        m_tempListItems.Add(item);
     }
 
     public void LoadManifests()
@@ -668,6 +888,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         foreach(TempListItem? item in m_tempListItems) item.Destroy();
         m_tempListItems.Clear();
+        m_gamepadIndex = -1;
     }
 
     private void SortPortItems()
@@ -830,49 +1051,19 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         m_tempListItems.Add(item);
     }
     
-    public void AddPortal(ZDO port)
-    {
-        if (m_currentPort == null || !Player.m_localPlayer) return;
-        if (port == m_currentPort.m_view.GetZDO()) return; // do not show current port
-        Port.PortInfo info = new Port.PortInfo(port);
-        if (!Player.m_localPlayer.IsKnownPort(info.portID)) return;
-        if (string.IsNullOrEmpty(info.portID.Name)) return; // make sure zdo has a port name
-        TempListItem item = new TempListItem(Instantiate(ListItem, LeftPanelRoot));
-        item.SetIcon(Minimap.instance.GetSprite(Minimap.PinType.Icon4));
-        item.PortID = info.portID;
-        item.SetLabel($"{info.portID.Name}");
-        item.SetButton(() =>
-        {
-            item.SetSelected(true);
-            m_selectedDestination = info;
-            Description.SetName($"<color=orange>{info.portID.Name}</color> ({(int)info.GetDistance(Player.m_localPlayer)}m)");
-            Description.SetBodyText(info.GetTooltip());
-            Description.ShowMapButton(info);
-            SetMainButtonText(LocalKeys.Teleport);
-            
-            Requirements.SetActive(true);
-            Requirements.LoadTeleportCost(GetTeleportRequirements(info));
-            Requirements.SetLevel(1.ToString());
-            MainButton.interactable = true;
-            float timer = 0f;
-            OnUpdate = dt =>
-            {
-                Requirements.Update(dt, Player.m_localPlayer);
-                bool shouldUpdate =
-                    info.shipments.Any(s => s.State == ShipmentState.InTransit) ||
-                    info.deliveries.Any(d => d.State == ShipmentState.InTransit);
-                if (!shouldUpdate) return;
-                timer += dt;
-                if (timer <= 1f) return;
-                timer = 0.0f;
-                Description.SetBodyText(info.GetTooltip());
-            };
-        });
-        m_tempListItems.Add(item);
-    }
     private class TempListItem
     {
         public ShipmentManager.PortID? PortID;
+        private UnityAction? Action;
+
+        public int SiblingIndex => Prefab != null ? Prefab.transform.GetSiblingIndex() : 0;
+
+        // What a click does, driven from the gamepad list navigation.
+        public void Select()
+        {
+            SetSelected(true);
+            Action?.Invoke();
+        }
 
         public void SetPortOrder(int index, bool favorite)
         {
@@ -894,6 +1085,12 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             Icon = Prefab.transform.Find("Icon").GetComponent<Image>();
             Label = Prefab.transform.Find("Label").GetComponent<Text>();
             Selected = Prefab.transform.Find("selected").gameObject;
+            if (Button != null)
+            {
+                Navigation navigation = Button.navigation;
+                navigation.mode = Navigation.Mode.None;
+                Button.navigation = navigation;
+            }
         }
 
         public void SetLabel(string label)
@@ -948,8 +1145,14 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         public void SetButton(UnityAction action)
         {
+            Action = action;
             if (Button == null) return;
-            Button.onClick.AddListener(action);
+            Button.onClick.AddListener(() =>
+            {
+                // A mouse click moves the gamepad cursor along so the d-pad continues from here.
+                if (instance != null) instance.m_gamepadIndex = SiblingIndex;
+                action();
+            });
         }
 
         public void Destroy()
@@ -966,6 +1169,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         private readonly GameObject Selected;
         private readonly Text SelectedLabel;
         private readonly UITooltip? Tooltip;
+        private TextMeshProUGUI? Glyph;
         public bool IsSelected => Selected.activeInHierarchy;
 
         public Tab(Transform transform)
@@ -985,6 +1189,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             Tooltip.m_topic = "MWL_Ports_Tooltip";
         }
 
+        public bool IsEnabled => Prefab.activeSelf;
+        public int SiblingIndex => Prefab.transform.GetSiblingIndex();
         public void Enable(bool enable) => Prefab.SetActive(enable);
         public void SetButton(UnityAction action) => Button.onClick.AddListener(action);
         public static void SetAllSelected(bool enable)
@@ -1013,6 +1219,32 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             if (instance == null) return;
             foreach(Tab tab in instance.Tabs) tab.Selected.SetActive(false);
             Selected.SetActive(selected);
+        }
+
+        // A controller glyph on the tab's top right corner, for tabs that have their own button,
+        // placed the way the vanilla popup buttons place theirs: a 20pt glyph centered on the
+        // corner. Null hides it. Drawn last so it sits above the selected overlay.
+        public void SetGlyph(string? template)
+        {
+            if (template == null)
+            {
+                if (Glyph != null && Glyph.gameObject.activeSelf) Glyph.gameObject.SetActive(false);
+                return;
+            }
+            if (Glyph == null)
+            {
+                Glyph = ControllerHints.CreateText(Prefab.transform, "Glyph", 20f, TextAlignmentOptions.Center);
+                RectTransform rect = Glyph.rectTransform;
+                rect.anchorMin = Vector2.one;
+                rect.anchorMax = Vector2.one;
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.sizeDelta = new Vector2(24f, 24f);
+                rect.anchoredPosition = new Vector2(0.4f, 1.4f);
+            }
+            Glyph.transform.SetAsLastSibling();
+            if (!Glyph.gameObject.activeSelf) Glyph.gameObject.SetActive(true);
+            string localized = ControllerHints.Localize(template);
+            if (Glyph.text != localized) Glyph.text = localized;
         }
     }
 
@@ -1057,20 +1289,34 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             FavoriteIcon.resizeTextForBestFit = false;
             FavoriteIcon.fontSize = 36;
             FavoriteIcon.raycastTarget = false;
-            FavoriteButton.onClick.AddListener(() =>
-            {
-                if (MapInfo == null || !Player.m_localPlayer) return;
-                Player.m_localPlayer.ToggleFavoritePort(MapInfo.portID);
-                UpdateFavoriteLabel();
-                instance?.SortPortItems();
-            });
+            FavoriteButton.onClick.AddListener(ToggleFavorite);
             BodyMinHeight = body.rectTransform.sizeDelta.y;
+            BodyScroll = body.GetComponentInParent<ScrollRect>();
+        }
+
+        private readonly ScrollRect? BodyScroll;
+
+        public bool IsFavorite => MapInfo != null && Player.m_localPlayer &&
+                                  Player.m_localPlayer.GetFavoritePorts().Contains(MapInfo.portID.GUID);
+
+        public void ToggleFavorite()
+        {
+            if (MapInfo == null || !Player.m_localPlayer) return;
+            Player.m_localPlayer.ToggleFavoritePort(MapInfo.portID);
+            UpdateFavoriteLabel();
+            instance?.SortPortItems();
+        }
+
+        // Right stick scrolling for the description body; a no-op when the prefab has no scroll rect.
+        public void Scroll(float delta)
+        {
+            if (BodyScroll == null || !BodyScroll.vertical) return;
+            BodyScroll.verticalNormalizedPosition = Mathf.Clamp01(BodyScroll.verticalNormalizedPosition + delta * 2f);
         }
 
         private void UpdateFavoriteLabel()
         {
-            bool favorite = MapInfo != null && Player.m_localPlayer &&
-                            Player.m_localPlayer.GetFavoritePorts().Contains(MapInfo.portID.GUID);
+            bool favorite = IsFavorite;
             FavoriteLabel.text = Localization.instance.Localize(favorite ? LocalKeys.RemoveFavorite : LocalKeys.AddFavorite);
             FavoriteIcon.text = favorite ? "★" : "☆";
             FavoriteIcon.color = favorite ? new Color(1f, 0.8f, 0.2f) : Color.white;
@@ -1094,7 +1340,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         public void ShowMapButton(Port.PortInfo? info)
         {
-            MapButton.gameObject.SetActive(info != null);
+            MapButton.gameObject.SetActive(info != null && PortMap.Available);
             MapInfo = info;
             FavoriteButton.gameObject.SetActive(info != null);
             // Reserve space only while the port actions are visible.
@@ -1277,8 +1523,8 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     private Vector2 dragStartOffset;
     private Vector2 dragStartMouse;
 
-    // Helper methods for teleport cost calculation and consumption.
-    private static List<Manifest.Requirement> GetTeleportRequirements(Port.PortInfo destination)
+    // Helper methods for teleport cost calculation and consumption, shared with the port map.
+    internal static List<Manifest.Requirement> GetTeleportRequirements(Port.PortInfo destination)
     {
         float costPerMeter = TeleportCostPerMeter?.Value ?? 0.5f;
         int coinCost = Mathf.FloorToInt(destination.GetDistance(Player.m_localPlayer) * costPerMeter);
@@ -1296,7 +1542,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         };
     }
 
-    private static bool HasTeleportRequirements(Player player, List<Manifest.Requirement> requirements)
+    internal static bool HasTeleportRequirements(Player player, List<Manifest.Requirement> requirements)
     {
         Inventory inventory = player.GetInventory();
         foreach (Manifest.Requirement req in requirements)
@@ -1307,7 +1553,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         return true;
     }
 
-    private static void ConsumeTeleportRequirements(Player player, List<Manifest.Requirement> requirements)
+    internal static void ConsumeTeleportRequirements(Player player, List<Manifest.Requirement> requirements)
     {
         Inventory inventory = player.GetInventory();
         foreach (Manifest.Requirement req in requirements)
@@ -1351,6 +1597,7 @@ public class PortUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
             icon = transform.Find("Icon").GetComponent<Image>();
         }
         
+        public bool IsGlowing => glow.enabled;
         public void SetButton(UnityAction action) => button.onClick.AddListener(action);
         public void SetText(string label) => text.text = Localization.instance.Localize(label);
         public void SetGlow(bool enable) => glow.enabled = enable;
