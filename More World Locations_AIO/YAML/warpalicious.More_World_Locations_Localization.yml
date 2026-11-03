@@ -84,7 +84,23 @@ tooltip_port: List of available ports
 tooltip_shipment: List of active shipments
 tooltip_delivery: List of active deliveries
 tooltip_manifest: Purchase manifests
-tooltip_teleport: Teleport to ports
+tooltip_teleport: Open the port map to teleport to a discovered port
+label_port_map: Port Map
+label_from: From
+label_favorites: Favorites
+label_no_favorites: No favorite ports yet
+label_distance: Distance
+label_free: Free
+label_aim_at_port: Hover over or aim at a port to see its teleport cost
+msg_no_known_ports: No other discovered ports to teleport to
+hint_tabs: Tabs
+hint_select: Select
+hint_close: Close
+hint_back: Back
+hint_favorites: Favorites
+hint_cycle_ports: Cycle ports
+label_confirm_teleport: Confirm Teleport
+msg_confirm_teleport: Teleport to <color=orange>$1</color>?
 label_exit: Exit
 label_purchase: Purchase
 label_open_delivery: Open Delivery
