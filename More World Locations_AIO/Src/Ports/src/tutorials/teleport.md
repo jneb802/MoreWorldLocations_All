@@ -2,7 +2,7 @@
 
 <color=orange><b>Mouse & Keyboard</b></color>
 <size=5>●</size> Left click a port pin, or a favorite in the sidebar, then confirm to teleport there
-<size=5>●</size> Middle click a port to add or remove it as a favorite
+<size=5>●</size> Middle click a port, or point at it and press <color=yellow>P</color>, to add or remove it as a favorite
 <size=5>●</size> Hover over a port to see its distance and teleport cost in the sidebar
 <size=5>●</size> Press <color=yellow>Escape</color> to return to the port
 

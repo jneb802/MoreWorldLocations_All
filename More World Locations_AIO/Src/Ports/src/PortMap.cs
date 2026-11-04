@@ -19,7 +19,7 @@ namespace More_World_Locations_AIO;
 /// sidebar listing favorites, hints in the map's own hint bars, and full mouse and gamepad control. Opened from the port UI's
 /// Teleport tab; closing the map (B / Escape / map key) returns to the port UI.
 ///
-/// Mouse: left click a port to teleport, middle click to toggle it as a favorite, click a sidebar
+/// Mouse: left click a port to teleport, middle click or P to toggle it as a favorite, click a sidebar
 /// entry to teleport there. Every teleport goes through a yes/no confirmation showing the cost.
 /// Gamepad: the map pans under the center crosshair. A teleports to the port under the crosshair,
 /// Y toggles it as a favorite, right stick up/down walks the favorites sidebar (the map follows),
@@ -42,6 +42,7 @@ public static class PortMap
     private static Sidebar? s_sidebar;
     private static PortEntry? s_hovered;
     private static int s_favoriteIndex = -1;
+    private static int s_pingTakenFrame = -1;
     private static int s_cycleIndex = -1;
 
     private static readonly Color HighlightColor = new(1f, 0.85f, 0.3f);
@@ -468,6 +469,19 @@ public static class PortMap
         && !ZInput.VirtualKeyboardOpen
         && !Minimap.InTextInput();
 
+    // Vanilla pings on P as well as middle click, and on the Mac build the ping hint the favorite
+    // hint is cloned from shows P. Minimap.Update reads P directly rather than through
+    // OnMapMiddleClick, so on a port it is taken here and the ping it would send is dropped.
+    private static void KeyboardInput()
+    {
+        if (Confirming || ZInput.IsGamepadActive() || !TakeInput() || Minimap.instance.inputDelay > 0f) return;
+        if (!ZInput.GetKeyDown(KeyCode.P)) return;
+        PortEntry? entry = EntryUnderPointer();
+        if (entry == null) return;
+        s_pingTakenFrame = Time.frameCount;
+        ToggleFavorite(entry);
+    }
+
     // Runs before Minimap.Update reads the pad. A press handled here is consumed, so the vanilla
     // map code later in the same Update does not also act on it (LB/RB would otherwise cross off
     // or remove whatever pin sits under the crosshair). The d-pad is left alone: it selects and
@@ -585,6 +599,7 @@ public static class PortMap
         {
             if (!s_open || __instance.m_mode != Minimap.MapMode.Large || Player.m_localPlayer == null) return;
             GamepadInput();
+            KeyboardInput();
             StepPan();
         }
 
@@ -651,6 +666,14 @@ public static class PortMap
             if (!Confirming) ToggleFavorite(entry);
             return false;
         }
+    }
+
+    // P on a port toggled a favorite in KeyboardInput; the vanilla ping for the same press is dropped.
+    [HarmonyPatch(typeof(Chat), nameof(Chat.SendPing))]
+    private static class PingKeyFavorites
+    {
+        [UsedImplicitly]
+        private static bool Prefix() => !(s_open && s_pingTakenFrame == Time.frameCount);
     }
 
     // Adding a pin on top of a port (double click, or A on the pad once the press is released)
