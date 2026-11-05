@@ -485,10 +485,6 @@ public static class LocationDefinitions
         new() { Name = "MWL_MinddripHallow1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_MinddripHallow1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsInterior", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 8f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
 
-        new() { Name = "MWL_ShrineEvent1", AssetPath = "Assets/WarpProjects/Dungeons/MWL_ShrineEvent1.prefab",
-            RequiredPlugin = More_World_Locations_AIOPlugin.ValheimFortressGUID,
-            Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsInterior", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 8f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
-
         new() { Name = "MWL_StoneTopHouse1", AssetPath = "Assets/WarpProjects/More World Locations/Plains/MWL_StoneTopHouse1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Plains, Group = "PlainsHouse", Priotized = true, RandomRotation = false, ExteriorRadius = 8, ClearArea = true, MinDistanceFromSimilar = 1024, MaxTerrainDelta = 4f, MinAltitude = 0f, MinDistance = LocationRings.Ring2.MinDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Everything } },
 

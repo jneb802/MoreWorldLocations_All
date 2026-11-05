@@ -6,7 +6,7 @@ public static class UpgradeWorldCommands
 {
     private static string Names(params MWLLocation[][] packs)
     {
-        return string.Join(",", packs.SelectMany(p => p).Where(l => l.IsAvailable).Select(l => l.Name));
+        return string.Join(",", packs.SelectMany(p => p).Select(l => l.Name));
     }
 
     public static void AddUpgradeWorldCommands()
