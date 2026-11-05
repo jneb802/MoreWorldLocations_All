@@ -4,6 +4,7 @@
 |           | - Added full gamepad support to the port UI and the Port Map, with on-screen controller glyph hints: bumpers switch tabs, d-pad walks lists, A confirms, X opens the Port Map, Y favorites, B closes. On the map, the right stick walks favorites and the bumpers cycle ports. |
 |           | - Added the client config `Hide Pins On Port Map` (default on) that hides player-placed pins while the Port Map is open. |
 |           | - Port anchor pins on the map are labeled and highlighted by the Port Map instead of getting a second pin stacked on top. |
+|           | - Removed the development location `MWL_ShrineEvent1`, its tribute interaction, and its asset bundle from MWL. This update does not delete existing saved placements. |
 | 5.2.2     | - Added the development location MWL_ShrineEvent1 in the Plains, available when Valheim Fortress is installed. Default spawn quantity is zero for manual testing. |
 |           | - Added an interior tribute interaction supporting ten item types at 10 items per offering. Challenge definitions and rewards come from Valheim Fortress configuration. Active challenges block duplicate offerings. |
 | 5.2.1     | - Fixed Underground Ruins stairs disappearing when dungeons load. Interior stairs now use the static dungeon kit prefab. Existing dungeons restore these stairs when their rooms load. |
