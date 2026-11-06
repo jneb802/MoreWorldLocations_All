@@ -1,0 +1,1665 @@
+{
+  "destination": "Assets/WarpProjects/CryptRecovery/Exterior/MDD_Exterior.prefab",
+  "instances": 276,
+  "preservedNodes": 289,
+  "maximumTransformError": 2.98023224E-08,
+  "nativePrefabs": [
+    {
+      "id": "6743792237844969354",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "8411346518216149502",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "3705637732130257356",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "8202046898255211681",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "5680561981908530087",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "8161895762762652528",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "592001798016004731",
+      "name": "JVLmock_rock1_mountain",
+      "prefab": "rock1_mountain",
+      "source": "Assets/world/Props/Rocks/rock1_mountain.prefab"
+    },
+    {
+      "id": "7732295234582544233",
+      "name": "JVLmock_piece_walltorch",
+      "prefab": "piece_walltorch",
+      "source": "Assets/GameElements/Pieces/piece_walltorch.prefab"
+    },
+    {
+      "id": "6420911753904809105",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2020338231523859572",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "8871814834794818784",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "3168157843499223404",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8945778026065566007",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "3518013449908750706",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "3760109027579672187",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "3412482960575536018",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8426828974463250652",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4060861769140342073",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "6980030072089432375",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1854310567523259933",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "6895770111958147649",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5950514033421047881",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8529022124123110012",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8006898828037240342",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "7515055337439921725",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2184576502064984879",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "3669661948102024477",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "8136995458936085535",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "466907268949629079",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "684184708525187471",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "9060745951960293785",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "458856946994191951",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7041615302614364083",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "2290391994288486064",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5787934940520540310",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "3251730055287749919",
+      "name": "JVLmock_piece_banner11",
+      "prefab": "piece_banner11",
+      "source": "Assets/GameElements/Pieces/piece_banner11.prefab"
+    },
+    {
+      "id": "9140620419979891171",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4934881110728534910",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2144829483624478670",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "662827506387933895",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "297270894460919284",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "7690669080424136413",
+      "name": "JVLmock_blackmarble_base_1",
+      "prefab": "blackmarble_base_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_base_1.prefab"
+    },
+    {
+      "id": "7172542695342831637",
+      "name": "JVLmock_blackmarble_base_1",
+      "prefab": "blackmarble_base_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_base_1.prefab"
+    },
+    {
+      "id": "7179923365656399989",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4438459648416064796",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "1052570142295667372",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8105026724211007402",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "6100425467066569165",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "6660004100102211867",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2803158439976274445",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "8671662685701581144",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1095001701042046745",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "711723883526866253",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3460347741876965888",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7000858890565484360",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "9002850905877567086",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "666478256489569970",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "6690386216526713755",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4536875696255119736",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "3444832533644691977",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "737387714374230612",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2636466194515657714",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "113903067054021525",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1097751340426780610",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "2935092890867766300",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4824431667889906026",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7892221992520959039",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3593999419028734250",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "8717568909344830869",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "8832037946263771814",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "7973918275171690726",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "356729393284840927",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "2837742699169379264",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1033242717305201538",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "1933300817313213870",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "740937713579905181",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "2514245310025429610",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "731870773110468449",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7182098583536638822",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4663394867603002489",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "7160095862252947934",
+      "name": "JVLmock_blackmarble_base_1",
+      "prefab": "blackmarble_base_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_base_1.prefab"
+    },
+    {
+      "id": "1975667117153402761",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "703030059379198336",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7441607589773158631",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "2113182514318890969",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7370030828480497198",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4912947816782307226",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8894489810847793664",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3973567658947498853",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5315952290561937270",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "6026907788179920488",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5024537448350919742",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6876840410903222471",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "392248050280864729",
+      "name": "JVLmock_blackmarble_base_1",
+      "prefab": "blackmarble_base_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_base_1.prefab"
+    },
+    {
+      "id": "3080436398029035041",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "1149518335685110455",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2876755194977241072",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "6402143574226403005",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "9215097336300624763",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4368747455583173702",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5234743735040040219",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7559914927046302249",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7674910007056984094",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4503219204246184237",
+      "name": "JVLmock_darkwood_gate",
+      "prefab": "darkwood_gate",
+      "source": "Assets/GameElements/Pieces/darkwood_gate.prefab"
+    },
+    {
+      "id": "5212957816066397107",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "7560921023695781488",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "6280652308473644732",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2761323247323048836",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "2470453655891117204",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8285849282423223294",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "7792833397747089247",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "978273992425086478",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6852074562555730090",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "318117357070726841",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5698567404595337908",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "834384175478359316",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7964770569265293247",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "7670168318966506184",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "7846112047079326964",
+      "name": "JVLmock_blackmarble_out_1",
+      "prefab": "blackmarble_out_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_out_1.prefab"
+    },
+    {
+      "id": "6586943070613396548",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "2631669836548259423",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "1827768601179665548",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2477205035456983768",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "7408455605797048531",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "1392396398991146027",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "2662755781790791875",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7356366847880925966",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "5732564648916464672",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7406900502052481583",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5137444806439352031",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "1251451060026833920",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "7914268798665478042",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5626169986505621720",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6650501525740730875",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2212587856612691000",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3928595386078604812",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "1590045654386964097",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6306863879011506528",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "7453771336973344122",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8800175965021271828",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "6425674220698607052",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "1885906898921433565",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "1958140430197590679",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "5349665795298965295",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3376199699274913979",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4463714939703720652",
+      "name": "JVLmock_piece_walltorch",
+      "prefab": "piece_walltorch",
+      "source": "Assets/GameElements/Pieces/piece_walltorch.prefab"
+    },
+    {
+      "id": "5788040584517973617",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2505657195662297016",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2663983961790212791",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7439520422766839170",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2410307792507074984",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "8117120094515108838",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7886254660753632901",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8709678664643955853",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "354934623703127884",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4291190218675245996",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "8365231529324282404",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4140274440907055560",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "8941335155938141802",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "9172723307806540913",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6052198558529990935",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7430920978029394665",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7527373299278983381",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "9021020988354281724",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "6836842787137022253",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "1401885264468335597",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4700109212859562896",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "7615203278684268217",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "674451600120367112",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "144112950343829152",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "6171914479250527084",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "4353591493178306757",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "3373490306931478714",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "7671045184058512224",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3270321425085466608",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5555597090944079364",
+      "name": "JVLmock_blackmarble_out_1",
+      "prefab": "blackmarble_out_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_out_1.prefab"
+    },
+    {
+      "id": "8317092552718995604",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3665699336461003589",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "3325281659444367871",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4800027941927422175",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4443770637949438381",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8164267820195710149",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "8867599691391391053",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "449130235809680336",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "443277573707336831",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8035318196794772367",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8761318689534146315",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "3918203469829928559",
+      "name": "JVLmock_piece_banner11",
+      "prefab": "piece_banner11",
+      "source": "Assets/GameElements/Pieces/piece_banner11.prefab"
+    },
+    {
+      "id": "2506247681783535484",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8480749968864303718",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "9123263664131220373",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "6329964533794737886",
+      "name": "JVLmock_blackmarble_out_1",
+      "prefab": "blackmarble_out_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_out_1.prefab"
+    },
+    {
+      "id": "2858763823143608754",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "2547496684862192573",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8858393262529891338",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "7938432177181785768",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "3374698271187803644",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5503548955707916685",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6495017829475308137",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "3502812915117669707",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8706384422213646750",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "578071738130651350",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5975789592157602661",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "1468489355229290223",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "6860213209735997268",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "525000785439895425",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "4936627448148532971",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2576748558418720677",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "1384244310950246173",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "4454051818431893941",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6783823393823502864",
+      "name": "JVLmock_blackmarble_out_1",
+      "prefab": "blackmarble_out_1",
+      "source": "Assets/GameElements/Pieces/blackmarble_out_1.prefab"
+    },
+    {
+      "id": "5520629119766995704",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1449983324913038965",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1318905457270805716",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "6720591992014368114",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4579679610466662157",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "2501380744718890527",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "1550839443936008326",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "8406914739190446304",
+      "name": "JVLmock_darkwood_gate",
+      "prefab": "darkwood_gate",
+      "source": "Assets/GameElements/Pieces/darkwood_gate.prefab"
+    },
+    {
+      "id": "3915655562955804947",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "63984831748440076",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "2871963475906375989",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4650972096957466212",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "1253208212564412325",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "9203245586102285201",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4372758796858311025",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "3535637593942647244",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4473952990517507083",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3982841251891625474",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1754546672811246464",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "6635706683492536666",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5466001529361173370",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4481907812391367889",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7348179036629640997",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "7235504366268473069",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7050552940358580495",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "4928553301955058439",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "4740926599737003880",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "1155295936084138936",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "442214627326568735",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5007410148030212374",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "5725077398744350188",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "4939183165816566797",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "6815968505471491004",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "521241432168083216",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "3249636794026003367",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "661573013743282731",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3843947678850540710",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "724381099657374707",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1173196862466506555",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "7721561193383303484",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "5828999928265153790",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "56562898925395806",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "8993070991430526185",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "1343140116902404213",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "7574447746204827814",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "8514745442301551146",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "1112275373358684058",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "9124644555014748608",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "4392795459555646509",
+      "name": "JVLmock_blackmarble_2x1x1",
+      "prefab": "blackmarble_2x1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_2x1x1.prefab"
+    },
+    {
+      "id": "460587254489188546",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "2660683499230252302",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "8231499638684734910",
+      "name": "JVLmock_stone_stair",
+      "prefab": "stone_stair",
+      "source": "Assets/GameElements/Pieces/stone_stair.prefab"
+    },
+    {
+      "id": "487613092878698044",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "2740187046415790045",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "4208092258699117416",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "8109144939657111674",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "7711917742146366984",
+      "name": "JVLmock_stone_wall_1x1",
+      "prefab": "stone_wall_1x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_1x1.prefab"
+    },
+    {
+      "id": "7214424130271379195",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "3526950318972049088",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "4920593944628047660",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "321760638325322536",
+      "name": "JVLmock_stone_wall_2x1",
+      "prefab": "stone_wall_2x1",
+      "source": "Assets/GameElements/Pieces/stone_wall_2x1.prefab"
+    },
+    {
+      "id": "9036152912021167112",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "7170572904464369420",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    },
+    {
+      "id": "1359599860423690509",
+      "name": "JVLmock_stone_floor_2x2",
+      "prefab": "stone_floor_2x2",
+      "source": "Assets/GameElements/Pieces/stone_floor_2x2.prefab"
+    },
+    {
+      "id": "4906590794250335909",
+      "name": "JVLmock_blackmarble_1x1",
+      "prefab": "blackmarble_1x1",
+      "source": "Assets/GameElements/Pieces/blackmarble_1x1.prefab"
+    }
+  ],
+  "functionalDungeonSetup": false
+}

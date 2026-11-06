@@ -1,0 +1,3514 @@
+{
+  "date": "2026-10-09",
+  "project": "/Users/benjmarston/Develop/valheimRipCombatArms/valheimRipCombat",
+  "scope": "Read-only mapping audit. Candidates are not runtime validated. Shared meshes establish geometry reuse, not direct prefab references or clean-rip provenance.",
+  "circle_stone_comparison": {
+    "source_guid": "14add7ead26df40dc9541b00bd23ee2e",
+    "native_guid": "108c7c25038ab7b4e87559acc94db80a",
+    "vertex_count": 320,
+    "vertices_equal": true,
+    "triangles_equal": true,
+    "uv_equal": true,
+    "normals_equal": true
+  },
+  "mappings": [
+    {
+      "current_mock": "JVLmock_CircleStone",
+      "instances": 1,
+      "status": "OFFSET",
+      "candidate_mock": "JVLmock_StartPlatform",
+      "notes": "Same vertex/index/UV/normal arrays (320 vertices), different asset GUID. Native mesh Y=-0.27; compensate placement.",
+      "source_variants": [
+        {
+          "source": "Assets/WarpProjects/CryptRecovery/VisualPrefabs/14add7ead26df40dc9541b00bd23ee2e_0.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_CircleStone",
+              "mesh": "Assets/WarpProjects/MockPlaceHolders/JVLmock_CircleStone.asset",
+              "guid": "14add7ead26df40dc9541b00bd23ee2e",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/startplatform.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/StartTemple/StartPlatform.prefab",
+        "root": "StartPlatform",
+        "hierarchy": "",
+        "name": "StartPlatform",
+        "components": [
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "Cube",
+            "guid": "108c7c25038ab7b4e87559acc94db80a",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t-0.27000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/StartTemple/models/startstone/startplatform.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_CurvedRock",
+      "instances": 17,
+      "status": "OFFSET",
+      "candidate_mock": "JVLmock_caverock_curvedrock",
+      "notes": "Native mesh X=-1; compensate placement. Check MaterialVariationWorld appearance.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/Caverocks/model/CurvedRock.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/world/Props/Caverocks/model/default_11.asset",
+              "guid": "1d771407275dfcd47b7ec5db032c9c7e",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/Curvedrock_snow_mat.mat"
+              ]
+            }
+          ],
+          "count": 17,
+          "rooms": [
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Caverocks/caverock_curvedrock.prefab",
+        "root": "caverock_curvedrock",
+        "hierarchy": "",
+        "name": "caverock_curvedrock",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "MaterialVariationWorld",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "default",
+            "guid": "1d771407275dfcd47b7ec5db032c9c7e",
+            "matrix": "1.00000\t0.00000\t0.00000\t-1.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Caverocks/model/Curvedrock_snow_mat.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 1553,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (1)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (2)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (4)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (5)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (6)/default"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_FloorBig",
+      "instances": 1,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_caverock_floorbig",
+      "notes": "Same mesh and relative transform; use cave variant, not Dvergr variant.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/Caverocks/model/FloorBig.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/world/Props/Caverocks/model/default_8.asset",
+              "guid": "4a644900e6e0fe345955097db72984cd",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/Curvedrock_snow_mat.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Caverocks/caverock_floorbig.prefab",
+        "root": "caverock_floorbig",
+        "hierarchy": "",
+        "name": "caverock_floorbig",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "MaterialVariationWorld",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "default",
+            "guid": "4a644900e6e0fe345955097db72984cd",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Caverocks/model/Curvedrock_snow_mat.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 597,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/room/caverock_floorbig/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_endcap02_crystal.prefab",
+          "hierarchy": "cave_new_endcap02_crystal/unused_cave_new_corridor04/room/floor/caverock_floorbig/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_endcap02_crystal.prefab",
+          "hierarchy": "cave_new_endcap02_crystal/unused_cave_new_corridor04/room/floor/caverock_floorbig (1)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_endcap02_crystal.prefab",
+          "hierarchy": "cave_new_endcap02_crystal/unused_cave_new_corridor04/room/floor/caverock_floorbig (2)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_entrance02.prefab",
+          "hierarchy": "cave_new_entrance02/room/floor/caverock_floorbig/default"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_Pickable_ForestCryptRandom",
+      "instances": 39,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_Pickable_ForestCryptRandom",
+      "notes": "Keep native gameplay prefab.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Items/pickables/Pickable_ForestCryptRandom.prefab",
+          "meshes": [],
+          "count": 39,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom12_ru",
+            "MCRoom15_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/pickables/Pickable_ForestCryptRandom.prefab",
+        "root": "Pickable_ForestCryptRandom",
+        "hierarchy": "",
+        "name": "Pickable_ForestCryptRandom",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "PickableItem"
+        ],
+        "meshes": []
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_Pickable_SurtlingCoreStand",
+      "instances": 5,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_Pickable_SurtlingCoreStand",
+      "notes": "Keep Surtling core behavior; other stands share geometry.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Items/pickables/Pickable_SurtlingCoreStand.prefab",
+          "meshes": [
+            {
+              "name": "stand",
+              "mesh": "Assets/GameElements/Items/pickables/_res/surtlingcorestand/JVLmock_stand.asset",
+              "guid": "01459e07ad9ab7f4b91a7472cfe43526",
+              "matrix": "1.20000\t0.00000\t0.00000\t0.00000\n0.00000\t1.20000\t0.00000\t0.00000\n0.00000\t0.00000\t1.20000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/GameElements/Items/pickables/_res/surtlingcorestand/JVLmock_corestand.mat"
+              ]
+            },
+            {
+              "name": "core",
+              "mesh": "Assets/GameElements/Items/materials/_res/surtlingcore/core.asset",
+              "guid": "3d1276202e2052c43944c7c92852edd8",
+              "matrix": "0.07811\t-0.07811\t0.00000\t0.00000\n0.06371\t0.06371\t-0.06389\t1.11120\n0.04518\t0.04518\t0.09010\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/GameElements/Items/materials/_res/surtlingcore/surtlingcore.mat"
+              ]
+            }
+          ],
+          "count": 5,
+          "rooms": [
+            "MCRoom22_ru",
+            "MCRoom24_ru",
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/pickables/Pickable_SurtlingCoreStand.prefab",
+        "root": "Pickable_SurtlingCoreStand",
+        "hierarchy": "",
+        "name": "Pickable_SurtlingCoreStand",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "Pickable",
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider",
+          "Transform",
+          "Light",
+          "LightFlicker"
+        ],
+        "meshes": [
+          {
+            "name": "stand",
+            "guid": "01459e07ad9ab7f4b91a7472cfe43526",
+            "matrix": "1.20000\t0.00000\t0.00000\t0.00000\n0.00000\t1.20000\t0.00000\t0.00000\n0.00000\t0.00000\t1.20000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/GameElements/Items/pickables/_res/surtlingcorestand/JVLmock_corestand.mat"
+            ]
+          },
+          {
+            "name": "core",
+            "guid": "3d1276202e2052c43944c7c92852edd8",
+            "matrix": "0.07811\t-0.07811\t0.00000\t0.00000\n0.06371\t0.06371\t-0.06389\t1.11120\n0.04518\t0.04518\t0.09010\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/GameElements/Items/materials/_res/surtlingcore/surtlingcore.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 72,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_EndCap3.prefab",
+          "hierarchy": "forestcrypt_EndCap3/Loot/Pickable_SurtlingCoreStand/visual/core"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber03.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber03/Props (1)/Pickable_SurtlingCoreStand/visual/core"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber03.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber03/Props (1)/Pickable_SurtlingCoreStand (1)/visual/core"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber03.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber03/Props (1)/Pickable_SurtlingCoreStand (2)/visual/core"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber03.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber03/Props (1)/Pickable_SurtlingCoreStand (3)/visual/core"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_Skull2",
+      "instances": 1,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_Skull2",
+      "notes": "Keep native transformed skull; Skull1 has different scale and material.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/Bones/Skull2.prefab",
+          "meshes": [
+            {
+              "name": "fi_vil_combs_props_bone_skull",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_4.asset",
+              "guid": "aaf2880277d12274aa7deaf3f0dd417b",
+              "matrix": "13.05421\t7.38834\t0.00000\t0.00000\n-5.68746\t10.04898\t-9.57449\t-0.21800\n-4.71598\t8.33249\t11.54682\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Bones/darkland_skull2.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Bones/Skull2.prefab",
+        "root": "Skull2",
+        "hierarchy": "",
+        "name": "Skull2",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "SphereCollider"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bone_skull",
+            "guid": "aaf2880277d12274aa7deaf3f0dd417b",
+            "matrix": "13.05421\t7.38834\t0.00000\t0.00000\n-5.68746\t10.04898\t-9.57449\t-0.21800\n-4.71598\t8.33249\t11.54682\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Bones/darkland_skull2.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 108,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (2)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (3)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (4)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (3)/original/fi_vil_combs_props_bone_skull (1)"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_Spawner_Skeleton",
+      "instances": 7,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_Spawner_Skeleton",
+      "notes": "Keep native spawner behavior.",
+      "source_variants": [
+        {
+          "source": "Assets/Characters/Skeleton/Spawner_Skeleton.prefab",
+          "meshes": [],
+          "count": 7,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom16_ru",
+            "MCRoom22_ru",
+            "MCRoom23_ru",
+            "MCRoom24_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/Characters/Skeleton/Spawner_Skeleton.prefab",
+        "root": "Spawner_Skeleton",
+        "hierarchy": "",
+        "name": "Spawner_Skeleton",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "CreatureSpawner"
+        ],
+        "meshes": []
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_Stone throne_broken",
+      "instances": 2,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_piece_throne02__Broken__high",
+      "notes": "Exact broken high-detail mesh. Child-only target; inspect collision and LOD behavior before use.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Pieces/_res/StoneThrone/model/Stone throne_broken.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/GameElements/Pieces/_res/StoneThrone/model/default_0.asset",
+              "guid": "6e0a7a58a52e1224481714dda2b2dd22",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/GameElements/Pieces/_res/StoneThrone/model/StoneThrone_broken.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Pieces/piece_throne02.prefab",
+        "root": "piece_throne02",
+        "hierarchy": "Broken/high",
+        "name": "high",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "high",
+            "guid": "6e0a7a58a52e1224481714dda2b2dd22",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/GameElements/Pieces/_res/StoneThrone/model/StoneThrone_broken.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_SunkenKit_int_wall_1x2",
+      "instances": 538,
+      "status": "APPLIED",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_1x2",
+      "notes": "538 replacements already applied from stone_2x1_high; runtime test pending.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab",
+          "meshes": [
+            {
+              "name": "stone_hgih",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/default_3.asset",
+              "guid": "1a0d8db346766234696718939c5be8d0",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+              ]
+            },
+            {
+              "name": "stone_low",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/default_2.asset",
+              "guid": "db66fe3319322ea40bcb9a212d2e264e",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+              ]
+            }
+          ],
+          "count": 538,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom11_ru",
+            "MCRoom12_ru",
+            "MCRoom13_ru",
+            "MCRoom14_ru",
+            "MCRoom15_ru",
+            "MCRoom16_ru",
+            "MCRoom17_ru",
+            "MCRoom18_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom23_ru",
+            "MCRoom24_ru",
+            "MCRoom26_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom4_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab",
+        "root": "SunkenKit_int_wall_1x2",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_1x2",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider"
+        ],
+        "meshes": [
+          {
+            "name": "stone_hgih",
+            "guid": "1a0d8db346766234696718939c5be8d0",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          },
+          {
+            "name": "stone_low",
+            "guid": "db66fe3319322ea40bcb9a212d2e264e",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 280,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_1x2 (5)/stone_low"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/wall/SunkenKit_int_wall_1x2 (7)/stone_low"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/wall/SunkenKit_int_wall_1x2 (8)/stone_low"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_endcap_hole4.prefab",
+          "hierarchy": "plainsfortress_Hildir_endcap_hole4/SunkenKit_int_wall_1x2 (24)/stone_low"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Start.prefab",
+          "hierarchy": "plainsfortress_Hildir_Start/stair/SunkenKit_int_wall_1x2 (5)/stone_low"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_TraderRune",
+      "instances": 1,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_TraderRune",
+      "notes": "Keep existing native prop.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/TraderRune/TraderRune.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/world/Props/TraderRune/model/default.asset",
+              "guid": "e871bcab6386f0847a2efaaca320b3d7",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/TraderRune/model/Tradaerrune_Mat.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/TraderRune/TraderRune.prefab",
+        "root": "TraderRune",
+        "hierarchy": "",
+        "name": "TraderRune",
+        "components": [
+          "Transform",
+          "HoverText",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "default",
+            "guid": "e871bcab6386f0847a2efaaca320b3d7",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/TraderRune/model/Tradaerrune_Mat.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_TreasureChest_forestcrypt",
+      "instances": 4,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_TreasureChest_forestcrypt",
+      "notes": "Keep forest crypt loot behavior; other chests share geometry.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Items/loot/TreasureChest_forestcrypt.prefab",
+          "meshes": [
+            {
+              "name": "stonechest",
+              "mesh": "Assets/world/Props/Chests/models/stonechest.asset",
+              "guid": "72cfcfe15b85bc54382543d097cfb829",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Chests/materials/stonechest.mat"
+              ]
+            },
+            {
+              "name": "stonechesttop_closed",
+              "mesh": "Assets/world/Props/Chests/models/stonechesttop.asset",
+              "guid": "1db4e394becf5ff438e74e9cb01ee49a",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Chests/materials/stonechest.mat"
+              ]
+            },
+            {
+              "name": "stonechesttop_open",
+              "mesh": "Assets/world/Props/Chests/models/stonechesttop.asset",
+              "guid": "1db4e394becf5ff438e74e9cb01ee49a",
+              "matrix": "0.95884\t0.00000\t-0.28396\t-0.10500\n0.00000\t1.00000\t0.00000\t0.00000\n0.28396\t0.00000\t0.95884\t0.42200\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Chests/materials/stonechest.mat"
+              ]
+            }
+          ],
+          "count": 4,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom15_ru",
+            "MCRoom18_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/loot/TreasureChest_forestcrypt.prefab",
+        "root": "TreasureChest_forestcrypt",
+        "hierarchy": "",
+        "name": "TreasureChest_forestcrypt",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "Container",
+          "Piece",
+          "WearNTear",
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "stonechest",
+            "guid": "72cfcfe15b85bc54382543d097cfb829",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Chests/materials/stonechest.mat"
+            ]
+          },
+          {
+            "name": "stonechesttop_closed",
+            "guid": "1db4e394becf5ff438e74e9cb01ee49a",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Chests/materials/stonechest.mat"
+            ]
+          },
+          {
+            "name": "stonechesttop_open",
+            "guid": "1db4e394becf5ff438e74e9cb01ee49a",
+            "matrix": "0.95884\t0.00000\t-0.28396\t-0.10500\n0.00000\t1.00000\t0.00000\t0.00000\n0.28396\t0.00000\t0.95884\t0.42200\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Chests/materials/stonechest.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 65,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_icecorridor02.prefab",
+          "hierarchy": "cave_new_icecorridor02/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_closed"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_icecorridor02.prefab",
+          "hierarchy": "cave_new_icecorridor02/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_open"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_crossroads01_hole.prefab",
+          "hierarchy": "cave_new_crossroads01_hole/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_closed"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_crossroads01_hole.prefab",
+          "hierarchy": "cave_new_crossroads01_hole/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_open"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_crossroads01_hole_ice.prefab",
+          "hierarchy": "cave_new_crossroads01_hole_ice/GameObject/TreasureChest_mountaincave/New/stonechesttop_closed"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_altar",
+      "instances": 3,
+      "status": "SCALE",
+      "candidate_mock": "JVLmock_altar",
+      "notes": "Native child scale is 1.5; replacement root must compensate to preserve room geometry.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/offeraltar/model/altar.prefab",
+          "meshes": [
+            {
+              "name": "altar",
+              "mesh": "Assets/world/Props/offeraltar/model/altar.asset",
+              "guid": "c41cda660a8698a4bbb00bd3b0f09ca8",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/altar.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom7_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/offeraltar/altar.prefab",
+        "root": "altar",
+        "hierarchy": "",
+        "name": "altar",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "altar",
+            "guid": "c41cda660a8698a4bbb00bd3b0f09ca8",
+            "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/offeraltar/model/altar.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 2,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber03.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber03/Props (1)/altar/altar"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber04.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber04/Props (1)/altar/altar"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_caverock_curvedrock",
+      "instances": 3,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_caverock_curvedrock",
+      "notes": "Already contains native mesh offset; do not apply model-only correction.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/Caverocks/caverock_curvedrock.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/world/Props/Caverocks/model/default_11.asset",
+              "guid": "1d771407275dfcd47b7ec5db032c9c7e",
+              "matrix": "1.00000\t0.00000\t0.00000\t-1.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Caverocks/model/Curvedrock_snow_mat.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Caverocks/caverock_curvedrock.prefab",
+        "root": "caverock_curvedrock",
+        "hierarchy": "",
+        "name": "caverock_curvedrock",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "MaterialVariationWorld",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "default",
+            "guid": "1d771407275dfcd47b7ec5db032c9c7e",
+            "matrix": "1.00000\t0.00000\t0.00000\t-1.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Caverocks/model/Curvedrock_snow_mat.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 1553,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (1)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (2)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (4)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (5)/default"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/GameObject/caverock_curvedrock (6)/default"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_crypt_skeleton_chest",
+      "instances": 2,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_crypt_skeleton_chest",
+      "notes": "Keep trapped chest behavior; do not substitute ordinary chest.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/Chests/crypt_skeleton_chest.prefab",
+          "meshes": [
+            {
+              "name": "stonechest",
+              "mesh": "Assets/world/Props/Chests/models/stonechest.asset",
+              "guid": "72cfcfe15b85bc54382543d097cfb829",
+              "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Chests/materials/stonechest.mat"
+              ]
+            },
+            {
+              "name": "stonechesttop_closed",
+              "mesh": "Assets/world/Props/Chests/models/stonechesttop.asset",
+              "guid": "1db4e394becf5ff438e74e9cb01ee49a",
+              "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Chests/materials/stonechest.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom15_ru",
+            "MCRoom8_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Chests/crypt_skeleton_chest.prefab",
+        "root": "crypt_skeleton_chest",
+        "hierarchy": "",
+        "name": "crypt_skeleton_chest",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "Destructible",
+          "DropOnDestroyed",
+          "HoverText",
+          "EggHatch",
+          "MaterialVariationWorld",
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "stonechest",
+            "guid": "72cfcfe15b85bc54382543d097cfb829",
+            "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Chests/materials/stonechest.mat"
+            ]
+          },
+          {
+            "name": "stonechesttop_closed",
+            "guid": "1db4e394becf5ff438e74e9cb01ee49a",
+            "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Chests/materials/stonechest.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 65,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_icecorridor02.prefab",
+          "hierarchy": "cave_new_icecorridor02/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_closed"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_icecorridor02.prefab",
+          "hierarchy": "cave_new_icecorridor02/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_open"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_crossroads01_hole.prefab",
+          "hierarchy": "cave_new_crossroads01_hole/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_closed"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_crossroads01_hole.prefab",
+          "hierarchy": "cave_new_crossroads01_hole/GameObject (1)/TreasureChest_mountaincave/New/stonechesttop_open"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_crossroads01_hole_ice.prefab",
+          "hierarchy": "cave_new_crossroads01_hole_ice/GameObject/TreasureChest_mountaincave/New/stonechesttop_closed"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_crypt_skeleton_laying",
+      "instances": 2,
+      "status": "KEEP",
+      "candidate_mock": "JVLmock_crypt_skeleton_laying",
+      "notes": "Keep complete existing skeleton prop.",
+      "source_variants": [
+        {
+          "source": "Assets/world/dungeon/Crypt/crypt_skeleton_laying.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_crypt_skeleton_laying",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_1.asset",
+              "guid": "a32f89179d7457f47aba5189913b4089",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            },
+            {
+              "name": "ribcage_Skeleton_mesh.000",
+              "mesh": "Assets/Characters/Skeleton/model/Model/ribcage_Skeleton_mesh.000.asset",
+              "guid": "27d34b37a85b1164a9d831c20c5c820f",
+              "matrix": "0.99885\t-0.04805\t0.00004\t-0.04099\n0.00000\t0.00091\t1.00000\t0.05474\n-0.04805\t-0.99884\t0.00091\t-0.34998\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+              ]
+            },
+            {
+              "name": "pelvis_Skeleton_mesh.009",
+              "mesh": "Assets/Characters/Skeleton/model/Model/pelvis_Skeleton_mesh.009.asset",
+              "guid": "6d6233024aef952498f65fc5f5fc00d5",
+              "matrix": "0.84945\t0.52768\t0.00000\t-0.03500\n0.00000\t0.00000\t1.00000\t0.03344\n0.52768\t-0.84945\t0.00000\t0.03300\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom17_ru",
+            "MCRoom7_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/dungeon/Crypt/crypt_skeleton_laying.prefab",
+        "root": "crypt_skeleton_laying",
+        "hierarchy": "",
+        "name": "crypt_skeleton_laying",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "LODGroup",
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "crypt_skeleton_laying",
+            "guid": "a32f89179d7457f47aba5189913b4089",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          },
+          {
+            "name": "ribcage_Skeleton_mesh.000",
+            "guid": "27d34b37a85b1164a9d831c20c5c820f",
+            "matrix": "0.99885\t-0.04805\t0.00004\t-0.04099\n0.00000\t0.00091\t1.00000\t0.05474\n-0.04805\t-0.99884\t0.00091\t-0.34998\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          },
+          {
+            "name": "pelvis_Skeleton_mesh.009",
+            "guid": "6d6233024aef952498f65fc5f5fc00d5",
+            "matrix": "0.84945\t0.52768\t0.00000\t-0.03500\n0.00000\t0.00000\t1.00000\t0.03344\n0.52768\t-0.84945\t0.00000\t0.03300\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 42,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_dome_bottom_lake.prefab",
+          "hierarchy": "cave_dome_bottom_lake/Camp/crypt_skeleton_laying"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_BurialChamber02.prefab",
+          "hierarchy": "forestcrypt_new_BurialChamber02/Props/Pickable_ForestCryptRemains04/crypt_skeleton_laying"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (2)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_dirtwall",
+      "instances": 36,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_dirtwall",
+      "notes": "Both model-only and native-source variants have matching mesh transforms.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/DirtWalls/model/dirtwall.prefab",
+          "meshes": [
+            {
+              "name": "dirtwall",
+              "mesh": "Assets/world/Props/DirtWalls/model/dirtwall.asset",
+              "guid": "2bed001a1f510624482a111448a9c894",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/dirtwall.mat"
+              ]
+            }
+          ],
+          "count": 27,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom13_ru",
+            "MCRoom14_ru",
+            "MCRoom15_ru",
+            "MCRoom16_ru",
+            "MCRoom17_ru",
+            "MCRoom18_ru",
+            "MCRoom19_ru",
+            "MCRoom23_ru",
+            "MCRoom3_ru",
+            "MCRoom4_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/world/Props/DirtWalls/dirtwall.prefab",
+          "meshes": [
+            {
+              "name": "dirtwall",
+              "mesh": "Assets/world/Props/DirtWalls/model/dirtwall.asset",
+              "guid": "2bed001a1f510624482a111448a9c894",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/DirtWalls/model/dirtwall.mat"
+              ]
+            }
+          ],
+          "count": 9,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom26_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/DirtWalls/dirtwall.prefab",
+        "root": "dirtwall",
+        "hierarchy": "",
+        "name": "dirtwall",
+        "components": [
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "dirtwall",
+            "guid": "2bed001a1f510624482a111448a9c894",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/DirtWalls/model/dirtwall.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 3,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Stairs1.prefab",
+          "hierarchy": "forestcrypt_Stairs1/Walls/dirtwall (2)/dirtwall"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Stairs1.prefab",
+          "hierarchy": "forestcrypt_Stairs1/Walls/dirtwall (3)/dirtwall"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Stairs1.prefab",
+          "hierarchy": "forestcrypt_Stairs1/Walls/dirtwall (4)/dirtwall"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_cath_decor_swords_cross",
+      "instances": 2,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_fi_vil_cath_decor_swords_cross",
+      "notes": "Use native CryptKit prefab with same name, not third-party model asset.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Cathedrals/cathedral_decor/fi_vil_cath_decor_swords_cross.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_cath_decor_swords_cross",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Cathedrals/cathedral_decor/Mesh.asset",
+              "guid": "eea833edf3b13cb438ba745e17b04d9e",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_cathedral_base.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom22_ru",
+            "MCRoom3_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CryptKit/fi_vil_cath_decor_swords_cross.prefab",
+        "root": "fi_vil_cath_decor_swords_cross",
+        "hierarchy": "",
+        "name": "fi_vil_cath_decor_swords_cross",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "LODGroup"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_cath_decor_swords_cross",
+            "guid": "eea833edf3b13cb438ba745e17b04d9e",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_cathedral_base.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 2,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber03.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber03/Props (1)/fi_vil_cath_decor_swords_cross"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber04.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber04/Props (1)/fi_vil_cath_decor_swords_cross"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bone_coffin",
+      "instances": 4,
+      "status": "REVIEW",
+      "candidate_mock": "JVLmock_crypt_skeleton_laying",
+      "notes": "Shared root mesh, but native prop adds ribcage and pelvis. Not an exact replacement; no isolated equivalent verified.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bone_coffin.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bone_coffin",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_1.asset",
+              "guid": "a32f89179d7457f47aba5189913b4089",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 4,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom19_ru",
+            "MCRoom3_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/dungeon/Crypt/crypt_skeleton_laying.prefab",
+        "root": "crypt_skeleton_laying",
+        "hierarchy": "",
+        "name": "crypt_skeleton_laying",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "LODGroup",
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "crypt_skeleton_laying",
+            "guid": "a32f89179d7457f47aba5189913b4089",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          },
+          {
+            "name": "ribcage_Skeleton_mesh.000",
+            "guid": "27d34b37a85b1164a9d831c20c5c820f",
+            "matrix": "0.99885\t-0.04805\t0.00004\t-0.04099\n0.00000\t0.00091\t1.00000\t0.05474\n-0.04805\t-0.99884\t0.00091\t-0.34998\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          },
+          {
+            "name": "pelvis_Skeleton_mesh.009",
+            "guid": "6d6233024aef952498f65fc5f5fc00d5",
+            "matrix": "0.84945\t0.52768\t0.00000\t-0.03500\n0.00000\t0.00000\t1.00000\t0.03344\n0.52768\t-0.84945\t0.00000\t0.03300\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 2,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_dome_bottom_lake.prefab",
+          "hierarchy": "cave_dome_bottom_lake/Camp/crypt_skeleton_laying"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_BurialChamber02.prefab",
+          "hierarchy": "forestcrypt_new_BurialChamber02/Props/Pickable_ForestCryptRemains04/crypt_skeleton_laying"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bone_hang_01a",
+      "instances": 7,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_crypt_hangingskeleton",
+      "notes": "Native hanging skeleton has same mesh and relative transform.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bone_hang_01a.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bone_hang_01a",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh.asset",
+              "guid": "507cc78beae6b8d4d8dd6a7a0fa2ad20",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 4,
+          "rooms": [
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bone_hang_01a.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bone_hang_01a",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh.asset",
+              "guid": "507cc78beae6b8d4d8dd6a7a0fa2ad20",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom23_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/dungeon/Crypt/crypt_hangingskeleton.prefab",
+        "root": "crypt_hangingskeleton",
+        "hierarchy": "",
+        "name": "crypt_hangingskeleton",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "LODGroup"
+        ],
+        "meshes": [
+          {
+            "name": "crypt_hangingskeleton",
+            "guid": "507cc78beae6b8d4d8dd6a7a0fa2ad20",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 33,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/wall/crypt_hangingskeleton (2)"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/wall/crypt_hangingskeleton (3)"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_endcap_middlewall08.prefab",
+          "hierarchy": "plainsfortress_Hildir_endcap_middlewall08/ROOM/wall1/crypt_hangingskeleton (3)"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_endcap_middlewall08.prefab",
+          "hierarchy": "plainsfortress_Hildir_endcap_middlewall08/ROOM/wall1/crypt_hangingskeleton (4)"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_endcap_middlewall08.prefab",
+          "hierarchy": "plainsfortress_Hildir_endcap_middlewall08/ROOM/wall1/crypt_hangingskeleton (3)"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bone_skull",
+      "instances": 28,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_Skull1",
+      "notes": "Same mesh and relative transform; native darkland_skull1 material. Check intended color; Skull2 is transformed.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bone_skull.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bone_skull",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_4.asset",
+              "guid": "aaf2880277d12274aa7deaf3f0dd417b",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 27,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom12_ru",
+            "MCRoom22_ru",
+            "MCRoom9_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bone_skull.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bone_skull",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_4.asset",
+              "guid": "aaf2880277d12274aa7deaf3f0dd417b",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom23_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Bones/Skull1.prefab",
+        "root": "Skull1",
+        "hierarchy": "",
+        "name": "Skull1",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "SphereCollider"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bone_skull",
+            "guid": "aaf2880277d12274aa7deaf3f0dd417b",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Bones/darkland_skull1.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 108,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (2)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (3)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (1)/original/fi_vil_combs_props_bone_skull (4)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/mudpile2 (3)/original/fi_vil_combs_props_bone_skull (1)"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bonepile_01e",
+      "instances": 16,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_01e",
+      "notes": "Native camp child; no vanilla room mesh use found. Do not spawn whole camp.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_01e.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_01e",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_6.asset",
+              "guid": "63c1fa0b81f5b294a864e268786e2f9f",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 13,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom22_ru",
+            "MCRoom9_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_01e.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_01e",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_6.asset",
+              "guid": "63c1fa0b81f5b294a864e268786e2f9f",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom17_ru",
+            "MCRoom23_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/BogWitchHut/BogWitch_Camp.prefab",
+        "root": "BogWitch_Camp",
+        "hierarchy": "Hut/fi_vil_combs_props_bonepile_01e",
+        "name": "fi_vil_combs_props_bonepile_01e",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bonepile_01e",
+            "guid": "63c1fa0b81f5b294a864e268786e2f9f",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bonepile_02b",
+      "instances": 6,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_02b",
+      "notes": "Native camp child; no vanilla room mesh use found. Do not spawn whole camp.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_02b.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_02b",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_8.asset",
+              "guid": "57f89347636c1804c83a4ddb7da9bf77",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 5,
+          "rooms": [
+            "MCRoom12_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_02b.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_02b",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_8.asset",
+              "guid": "57f89347636c1804c83a4ddb7da9bf77",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/BogWitchHut/BogWitch_Camp.prefab",
+        "root": "BogWitch_Camp",
+        "hierarchy": "Hut/fi_vil_combs_props_bonepile_02b",
+        "name": "fi_vil_combs_props_bonepile_02b",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bonepile_02b",
+            "guid": "57f89347636c1804c83a4ddb7da9bf77",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bonepile_02c",
+      "instances": 7,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_Pickable_ForestCryptRemains03__crypt_skeleton_pile03",
+      "notes": "Exact visual child; whole Pickable adds loot behavior.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_02c.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_02c",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_2.asset",
+              "guid": "e74ddb1d727f4354ab88bf3a93e570a7",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 4,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom9_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_02c.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_02c",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_2.asset",
+              "guid": "e74ddb1d727f4354ab88bf3a93e570a7",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom23_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/pickables/Pickable_ForestCryptRemains03.prefab",
+        "root": "Pickable_ForestCryptRemains03",
+        "hierarchy": "crypt_skeleton_pile03",
+        "name": "crypt_skeleton_pile03",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "LODGroup",
+          "Transform",
+          "BoxCollider"
+        ],
+        "meshes": [
+          {
+            "name": "crypt_skeleton_pile03",
+            "guid": "e74ddb1d727f4354ab88bf3a93e570a7",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 74,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_ForestCryptRemains01/crypt_skeleton_pile01"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_ForestCryptRemains03/crypt_skeleton_pile03"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_ForestCryptRemains03/crypt_skeleton_pile03"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (2)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bonepile_04a",
+      "instances": 4,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_Pickable_ForestCryptRemains02__crypt_skeleton_pile02__fi_vil_combs_props_bonepile_04a",
+      "notes": "Exact visual child; whole remains prefab adds geometry and loot behavior.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_04a.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_04a",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_3.asset",
+              "guid": "6563d953cf360e24faeb6b394fbe6bab",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_04a.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_04a",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_3.asset",
+              "guid": "6563d953cf360e24faeb6b394fbe6bab",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/pickables/Pickable_ForestCryptRemains02.prefab",
+        "root": "Pickable_ForestCryptRemains02",
+        "hierarchy": "crypt_skeleton_pile02/fi_vil_combs_props_bonepile_04a",
+        "name": "fi_vil_combs_props_bonepile_04a",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bonepile_04a",
+            "guid": "6563d953cf360e24faeb6b394fbe6bab",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 129,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/fi_vil_combs_props_bonepile_04a"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_MeatPile/meatpile/fi_vil_combs_props_bonepile_04a"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/fi_vil_combs_props_bonepile_04a"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_MeatPile/meatpile/fi_vil_combs_props_bonepile_04a"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (2)/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/fi_vil_combs_props_bonepile_04a"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bonepile_04b",
+      "instances": 6,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_04b",
+      "notes": "Native camp child; no vanilla room mesh use found. Do not spawn whole camp.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_04b.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_04b",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_7.asset",
+              "guid": "8cb68f5c064c97f44904afedfa029fe1",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 4,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_04b.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_04b",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_7.asset",
+              "guid": "8cb68f5c064c97f44904afedfa029fe1",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom17_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/BogWitchHut/BogWitch_Camp.prefab",
+        "root": "BogWitch_Camp",
+        "hierarchy": "Hut/fi_vil_combs_props_bonepile_04b",
+        "name": "fi_vil_combs_props_bonepile_04b",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bonepile_04b",
+            "guid": "8cb68f5c064c97f44904afedfa029fe1",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_combs_props_bonepile_04d",
+      "instances": 8,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_BogWitch_Camp__Hut__fi_vil_combs_props_bonepile_04d",
+      "notes": "Native camp child; no vanilla room mesh use found. Do not spawn whole camp.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_04d.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_04d",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_10.asset",
+              "guid": "1cf92b8e3635c664889445728a183094",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_catacombs_0.mat"
+              ]
+            }
+          ],
+          "count": 6,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/fi_vil_combs_props_bonepile_04d.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_combs_props_bonepile_04d",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Catacombs/catacombs_props/bones/Mesh_10.asset",
+              "guid": "1cf92b8e3635c664889445728a183094",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom23_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/BogWitchHut/BogWitch_Camp.prefab",
+        "root": "BogWitch_Camp",
+        "hierarchy": "Hut/fi_vil_combs_props_bonepile_04d",
+        "name": "fi_vil_combs_props_bonepile_04d",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_combs_props_bonepile_04d",
+            "guid": "1cf92b8e3635c664889445728a183094",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_catacombs.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    },
+    {
+      "current_mock": "JVLmock_fi_vil_shield05_a",
+      "instances": 5,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_fi_vil_shield05_a",
+      "notes": "Use native CryptKit prefab with same name, not third-party model asset.",
+      "source_variants": [
+        {
+          "source": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Props/Shields/fi_vil_shield05_a.prefab",
+          "meshes": [
+            {
+              "name": "JVLmock_fi_vil_shield05_a",
+              "mesh": "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Meshes/Props/Shields/Mesh.asset",
+              "guid": "19e9717c3105c5544932dfa8e6223446",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/fi_village_shields.mat"
+              ]
+            }
+          ],
+          "count": 5,
+          "rooms": [
+            "MCRoom22_ru",
+            "MCRoom3_ru",
+            "MCRoom8_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CryptKit/fi_vil_shield05_a.prefab",
+        "root": "fi_vil_shield05_a",
+        "hierarchy": "",
+        "name": "fi_vil_shield05_a",
+        "components": [
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "LODGroup"
+        ],
+        "meshes": [
+          {
+            "name": "fi_vil_shield05_a",
+            "guid": "19e9717c3105c5544932dfa8e6223446",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/3rd party/Fantasy_Interiors/Villages_&_Towns/Materials/fi_village_shields.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 13,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_room1.prefab",
+          "hierarchy": "forestcrypt_room1/Props/shields/fi_vil_shield05_a"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_room1.prefab",
+          "hierarchy": "forestcrypt_room1/Props/shields/fi_vil_shield05_a (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_room1.prefab",
+          "hierarchy": "forestcrypt_room1/Props/shields/fi_vil_shield05_a (2)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber05.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber05/Props/shields/fi_vil_shield05_a (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_Burialchamber05.prefab",
+          "hierarchy": "forestcrypt_new_Burialchamber05/Props/shields/fi_vil_shield05_a (2)"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_skeleton_arm",
+      "instances": 3,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_Pickable_ForestCryptRemains02__crypt_skeleton_pile02__skeleton_arm",
+      "notes": "Exact visual child; whole remains prefab adds geometry and loot behavior.",
+      "source_variants": [
+        {
+          "source": "Assets/Characters/Skeleton/model/Model/skeleton_arm.prefab",
+          "meshes": [
+            {
+              "name": "arm_Skeleton_mesh.008",
+              "mesh": "Assets/Characters/Skeleton/model/Model/arm_Skeleton_mesh.008.asset",
+              "guid": "fc8bdab899c4d2f4ab704894d64a8c1a",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/Characters/Skeleton/model/Model/skeleton_arm.prefab",
+          "meshes": [
+            {
+              "name": "arm_Skeleton_mesh.008",
+              "mesh": "Assets/Characters/Skeleton/model/Model/arm_Skeleton_mesh.008.asset",
+              "guid": "fc8bdab899c4d2f4ab704894d64a8c1a",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/pickables/Pickable_ForestCryptRemains02.prefab",
+        "root": "Pickable_ForestCryptRemains02",
+        "hierarchy": "crypt_skeleton_pile02/skeleton_arm",
+        "name": "skeleton_arm",
+        "components": [
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "arm_Skeleton_mesh.008",
+            "guid": "fc8bdab899c4d2f4ab704894d64a8c1a",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 34,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/skeleton_arm/arm_Skeleton_mesh.008"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/skeleton_arm/arm_Skeleton_mesh.008"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (2)/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/skeleton_arm/arm_Skeleton_mesh.008"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (3)/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/skeleton_arm/arm_Skeleton_mesh.008"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_shrine01.prefab",
+          "hierarchy": "cave_shrine_shrine01/dirtcenter/Pickable_ForestCryptRemains02/crypt_skeleton_pile02/skeleton_arm/arm_Skeleton_mesh.008"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_skeleton_pelvis",
+      "instances": 7,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_crypt_skeleton_laying__skeleton_pelvis",
+      "notes": "Exact visual child; whole skeleton adds geometry.",
+      "source_variants": [
+        {
+          "source": "Assets/Characters/Skeleton/model/Model/skeleton_pelvis.prefab",
+          "meshes": [
+            {
+              "name": "pelvis_Skeleton_mesh.009",
+              "mesh": "Assets/Characters/Skeleton/model/Model/pelvis_Skeleton_mesh.009.asset",
+              "guid": "6d6233024aef952498f65fc5f5fc00d5",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 5,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom3_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/Characters/Skeleton/model/Model/skeleton_pelvis.prefab",
+          "meshes": [
+            {
+              "name": "pelvis_Skeleton_mesh.009",
+              "mesh": "Assets/Characters/Skeleton/model/Model/pelvis_Skeleton_mesh.009.asset",
+              "guid": "6d6233024aef952498f65fc5f5fc00d5",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom23_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/dungeon/Crypt/crypt_skeleton_laying.prefab",
+        "root": "crypt_skeleton_laying",
+        "hierarchy": "skeleton_pelvis",
+        "name": "skeleton_pelvis",
+        "components": [
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "pelvis_Skeleton_mesh.009",
+            "guid": "6d6233024aef952498f65fc5f5fc00d5",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 2,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_dome_bottom_lake.prefab",
+          "hierarchy": "cave_dome_bottom_lake/Camp/crypt_skeleton_laying/skeleton_pelvis/pelvis_Skeleton_mesh.009"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_BurialChamber02.prefab",
+          "hierarchy": "forestcrypt_new_BurialChamber02/Props/Pickable_ForestCryptRemains04/crypt_skeleton_laying/skeleton_pelvis/pelvis_Skeleton_mesh.009"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_skeleton_ribcage",
+      "instances": 11,
+      "status": "CHILD",
+      "candidate_mock": "JVLmock_Pickable_ForestCryptRemains01__crypt_skeleton_pile01__skeleton_ribcage",
+      "notes": "This child preserves model-relative matrix; other ribcage parents can differ.",
+      "source_variants": [
+        {
+          "source": "Assets/Characters/Skeleton/model/Model/skeleton_ribcage.prefab",
+          "meshes": [
+            {
+              "name": "ribcage_Skeleton_mesh.000",
+              "mesh": "Assets/Characters/Skeleton/model/Model/ribcage_Skeleton_mesh.000.asset",
+              "guid": "27d34b37a85b1164a9d831c20c5c820f",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 9,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom3_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        },
+        {
+          "source": "Assets/Characters/Skeleton/model/Model/skeleton_ribcage.prefab",
+          "meshes": [
+            {
+              "name": "ribcage_Skeleton_mesh.000",
+              "mesh": "Assets/Characters/Skeleton/model/Model/ribcage_Skeleton_mesh.000.asset",
+              "guid": "27d34b37a85b1164a9d831c20c5c820f",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MCRoom23_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/GameElements/Items/pickables/Pickable_ForestCryptRemains01.prefab",
+        "root": "Pickable_ForestCryptRemains01",
+        "hierarchy": "crypt_skeleton_pile01/skeleton_ribcage",
+        "name": "skeleton_ribcage",
+        "components": [
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "ribcage_Skeleton_mesh.000",
+            "guid": "27d34b37a85b1164a9d831c20c5c820f",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/Characters/Skeleton/model/Materials/Skeleton.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 38,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (1)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (2)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_room01.prefab",
+          "hierarchy": "cave_shrine_room01/dirtcorner (3)/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_shrine01.prefab",
+          "hierarchy": "cave_shrine_shrine01/dirtcenter/Pickable_ForestCryptRemains01/crypt_skeleton_pile01/skeleton_ribcage/ribcage_Skeleton_mesh.000"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stair1",
+      "instances": 44,
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_stair",
+      "notes": "Native child rotates Y=-90 and scales (0.8,0.7,0.79); compensate root matrix, including nonuniform room scales.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/CryptKit/models/stair1.prefab",
+          "meshes": [
+            {
+              "name": "Mesh.001_Untitled.003",
+              "mesh": "Assets/world/Props/CryptKit/models/Mesh.001_Untitled.003.asset",
+              "guid": "4e7b1de4573ed094d90d0b2b431d12b0",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stonekit_village_cathedral_base.mat"
+              ]
+            }
+          ],
+          "count": 44,
+          "rooms": [
+            "MCRoom22_ru",
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_stair.prefab",
+        "root": "SunkenKit_int_stair",
+        "hierarchy": "",
+        "name": "SunkenKit_int_stair",
+        "components": [
+          "Transform",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "LODGroup"
+        ],
+        "meshes": [
+          {
+            "name": "stair1",
+            "guid": "4e7b1de4573ed094d90d0b2b431d12b0",
+            "matrix": "0.00000\t0.00000\t-0.79000\t0.00000\n0.00000\t0.70000\t0.00000\t0.00000\n0.80000\t0.00000\t0.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/stonekit_village_cathedral_base.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 27,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/Room/podium/SunkenKit_int_stair (2)/stair1"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/Room/podium/SunkenKit_int_stair (3)/stair1"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room2.prefab",
+          "hierarchy": "sunkencrypt_new_Room2/Room/podium/SunkenKit_int_stair (4)/stair1"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Start1.prefab",
+          "hierarchy": "sunkencrypt_new_Start1/ROOM/SunkenKit_int_stair (6)/stair1"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/sunkencrypt_new_Room4.prefab",
+          "hierarchy": "sunkencrypt_new_Room4/Room/podium/SunkenKit_int_stair (2)/stair1"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stone_1x1",
+      "instances": 6,
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_1x2",
+      "notes": "Geometry verified after local X scale 0.5; no offset for low mesh. Native prefab adds high-detail mesh with a slight relative offset. Preserve existing instance transforms. Runtime materials, UV appearance and collision remain untested.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Pieces/_res/stone/stone_1x1.prefab",
+          "meshes": [
+            {
+              "name": "Cube.007_Cube.008",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/Cube.007_Cube.008.asset",
+              "guid": "0e4238eb20677aa4ba8921853b1ad68e",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/sunkenkit_stone_mat_interior 1.mat"
+              ]
+            }
+          ],
+          "count": 6,
+          "rooms": [
+            "MCRoom26_ru",
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab",
+        "root": "SunkenKit_int_wall_1x2",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_1x2",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider"
+        ],
+        "meshes": [
+          {
+            "name": "stone_hgih",
+            "guid": "1a0d8db346766234696718939c5be8d0",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          },
+          {
+            "name": "stone_low",
+            "guid": "db66fe3319322ea40bcb9a212d2e264e",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 47,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/Ice_floor/ice_low"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_icecorridor02.prefab",
+          "hierarchy": "cave_new_icecorridor02/Ice_floor/ice_low"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_deeproom_bottom_ice.prefab",
+          "hierarchy": "cave_new_deeproom_bottom_ice/Ice_floor/ice_low"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_deeproom_bottom_ice.prefab",
+          "hierarchy": "cave_new_deeproom_bottom_ice/Ice_floor (1)/ice_low"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_new_deeproom_bottom_ice.prefab",
+          "hierarchy": "cave_new_deeproom_bottom_ice/Ice_floor (2)/ice_low"
+        }
+      ],
+      "scaled_geometry_comparison": {
+        "scale": [
+          0.5,
+          1,
+          1
+        ],
+        "translation_after_scale": [
+          0,
+          0,
+          0
+        ],
+        "source_mesh_guid": "0e4238eb20677aa4ba8921853b1ad68e",
+        "target_mesh_guid": "db66fe3319322ea40bcb9a212d2e264e",
+        "maximum_bidirectional_vertex_error": 5.000000000143778e-07,
+        "maximum_target_triangle_nearest_source_triangle_error": 5.000000000143778e-07,
+        "source_vertex_count": 24,
+        "target_vertex_count": 24,
+        "triangle_count_each": 12,
+        "uv_comparison_performed": false
+      }
+    },
+    {
+      "current_mock": "JVLmock_stone_1x1_high",
+      "instances": 1906,
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_1x2",
+      "notes": "Geometry verified after local X scale 0.5 and local X offset +0.00973847482. Aligning high mesh leaves native low mesh/collider offset by this amount. Preserve existing instance transforms. Runtime materials, UV appearance and collision remain untested.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Pieces/_res/stone/stone_1x1_high.prefab",
+          "meshes": [
+            {
+              "name": "Cube.006_Cube.003",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/Cube.006_Cube.003.asset",
+              "guid": "2f541e922766de24687d110a707fff89",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/rock_mistlands_ru.mat"
+              ]
+            }
+          ],
+          "count": 1906,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom11_ru",
+            "MCRoom12_ru",
+            "MCRoom13_ru",
+            "MCRoom14_ru",
+            "MCRoom15_ru",
+            "MCRoom16_ru",
+            "MCRoom17_ru",
+            "MCRoom18_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom23_ru",
+            "MCRoom24_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom4_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_1x2.prefab",
+        "root": "SunkenKit_int_wall_1x2",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_1x2",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider"
+        ],
+        "meshes": [
+          {
+            "name": "stone_hgih",
+            "guid": "1a0d8db346766234696718939c5be8d0",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          },
+          {
+            "name": "stone_low",
+            "guid": "db66fe3319322ea40bcb9a212d2e264e",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 12,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/meadowsvillage_greathall.prefab",
+          "hierarchy": "meadowsvillage_greathall/house/furniture/stone_wall_1x1/new/stone_hgih"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/meadowsvillage_greathall.prefab",
+          "hierarchy": "meadowsvillage_greathall/house/furniture/stone_wall_1x1/worn/stone_hgih"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/meadowsvillage_greathall.prefab",
+          "hierarchy": "meadowsvillage_greathall/house/furniture/stone_wall_1x1/broken/stone_hgih"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/meadowsvillage_greathall.prefab",
+          "hierarchy": "meadowsvillage_greathall/house/furniture/stone_wall_1x1 (1)/new/stone_hgih"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/meadowsvillage_greathall.prefab",
+          "hierarchy": "meadowsvillage_greathall/house/furniture/stone_wall_1x1 (1)/worn/stone_hgih"
+        }
+      ],
+      "scaled_geometry_comparison": {
+        "scale": [
+          0.5,
+          1,
+          1
+        ],
+        "translation_after_scale": [
+          0.00973847482,
+          0,
+          0
+        ],
+        "source_mesh_guid": "2f541e922766de24687d110a707fff89",
+        "target_mesh_guid": "1a0d8db346766234696718939c5be8d0",
+        "maximum_bidirectional_vertex_error": 5.251800000438678e-07,
+        "maximum_target_triangle_nearest_source_triangle_error": 5.251800000438678e-07,
+        "source_vertex_count": 332,
+        "target_vertex_count": 331,
+        "triangle_count_each": 420,
+        "uv_comparison_performed": false
+      }
+    },
+    {
+      "current_mock": "JVLmock_stone_4x2",
+      "instances": 3,
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_2x4",
+      "notes": "Same low-detail mesh; native children rotate Z=90. Adds high-detail LOD. Compensate transform.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Pieces/_res/stone/stone_4x2.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/default_0.asset",
+              "guid": "0f73d6cddec6e0145ae9905eefe111c9",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/sunkenkit_stone_mat_interior 1.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom24_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_2x4.prefab",
+        "root": "SunkenKit_int_wall_2x4",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_2x4",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "stone",
+            "guid": "0f73d6cddec6e0145ae9905eefe111c9",
+            "matrix": "0.00000\t-1.00000\t0.00000\t0.00000\n1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          },
+          {
+            "name": "stone_high",
+            "guid": "0f12f436152a6af498e515b0ac2ae1c7",
+            "matrix": "0.00000\t-1.00000\t0.00000\t0.00000\n1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 1191,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (2)/stone"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (4)/stone"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (5)/stone"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_2x4 (5)/stone"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (6)/stone"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stone_4x2_high",
+      "instances": 235,
+      "status": "TRANSFORM",
+      "candidate_mock": "JVLmock_SunkenKit_int_wall_2x4",
+      "notes": "Same high-detail mesh; native children rotate Z=90. Adds low-detail LOD and collider. Compensate transform.",
+      "source_variants": [
+        {
+          "source": "Assets/GameElements/Pieces/_res/stone/stone_4x2_high.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/default_4.asset",
+              "guid": "0f12f436152a6af498e515b0ac2ae1c7",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/rock_mistlands.mat"
+              ]
+            }
+          ],
+          "count": 95,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom12_ru",
+            "MCRoom3_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        },
+        {
+          "source": "Assets/GameElements/Pieces/_res/stone/stone_4x2_high.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/default_4.asset",
+              "guid": "0f12f436152a6af498e515b0ac2ae1c7",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/sunkenkit_stone_mat_interior 1.mat"
+              ]
+            }
+          ],
+          "count": 109,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom11_ru",
+            "MCRoom12_ru",
+            "MCRoom13_ru",
+            "MCRoom14_ru",
+            "MCRoom15_ru",
+            "MCRoom16_ru",
+            "MCRoom17_ru",
+            "MCRoom18_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom23_ru",
+            "MCRoom24_ru",
+            "MCRoom26_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom4_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        },
+        {
+          "source": "Assets/GameElements/Pieces/_res/stone/stone_4x2_high.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/GameElements/Pieces/_res/stone/default_4.asset",
+              "guid": "0f12f436152a6af498e515b0ac2ae1c7",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stonewall_1.mat"
+              ]
+            }
+          ],
+          "count": 31,
+          "rooms": [
+            "MCRoom12_ru",
+            "MCRoom17_ru",
+            "MCRoom19_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/CastleBuildingKit/SunkenKit_int_wall_2x4.prefab",
+        "root": "SunkenKit_int_wall_2x4",
+        "hierarchy": "",
+        "name": "SunkenKit_int_wall_2x4",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "BoxCollider",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "stone",
+            "guid": "0f73d6cddec6e0145ae9905eefe111c9",
+            "matrix": "0.00000\t-1.00000\t0.00000\t0.00000\n1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          },
+          {
+            "name": "stone_high",
+            "guid": "0f12f436152a6af498e515b0ac2ae1c7",
+            "matrix": "0.00000\t-1.00000\t0.00000\t0.00000\n1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/CastleBuildingKit/_res/stone/sunkenkit_stone_mat_interior 2.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 1191,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (2)/stone_high"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (4)/stone_high"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (5)/stone_high"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_2x4 (5)/stone_high"
+        },
+        {
+          "path": "Assets/world/Rooms/tower/plainsfortress_Hildir_Floor2.prefab",
+          "hierarchy": "plainsfortress_Hildir_Floor2/stair/SunkenKit_int_wall_4x4 (6)/stone_high"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stonepillar",
+      "instances": 80,
+      "status": "MATCH",
+      "candidate_mock": "JVLmock_StonePillar",
+      "notes": "Case-sensitive native root name; same mesh/transform. Native material is itself named JVLmock_stonepillar in this working rip; runtime material needs checking.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/stonepillar/model/stonepillar.prefab",
+          "meshes": [
+            {
+              "name": "stonepillar",
+              "mesh": "Assets/world/Props/stonepillar/model/JVLmock_stonepillar.asset",
+              "guid": "ef6ce968dda303546a61e186a868fb65",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stonepillar.mat"
+              ]
+            }
+          ],
+          "count": 80,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom11_ru",
+            "MCRoom12_ru",
+            "MCRoom13_ru",
+            "MCRoom14_ru",
+            "MCRoom15_ru",
+            "MCRoom16_ru",
+            "MCRoom17_ru",
+            "MCRoom18_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom23_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom4_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/stonepillar/StonePillar.prefab",
+        "root": "StonePillar",
+        "hierarchy": "",
+        "name": "StonePillar",
+        "components": [
+          "Transform",
+          "MaterialVariationWorld",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "LodFadeInOut",
+          "LODGroup"
+        ],
+        "meshes": [
+          {
+            "name": "StonePillar",
+            "guid": "ef6ce968dda303546a61e186a868fb65",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stonepillar/model/JVLmock_stonepillar.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 48,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/wall (2)/StonePillar_mountain/StonePillar"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_start02_ice.prefab",
+          "hierarchy": "cave_shrine_start02_ice/wall (3)/StonePillar_mountain/StonePillar"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_corridor03.prefab",
+          "hierarchy": "cave_shrine_corridor03/wall (1)/StonePillar_mountain/StonePillar"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_corridor03.prefab",
+          "hierarchy": "cave_shrine_corridor03/wall (1)/StonePillar_mountain (1)/StonePillar"
+        },
+        {
+          "path": "Assets/world/Rooms/cave/cave_shrine_corridor03.prefab",
+          "hierarchy": "cave_shrine_corridor03/GameObject/StonePillar_mountain (2)/StonePillar"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stoneslab_lod0",
+      "instances": 12,
+      "status": "PAIR_REVIEW",
+      "candidate_mock": "JVLmock_StoneSlab",
+      "notes": "Native prop contains both LOD meshes. Pair with matching lod1 placement before replacement to prevent duplicate slabs.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/stoneslab/model/stoneslab_lod0.prefab",
+          "meshes": [
+            {
+              "name": "stoneslab",
+              "mesh": "Assets/world/Props/stoneslab/model/stoneslab_0.asset",
+              "guid": "3285a52186e8e3146bb5a74028e00181",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stoneslab.mat"
+              ]
+            }
+          ],
+          "count": 12,
+          "rooms": [
+            "MCRoom12_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/stoneslab/StoneSlab.prefab",
+        "root": "StoneSlab",
+        "hierarchy": "",
+        "name": "StoneSlab",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "lod0",
+            "guid": "3285a52186e8e3146bb5a74028e00181",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stoneslab/model/stoneslab.mat"
+            ]
+          },
+          {
+            "name": "lod1",
+            "guid": "3feace13d4fc346468b157234d48ebf3",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stoneslab/model/stoneslab.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 1,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_BurialChamber02.prefab",
+          "hierarchy": "forestcrypt_new_BurialChamber02/Props/StoneSlab/lod0"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stoneslab_lod1",
+      "instances": 12,
+      "status": "PAIR_REVIEW",
+      "candidate_mock": "JVLmock_StoneSlab",
+      "notes": "Native prop contains both LOD meshes. Pair with matching lod0 placement before replacement to prevent duplicate slabs.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/stoneslab/model/stoneslab_lod1.prefab",
+          "meshes": [
+            {
+              "name": "stoneslab",
+              "mesh": "Assets/world/Props/stoneslab/model/stoneslab.asset",
+              "guid": "3feace13d4fc346468b157234d48ebf3",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stoneslab.mat"
+              ]
+            }
+          ],
+          "count": 12,
+          "rooms": [
+            "MCRoom12_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/stoneslab/StoneSlab.prefab",
+        "root": "StoneSlab",
+        "hierarchy": "",
+        "name": "StoneSlab",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "lod0",
+            "guid": "3285a52186e8e3146bb5a74028e00181",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stoneslab/model/stoneslab.mat"
+            ]
+          },
+          {
+            "name": "lod1",
+            "guid": "3feace13d4fc346468b157234d48ebf3",
+            "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stoneslab/model/stoneslab.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 1,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_new_BurialChamber02.prefab",
+          "hierarchy": "forestcrypt_new_BurialChamber02/Props/StoneSlab/lod1"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stonewall",
+      "instances": 3,
+      "status": "SCALE",
+      "candidate_mock": "JVLmock_stonewall",
+      "notes": "All current variants have identity mesh matrix, native child scale is 1.5. Compensate even where nearest source is already native.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/stonewall/stonewall.prefab",
+          "meshes": [
+            {
+              "name": "stonewall (1)",
+              "mesh": "Assets/world/Props/stonewall/model/stonewall.asset",
+              "guid": "8116c2a217843eb4a82ed28855bc733d",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/stonewall/model/stonewall.mat"
+              ]
+            }
+          ],
+          "count": 2,
+          "rooms": [
+            "MC_EndCap_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        },
+        {
+          "source": "Assets/world/Props/stonewall/model/stonewall.prefab",
+          "meshes": [
+            {
+              "name": "stonewall",
+              "mesh": "Assets/world/Props/stonewall/model/stonewall.asset",
+              "guid": "8116c2a217843eb4a82ed28855bc733d",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stonewall.mat"
+              ]
+            }
+          ],
+          "count": 1,
+          "rooms": [
+            "MCRoom11_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/stonewall/stonewall.prefab",
+        "root": "stonewall",
+        "hierarchy": "",
+        "name": "stonewall",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "MaterialVariationWorld",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "stonewall (1)",
+            "guid": "8116c2a217843eb4a82ed28855bc733d",
+            "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stonewall/model/stonewall.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 503,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Chasm01.prefab",
+          "hierarchy": "forestcrypt_Chasm01/Roof/stonewall (8)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Chasm01.prefab",
+          "hierarchy": "forestcrypt_Chasm01/Roof/stonewall (9)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Chasm01.prefab",
+          "hierarchy": "forestcrypt_Chasm01/Roof/stonewall (10)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Chasm01.prefab",
+          "hierarchy": "forestcrypt_Chasm01/Roof/stonewall (11)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_Chasm01.prefab",
+          "hierarchy": "forestcrypt_Chasm01/Roof/stonewall (12)/stonewall (1)"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_stonewall_1",
+      "instances": 403,
+      "status": "SCALE",
+      "candidate_mock": "JVLmock_stonewall_1",
+      "notes": "Correct native name already; raw model must become native prop with scale compensation for 1.5 child scale.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/stonewall/model/stonewall_1.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/world/Props/stonewall/model/default.asset",
+              "guid": "bc8bd722a3240e04da9bd5732a389182",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/stonewall_1.mat"
+              ]
+            }
+          ],
+          "count": 403,
+          "rooms": [
+            "MCRoom10_ru",
+            "MCRoom11_ru",
+            "MCRoom12_ru",
+            "MCRoom13_ru",
+            "MCRoom14_ru",
+            "MCRoom15_ru",
+            "MCRoom16_ru",
+            "MCRoom17_ru",
+            "MCRoom18_ru",
+            "MCRoom19_ru",
+            "MCRoom22_ru",
+            "MCRoom23_ru",
+            "MCRoom24_ru",
+            "MCRoom27_ru",
+            "MCRoom3_ru",
+            "MCRoom4_ru",
+            "MCRoom7_ru",
+            "MCRoom8_ru",
+            "MCRoom9_ru",
+            "MCRoomEntrance_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/stonewall/stonewall_1.prefab",
+        "root": "stonewall_1",
+        "hierarchy": "",
+        "name": "stonewall_1",
+        "components": [
+          "Transform",
+          "LODGroup",
+          "MaterialVariationWorld",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider"
+        ],
+        "meshes": [
+          {
+            "name": "stonewall (1)",
+            "guid": "bc8bd722a3240e04da9bd5732a389182",
+            "matrix": "1.50000\t0.00000\t0.00000\t0.00000\n0.00000\t1.50000\t0.00000\t0.00000\n0.00000\t0.00000\t1.50000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/stonewall/model/stonewall_1.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 22,
+      "vanilla_room_examples": [
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_chamber_hildir.prefab",
+          "hierarchy": "forestcrypt_chamber_hildir/Roof/stonewall_1/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_chamber_hildir.prefab",
+          "hierarchy": "forestcrypt_chamber_hildir/Roof/stonewall_1 (1)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_chamber_hildir.prefab",
+          "hierarchy": "forestcrypt_chamber_hildir/Roof/stonewall_1 (2)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_chamber_hildir.prefab",
+          "hierarchy": "forestcrypt_chamber_hildir/Roof/stonewall_1 (3)/stonewall (1)"
+        },
+        {
+          "path": "Assets/world/Rooms/rooms/forestcrypt_chamber_hildir.prefab",
+          "hierarchy": "forestcrypt_chamber_hildir/Roof/stonewall_1 (4)/stonewall (1)"
+        }
+      ]
+    },
+    {
+      "current_mock": "JVLmock_widestone",
+      "instances": 11,
+      "status": "VARIANT",
+      "candidate_mock": "JVLmock_widestone",
+      "notes": "Model-only instances need compensation for native child scale 2 and X=-0.2. Existing complete native instances need no correction.",
+      "source_variants": [
+        {
+          "source": "Assets/world/Props/Rocks/models/widestone.prefab",
+          "meshes": [
+            {
+              "name": "default",
+              "mesh": "Assets/world/Props/Rocks/models/default_2.asset",
+              "guid": "2db15b3c6ae02404db4a04df680f5a31",
+              "matrix": "1.00000\t0.00000\t0.00000\t0.00000\n0.00000\t1.00000\t0.00000\t0.00000\n0.00000\t0.00000\t1.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/WarpProjects/CryptRecovery/Source/Material/highrock.mat"
+              ]
+            }
+          ],
+          "count": 8,
+          "rooms": [
+            "MCRoom22_ru"
+          ],
+          "all_source_meshes_match_target_transform": false
+        },
+        {
+          "source": "Assets/world/Props/Rocks/widestone.prefab",
+          "meshes": [
+            {
+              "name": "high",
+              "mesh": "Assets/world/Props/Rocks/models/default_2.asset",
+              "guid": "2db15b3c6ae02404db4a04df680f5a31",
+              "matrix": "2.00000\t0.00000\t0.00000\t-0.20000\n0.00000\t2.00000\t0.00000\t0.00000\n0.00000\t0.00000\t2.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Rocks/materials/highrock.mat"
+              ]
+            },
+            {
+              "name": "low",
+              "mesh": "Assets/world/Props/Rocks/models/default.asset",
+              "guid": "70e39d390362ec24db6ceef37d0c1b6f",
+              "matrix": "2.00000\t0.00000\t0.00000\t-0.20000\n0.00000\t2.00000\t0.00000\t0.00000\n0.00000\t0.00000\t2.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+              "materials": [
+                "Assets/world/Props/Rocks/materials/highrock.mat"
+              ]
+            }
+          ],
+          "count": 3,
+          "rooms": [
+            "MCRoom27_ru"
+          ],
+          "all_source_meshes_match_target_transform": true
+        }
+      ],
+      "candidate": {
+        "path": "Assets/world/Props/Rocks/widestone.prefab",
+        "root": "widestone",
+        "hierarchy": "",
+        "name": "widestone",
+        "components": [
+          "Transform",
+          "ZNetView",
+          "LODGroup",
+          "LodFadeInOut",
+          "Destructible",
+          "StaticPhysics",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer",
+          "MeshCollider",
+          "Transform",
+          "MeshFilter",
+          "MeshRenderer"
+        ],
+        "meshes": [
+          {
+            "name": "high",
+            "guid": "2db15b3c6ae02404db4a04df680f5a31",
+            "matrix": "2.00000\t0.00000\t0.00000\t-0.20000\n0.00000\t2.00000\t0.00000\t0.00000\n0.00000\t0.00000\t2.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Rocks/materials/highrock.mat"
+            ]
+          },
+          {
+            "name": "low",
+            "guid": "70e39d390362ec24db6ceef37d0c1b6f",
+            "matrix": "2.00000\t0.00000\t0.00000\t-0.20000\n0.00000\t2.00000\t0.00000\t0.00000\n0.00000\t0.00000\t2.00000\t0.00000\n0.00000\t0.00000\t0.00000\t1.00000\n",
+            "materials": [
+              "Assets/world/Props/Rocks/materials/highrock.mat"
+            ]
+          }
+        ]
+      },
+      "vanilla_room_mesh_uses": 0,
+      "vanilla_room_examples": []
+    }
+  ]
+}
