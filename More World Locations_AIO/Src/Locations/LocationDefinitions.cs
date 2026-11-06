@@ -366,6 +366,10 @@ public static class LocationDefinitions
 
     public static readonly MWLLocation[] Mountains =
     {
+        // Initial placement settings; verify radius and terrain limits with the finished prefab.
+        new() { Name = "MWL_DvergrCitadel1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_DvergrCitadel1.prefab",
+            Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "mountaincaves", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 512, MinTerrainDelta = 0f, MaxTerrainDelta = 5f, MinAltitude = 80, MinDistance = LocationRings.Ring7.MinDistance, MaxDistance = LocationRings.Ring7.MaxDistance, InForest = false, BiomeArea = Heightmap.BiomeArea.Median } },
+
         new() { Name = "MWL_StoneCastle1", AssetPath = "Assets/WarpProjects/More World Locations/Mountain/MWL_StoneCastle1.prefab",
             Config = new LocationConfig { Biome = Heightmap.Biome.Mountain, Group = "Mountain_Stone_Large", Priotized = true, RandomRotation = false, ExteriorRadius = 20, ClearArea = true, MinDistanceFromSimilar = 1024, SlopeRotation = true, MinTerrainDelta = 10f, MaxTerrainDelta = 15f, MinAltitude = 80, MinDistance = LocationRings.Ring2.MinDistance, InForest = false } },
 
