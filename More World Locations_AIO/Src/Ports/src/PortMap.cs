@@ -34,7 +34,12 @@ public static class PortMap
     public static bool IsOpen => s_open;
 
     private static bool s_open;
+    /// <summary>The port the map was opened from; null when a road travel stop opened it.</summary>
     private static Port? s_origin;
+    private static string s_originName = "";
+    /// <summary>Road travel: the port GUIDs offered, and the check run before paying (RoadTravelPorts).</summary>
+    private static ICollection<string>? s_onlyPorts;
+    private static Action<Port.PortInfo, Action>? s_approve;
     private static int s_pinType = -1;
     private static readonly List<PortEntry> s_entries = new();
     private static readonly List<PortEntry> s_favorites = new();
@@ -65,10 +70,25 @@ public static class PortMap
 
     public static void Open(Port origin)
     {
+        ZDO? originZdo = origin.m_view != null && origin.m_view.IsValid() ? origin.m_view.GetZDO() : null;
+        OpenFrom(origin.transform.position, origin.m_name, origin, originZdo, null, null);
+    }
+
+    /// <summary>
+    /// Opens the picker from a road travel stop (RoadTravelPorts.OpenRoadTravelMap): only the known ports among
+    /// <paramref name="onlyPorts"/> are offered, and once the player confirms, <paramref name="approve"/> is asked first; it
+    /// calls its action to pay and teleport as the port teleport does. Closing it does not return to a port panel.
+    /// </summary>
+    internal static void OpenForRoadTravel(Vector3 position, string name, ICollection<string> onlyPorts, Action<Port.PortInfo, Action> approve) =>
+        OpenFrom(position, name, null, null, onlyPorts, approve);
+
+    private static void OpenFrom(Vector3 position, string name, Port? origin, ZDO? originZdo, ICollection<string>? onlyPorts,
+        Action<Port.PortInfo, Action>? approve)
+    {
         if (Minimap.instance == null || Player.m_localPlayer == null || !Available) return;
         if (s_open) Close(false);
 
-        List<Port.PortInfo> ports = CollectPorts(origin);
+        List<Port.PortInfo> ports = CollectPorts(originZdo, onlyPorts);
         if (ports.Count == 0)
         {
             Player.m_localPlayer.Message(MessageHud.MessageType.Center, LocalKeys.NoKnownPorts);
@@ -77,10 +97,13 @@ public static class PortMap
 
         PortUI.instance?.Hide();
 
-        Minimap.instance.ShowPointOnMap(origin.transform.position);
+        Minimap.instance.ShowPointOnMap(position);
         if (Minimap.instance.m_mode != Minimap.MapMode.Large) return;
 
         s_origin = origin;
+        s_originName = name;
+        s_onlyPorts = onlyPorts;
+        s_approve = approve;
         s_open = true;
         s_hovered = null;
         s_favoriteIndex = -1;
@@ -125,22 +148,25 @@ public static class PortMap
 
         Port? origin = s_origin;
         s_origin = null;
+        s_originName = "";
+        s_onlyPorts = null;
+        s_approve = null;
         if (!returnToPortUi || origin == null || PortUI.instance == null) return;
         if (origin.m_view == null || !origin.m_view.IsValid()) return;
         if (Player.m_localPlayer == null || Player.m_localPlayer.IsDead()) return;
         PortUI.instance.Show(origin);
     }
 
-    private static List<Port.PortInfo> CollectPorts(Port origin)
+    private static List<Port.PortInfo> CollectPorts(ZDO? originZdo, ICollection<string>? onlyPorts)
     {
         List<Port.PortInfo> ports = new();
         if (Player.m_localPlayer == null) return ports;
-        ZDO? originZdo = origin.m_view != null && origin.m_view.IsValid() ? origin.m_view.GetZDO() : null;
         foreach (ZDO port in ShipmentManager.GetPorts())
         {
             if (port == originZdo) continue;
             Port.PortInfo info = new Port.PortInfo(port);
             if (string.IsNullOrEmpty(info.portID.Name)) continue;
+            if (onlyPorts != null && !onlyPorts.Contains(info.portID.GUID)) continue;
             if (!Player.m_localPlayer.IsKnownPort(info.portID)) continue;
             ports.Add(info);
         }
@@ -336,9 +362,20 @@ public static class PortMap
         // Re-checked here: the popup may have been answered after the player lost coins or the map.
         if (!CheckTeleport(player, entry.Info)) return;
         Port.PortInfo destination = entry.Info;
+        Action<Port.PortInfo, Action>? approve = s_approve;
         Close(false); // also consumes the pad press that answered the confirmation
         Minimap.instance.SetMapMode(Minimap.MapMode.Small);
-        PayAndTeleport(player, destination);
+        if (approve == null)
+        {
+            PayAndTeleport(player, destination);
+            return;
+        }
+        // Road travel: the caller checks first (its server), then pays and teleports through here.
+        approve(destination, () =>
+        {
+            Player? traveller = Player.m_localPlayer;
+            if (traveller != null && CheckTeleport(traveller, destination)) PayAndTeleport(traveller, destination);
+        });
     }
 
     internal static bool CanAfford(Player player, Port.PortInfo info) =>
@@ -729,6 +766,9 @@ public static class PortMap
         {
             s_open = false;
             s_origin = null;
+            s_originName = "";
+            s_onlyPorts = null;
+            s_approve = null;
             s_entries.Clear();
             s_favorites.Clear();
             s_hovered = null;
@@ -1003,7 +1043,7 @@ public static class PortMap
             m_root.transform.SetAsLastSibling();
             m_scroll = 0;
             m_title.text = ControllerHints.Localize(LocalKeys.PortMap);
-            m_from.text = ControllerHints.Localize($"{LocalKeys.From}: <color=orange>{s_origin?.m_name}</color>");
+            m_from.text = ControllerHints.Localize($"{LocalKeys.From}: <color=orange>{s_originName}</color>");
             m_favoritesHeader.text = ControllerHints.Localize(LocalKeys.Favorites);
             m_detailEntry = null;
             m_detailTimer = 1f;

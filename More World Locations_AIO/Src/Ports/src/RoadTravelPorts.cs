@@ -1,13 +1,16 @@
+using System;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
 
-/// <summary>Supported integration for a separate road travel service. Shipping and sea travel keep their own UI.</summary>
+/// <summary>Supported integration for a separate road travel service: the ports, their locations, and the port teleport
+/// map opened from a road travel stop.</summary>
 public static class RoadTravelPorts
 {
-    public const int ApiVersion = 1;
+    /// <summary>2: <see cref="OpenRoadTravelMap"/>.</summary>
+    public const int ApiVersion = 2;
     internal static bool IsPortLocation(ZoneSystem.ZoneLocation location)
     {
         string name = location.m_prefab.Name;
@@ -82,6 +85,20 @@ public static class RoadTravelPorts
     }
 
     public static bool CanTravel(Player player) => player != null && player.IsTeleportable(allowAllItems: false);
+
+    /// <summary>
+    /// Opens the port teleport map from a road travel stop at <paramref name="origin"/>, offering only the ports in
+    /// <paramref name="portGuids"/> (by PortGUID) that the player has discovered. The cost, confirmation and arrival are the
+    /// port teleport's own. Once the player confirms, <paramref name="approve"/> receives the chosen PortGUID and an action
+    /// that pays and teleports; the caller runs it when it approves the trip (for example after its server has checked it),
+    /// or not at all. False when the map cannot open (a world without a map).
+    /// </summary>
+    public static bool OpenRoadTravelMap(Vector3 origin, string originName, ICollection<string> portGuids, Action<string, Action> approve)
+    {
+        if (!PortMap.Available || portGuids == null || approve == null) return false;
+        PortMap.OpenForRoadTravel(origin, originName ?? "", portGuids, (info, proceed) => approve(info.portID.GUID, proceed));
+        return true;
+    }
 
     [HarmonyPatch(typeof(ZDO), nameof(ZDO.SetPrefab))]
     private static class NewPort
