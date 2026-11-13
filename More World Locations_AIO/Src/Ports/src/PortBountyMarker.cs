@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Jotunn.Entities;
+using Jotunn.Managers;
 using UnityEngine;
 
 namespace More_World_Locations_AIO;
@@ -7,9 +9,8 @@ namespace More_World_Locations_AIO;
 // Optional integration contract. MWL never creates the NPC or references its mod.
 public sealed class PortBountyMarker : MonoBehaviour
 {
-    public const string MarkerName = "MWL_BodyRetrievalMarker";
-    public const int ContractVersion = 1;
-    public static readonly Vector3 LocalPosition = new Vector3(2.5f, 0f, 0f);
+    public const string PrefabName = "PraetorisBountyNPC";
+    public const int ContractVersion = 2;
     private static readonly HashSet<PortBountyMarker> Live = new();
     private static event Action<ZNetView, Transform>? Loaded;
     private ZNetView? _port;
@@ -25,19 +26,23 @@ public sealed class PortBountyMarker : MonoBehaviour
 
     public static void Unsubscribe(Action<ZNetView, Transform> listener) => Loaded -= listener;
 
-    public static void AddToPrefab(GameObject port)
+    public static void RegisterPrefab()
     {
-        Transform existing = port.transform.Find(MarkerName);
-        if (existing != null) return;
-        GameObject marker = new GameObject(MarkerName);
-        marker.transform.SetParent(port.transform, false);
-        marker.transform.localPosition = LocalPosition;
+        if (PrefabManager.Instance.GetPrefab(PrefabName) != null) return;
+        // JVLmock_PraetorisBountyNPC in a location resolves to this persistent
+        // anchor. No NPC is created unless the author placed a mock.
+        GameObject marker = PrefabManager.Instance.CreateEmptyPrefab(PrefabName);
+        UnityEngine.Object.DestroyImmediate(marker.GetComponent<MeshRenderer>());
+        UnityEngine.Object.DestroyImmediate(marker.GetComponent<MeshFilter>());
+        UnityEngine.Object.DestroyImmediate(marker.GetComponent<Collider>());
+        marker.GetComponent<ZNetView>().m_persistent = true;
         marker.AddComponent<PortBountyMarker>();
+        PrefabManager.Instance.AddPrefab(new CustomPrefab(marker, false));
     }
 
     private void Start()
     {
-        _port = GetComponentInParent<ZNetView>();
+        _port = GetComponent<ZNetView>();
         if (_port == null || !_port.IsValid()) return;
         Live.Add(this);
         if (Loaded == null) return;

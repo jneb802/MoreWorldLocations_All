@@ -123,7 +123,6 @@ public static class PortInit
                 }
                 child.gameObject.RemoveAllComponents<MonoBehaviour>(false, typeof(PortTrader));
             }
-            PortBountyMarker.AddToPrefab(blueprint.Prefab);
             PrefabManager.RegisterPrefab(blueprint.Prefab);
         };
     }

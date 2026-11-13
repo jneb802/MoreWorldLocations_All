@@ -26,6 +26,7 @@ public class PortPrefabs
     
     public static void AddPortPrefabs()
     {
+        PortBountyMarker.RegisterPrefab();
         GameObject portTraderPrefab = portsBundle.LoadAsset<GameObject>("PortTrader");
         if (portTraderPrefab == null)
         {
@@ -34,7 +35,6 @@ public class PortPrefabs
         CustomPrefab portTraderCustomPrefab = new CustomPrefab(portTraderPrefab, true);
         portTraderCustomPrefab.Prefab.AddComponent<Port>();
         portTraderCustomPrefab.Prefab.AddComponent<PortTrader>();
-        PortBountyMarker.AddToPrefab(portTraderCustomPrefab.Prefab);
         
         PrefabManager.Instance.AddPrefab(portTraderCustomPrefab);
         ShipmentManager.PrefabsToSearch.Add("PortTrader");
