@@ -26,7 +26,6 @@ public class PortPrefabs
     
     public static void AddPortPrefabs()
     {
-        PortBountyMarker.RegisterPrefab();
         GameObject portTraderPrefab = portsBundle.LoadAsset<GameObject>("PortTrader");
         if (portTraderPrefab == null)
         {
